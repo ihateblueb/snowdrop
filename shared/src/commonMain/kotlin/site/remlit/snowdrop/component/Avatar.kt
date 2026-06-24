@@ -14,16 +14,22 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import site.remlit.snowdrop.model.User
 
+const val bigAvatarSize = 84
+const val avatarSize = 48
+
 @Composable
-fun Avatar(user: User) {
+fun Avatar(user: User, big: Boolean = false) {
+
+	val size = if (big) bigAvatarSize.dp else avatarSize.dp
+	val radius = if (big) 20.dp else 15.dp
 
 	@Composable
 	fun fallback() {
 		Box(
-			modifier = Modifier.clip(RoundedCornerShape(15.dp))
+			modifier = Modifier.clip(RoundedCornerShape(radius))
 				.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-				.height(48.dp)
-				.width(48.dp)
+				.height(size)
+				.width(size)
 		)
 	}
 
@@ -32,9 +38,9 @@ fun Avatar(user: User) {
 			{ asyncPainterResource(user.avatarStatic!!) },
 			"Profile",
 			onLoading = { fallback() },
-			modifier = Modifier.clip(RoundedCornerShape(15.dp))
-				.height(48.dp)
-				.width(48.dp)
+			modifier = Modifier.clip(RoundedCornerShape(radius))
+				.height(size)
+				.width(size)
 		)
 	} else fallback()
 }

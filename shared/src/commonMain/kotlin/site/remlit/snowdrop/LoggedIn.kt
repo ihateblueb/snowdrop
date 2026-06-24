@@ -126,19 +126,6 @@ fun LoggedIn() {
 			Column(
 				modifier = Modifier.padding(bottom = bottomPadding.calculateBottomPadding())
 			) {
-				TopAppBar(
-					title = {
-						when (selection) {
-							0 -> Text("Timeline")
-							1 -> Text("Notifications")
-							2 -> Text("Explore")
-							3 -> Text("Profile")
-
-							else -> Text("Error")
-						}
-					}
-				)
-
 				Column {
 					when (selection) {
 						0 -> Timeline()
