@@ -21,6 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,6 +57,9 @@ import snowdrop.shared.generated.resources.icon_volume_off_24px
 @Composable
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
+	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
+	val clipboardManager = LocalClipboardManager.current
+	val uriHandler = LocalUriHandler.current
 
 	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
 
@@ -221,23 +229,21 @@ fun Status(status: Status) {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_link_24px), null)
 						},
-						onClick = { }
+						onClick = {
+							clipboardManager.setText(AnnotatedString(status.url))
+							showDropdown = !showDropdown
+						}
 					)
 
 					DropdownMenuItem(
-						text = { Text("Copy link (remote)") },
-						leadingIcon = {
-							Icon(painterResource(Res.drawable.icon_link_24px), null)
-						},
-						onClick = { }
-					)
-
-					DropdownMenuItem(
-						text = { Text("Open original page") },
+						text = { Text("Open in browser") },
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 						},
-						onClick = { }
+						onClick = {
+							uriHandler.openUri(status.url)
+							showDropdown = !showDropdown
+						}
 					)
 
 					HorizontalDivider()
