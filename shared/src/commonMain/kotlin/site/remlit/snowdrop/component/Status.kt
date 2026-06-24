@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.User
+import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
@@ -38,9 +40,13 @@ import snowdrop.shared.generated.resources.icon_star_filled_24px
 
 @Composable
 fun Status(status: Status) {
+	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+
 	var realStatus by remember { mutableStateOf(status) }
 	var isReblog by remember { mutableStateOf(false) }
 	var rebloggingAccount by remember { mutableStateOf<User?>(null) }
+	var isMine by remember { mutableStateOf(realStatus.account.id == currentAccount?.id) }
+	//todo: or is admin? figure out how to do that
 
 	if (status.reblog != null) {
 		realStatus = status.reblog
@@ -227,15 +233,17 @@ fun Status(status: Status) {
 					HorizontalDivider()
 
 					// if mine
-					DropdownMenuItem(
-						text = { Text("Edit") },
-						onClick = { }
-					)
+					if (isMine) {
+						DropdownMenuItem(
+							text = { Text("Edit") },
+							onClick = { }
+						)
 
-					DangerDropdownItem(
-						text = { Text("Delete") },
-						onClick = { }
-					)
+						DangerDropdownItem(
+							text = { Text("Delete") },
+							onClick = { }
+						)
+					}
 				}
 			}
 		}

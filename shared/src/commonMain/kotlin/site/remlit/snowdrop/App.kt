@@ -16,8 +16,11 @@ fun App() {
 
 		val loggedIn by settings.getBooleanFlow("logged_in", false)
 			.collectAsState(false, settingsContext)
+		// initial state is often wrong and the login screen flashes,
+		// todo: figure out some alternative for this
 
 		if (!loggedIn) Login()
 		else LoggedIn()
+
 	}
 }

@@ -15,11 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import site.remlit.snowdrop.api.timeline.getHomeTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.model.Status
 
 @Composable
+@Preview
 fun Timeline() {
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,

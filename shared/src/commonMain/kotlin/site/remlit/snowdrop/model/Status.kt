@@ -65,7 +65,7 @@ data class Status(
 
 	val state: String? = null,
 	@SerialName("quoted_status")
-	val quotedStatus: String? = null,
+	val quotedStatus: Status? = null,
 
 	@SerialName("created_at")
 	val createdAt: String,

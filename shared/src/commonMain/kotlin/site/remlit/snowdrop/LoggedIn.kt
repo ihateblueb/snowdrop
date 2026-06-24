@@ -25,16 +25,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import site.remlit.snowdrop.view.Explore
 import site.remlit.snowdrop.view.Notifications
+import site.remlit.snowdrop.view.Profile
 import site.remlit.snowdrop.view.Timeline
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_account_circle_24px
@@ -47,6 +50,7 @@ import snowdrop.shared.generated.resources.icon_notifications_24px
 import snowdrop.shared.generated.resources.icon_notifications_filled_24px
 
 @Composable
+@Preview
 @OptIn(ExperimentalSettingsApi::class)
 fun LoggedIn() {
 	LaunchedEffect(Unit) {
@@ -128,6 +132,7 @@ fun LoggedIn() {
 							0 -> Text("Timeline")
 							1 -> Text("Notifications")
 							2 -> Text("Explore")
+							3 -> Text("Profile")
 
 							else -> Text("Error")
 						}
@@ -139,6 +144,7 @@ fun LoggedIn() {
 						0 -> Timeline()
 						1 -> Notifications()
 						2 -> Explore()
+						3 -> Profile(account!!.id)
 
 						else -> Text("Something went wrong...")
 					}
