@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +39,7 @@ import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Dispatchers
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
@@ -71,7 +73,11 @@ fun ProfileView(id: String) = ViewSurface {
 			title = {
 				if (account == null) Text("Profile")
 				else Column {
-					Text(account!!.displayName ?: account!!.username)
+					Text(
+						account!!.displayName ?: account!!.username,
+						maxLines = 1,
+						overflow = TextOverflow.Ellipsis
+					)
 					Text(
 						"${formatNumber(account!!.statusesCount)} posts",
 						fontSize = 14.sp
@@ -166,9 +172,7 @@ fun ProfileView(id: String) = ViewSurface {
 
 						// bio
 						if (account!!.note != null) {
-							Text(text = remember(account!!.note!!) {
-								htmlToAnnotatedString(account!!.note!!)
-							})
+							HtmlContent(account!!.note!!)
 						}
 
 						// bottom of header

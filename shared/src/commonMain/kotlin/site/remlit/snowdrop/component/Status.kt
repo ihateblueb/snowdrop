@@ -126,9 +126,7 @@ fun Status(status: Status) {
 		// Content
 		Column(modifier = Modifier.padding(start = 10.dp, top = 5.dp, end = 10.dp, bottom = 5.dp)) {
 			if (realStatus.content != null) {
-				Text(text = remember(realStatus.content!!) {
-					htmlToAnnotatedString(realStatus.content!!)
-				})
+				HtmlContent(realStatus.content!!, realStatus.mentions)
 			}
 		}
 
