@@ -47,5 +47,5 @@ suspend fun getPublicTimeline(
 		if (bubble != null) parameter("bubble", bubble)
 	}
 
-	return endOfRequest(req)
+	endOfRequest(req)
 }

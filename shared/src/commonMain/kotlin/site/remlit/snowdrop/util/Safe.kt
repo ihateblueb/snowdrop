@@ -9,8 +9,10 @@ inline fun safe(block: () -> Unit) =
 		e.printStackTrace()
 	}
 
-inline fun <T> safeApiRequest(block: () -> Unit): ApiResponse<T> =
-	try { return ApiResponse(response = block() as? T) } catch (e: Throwable) {
+inline fun <T> safeApiRequest(block: () -> T): ApiResponse<T> =
+	try {
+		return ApiResponse(response = block())
+	} catch (e: Throwable) {
 		Logger.e { "Safely caught exception: ${e.message}" }
 		e.printStackTrace()
 		return ApiResponse(error = true, message = e.message)

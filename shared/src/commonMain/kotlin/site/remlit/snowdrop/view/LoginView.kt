@@ -43,7 +43,9 @@ import kotlin.uuid.Uuid
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun LoginView() {
+fun LoginView(
+	navigateToTimeline: () -> Unit
+) {
 	val uriHandler = LocalUriHandler.current
 
 
@@ -124,6 +126,7 @@ fun LoginView() {
 
 					waitingForNext = true
 
+					// todo: this blocking is annoying
 					runBlocking {
 						val existingAccounts = blockingSettings.getString("accounts", "")
 						val accountId = "_S-${Uuid.random()}"
@@ -144,7 +147,7 @@ fun LoginView() {
 					}
 				}
 			) {
-				if (waitingForNext) CircularProgressIndicator()
+				if (waitingForNext) Text("...")
 				else Text("Continue")
 			}
 
@@ -213,6 +216,8 @@ fun LoginView() {
 
 							updateCurrentAccountObject()
 						}
+
+						navigateToTimeline()
 					}
 				) {
 					Text("Finish")

@@ -36,5 +36,5 @@ suspend fun getHomeTimeline(
 		if (minId != null) parameter("min_id", minId)
 	}
 
-	return endOfRequest(req)
+	endOfRequest(req)
 }

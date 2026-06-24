@@ -164,12 +164,17 @@ fun App() = safe {
 						)
 					}
 
-					composable<Login> { LoginView() }
+					composable<Login> {
+						LoginView(
+							navigateToTimeline = { navController.navigate(Timeline) },
+						)
+					}
 					composable<Timeline> { TimelineView() }
 					composable<Notifications> { NotificationsView() }
 					composable<Explore> { ExploreView() }
 					composable<MyProfile> {
-						if (account != null) ProfileView(account!!.id) else Text("Error")
+						if (account != null) ProfileView(account!!.id)
+						else Text("Error")
 					}
 
 					composable<Profile> {

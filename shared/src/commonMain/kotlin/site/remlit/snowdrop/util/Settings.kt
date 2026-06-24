@@ -18,14 +18,31 @@ expect val settings: FlowSettings
 @OptIn(ExperimentalSettingsApi::class)
 val blockingSettings = settings.toBlockingSettings()
 
+fun getAccounts() = blockingSettings.getString("accounts", "")
 fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
 fun getCurrentAccountHost() = blockingSettings.getString("account_${getCurrentAccountId()}_host", "")
+
+fun logoutAccount(accountId: String) {
+	blockingSettings.remove("account_${accountId}_host")
+	blockingSettings.remove("account_${accountId}_client_id")
+	blockingSettings.remove("account_${accountId}_client_secret")
+	blockingSettings.remove("account_${accountId}_token")
+
+	blockingSettings.putString(
+		"accounts",
+		getAccounts().split(" ").filter { it != accountId }
+			.joinToString(" ")
+	)
+}
 
 fun setupAppSettings() {
 	if (!blockingSettings.getBoolean("setup", false)) {
 		blockingSettings.putBoolean("logged_in", false)
 		blockingSettings.putBoolean("setup", true)
 	}
+
+	if (getCurrentAccountId() != "" && getCurrentAccountHost() == "")
+		logoutAccount(getCurrentAccountId())
 }
 
 /**
@@ -34,9 +51,9 @@ fun setupAppSettings() {
  * */
 @OptIn(ExperimentalSettingsApi::class)
 fun getCurrentAccountObjectFlow(): Flow<User> = object : Flow<User> {
-	override suspend fun collect(collector: FlowCollector<User>) {
+	override suspend fun collect(collector: FlowCollector<User>) = safe {
 		if (getCurrentAccountId() == "")
-			return
+			return@safe
 
 		if (settings.getStringOrNull("account_${getCurrentAccountId()}_user") == null)
 			updateCurrentAccountObject()

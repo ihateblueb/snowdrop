@@ -29,5 +29,5 @@ suspend fun createToken(code: String): ApiResponse<OauthToken> = safeApiRequest 
 
 	})
 
-	return endOfRequest(req)
+	endOfRequest(req)
 }

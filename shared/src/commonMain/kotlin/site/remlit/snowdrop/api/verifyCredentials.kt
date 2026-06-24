@@ -22,5 +22,5 @@ suspend fun verifyCredentials(): ApiResponse<User> = safeApiRequest {
 		header("Authorization", "Bearer $token")
 	}
 
-	return endOfRequest(req)
+	endOfRequest(req)
 }

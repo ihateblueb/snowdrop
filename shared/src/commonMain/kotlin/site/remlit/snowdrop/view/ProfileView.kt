@@ -65,128 +65,130 @@ fun ProfileView(id: String) {
 		ready = true
 	}
 
-	TopAppBar(
-		title = {
-			if (account == null) Text("Profile")
-			else Column {
-				Text(account!!.displayName ?: account!!.username)
-				Text(
-					"${formatNumber(account!!.statusesCount)} posts",
-					fontSize = 14.sp
-				)
-			}
-		}
-	)
-
-	if (!ready || account == null) {
-		Column(
-			modifier = Modifier.fillMaxHeight().fillMaxWidth(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
-		) {
-			CircularProgressIndicator()
-		}
-	} else {
-		Column(
-			modifier = Modifier
-				.verticalScroll(scrollState)
-		) {
-			Column {
-				@Composable
-				fun fallbackHeader() {
-					Box(
-						modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-							.height(headerHeight.dp)
-							.fillMaxWidth()
+	Column {
+		TopAppBar(
+			title = {
+				if (account == null) Text("Profile")
+				else Column {
+					Text(account!!.displayName ?: account!!.username)
+					Text(
+						"${formatNumber(account!!.statusesCount)} posts",
+						fontSize = 14.sp
 					)
 				}
+			}
+		)
 
-				if (account!!.header != null) {
-					KamelImage(
-						{ asyncPainterResource(account!!.header!!) },
-						account!!.headerDescription,
-						onLoading = { fallbackHeader() },
-						modifier = Modifier.height(headerHeight.dp)
-							.fillMaxWidth(),
-						contentScale = ContentScale.Crop
+		if (!ready || account == null) {
+			Column(
+				modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center
+			) {
+				CircularProgressIndicator()
+			}
+		} else {
+			Column(
+				modifier = Modifier
+					.verticalScroll(scrollState)
+			) {
+				Column {
+					@Composable
+					fun fallbackHeader() {
+						Box(
+							modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+								.height(headerHeight.dp)
+								.fillMaxWidth()
+						)
+					}
 
-					)
-				} else fallbackHeader()
+					if (account!!.header != null) {
+						KamelImage(
+							{ asyncPainterResource(account!!.header!!) },
+							account!!.headerDescription,
+							onLoading = { fallbackHeader() },
+							modifier = Modifier.height(headerHeight.dp)
+								.fillMaxWidth(),
+							contentScale = ContentScale.Crop
 
-				// The Rest
-				Column(
-					modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 10.dp)
-						.offset(y = (-((bigAvatarSize/2))).dp)
-				) {
-					// top of header, avatar and button
-					Row(
-						modifier = Modifier.padding(bottom = 10.dp),
+						)
+					} else fallbackHeader()
 
-						verticalAlignment = Alignment.Bottom,
-						horizontalArrangement = Arrangement.SpaceBetween
+					// The Rest
+					Column(
+						modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 10.dp)
+							.offset(y = (-((bigAvatarSize/2))).dp)
 					) {
-						// jank outer border
-						Box(contentAlignment = Alignment.Center) {
-							Box(
-								modifier = Modifier.background(
-									MaterialTheme.colorScheme.background,
-									RoundedCornerShape((bigAvatarRadius + 2).dp)
-								).height((bigAvatarSize + 6).dp)
-									.width((bigAvatarSize + 6).dp)
-							)
-							Avatar(user = account!!, big = true)
-						}
+						// top of header, avatar and button
+						Row(
+							modifier = Modifier.padding(bottom = 10.dp),
 
-						if (isMe) {
-							OutlinedButton(onClick = {}) {
-								Text("Edit profile")
+							verticalAlignment = Alignment.Bottom,
+							horizontalArrangement = Arrangement.SpaceBetween
+						) {
+							// jank outer border
+							Box(contentAlignment = Alignment.Center) {
+								Box(
+									modifier = Modifier.background(
+										MaterialTheme.colorScheme.background,
+										RoundedCornerShape((bigAvatarRadius + 2).dp)
+									).height((bigAvatarSize + 6).dp)
+										.width((bigAvatarSize + 6).dp)
+								)
+								Avatar(user = account!!, big = true)
 							}
-						} else {
-							OutlinedButton(onClick = {}) {
-								Text("Follow")
+
+							if (isMe) {
+								OutlinedButton(onClick = {}) {
+									Text("Edit profile")
+								}
+							} else {
+								OutlinedButton(onClick = {}) {
+									Text("Follow")
+								}
 							}
 						}
-					}
 
-					// display name
-					Row(
-						modifier = Modifier.padding(bottom = 5.dp),
-					) {
-						Column {
-							Text(
-								account!!.displayName ?: account!!.username,
-								fontWeight = FontWeight.Bold,
-								fontSize = 24.sp
-							)
-							Text("@${account!!.fqn}")
+						// display name
+						Row(
+							modifier = Modifier.padding(bottom = 5.dp),
+						) {
+							Column {
+								Text(
+									account!!.displayName ?: account!!.username,
+									fontWeight = FontWeight.Bold,
+									fontSize = 24.sp
+								)
+								Text("@${account!!.fqn}")
+							}
 						}
-					}
 
-					// bio
-					if (account!!.note != null) {
-						Text(text = remember(account!!.note!!) {
-							htmlToAnnotatedString(account!!.note!!)
-						})
-					}
-
-					// bottom of header
-					Row(
-						modifier = Modifier.padding(top = 5.dp),
-						horizontalArrangement = Arrangement.spacedBy(10.dp)
-					) {
-						Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-							Text(
-								"${account!!.followersCount}",
-								fontWeight = FontWeight.Bold
-							)
-							Text("followers")
+						// bio
+						if (account!!.note != null) {
+							Text(text = remember(account!!.note!!) {
+								htmlToAnnotatedString(account!!.note!!)
+							})
 						}
-						Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-							Text(
-								"${account!!.followingCount}",
-								fontWeight = FontWeight.Bold
-							)
-							Text("following")
+
+						// bottom of header
+						Row(
+							modifier = Modifier.padding(top = 5.dp),
+							horizontalArrangement = Arrangement.spacedBy(10.dp)
+						) {
+							Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+								Text(
+									"${account!!.followersCount}",
+									fontWeight = FontWeight.Bold
+								)
+								Text("followers")
+							}
+							Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+								Text(
+									"${account!!.followingCount}",
+									fontWeight = FontWeight.Bold
+								)
+								Text("following")
+							}
 						}
 					}
 				}

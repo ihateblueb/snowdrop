@@ -24,5 +24,5 @@ suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest {
 		append("website", "https://github.com/ihateblueb/snowdrop")
 	})
 
-	return endOfRequest(req)
+	endOfRequest(req)
 }
