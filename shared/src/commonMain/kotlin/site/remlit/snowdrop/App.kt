@@ -99,6 +99,10 @@ fun App() = safe {
 		.collectAsStateWithLifecycle(null)
 
 
+	fun shouldHideBottomBar(): Boolean {
+		return atRoute<Profile>(currentDest) || atRoute<Settings>(currentDest)
+	}
+
 	@Composable
 	fun fallbackAvatarIcon() {
 		if (currentDest != null && currentDest.hasRoute<MyProfile>()) Icon(painterResource(Res.drawable.icon_account_circle_filled_24px), null)
@@ -110,7 +114,7 @@ fun App() = safe {
 
 			Scaffold(
 				bottomBar = {
-					if (loggedIn == true) {
+					if (loggedIn == true && !shouldHideBottomBar()) {
 						NavigationBar {
 							NavigationBarItem(
 								selected = atRoute<Timeline>(currentDest),
