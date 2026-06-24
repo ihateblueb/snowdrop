@@ -1,11 +1,14 @@
 package site.remlit.snowdrop.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,10 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.User
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
+import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
@@ -42,9 +48,11 @@ fun Status(status: Status) {
 		rebloggingAccount = status.account
 	}
 
+	var showDropdown by remember { mutableStateOf(false) }
+
 
 	@Composable
-	fun footerButton(
+	fun FooterButton(
 		onClick: () -> Unit,
 		content: @Composable () -> Unit
 	) {
@@ -107,12 +115,23 @@ fun Status(status: Status) {
 			}
 		}
 
+		if (realStatus.reactions.isEmpty()) {
+			Row(
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				for (reaction in realStatus.reactions) {
+					Text("${reaction.name} ${reaction.count}")
+				}
+			}
+		}
+
 		// Footer
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(5.dp),
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			footerButton(onClick = { }) {
+			FooterButton(onClick = { }) {
 				if (realStatus.inReplyToId != null) Icon(
 					painterResource(Res.drawable.icon_reply_all_24px),
 					null
@@ -124,7 +143,7 @@ fun Status(status: Status) {
 				Text("${realStatus.repliesCount}")
 			}
 
-			footerButton(onClick = { }) {
+			FooterButton(onClick = { }) {
 				if (realStatus.reblogged) Icon(
 					painterResource(Res.drawable.icon_repeat_24px),
 					null,
@@ -137,7 +156,7 @@ fun Status(status: Status) {
 				Text("${realStatus.reblogsCount}")
 			}
 
-			footerButton(onClick = { }) {
+			FooterButton(onClick = { }) {
 				if (realStatus.favourited) Icon(
 					painterResource(Res.drawable.icon_star_filled_24px),
 					null,
@@ -150,15 +169,74 @@ fun Status(status: Status) {
 				Text("${realStatus.favouritesCount}")
 			}
 
-			footerButton(onClick = { }) {
-				if (realStatus.bookmarked) Icon(
-					painterResource(Res.drawable.icon_bookmark_24px),
+			FooterButton(onClick = { }) {
+				if (realStatus.favourited) Icon(
+					painterResource(Res.drawable.icon_add_24px),
 					null,
 					tint = MaterialTheme.colorScheme.primary
 				) else Icon(
-					painterResource(Res.drawable.icon_bookmark_24px),
+					painterResource(Res.drawable.icon_add_24px),
 					null
 				)
+			}
+
+			Box {
+				FooterButton(onClick = { showDropdown = !showDropdown }) {
+					Icon(
+						painterResource(Res.drawable.icon_more_horiz_24px),
+						null
+					)
+				}
+
+				DropdownMenu(
+					expanded = showDropdown,
+					onDismissRequest = { showDropdown = false }
+				) {
+					DropdownMenuItem(
+						text = { Text("Copy link") },
+						onClick = { }
+					)
+
+					DropdownMenuItem(
+						text = { Text("Copy link (remote)") },
+						onClick = { }
+					)
+
+					DropdownMenuItem(
+						text = { Text("Open original page") },
+						onClick = { }
+					)
+
+					HorizontalDivider()
+
+					DropdownMenuItem(
+						text = { Text("Bookmark") },
+						onClick = { }
+					)
+
+					DropdownMenuItem(
+						text = { Text("Mute") },
+						onClick = { }
+					)
+
+					DangerDropdownItem(
+						text = { Text("Report") },
+						onClick = { }
+					)
+
+					HorizontalDivider()
+
+					// if mine
+					DropdownMenuItem(
+						text = { Text("Edit") },
+						onClick = { }
+					)
+
+					DangerDropdownItem(
+						text = { Text("Delete") },
+						onClick = { }
+					)
+				}
 			}
 		}
 	}
