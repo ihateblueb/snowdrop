@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.bigAvatarRadius
@@ -41,6 +43,9 @@ import site.remlit.snowdrop.component.bigAvatarSize
 import site.remlit.snowdrop.model.User
 import site.remlit.snowdrop.util.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_edit_24px
+import snowdrop.shared.generated.resources.icon_person_add_24px
 
 const val headerHeight = 200
 
@@ -131,12 +136,10 @@ fun Profile(id: String) {
 
 						if (isMe) {
 							OutlinedButton(onClick = {}) {
-								// todo: pencil icon
 								Text("Edit profile")
 							}
 						} else {
 							OutlinedButton(onClick = {}) {
-								// todo user plus icon
 								Text("Follow")
 							}
 						}

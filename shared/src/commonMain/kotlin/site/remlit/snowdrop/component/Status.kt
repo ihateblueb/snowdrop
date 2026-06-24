@@ -31,12 +31,19 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
+import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
+import snowdrop.shared.generated.resources.icon_delete_24px
+import snowdrop.shared.generated.resources.icon_edit_24px
+import snowdrop.shared.generated.resources.icon_flag_24px
+import snowdrop.shared.generated.resources.icon_link_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
+import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_star_filled_24px
+import snowdrop.shared.generated.resources.icon_volume_off_24px
 
 @Composable
 fun Status(status: Status) {
@@ -200,33 +207,61 @@ fun Status(status: Status) {
 				) {
 					DropdownMenuItem(
 						text = { Text("Copy link") },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_link_24px), null)
+						},
 						onClick = { }
 					)
 
 					DropdownMenuItem(
 						text = { Text("Copy link (remote)") },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_link_24px), null)
+						},
 						onClick = { }
 					)
 
 					DropdownMenuItem(
 						text = { Text("Open original page") },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
+						},
 						onClick = { }
 					)
 
 					HorizontalDivider()
 
-					DropdownMenuItem(
-						text = { Text("Bookmark") },
-						onClick = { }
-					)
+					if (realStatus.bookmarked) {
+						DropdownMenuItem(
+							text = { Text("Unbookmark") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
+							},
+							onClick = { }
+						)
+					} else {
+						DropdownMenuItem(
+							text = { Text("Bookmark") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
+							},
+							onClick = { }
+						)
+					}
 
 					DropdownMenuItem(
 						text = { Text("Mute") },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
+						},
 						onClick = { }
 					)
 
 					DangerDropdownItem(
 						text = { Text("Report") },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_flag_24px), null)
+						},
 						onClick = { }
 					)
 
@@ -236,11 +271,17 @@ fun Status(status: Status) {
 
 						DropdownMenuItem(
 							text = { Text("Edit") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_edit_24px), null)
+							},
 							onClick = { }
 						)
 
 						DangerDropdownItem(
 							text = { Text("Delete") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_delete_24px), null)
+							},
 							onClick = { }
 						)
 					}
