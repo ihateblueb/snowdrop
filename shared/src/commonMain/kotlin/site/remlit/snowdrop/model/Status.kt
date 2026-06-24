@@ -160,7 +160,7 @@ data class Status(
 		@SerialName("preview_url")
 		val previewUrl: String,
 		@SerialName("text_url")
-		val textUrl: String,
+		val textUrl: String?,
 
 		val meta: Meta? = null,
 		val description: String? = null,
@@ -176,7 +176,7 @@ data class Status(
 				val width: Long = 0,
 				val height: Long = 0,
 				val size: String,
-				val aspect: Long = 0,
+				val aspect: Double = 0.0,
 			)
 		}
 	}
@@ -189,7 +189,7 @@ data class Status(
 		val url: String? = null,
 		@SerialName("static_url")
 		val staticUrl: String? = null,
-		val accounts: List<User> = emptyList(),
+		val accounts: List<User>? = emptyList(),
 		@SerialName("account_ids")
 		val accountIds: List<String> = emptyList()
 	)
