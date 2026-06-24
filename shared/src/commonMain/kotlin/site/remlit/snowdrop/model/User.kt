@@ -56,7 +56,7 @@ data class User(
 	@SerialName("formatted_note")
 	val formattedNote: String? = null,
 	@SerialName("formatted_fields")
-	val formattedFields: List<Field> = emptyList(),
+	val formattedFields: List<Field>? = emptyList(),
 
 	@SerialName("created_at")
 	val createdAt: String,
