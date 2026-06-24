@@ -106,7 +106,10 @@ fun Status(status: Status) {
 		// todo: not vertically centered correctly
 	) {
 		if (isReblog && rebloggingAccount != null) {
-			Row(modifier = Modifier.padding(start = 35.dp)) {
+			Row(
+				modifier = Modifier.padding(start = 35.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
 				Icon(
 					painterResource(Res.drawable.icon_repeat_24px),
 					null,
@@ -122,7 +125,7 @@ fun Status(status: Status) {
 
 		// Header
 		Row(
-			modifier = Modifier.padding(10.dp)
+			modifier = Modifier.padding(5.dp)
 				.fillMaxWidth(),
 			verticalAlignment = Alignment.CenterVertically
 		) {
@@ -187,6 +190,7 @@ fun Status(status: Status) {
 
 		// Footer
 		Row(
+			modifier = Modifier.padding(start = 5.dp, end = 5.dp, bottom = 5.dp),
 			horizontalArrangement = Arrangement.spacedBy(5.dp),
 			verticalAlignment = Alignment.CenterVertically
 		) {
@@ -332,5 +336,10 @@ fun Status(status: Status) {
 				}
 			}
 		}
+
+		HorizontalDivider(
+			thickness = 1.dp,
+			color = MaterialTheme.colorScheme.surfaceContainer
+		)
 	}
 }

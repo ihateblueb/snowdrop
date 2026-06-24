@@ -66,7 +66,7 @@ data class User(
 	@Serializable
 	data class Field(
 		val name: String,
-		val `value`: String,
+		val value: String,
 		@SerialName("verified_at")
 		val verifiedAt: String? = null
 	)

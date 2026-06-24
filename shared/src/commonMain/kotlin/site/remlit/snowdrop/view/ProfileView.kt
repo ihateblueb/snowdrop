@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -164,7 +165,7 @@ fun ProfileView(id: String) = ViewSurface {
 
 						// display name
 						Row(
-							modifier = Modifier.padding(bottom = 5.dp),
+							modifier = Modifier.padding(bottom = 10.dp),
 						) {
 							Column {
 								Text(
@@ -181,9 +182,36 @@ fun ProfileView(id: String) = ViewSurface {
 							HtmlContent(account!!.note!!)
 						}
 
+						/* UGLY...
+						if (!account!!.fields.isEmpty()) {
+							HorizontalDivider()
+							Column(
+								modifier = Modifier.padding(10.dp),
+								verticalArrangement = Arrangement.spacedBy(5.dp)
+							) {
+								account!!.fields.forEach { (name, value) ->
+									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+										Text(
+											name,
+											fontWeight = FontWeight.Bold
+										)
+										HtmlContent(value)
+									}
+								}
+							}
+							HorizontalDivider()
+						}
+						 */
+
+						Row(
+							modifier = Modifier.padding(top = 5.dp)
+						) {
+							Text("Joined at " + account!!.createdAt)
+						}
+
 						// bottom of header
 						Row(
-							modifier = Modifier.padding(top = 5.dp),
+							modifier = Modifier.padding(top = 10.dp),
 							horizontalArrangement = Arrangement.spacedBy(10.dp)
 						) {
 							Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
