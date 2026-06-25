@@ -78,7 +78,7 @@ fun ProfileView(id: String) = ViewSurface {
 	var account by remember { mutableStateOf<User?>(null) }
 	var ready by remember { mutableStateOf(false) }
 
-	var isMe by remember { mutableStateOf(true) }
+	var isMe by remember { mutableStateOf(false) }
 	if (currentAccount != null && currentAccount?.id == account?.id)
 		isMe = true
 
