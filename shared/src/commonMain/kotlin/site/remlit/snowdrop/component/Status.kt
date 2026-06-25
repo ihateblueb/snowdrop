@@ -34,6 +34,7 @@ import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.User
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.toFormatShort
 import site.remlit.snowdrop.util.toRelativeString
@@ -62,6 +63,7 @@ import snowdrop.shared.generated.resources.icon_volume_off_24px
 @Composable
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
+	val currentDest = navHandler.currentDestination
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current
@@ -100,9 +102,14 @@ fun Status(status: Status) {
 
 
 	Column(
-		modifier = Modifier.clickable(onClick = {
-			navHandler.navigate(StatusRoute(realStatus.id))
-		})
+		modifier = Modifier.clickable(
+				// todo: fix this when we add ascendants/descendants (idk how to get the id of the current view)
+				enabled = !atRoute<StatusRoute>(currentDest),
+				onClick = {
+					navHandler.navigate(StatusRoute(realStatus.id))
+				}
+			)
+		// todo: not vertically centered correctly
 	) {
 		Column(
 			modifier = Modifier.fillMaxWidth()
