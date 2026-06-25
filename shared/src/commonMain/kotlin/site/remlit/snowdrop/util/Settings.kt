@@ -76,4 +76,5 @@ suspend fun updateCurrentAccountObject() {
 	)
 }
 
-var scrollingUpward by mutableStateOf(false)
+/** Used for compose post FAB,  */
+var scrollingUpward by mutableStateOf(true)

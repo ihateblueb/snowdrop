@@ -206,7 +206,6 @@ fun Status(status: Status) {
 			}
 
 			Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
-
 				if (realStatus.spoilerText != null && !realStatus.spoilerText!!.isBlank()) {
 					Column(
 						modifier = Modifier.fillMaxWidth()

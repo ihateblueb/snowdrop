@@ -41,10 +41,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
@@ -67,6 +70,18 @@ fun ComposeView() = ViewSurface {
 	var cw by remember { mutableStateOf("") }
 	var content by remember { mutableStateOf("") }
 	var visibility by remember { mutableStateOf("public") }
+
+
+	suspend fun sendPost() {
+		val res = createStatus(CreateStatusRequest(
+			status = content,
+			spoilerText = cw,
+			visibility = visibility
+		))
+		if (res.error) return
+		if (res.response == null) return
+		navHandler.popBackStack()
+	}
 
 	TopAppBar(
 		navigationIcon = {
@@ -220,9 +235,9 @@ fun ComposeView() = ViewSurface {
 				verticalArrangement = Arrangement.spacedBy(10.dp)
 			) {
 				TextField(
-					cw,
+					content,
 					placeholder = { Text("Write your post here...") },
-					onValueChange = { cw = it },
+					onValueChange = { content = it },
 					modifier = Modifier.imePadding()
 						.fillMaxWidth(),
 					colors = TextFieldDefaults.colors(
@@ -246,7 +261,7 @@ fun ComposeView() = ViewSurface {
 					horizontalArrangement = Arrangement.End
 				) {
 					Row {
-						TextButton(onClick = {}) {
+						TextButton(onClick = { runBlocking { sendPost() } }) {
 							Icon(painterResource(Res.drawable.icon_send_24px), null)
 						}
 					}

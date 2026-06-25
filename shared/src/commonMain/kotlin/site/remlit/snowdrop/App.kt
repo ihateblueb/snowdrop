@@ -3,16 +3,9 @@ package site.remlit.snowdrop
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOut
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -25,17 +18,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -72,7 +62,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_account_circle_24px
 import snowdrop.shared.generated.resources.icon_account_circle_filled_24px
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
-import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_edit_square_24px
 import snowdrop.shared.generated.resources.icon_explore_24px
 import snowdrop.shared.generated.resources.icon_explore_filled_24px
@@ -130,9 +119,9 @@ fun App() = safe {
 
 	fun shouldShowComposeFab(): Boolean =
 		loggedIn == true &&
-				(atRoute<TimelineRoute>(currentDest) ||
-						atRoute<ProfileRoute>(currentDest)) &&
-				scrollingUpward
+			(atRoute<TimelineRoute>(currentDest) ||
+				atRoute<ProfileRoute>(currentDest)) &&
+			scrollingUpward
 
 
 	@Composable
@@ -158,7 +147,7 @@ fun App() = safe {
 									onClick = {
 										if (!atRoute<TimelineRoute>(currentDest))
 											navController.navigate(TimelineRoute)
-							  		},
+									},
 									icon = {
 										if (atRoute<TimelineRoute>(currentDest)) Icon(
 											painterResource(Res.drawable.icon_home_filled_24px),
