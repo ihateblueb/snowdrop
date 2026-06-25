@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Dispatchers
@@ -54,16 +55,23 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 
 const val headerHeight = 200
 
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
 
+	/* Preferences */
+	val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
+		.collectAsStateWithLifecycle(false)
+
+	/* View variables */
 	val currentAccount by getCurrentAccountObjectFlow()
 		.collectAsStateWithLifecycle(null)
 
@@ -242,25 +250,26 @@ fun ProfileView(id: String) = ViewSurface {
 						}
 
 						// bottom of header
-						Row(
-							modifier = Modifier.padding(top = 10.dp),
-							horizontalArrangement = Arrangement.spacedBy(10.dp)
-						) {
-							Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-								Text(
-									"${account!!.followersCount}",
-									fontWeight = FontWeight.Bold
-								)
-								Text("followers")
+						if (!hideFollowCounters)
+							Row(
+								modifier = Modifier.padding(top = 10.dp),
+								horizontalArrangement = Arrangement.spacedBy(10.dp)
+							) {
+								Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+									Text(
+										"${account!!.followersCount}",
+										fontWeight = FontWeight.Bold
+									)
+									Text("followers")
+								}
+								Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+									Text(
+										"${account!!.followingCount}",
+										fontWeight = FontWeight.Bold
+									)
+									Text("following")
+								}
 							}
-							Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-								Text(
-									"${account!!.followingCount}",
-									fontWeight = FontWeight.Bold
-								)
-								Text("following")
-							}
-						}
 					}
 
 					Column(

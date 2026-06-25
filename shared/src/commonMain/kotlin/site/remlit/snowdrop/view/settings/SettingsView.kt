@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
@@ -42,6 +43,7 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun SettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
@@ -100,6 +102,7 @@ fun SettingsView() = ViewSurface {
 					}
 				)
 			}
+			// todo: replace this
 			AnimatedVisibility(
 				visible = showVisibilityPicker,
 				enter = slideInVertically() + fadeIn(),
@@ -169,13 +172,33 @@ fun SettingsView() = ViewSurface {
 			)
 		}
 		item {
+			val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
+				.collectAsStateWithLifecycle(false)
+
 			Card {
 				ListItem(
 					headlineContent = { Text("Hide interaction counters on posts") },
 					trailingContent = {
-						//Switch()
-					},
-					modifier = Modifier.clickable {
+						Switch(
+							hideInteractionCounters,
+							onCheckedChange = { blockingSettings.putBoolean("hide_interaction_counters", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text("Hide follow counters") },
+					trailingContent = {
+						Switch(
+							hideFollowCounters,
+							onCheckedChange = { blockingSettings.putBoolean("hide_follow_counters", it) }
+						)
 					}
 				)
 			}

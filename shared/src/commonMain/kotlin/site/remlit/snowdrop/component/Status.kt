@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusRoute
@@ -44,6 +45,7 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.toFormatShort
 import site.remlit.snowdrop.util.toRelativeString
 import snowdrop.shared.generated.resources.Res
@@ -67,6 +69,7 @@ import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
@@ -74,6 +77,11 @@ fun Status(status: Status) {
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current
 
+	/* Preferences */
+	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
+		.collectAsStateWithLifecycle(false)
+
+	/* View variables */
 	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
 
 	var realStatus by remember { mutableStateOf(status) }
@@ -282,7 +290,8 @@ fun Status(status: Status) {
 						null
 					)
 
-					Text(realStatus.repliesCount.toFormatShort())
+					if (!hideInteractionCounters)
+						Text(realStatus.repliesCount.toFormatShort())
 				}
 
 				FooterButton(onClick = { }) {
@@ -296,12 +305,12 @@ fun Status(status: Status) {
 							null
 						)
 
-						Text(realStatus.reblogsCount.toFormatShort())
-					} else {
+						if (!hideInteractionCounters)
+							Text(realStatus.reblogsCount.toFormatShort())
+					} else	 {
 						Icon(
 							painterResource(Res.drawable.icon_lock_24px),
-							null,
-							tint = MaterialTheme.colorScheme.secondary
+							null
 						)
 					}
 				}
@@ -316,7 +325,8 @@ fun Status(status: Status) {
 						null
 					)
 
-					Text(realStatus.favouritesCount.toFormatShort())
+					if (!hideInteractionCounters)
+						Text(realStatus.favouritesCount.toFormatShort())
 				}
 
 				FooterButton(onClick = { }) {
