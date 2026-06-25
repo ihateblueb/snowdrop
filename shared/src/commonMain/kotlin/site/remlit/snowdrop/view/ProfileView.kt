@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Dispatchers
@@ -65,10 +64,12 @@ fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
 
-	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+	val currentAccount by getCurrentAccountObjectFlow()
+		.collectAsStateWithLifecycle(null)
 
 	var account by remember { mutableStateOf<User?>(null) }
-	var isMe by remember { mutableStateOf(account?.id == currentAccount?.id) }
+	var isMe by remember { mutableStateOf(account != null && currentAccount != null &&
+			account?.id == currentAccount?.id) }
 	var ready by remember { mutableStateOf(false) }
 
 	val scrollState = rememberScrollState()

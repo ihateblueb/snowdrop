@@ -1,23 +1,41 @@
 package site.remlit.snowdrop
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -38,8 +56,10 @@ import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.kamelConfig
 import site.remlit.snowdrop.util.safe
+import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
+import site.remlit.snowdrop.view.ComposeView
 import site.remlit.snowdrop.view.ExploreView
 import site.remlit.snowdrop.view.LoginView
 import site.remlit.snowdrop.view.NotificationsView
@@ -51,6 +71,9 @@ import site.remlit.snowdrop.view.settings.SettingsView
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_account_circle_24px
 import snowdrop.shared.generated.resources.icon_account_circle_filled_24px
+import snowdrop.shared.generated.resources.icon_alternate_email_24px
+import snowdrop.shared.generated.resources.icon_edit_24px
+import snowdrop.shared.generated.resources.icon_edit_square_24px
 import snowdrop.shared.generated.resources.icon_explore_24px
 import snowdrop.shared.generated.resources.icon_explore_filled_24px
 import snowdrop.shared.generated.resources.icon_home_24px
@@ -75,9 +98,11 @@ object MyProfileRoute : Destination(5)
 data class ProfileRoute(val id: String) : Destination(6)
 @Serializable
 data class StatusRoute(val id: String) : Destination(7)
+@Serializable
+object ComposeRoute : Destination(8)
 
 @Serializable
-object Settings : Destination(100)
+object SettingsRoute : Destination(100)
 
 
 @Composable
@@ -98,9 +123,17 @@ fun App() = safe {
 		.collectAsStateWithLifecycle(null)
 
 
-	fun shouldHideBottomBar(): Boolean {
-		return atRoute<ProfileRoute>(currentDest) || atRoute<Settings>(currentDest)
-	}
+	fun shouldHideBottomBar(): Boolean =
+		atRoute<ProfileRoute>(currentDest) ||
+			atRoute<SettingsRoute>(currentDest) ||
+			atRoute<ComposeRoute>(currentDest)
+
+	fun shouldShowComposeFab(): Boolean =
+		loggedIn == true &&
+				(atRoute<TimelineRoute>(currentDest) ||
+						atRoute<ProfileRoute>(currentDest)) &&
+				scrollingUpward
+
 
 	@Composable
 	fun fallbackAvatarIcon() {
@@ -123,10 +156,9 @@ fun App() = safe {
 								NavigationBarItem(
 									selected = atRoute<TimelineRoute>(currentDest),
 									onClick = {
-									if (!atRoute<TimelineRoute>(currentDest)) {
-										navController.navigate(TimelineRoute)
-									}
-							  	},
+										if (!atRoute<TimelineRoute>(currentDest))
+											navController.navigate(TimelineRoute)
+							  		},
 									icon = {
 										if (atRoute<TimelineRoute>(currentDest)) Icon(
 											painterResource(Res.drawable.icon_home_filled_24px),
@@ -182,7 +214,22 @@ fun App() = safe {
 								)
 							}
 						}
-					}
+					},
+					floatingActionButton = {
+						AnimatedVisibility(
+							visible = shouldShowComposeFab(),
+							enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+							exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+						) {
+							FloatingActionButton(
+								onClick = { navController.navigate(ComposeRoute) }
+							) {
+								if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
+								else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
+							}
+						}
+					},
+					floatingActionButtonPosition = FabPosition.End
 				) { bottomPadding ->
 					Column(
 						modifier = Modifier.padding(bottom = bottomPadding.calculateBottomPadding())
@@ -224,8 +271,9 @@ fun App() = safe {
 								ProfileView(args.id)
 							}
 
+							composable<ComposeRoute> { ComposeView() }
 							// Settings
-							composable<Settings> { SettingsView() }
+							composable<SettingsRoute> { SettingsView() }
 						}
 					}
 				}

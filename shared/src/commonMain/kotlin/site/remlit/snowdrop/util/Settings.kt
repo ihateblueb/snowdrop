@@ -1,16 +1,15 @@
 package site.remlit.snowdrop.util
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toBlockingSettings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.User
-
-val settingsContext = CoroutineScope(Dispatchers.Default).coroutineContext
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -76,3 +75,5 @@ suspend fun updateCurrentAccountObject() {
 		json.encodeToString(verifyRes.response)
 	)
 }
+
+var scrollingUpward by mutableStateOf(false)

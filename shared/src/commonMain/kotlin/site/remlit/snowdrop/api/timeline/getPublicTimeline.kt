@@ -15,7 +15,7 @@ import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
 suspend fun getPublicTimeline(
-	limit: Int = 20,
+	limit: Int = 30,
 
 	maxId: String? = null,
 	sinceId: String? = null,

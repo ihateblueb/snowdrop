@@ -3,15 +3,11 @@ package site.remlit.snowdrop.component
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,20 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.StatusRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.toRelativeString
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_globe_20px
-import snowdrop.shared.generated.resources.icon_home_20px
-import snowdrop.shared.generated.resources.icon_lock_20px
-import snowdrop.shared.generated.resources.icon_mail_20px
+import snowdrop.shared.generated.resources.icon_warning_20px
 
 @Composable
 fun MiniStatus(status: Status) {
@@ -67,7 +58,10 @@ fun MiniStatus(status: Status) {
 						verticalAlignment = Alignment.CenterVertically,
 						horizontalArrangement = Arrangement.spacedBy(5.dp)
 					) {
-						Text("${status.getCreatedAtTimestamp()?.toRelativeString()}")
+						Text(
+							"${status.getCreatedAtTimestamp()?.toRelativeString()}",
+							fontSize = 13.sp
+						)
 						Visibility(status.visibility)
 					}
 				}
@@ -76,12 +70,10 @@ fun MiniStatus(status: Status) {
 			if (!status.spoilerText.isNullOrBlank()) {
 				Row(
 					modifier = Modifier.padding(top = 5.dp),
-					horizontalArrangement = Arrangement.spacedBy(5.dp)
+					horizontalArrangement = Arrangement.spacedBy(5.dp),
+					verticalAlignment = Alignment.CenterVertically
 				) {
-					Text(
-						"CW:",
-						fontWeight = FontWeight.Bold
-					)
+					Icon(painterResource(Res.drawable.icon_warning_20px), null,)
 					Text(
 						status.spoilerText,
 						fontWeight = FontWeight.Medium

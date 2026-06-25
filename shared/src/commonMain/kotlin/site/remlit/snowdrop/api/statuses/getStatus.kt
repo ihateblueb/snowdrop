@@ -1,8 +1,7 @@
 package site.remlit.snowdrop.api.statuses
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import io.ktor.client.request.get
-import io.ktor.client.request.header
+import io.ktor.client.request.*
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.endOfRequest

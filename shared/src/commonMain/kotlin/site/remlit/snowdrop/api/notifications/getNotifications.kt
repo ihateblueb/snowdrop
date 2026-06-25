@@ -1,11 +1,9 @@
 package site.remlit.snowdrop.api.notifications
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import io.ktor.client.request.get
-import io.ktor.client.request.header
+import io.ktor.client.request.*
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Notification
-import site.remlit.snowdrop.model.User
 import site.remlit.snowdrop.util.endOfRequest
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountId

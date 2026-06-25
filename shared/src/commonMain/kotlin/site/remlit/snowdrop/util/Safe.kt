@@ -11,6 +11,7 @@ inline fun safe(block: () -> Unit) =
 
 inline fun <T> safeApiRequest(block: () -> T): ApiResponse<T> =
 	try {
+		// todo: send alerts from here
 		return ApiResponse(response = block())
 	} catch (e: Throwable) {
 		Logger.e { "Safely caught exception: ${e.message}" }

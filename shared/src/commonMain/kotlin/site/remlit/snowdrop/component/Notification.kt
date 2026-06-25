@@ -10,13 +10,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Notification
-import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.toRelativeString
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
@@ -79,7 +78,10 @@ fun Notification(notification: Notification) {
 						horizontalArrangement = Arrangement.End
 					) {
 						Row {
-							Text("${notification.getCreatedAtTimestamp()?.toRelativeString()}")
+							Text(
+								"${notification.getCreatedAtTimestamp()?.toRelativeString()}",
+								fontSize = 13.sp
+							)
 						}
 					}
 				}

@@ -1,7 +1,6 @@
 package site.remlit.snowdrop.component
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -28,11 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,7 +40,6 @@ import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.User
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.WarningColor
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -56,12 +52,8 @@ import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_flag_24px
-import snowdrop.shared.generated.resources.icon_globe_20px
-import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_link_24px
-import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_lock_24px
-import snowdrop.shared.generated.resources.icon_mail_20px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
@@ -143,7 +135,9 @@ fun Status(status: Status) {
 					)
 					Text(
 						"${rebloggingAccount!!.displayName ?: rebloggingAccount!!.username} boosted",
-						color = MaterialTheme.colorScheme.secondary
+						color = MaterialTheme.colorScheme.secondary,
+						fontSize = 14.sp,
+						fontWeight = FontWeight.Medium
 					)
 				}
 			}
@@ -172,7 +166,12 @@ fun Status(status: Status) {
 						realStatus.account.displayName ?: realStatus.account.username,
 						fontWeight = FontWeight.Medium,
 					)
-					Text("@${realStatus.account.fqn}")
+					Text(
+						"@${realStatus.account.fqn}",
+						overflow = TextOverflow.Ellipsis,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+						fontSize = 13.sp
+					)
 				}
 
 				// todo: visiblity, timestamp, etc.
@@ -184,7 +183,10 @@ fun Status(status: Status) {
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
 						Visibility(status.visibility)
-						Text("${realStatus.getCreatedAtTimestamp()?.toRelativeString()}")
+						Text(
+							"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
+							fontSize = 13.sp
+						)
 					}
 				}
 			}
@@ -203,7 +205,7 @@ fun Status(status: Status) {
 				}
 			}
 
-			Column(modifier = Modifier.padding(start = 10.dp, top = 5.dp, end = 10.dp, bottom = 5.dp)) {
+			Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
 
 				if (realStatus.spoilerText != null && !realStatus.spoilerText!!.isBlank()) {
 					Column(

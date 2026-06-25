@@ -5,7 +5,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.tappableElement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -25,6 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -32,21 +35,24 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import site.remlit.snowdrop.Settings
+import site.remlit.snowdrop.SettingsRoute
 import site.remlit.snowdrop.api.timeline.getHomeTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.scrollingUpward
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_settings_24px
 
 @Composable
-inline fun LazyListState.scrollEndCallback(crossinline callback: () -> Unit) {
+inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
+	val postsTillEndBeforeFetch = 10
+
 	LaunchedEffect(key1 = this) {
 		snapshotFlow { layoutInfo }
 			.filter { it.totalItemsCount > 0 }
-			.map { it.totalItemsCount - (it.visibleItemsInfo.lastOrNull()?.index ?: -1) <= 10 } // change 10 to however many posts back
+			.map { it.totalItemsCount - (it.visibleItemsInfo.lastOrNull()?.index ?: -1) <= postsTillEndBeforeFetch }
 			.distinctUntilChanged()
 			.filter { it }
 			.onEach { callback() }
@@ -66,7 +72,7 @@ fun TimelineView() = ViewSurface {
 		val timeline = remember { mutableStateListOf<Status>() }
 		val refreshState = rememberPullToRefreshState()
 		val listState = rememberLazyListState().also {
-			it.scrollEndCallback {
+			it.ScrollEndCallback {
 				coroutineScope.launch {
 					val res = getHomeTimeline(maxId = timeline.last().id)
 					if (res.error) return@launch
@@ -106,7 +112,7 @@ fun TimelineView() = ViewSurface {
 				Text("Timeline")
 			},
 			actions = {
-				IconButton(onClick = { navHandler.navigate(Settings) }) {
+				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
 			}
@@ -115,15 +121,29 @@ fun TimelineView() = ViewSurface {
 		PullToRefreshBox(
 			isRefreshing = isRefreshing.value,
 			state = refreshState,
-			onRefresh = { coroutineScope.launch {
-				coroutineScope.launch { addOrUpdateTimeline() }
-				listState.scrollToItem(0)
-			} }
+			onRefresh = {
+				coroutineScope.launch {
+					coroutineScope.launch { addOrUpdateTimeline() }
+					listState.scrollToItem(0)
+				}
+			}
 		) {
+			val nestedScrollConnection = remember {
+				object : NestedScrollConnection {
+					override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+						if (available.y < 0) scrollingUpward = false
+						else if (available.y > 0) scrollingUpward = true
+
+						return Offset.Zero
+					}
+				}
+			}
+
 			LazyColumn(
 				state = listState,
 				modifier = Modifier
 					.fillMaxSize()
+					.nestedScroll(nestedScrollConnection),
 			) {
 				items(
 					items = timeline,

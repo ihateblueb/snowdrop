@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -48,7 +49,8 @@ fun Avatar(
 			onLoading = { fallback() },
 			modifier = Modifier.clip(RoundedCornerShape(radius))
 				.height(size)
-				.width(size)
+				.width(size),
+			contentScale = ContentScale.Crop
 		)
 	} else fallback()
 }
