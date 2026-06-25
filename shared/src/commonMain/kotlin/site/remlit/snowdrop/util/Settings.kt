@@ -76,4 +76,4 @@ suspend fun updateCurrentAccountObject() {
 	)
 }
 
-var scrollingUpward by mutableStateOf(false)
+var scrollingUpward by mutableStateOf(true)
