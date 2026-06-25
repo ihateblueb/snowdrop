@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.Dispatchers
 import site.remlit.snowdrop.api.statuses.getStatus
@@ -49,7 +50,11 @@ fun StatusView(id: String) = ViewSurface {
 				Text("Post")
 			}
 			else Column {
-				Text("Post by " + (status!!.account.displayName ?: status!!.account.username))
+				Text(
+					"Post by " + (status!!.account.displayName ?: status!!.account.username),
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
 			}
 		}
 	)
