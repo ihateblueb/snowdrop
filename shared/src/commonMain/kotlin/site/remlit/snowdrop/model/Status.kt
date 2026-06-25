@@ -93,7 +93,7 @@ data class Status(
 		@SerialName("votes_count")
 		val votesCount: Long = 0,
 		@SerialName("voters_count")
-		val votersCount: Long = 0,
+		val votersCount: Long? = 0,
 
 		@SerialName("own_votes")
 		val ownVotes: List<Int>,

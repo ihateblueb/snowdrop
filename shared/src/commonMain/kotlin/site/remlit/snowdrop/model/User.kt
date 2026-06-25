@@ -45,7 +45,7 @@ data class User(
 	val isCat: Boolean = false,
 	@SerialName("speak_as_cat")
 	val speakAsCat: Boolean = false,
-	val discoverable: Boolean,
+	val discoverable: Boolean? = null,
 
 	val fields: List<Field>,
 	val source: Source? = null,

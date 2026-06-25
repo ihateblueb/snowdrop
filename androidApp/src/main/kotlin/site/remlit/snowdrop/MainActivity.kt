@@ -1,5 +1,6 @@
 package site.remlit.snowdrop
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +14,7 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		actionBar?.hide()
 
-		val oauthCallbackCode: String = intent.data.toString().replace("snowdrop://oauth-callback/?code=", "")
+		val oauthCallbackCode: String? = intent.data?.getQueryParameter("code")
 
 		setContent {
 			App(oauthCallback = oauthCallbackCode)
