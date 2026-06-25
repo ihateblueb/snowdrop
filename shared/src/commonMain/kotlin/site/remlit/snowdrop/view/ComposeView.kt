@@ -35,12 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.api.statuses.createStatus
@@ -49,7 +48,9 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_globe_20px
@@ -59,6 +60,7 @@ import snowdrop.shared.generated.resources.icon_mail_20px
 import snowdrop.shared.generated.resources.icon_send_24px
 
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun ComposeView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
@@ -69,7 +71,7 @@ fun ComposeView() = ViewSurface {
 
 	var cw by remember { mutableStateOf("") }
 	var content by remember { mutableStateOf("") }
-	var visibility by remember { mutableStateOf("public") }
+	var visibility by remember { mutableStateOf(blockingSettings.getString("default_visibility", "public")) }
 
 
 	suspend fun sendPost() {

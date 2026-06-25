@@ -289,6 +289,10 @@ fun Status(status: Status) {
 				}
 			}
 
+			if (realStatus.quotedStatus != null) {
+				MiniStatus(realStatus.quotedStatus!!)
+			}
+
 			// Footer
 			Row(
 				modifier = Modifier.padding(start = 5.dp, end = 5.dp),
