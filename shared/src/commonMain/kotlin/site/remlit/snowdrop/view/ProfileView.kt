@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -38,6 +40,8 @@ import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
@@ -45,13 +49,20 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
 import site.remlit.snowdrop.model.User
+import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_outline_arrow_back_24
 
 const val headerHeight = 200
 
 @Composable
 fun ProfileView(id: String) = ViewSurface {
+	val navHandler = LocalNavController.current
+	val currentDest = navHandler.currentDestination
+
 	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
 
 	var account by remember { mutableStateOf<User?>(null) }
@@ -71,6 +82,14 @@ fun ProfileView(id: String) = ViewSurface {
 
 	Column {
 		TopAppBar(
+			navigationIcon = {
+				// not sure why you can't just check isMe.. if you do it just doesn't ever show up
+				if (atRoute<ProfileRoute>(currentDest)) {
+					IconButton(onClick = { navHandler.popBackStack() }) {
+						Icon(painterResource(Res.drawable.icon_outline_arrow_back_24), null)
+					}
+				}
+			},
 			title = {
 				if (account == null) Column {
 					Text("Profile")
