@@ -55,6 +55,10 @@ import snowdrop.shared.generated.resources.icon_tooth_24px
 fun Notification(notification: Notification) {
 	val navHandler = LocalNavController.current
 
+	// sharkey doesn't include the actual reactions in the notifications for some reason
+	// chuckya includes the reaction prop, so we should use that. otherwise there's no point in showing the notif
+	if (notification.type == "reaction" && notification.reaction == null) return
+
 	if (notification.type == "mention" && notification.status != null) {
 		Status(notification.status)
 	} else {
@@ -72,6 +76,10 @@ fun Notification(notification: Notification) {
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"pleroma:emoji_reaction" -> Icon(
+							painterResource(Res.drawable.icon_add_24px), null,
+							tint = MaterialTheme.colorScheme.primary
+						)
+						"reaction" -> Icon(
 							painterResource(Res.drawable.icon_add_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
@@ -114,7 +122,7 @@ fun Notification(notification: Notification) {
 						var message by remember { mutableStateOf("") }
 
 						when (notification.type) {
-							"favourite", "pleroma:emoji_reaction", "reblog", "update", "status", "bite" ->
+							"favourite", "pleroma:emoji_reaction", "reaction", "reblog", "update", "status", "bite" ->
 								displayName = notification.account.displayName
 									?: notification.account.username
 						}
@@ -122,6 +130,7 @@ fun Notification(notification: Notification) {
 						when (notification.type) {
 							"favourite" -> message = "liked your post"
 							"pleroma:emoji_reaction" -> message = "reacted with ${notification.emoji}"
+							"reaction" -> message = "reacted with :${notification.reaction?.name}:"
 							"reblog" -> message = "boosted your post"
 							"update" -> message = "edited a post"
 							"poll" -> message = "A poll you have voted in has ended"

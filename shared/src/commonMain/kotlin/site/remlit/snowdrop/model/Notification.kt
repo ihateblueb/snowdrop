@@ -14,6 +14,7 @@ data class Notification(
 	val status: Status? = null,
 
 	val emoji: String? = null,
+	val reaction: ChuckyaReaction? = null,
 	@SerialName("emoji_url")
 	val emojiUrl: String? = null,
 	val bite: Bite? = null,
@@ -21,6 +22,14 @@ data class Notification(
 	@SerialName("created_at")
 	val createdAt: String
 ) {
+	@Serializable
+	data class ChuckyaReaction(
+		val name: String? = null,
+		val id: String? = null,
+		val url: String? = null,
+		@SerialName("static_url")
+		val staticUrl: String? = null
+	)
 	@Serializable
 	data class Bite(
 		val id: String,
