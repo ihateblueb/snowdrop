@@ -13,7 +13,7 @@ data class CreateAppResponse(
 	@SerialName("redirect_uri")
 	val redirectUri: String,
 	@SerialName("redirect_uris")
-	val redirectUris: String? = null,
+	val redirectUris: List<String>? = null,
 
 	@SerialName("client_id")
 	val clientId: String,

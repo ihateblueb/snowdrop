@@ -15,7 +15,7 @@ data class Status(
 	val text: String? = null,
 	val content: String? = null,
 
-	val url: String,
+	val url: String? = null,
 	val uri: String? = null,
 
 	@SerialName("in_reply_to_id")
@@ -62,7 +62,7 @@ data class Status(
 	val tags: List<Tag> = listOf(),
 
 	val card: String? = null,
-	val application: String? = null,
+	val application: Unit? = null,
 	val language: String? = null,
 
 	val state: String? = null,

@@ -114,7 +114,7 @@ fun ComposeView() = ViewSurface {
 						fontWeight = FontWeight.Medium
 					)
 					Text(
-						"@${currentAccount!!.fqn}",
+						"@${currentAccount!!.acct}",
 						overflow = TextOverflow.Ellipsis,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						fontSize = 13.sp

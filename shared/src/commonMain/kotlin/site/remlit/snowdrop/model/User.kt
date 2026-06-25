@@ -8,7 +8,7 @@ data class User(
 	val id: String,
 	val username: String,
 	val acct: String,
-	val fqn: String,
+	val fqn: String? = null,
 	@SerialName("display_name")
 	val displayName: String? = null,
 
@@ -37,7 +37,7 @@ data class User(
 	val headerDescription: String? = null,
 
 	// todo: why is this a string? what is this?
-	val moved: String? = null,
+	val moved: User? = null,
 
 	val locked: Boolean,
 	val bot: Boolean,

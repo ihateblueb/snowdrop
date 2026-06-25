@@ -194,7 +194,7 @@ fun Status(status: Status) {
 						maxLines = 1
 					)
 					Text(
-						"@${realStatus.account.fqn}",
+						"@${realStatus.account.acct}",
 						overflow = TextOverflow.Ellipsis,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						fontSize = 13.sp,
@@ -374,27 +374,29 @@ fun Status(status: Status) {
 						expanded = showDropdown,
 						onDismissRequest = { showDropdown = false }
 					) {
-						DropdownMenuItem(
-							text = { Text("Copy link") },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_link_24px), null)
-							},
-							onClick = {
-								clipboardManager.setText(AnnotatedString(status.url))
-								showDropdown = !showDropdown
-							}
-						)
+						if (status.url != null) {
+							DropdownMenuItem(
+								text = { Text("Copy link") },
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_link_24px), null)
+								},
+								onClick = {
+									clipboardManager.setText(AnnotatedString(status.url))
+									showDropdown = !showDropdown
+								}
+							)
 
-						DropdownMenuItem(
-							text = { Text("Open in browser") },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
-							},
-							onClick = {
-								uriHandler.openUri(status.url)
-								showDropdown = !showDropdown
-							}
-						)
+							DropdownMenuItem(
+								text = { Text("Open in browser") },
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
+								},
+								onClick = {
+									uriHandler.openUri(status.url)
+									showDropdown = !showDropdown
+								}
+							)
+						}
 
 						HorizontalDivider()
 

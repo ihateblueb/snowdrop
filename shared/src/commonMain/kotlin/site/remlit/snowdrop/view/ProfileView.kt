@@ -224,7 +224,7 @@ fun ProfileView(id: String) = ViewSurface {
 									fontWeight = FontWeight.Bold,
 									fontSize = 24.sp
 								)
-								Text("@${account!!.fqn}")
+								Text("@${account!!.acct}")
 							}
 						}
 
