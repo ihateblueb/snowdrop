@@ -97,7 +97,7 @@ object SettingsRoute : Destination(100)
 @Composable
 @Preview
 @OptIn(ExperimentalSettingsApi::class)
-fun App() = safe {
+fun App(oauthCallback: String? = null) = safe {
 	setupAppSettings()
 
 	val navController = rememberNavController()
@@ -240,6 +240,7 @@ fun App() = safe {
 
 							composable<LoginRoute> {
 								LoginView(
+									oauthCallbackCode = oauthCallback,
 									navigateToTimeline = { navController.navigate(TimelineRoute) },
 								)
 							}

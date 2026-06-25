@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
 import site.remlit.snowdrop.api.oauth.authScopes
@@ -47,6 +48,7 @@ import kotlin.uuid.Uuid
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
 fun LoginView(
+	oauthCallbackCode: String? = null,
 	navigateToTimeline: () -> Unit
 ) = ViewSurface {
 	val uriHandler = LocalUriHandler.current
@@ -54,7 +56,6 @@ fun LoginView(
 
 	// Text field states
 	var host by remember { mutableStateOf("") }
-	var code by remember { mutableStateOf("") }
 
 	// Error states
 	var showHostError by remember { mutableStateOf(false) }
@@ -62,7 +63,6 @@ fun LoginView(
 	// Auth flow states
 	var waitingForNext by remember { mutableStateOf(false) }
 	var continued by remember { mutableStateOf(false) }
-	var showTokenAndFinish by remember { mutableStateOf(false) }
 
 	// Account states
 	val currentAccountId by settings.getStringOrNullFlow("current_account")
@@ -98,27 +98,38 @@ fun LoginView(
 			blockingSettings.putString("account_${accountId}_client_secret", res.response.clientSecret)
 
 			continued = true
+
+			val authLink = "https://${host}/oauth/authorize"+
+				"?response_type=code"+
+				"&redirect_uri=$redirectUri"+
+				"&scope=$authScopes"+
+				"&client_id=${res.response.clientId}"
+
+			uriHandler.openUri(authLink)
 		}
 	}
 
 	fun finishButtonPressed() {
 		runBlocking {
-			val res = createToken(code)
+			val res = createToken(oauthCallbackCode!!)
 			if (res.error) return@runBlocking
 			if (res.response !is OauthToken) return@runBlocking
 
 			blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
 			blockingSettings.putBoolean("logged_in", true)
 
-			updateCurrentAccountObject()
+			updateCurrentAccountObject(res.response.accessToken)
 		}
 
 		navigateToTimeline()
 	}
 
+	if (oauthCallbackCode != "null" && oauthCallbackCode != null) {
+		Logger.e("MEOW! CONTENT IS $oauthCallbackCode")
+		finishButtonPressed()
+	}
+
 	if (!continued) {
-
-
 		Column(
 			modifier = Modifier
 				.background(MaterialTheme.colorScheme.background)
@@ -180,60 +191,7 @@ fun LoginView(
 				Text("Clear all data")
 			}
 		}
-
-
 	} else {
-
-
-		Column(
-			modifier = Modifier
-				.background(MaterialTheme.colorScheme.background)
-				.safeContentPadding()
-				.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
-		) {
-			Text(
-				"Snowdrop",
-				fontSize = 25.sp,
-				fontWeight = FontWeight.Bold,
-				modifier = Modifier
-					.padding(bottom = 25.dp)
-			)
-
-			val authLink = "https://${host}/oauth/authorize"+
-					"?response_type=code"+
-					"&redirect_uri=$redirectUri"+
-					"&scope=$authScopes"+
-					"&client_id=$clientId"
-
-			if (!showTokenAndFinish) {
-				Button(onClick = {
-					showTokenAndFinish = true
-					uriHandler.openUri(authLink)
-				}) {
-					Text("Get authorization code")
-				}
-			} else {
-				TextField(
-					code,
-					singleLine = true,
-					onValueChange = { code = it },
-					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-					keyboardActions = KeyboardActions(onGo = { finishButtonPressed() }),
-					label = { Text("Code") }
-				)
-
-				Button(
-					modifier = Modifier
-						.padding(top = 10.dp),
-					onClick = { finishButtonPressed() }
-				) {
-					Text("Finish")
-				}
-			}
-		}
-
-
+		Text("Finishing auth")
 	}
 }

@@ -23,8 +23,6 @@ fun getCurrentAccountHost() = blockingSettings.getString("account_${getCurrentAc
 
 fun logoutAccount(accountId: String) {
 	blockingSettings.remove("account_${accountId}_host")
-	blockingSettings.remove("account_${accountId}_client_id")
-	blockingSettings.remove("account_${accountId}_client_secret")
 	blockingSettings.remove("account_${accountId}_token")
 
 	blockingSettings.putString(
@@ -65,8 +63,8 @@ fun getCurrentAccountObjectFlow(): Flow<User> = object : Flow<User> {
 	}
 }
 
-suspend fun updateCurrentAccountObject() {
-	val verifyRes = verifyCredentials()
+suspend fun updateCurrentAccountObject(token: String? = null) {
+	val verifyRes = verifyCredentials(token)
 	if (verifyRes.error) return
 	if (verifyRes.response !is User) return
 
@@ -74,6 +72,7 @@ suspend fun updateCurrentAccountObject() {
 		"account_${getCurrentAccountId()}_user",
 		json.encodeToString(verifyRes.response)
 	)
+	blockingSettings.putString("account_${getCurrentAccountId()}_token", token!!)
 }
 
 /** Used for compose post FAB,  */

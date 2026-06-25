@@ -11,7 +11,7 @@ import site.remlit.snowdrop.util.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 
 const val authScopes = "read write push"
-const val redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+const val redirectUri = "snowdrop://oauth-callback"
 
 @OptIn(ExperimentalSettingsApi::class)
 suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest {

@@ -13,8 +13,10 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		actionBar?.hide()
 
+		val oauthCallbackCode: String = intent.data.toString().replace("snowdrop://oauth-callback/?code=", "")
+
 		setContent {
-			App()
+			App(oauthCallback = oauthCallbackCode)
 		}
 	}
 }
