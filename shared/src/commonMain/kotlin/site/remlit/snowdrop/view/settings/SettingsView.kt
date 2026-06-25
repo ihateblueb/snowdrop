@@ -14,7 +14,7 @@ import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_outline_arrow_back_24
+import snowdrop.shared.generated.resources.icon_arrow_back_24
 
 @Composable
 fun SettingsView() = ViewSurface {
@@ -23,7 +23,7 @@ fun SettingsView() = ViewSurface {
 	TopAppBar(
 		navigationIcon = {
 			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_outline_arrow_back_24), null)
+				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
 			}
 		},
 		title = {

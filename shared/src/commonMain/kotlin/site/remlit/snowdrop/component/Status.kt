@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +53,7 @@ import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_flag_24px
+import snowdrop.shared.generated.resources.icon_image_24
 import snowdrop.shared.generated.resources.icon_link_24px
 import snowdrop.shared.generated.resources.icon_lock_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
@@ -233,6 +235,12 @@ fun Status(status: Status) {
 									else "Hide content",
 									fontSize = 12.sp
 								)
+							}
+
+							Spacer(Modifier.weight(1f))
+
+							if (realStatus.mediaAttachments.isNotEmpty()) {
+								Icon(painterResource(Res.drawable.icon_image_24), null)
 							}
 						}
 					}

@@ -55,7 +55,7 @@ import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_outline_arrow_back_24
+import snowdrop.shared.generated.resources.icon_arrow_back_24
 
 const val headerHeight = 200
 
@@ -92,7 +92,7 @@ fun ProfileView(id: String) = ViewSurface {
 				// not sure why you can't just check isMe.. if you do it just doesn't ever show up
 				if (atRoute<ProfileRoute>(currentDest)) {
 					IconButton(onClick = { navHandler.popBackStack() }) {
-						Icon(painterResource(Res.drawable.icon_outline_arrow_back_24), null)
+						Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
 					}
 				}
 			},
