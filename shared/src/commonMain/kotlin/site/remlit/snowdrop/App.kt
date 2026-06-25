@@ -116,7 +116,11 @@ fun App() = safe {
 						NavigationBar {
 							NavigationBarItem(
 								selected = atRoute<TimelineRoute>(currentDest),
-								onClick = { navController.navigate(TimelineRoute) },
+								onClick = {
+									if (!atRoute<TimelineRoute>(currentDest)) {
+										navController.navigate(TimelineRoute)
+									}
+							  	},
 								icon = {
 									if (atRoute<TimelineRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_home_filled_24px), null)
 									else Icon(painterResource(Res.drawable.icon_home_24px), null)

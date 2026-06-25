@@ -1,9 +1,13 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.tappableElement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -18,9 +22,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.Settings
@@ -33,7 +42,19 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_settings_24px
 
 @Composable
-@Preview
+inline fun LazyListState.scrollEndCallback(crossinline callback: () -> Unit) {
+	LaunchedEffect(key1 = this) {
+		snapshotFlow { layoutInfo }
+			.filter { it.totalItemsCount > 0 }
+			.map { it.totalItemsCount - (it.visibleItemsInfo.lastOrNull()?.index ?: -1) <= 10 } // change 10 to however many posts back
+			.distinctUntilChanged()
+			.filter { it }
+			.onEach { callback() }
+			.collect()
+	}
+}
+
+@Composable
 fun TimelineView() = ViewSurface {
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,10 +62,19 @@ fun TimelineView() = ViewSurface {
 	) {
 		val navHandler = LocalNavController.current
 		val coroutineScope = rememberCoroutineScope()
-		val listState = rememberLazyListState()
 
 		val timeline = remember { mutableStateListOf<Status>() }
 		val refreshState = rememberPullToRefreshState()
+		val listState = rememberLazyListState().also {
+			it.scrollEndCallback {
+				coroutineScope.launch {
+					val res = getHomeTimeline(maxId = timeline.last().id)
+					if (res.error) return@launch
+					if (res.response == null) return@launch
+					timeline.addAll(res.response)
+				}
+			}
+		}
 		val isRefreshing = remember { mutableStateOf(false) }
 
 		suspend fun addOrUpdateTimeline() {
@@ -63,6 +93,15 @@ fun TimelineView() = ViewSurface {
 		}
 
 		TopAppBar(
+			modifier = Modifier.clickable(
+				interactionSource = MutableInteractionSource(),
+				indication = null,
+				onClick = {
+					coroutineScope.launch {
+						listState.animateScrollToItem(0)
+					}
+				}
+			),
 			title = {
 				Text("Timeline")
 			},
