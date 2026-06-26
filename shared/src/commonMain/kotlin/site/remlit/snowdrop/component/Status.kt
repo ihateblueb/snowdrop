@@ -46,8 +46,8 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
-import site.remlit.snowdrop.util.toFormatShort
-import site.remlit.snowdrop.util.toRelativeString
+import site.remlit.snowdrop.util.extension.toFormatShort
+import site.remlit.snowdrop.util.extension.toRelativeString
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px

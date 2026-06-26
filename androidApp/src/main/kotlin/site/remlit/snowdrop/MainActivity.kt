@@ -1,12 +1,12 @@
 package site.remlit.snowdrop
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import site.remlit.snowdrop.util.ExternalUriHandler
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,10 +14,11 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		actionBar?.hide()
 
-		val oauthCallbackCode: String? = intent.data?.getQueryParameter("code")
+		if (intent.data != null)
+			ExternalUriHandler.onNewUri(intent.data.toString())
 
 		setContent {
-			App(oauthCallback = oauthCallbackCode)
+			App()
 		}
 	}
 }

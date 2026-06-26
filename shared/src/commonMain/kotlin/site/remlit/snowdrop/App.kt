@@ -21,7 +21,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -41,10 +46,11 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.model.ui.Destination
+import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
-import site.remlit.snowdrop.util.kamelConfig
+import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.safe
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.settings
@@ -97,8 +103,12 @@ object SettingsRoute : Destination(100)
 @Composable
 @Preview
 @OptIn(ExperimentalSettingsApi::class)
-fun App(oauthCallback: String? = null) = safe {
+fun App() = safe {
 	setupAppSettings()
+
+	/*
+	* Variables & Handlers for Whole App Stuff
+	*/
 
 	val navController = rememberNavController()
 
@@ -112,6 +122,22 @@ fun App(oauthCallback: String? = null) = safe {
 		.collectAsStateWithLifecycle(null)
 
 
+	var oauthCallback by remember { mutableStateOf<String?>(null) }
+
+	DisposableEffect(Unit) {
+		ExternalUriHandler.listener = { uri ->
+			Logger.d { "URI received: $uri" }
+
+			if (uri.startsWith("snowdrop://oauth-callback?code="))
+				oauthCallback = uri.replace("snowdrop://oauth-callback?code=", "")
+
+			// if any other URIs need to be configured, they can be added here
+		}
+
+		onDispose { ExternalUriHandler.listener = null }
+	}
+
+
 	fun shouldHideBottomBar(): Boolean =
 		atRoute<ProfileRoute>(currentDest) ||
 			atRoute<SettingsRoute>(currentDest) ||
@@ -123,6 +149,9 @@ fun App(oauthCallback: String? = null) = safe {
 				atRoute<ProfileRoute>(currentDest)) &&
 			scrollingUpward
 
+	/*
+	* UI Begins
+	*/
 
 	@Composable
 	fun fallbackAvatarIcon() {

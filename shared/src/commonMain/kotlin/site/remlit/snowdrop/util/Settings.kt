@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.User
+import site.remlit.snowdrop.util.config.json
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -22,6 +23,8 @@ fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
 fun getCurrentAccountHost() = blockingSettings.getString("account_${getCurrentAccountId()}_host", "")
 
 fun logoutAccount(accountId: String) {
+	blockingSettings.putBoolean("logged_in", false)
+	blockingSettings.remove("current_account")
 	blockingSettings.remove("account_${accountId}_host")
 	blockingSettings.remove("account_${accountId}_token")
 
@@ -75,5 +78,5 @@ suspend fun updateCurrentAccountObject(token: String? = null) {
 	blockingSettings.putString("account_${getCurrentAccountId()}_token", token!!)
 }
 
-/** Used for compose post FAB,  */
+/** Used for compose post FAB */
 var scrollingUpward by mutableStateOf(true)

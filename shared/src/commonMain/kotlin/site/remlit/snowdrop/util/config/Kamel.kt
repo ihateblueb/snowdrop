@@ -1,4 +1,4 @@
-package site.remlit.snowdrop.util
+package site.remlit.snowdrop.util.config
 
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher

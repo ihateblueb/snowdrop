@@ -53,7 +53,7 @@ import site.remlit.snowdrop.component.bigAvatarSize
 import site.remlit.snowdrop.model.User
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.atRoute
-import site.remlit.snowdrop.util.formatNumber
+import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res

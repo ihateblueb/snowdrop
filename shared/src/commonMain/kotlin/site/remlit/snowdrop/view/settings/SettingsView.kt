@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
@@ -32,15 +33,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.icon_lock_24px
+import snowdrop.shared.generated.resources.icon_logout_24px
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -199,6 +205,27 @@ fun SettingsView() = ViewSurface {
 							hideFollowCounters,
 							onCheckedChange = { blockingSettings.putBoolean("hide_follow_counters", it) }
 						)
+					}
+				)
+			}
+		}
+		item {
+			Spacer(modifier = Modifier)
+		}
+		item {
+			Card {
+				ListItem(
+					leadingContent = {
+						Icon(
+							painterResource(Res.drawable.icon_logout_24px), null,
+							tint = MaterialTheme.colorScheme.error
+						)
+					},
+					headlineContent = { Text("Log out", color = MaterialTheme.colorScheme.error) },
+					modifier = Modifier.clickable {
+						val id = getCurrentAccountId()
+						logoutAccount(id)
+						navHandler.navigate(StartRoute)
 					}
 				)
 			}

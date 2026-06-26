@@ -1,4 +1,4 @@
-package site.remlit.snowdrop.util
+package site.remlit.snowdrop.util.extension
 
 import kotlin.math.roundToInt
 import kotlin.time.Clock

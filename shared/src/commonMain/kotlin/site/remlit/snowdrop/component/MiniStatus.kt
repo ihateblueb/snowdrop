@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.StatusRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.toRelativeString
+import site.remlit.snowdrop.util.extension.toRelativeString
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_warning_20px
 

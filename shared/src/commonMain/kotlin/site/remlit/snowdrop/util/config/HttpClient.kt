@@ -1,4 +1,4 @@
-package site.remlit.snowdrop.util
+package site.remlit.snowdrop.util.config
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.*

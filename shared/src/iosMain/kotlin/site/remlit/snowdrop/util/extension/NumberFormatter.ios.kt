@@ -1,4 +1,4 @@
-package site.remlit.snowdrop.util
+package site.remlit.snowdrop.util.extension
 
 import platform.Foundation.NSLocale
 import platform.Foundation.NSNumber
