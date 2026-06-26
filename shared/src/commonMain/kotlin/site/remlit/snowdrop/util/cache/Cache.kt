@@ -10,6 +10,7 @@ import site.remlit.snowdrop.model.cache.CacheEntry
 import site.remlit.snowdrop.model.cache.CacheManifest
 import site.remlit.snowdrop.util.config.cbor
 import site.remlit.snowdrop.util.config.json
+import site.remlit.snowdrop.util.getCurrentAccountId
 
 /* I don't think this will be used, but i'm keeping it just in case */
 @OptIn(ExperimentalSettingsApi::class)
@@ -21,23 +22,23 @@ val blockingCache = cache.toBlockingSettings()
 
 @OptIn(ExperimentalSerializationApi::class)
 fun setupCache() {
-	if (blockingCache.hasKey("manifest")) return
+	if (blockingCache.hasKey("${getCurrentAccountId()}_manifest")) return
 	blockingCache.putString(
-		"manifest",
+		"${getCurrentAccountId()}_manifest",
 		cbor.encodeToHexString(CacheManifest())
 	)
 }
 
 @OptIn(ExperimentalSerializationApi::class)
 fun getCacheManifest(): CacheManifest {
-	val raw = blockingCache.getStringOrNull("manifest")
+	val raw = blockingCache.getStringOrNull("${getCurrentAccountId()}_manifest")
 		?: return CacheManifest()
 	return cbor.decodeFromHexString(raw)
 }
 
 @OptIn(ExperimentalSerializationApi::class)
 fun getCacheEntry(id: String): CacheEntry? {
-	val raw = blockingCache.getStringOrNull("entry_$id")
+	val raw = blockingCache.getStringOrNull("${getCurrentAccountId()}_entry_$id")
 		?: return null
 	return cbor.decodeFromHexString(raw)
 }
@@ -54,14 +55,14 @@ inline fun <reified T> putCacheEntry(
 
 	val manifest = getCacheManifest()
 	blockingCache.putString(
-		"manifest",
+		"${getCurrentAccountId()}_manifest",
 		cbor.encodeToHexString(
 			manifest.copy(ids = manifest.ids.plus(id).distinct())
 		)
 	)
 
 	blockingCache.putString(
-		"entry_$id",
+		"${getCurrentAccountId()}_entry_$id",
 		cbor.encodeToHexString(entry)
 	)
 }

@@ -55,7 +55,7 @@ fun setupAppSettings() {
  * */
 @OptIn(ExperimentalSettingsApi::class)
 fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
-	if (getCurrentAccountId() == "")
+	if (!settings.getBoolean("logged_in", false))
 		return@flow
 
 	if (getCacheEntry("account_${getCurrentAccountId()}") == null)

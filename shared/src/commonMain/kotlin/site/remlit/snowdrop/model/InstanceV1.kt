@@ -84,10 +84,15 @@ data class InstanceV1(
 		data class MediaAttachments(
 			@SerialName("supported_mine_types")
 			val supportedMimeTypes: List<String> = emptyList(),
+			@SerialName("image_size_limit")
 			val imageSizeLimit: Int = 0,
+			@SerialName("image_matrix_limit")
 			val imageMatrixLimit: Int = 0,
+			@SerialName("video_size_limit")
 			val videoSizeLimit: Int = 0,
+			@SerialName("video_frame_limit")
 			val videoFrameLimit: Int = 0,
+			@SerialName("video_matrix_limit")
 			val videoMatrixLimit: Int = 0,
 		)
 

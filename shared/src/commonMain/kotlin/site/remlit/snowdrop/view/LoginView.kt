@@ -128,10 +128,8 @@ fun LoginView(
 		navigateToTimeline()
 	}
 
-	if (!oauthCallbackCode.isNullOrBlank()) {
-		Logger.e("MEOW! CONTENT IS $oauthCallbackCode")
+	if (!oauthCallbackCode.isNullOrBlank())
 		finishButtonPressed()
-	}
 
 	if (!continued) {
 		Column(

@@ -42,6 +42,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.kamel.image.config.LocalKamelConfig
+import io.ktor.http.Url
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.AppTheme
@@ -57,6 +58,7 @@ import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
+import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.settings.*
 import snowdrop.shared.generated.resources.Res
@@ -122,13 +124,11 @@ fun App() = safe {
 
 	DisposableEffect(Unit) {
 		ExternalUriHandler.listener = { uri ->
-			Logger.d { "URI received: $uri" }
+			val parsed = safeReturnable { Url(uri) }
+			Logger.d { "URI received & parsed: $parsed" }
 
-			if (uri.startsWith("snowdrop://oauth-callback?code="))
-				blockingSettings.putString(
-					"oauth_callback",
-					uri.replace("snowdrop://oauth-callback?code=", "")
-				)
+			if (parsed?.host == "oauth-callback" && parsed.parameters.contains("code"))
+				blockingSettings.putString("oauth_callback", parsed.parameters["code"]!!)
 
 			// if any other URIs need to be configured, they can be added here
 		}
