@@ -46,4 +46,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
             name: snowdrop-release
-            path: androidApp/build/outputs/release/*.apk
+            path: androidApp/build/outputs/apk/release/*.apk
