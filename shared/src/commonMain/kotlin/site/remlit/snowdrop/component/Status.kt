@@ -381,7 +381,7 @@ fun Status(status: Status) {
 									Icon(painterResource(Res.drawable.icon_link_24px), null)
 								},
 								onClick = {
-									clipboardManager.setText(AnnotatedString(status.url))
+									clipboardManager.setText(AnnotatedString(realStatus.url!!))
 									showDropdown = !showDropdown
 								}
 							)
@@ -392,7 +392,7 @@ fun Status(status: Status) {
 									Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 								},
 								onClick = {
-									uriHandler.openUri(status.url)
+									uriHandler.openUri(realStatus.url!!)
 									showDropdown = !showDropdown
 								}
 							)
