@@ -44,7 +44,7 @@ fun MiniStatus(status: Status) {
 				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				Avatar(status.account!!, small = true)
+				Avatar(status.account!!, smaller = true)
 				Text(
 					status.account.displayName ?: status.account.username,
 					fontWeight = FontWeight.Bold,

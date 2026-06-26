@@ -77,7 +77,6 @@ fun ProfileView(id: String) = ViewSurface {
 		.collectAsStateWithLifecycle(null)
 
 	val account by fetchAccount(id).collectAsStateWithLifecycle(null)
-	var ready by remember { mutableStateOf(false) }
 
 	var isMe by remember { mutableStateOf(false) }
 	if (currentAccount != null && currentAccount?.id == account?.id)
@@ -87,7 +86,7 @@ fun ProfileView(id: String) = ViewSurface {
 
 	/* todo: relationships on profile view
 	* var relationships by remember { mutableStateOf<List<RelationshipResponse>?>(null) }
-	if (ready && !isMe) runBlocking {
+	if (!isMe) runBlocking {
 		val req = getRelationships(listOf(currentAccount!!.id, account!!.id))
 		if (req.error) return@runBlocking
 		if (req.response == null) return@runBlocking
@@ -129,7 +128,7 @@ fun ProfileView(id: String) = ViewSurface {
 			}
 		)
 
-		if (!ready || account == null) {
+		if (account == null) {
 			Column(
 				modifier = Modifier.fillMaxHeight().fillMaxWidth(),
 				horizontalAlignment = Alignment.CenterHorizontally,

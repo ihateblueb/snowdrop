@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ProfileRoute
@@ -99,6 +101,13 @@ fun Status(status: Status) {
 	var cwOpen by remember { mutableStateOf(false) }
 	var showDropdown by remember { mutableStateOf(false) }
 
+	var inThreadView by remember { mutableStateOf(false) }
+	var threadViewMainStatus by remember { mutableStateOf(false) }
+
+	inThreadView = atRoute<ThreadRoute>(currentDest)
+	threadViewMainStatus = inThreadView && navHandler.currentBackStackEntry
+		?.toRoute<ThreadRoute>()?.id == realStatus.id
+
 
 	@Composable
 	fun FooterButton(
@@ -118,12 +127,12 @@ fun Status(status: Status) {
 
 	Column(
 		modifier = Modifier.clickable(
-				// todo: fix this when we add ascendants/descendants (idk how to get the id of the current view)
-				enabled = !atRoute<ThreadRoute>(currentDest),
-				onClick = {
-					navHandler.navigate(ThreadRoute(realStatus.id!!))
-				}
-			)
+			enabled = !inThreadView || (inThreadView && !threadViewMainStatus),
+			onClick = { navHandler.navigate(ThreadRoute(realStatus.id!!)) }
+		).background(
+			if (threadViewMainStatus) MaterialTheme.colorScheme.surfaceContainerLow
+			else Color.Unspecified
+		)
 	) {
 		Column(
 			modifier = Modifier.fillMaxWidth()
@@ -131,37 +140,37 @@ fun Status(status: Status) {
 			// todo: not vertically centered correctly
 		) {
 			if (isReblog && rebloggingAccount != null) {
-						Row(
-							modifier = Modifier.padding(start = 35.dp),
-							verticalAlignment = Alignment.CenterVertically
-						) {
-							Icon(
-								painterResource(Res.drawable.icon_repeat_24px),
-								null,
-								modifier = Modifier.padding(end = 5.dp),
-								tint = MaterialTheme.colorScheme.secondary
-							)
-							Row(
-								modifier = Modifier.weight(1f, fill = false),
-								verticalAlignment = Alignment.CenterVertically
-							) {
-								Text(
-									rebloggingAccount!!.displayName ?: rebloggingAccount!!.username,
-									color = MaterialTheme.colorScheme.secondary,
-									fontSize = 14.sp,
-									fontWeight = FontWeight.Medium,
-									overflow = TextOverflow.Ellipsis,
-									maxLines = 1,
-									modifier = Modifier.weight(1f, fill = false)
-								)
-								Text(
-									" boosted",
-									color = MaterialTheme.colorScheme.secondary,
-									fontSize = 14.sp,
-									fontWeight = FontWeight.Medium
-								)
-							}
-						}
+				Row(
+					modifier = Modifier.padding(start = 35.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					Icon(
+						painterResource(Res.drawable.icon_repeat_24px),
+						null,
+						modifier = Modifier.padding(end = 5.dp),
+						tint = MaterialTheme.colorScheme.secondary
+					)
+					Row(
+						modifier = Modifier.weight(1f, fill = false),
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Text(
+							rebloggingAccount!!.displayName ?: rebloggingAccount!!.username,
+							color = MaterialTheme.colorScheme.secondary,
+							fontSize = 14.sp,
+							fontWeight = FontWeight.Medium,
+							overflow = TextOverflow.Ellipsis,
+							maxLines = 1,
+							modifier = Modifier.weight(1f, fill = false)
+						)
+						Text(
+							" boosted",
+							color = MaterialTheme.colorScheme.secondary,
+							fontSize = 14.sp,
+							fontWeight = FontWeight.Medium
+						)
+					}
+				}
 			}
 
 			/*
@@ -178,7 +187,10 @@ fun Status(status: Status) {
 							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
 						})
 				) {
-					Avatar(realStatus.account!!)
+					Avatar(
+						realStatus.account!!,
+						small = inThreadView && !threadViewMainStatus
+					)
 				}
 
 				Column(
@@ -397,6 +409,24 @@ fun Status(status: Status) {
 								}
 							)
 						}
+
+						HorizontalDivider()
+
+						DropdownMenuItem(
+							text = { Text("Show boosts") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_repeat_24px), null)
+							},
+							onClick = { }
+						)
+
+						DropdownMenuItem(
+							text = { Text("Show likes") },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_star_24px), null)
+							},
+							onClick = { }
+						)
 
 						HorizontalDivider()
 

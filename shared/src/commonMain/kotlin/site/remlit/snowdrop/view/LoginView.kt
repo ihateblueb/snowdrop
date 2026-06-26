@@ -40,6 +40,7 @@ import site.remlit.snowdrop.api.oauth.redirectUri
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.response.CreateAppResponse
 import site.remlit.snowdrop.model.response.OauthToken
+import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.blockingCache
 import site.remlit.snowdrop.util.cache.setupCache
@@ -83,7 +84,7 @@ fun LoginView(
 		waitingForNext = true
 
 		// todo: this blocking is annoying
-		runBlocking {
+		bg {
 			val existingAccounts = settings.getString("accounts", "")
 			val accountId = "_S-${Uuid.random()}"
 			settings.putString("accounts", "$existingAccounts $accountId")
@@ -92,8 +93,8 @@ fun LoginView(
 
 			// get link you must visit to get token
 			val res = createApp()
-			if (res.error) return@runBlocking
-			if (res.response !is CreateAppResponse) return@runBlocking
+			if (res.error) return@bg
+			if (res.response !is CreateAppResponse) return@bg
 
 			settings.putString("account_${accountId}_token", "")
 			settings.putString("account_${accountId}_client_id", res.response.clientId)

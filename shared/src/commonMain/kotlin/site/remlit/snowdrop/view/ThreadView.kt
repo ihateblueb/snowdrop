@@ -30,43 +30,37 @@ import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.StatusContext
+import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.component.Status as StatusComponent
 
 @Composable
-fun ThreadView(id: String, status: Status? = null) = ViewSurface {
+fun ThreadView(id: String) = ViewSurface {
 	val currentAccount by getCurrentAccountObjectFlow()
 		.collectAsStateWithLifecycle(null)
 
-	var status by remember { mutableStateOf(status) }
+	val status by fetchStatus(id).collectAsStateWithLifecycle(null)
 
-	val threadStatuses = remember { mutableStateListOf<Status>() }
-	val context = remember { mutableStateOf<StatusContext?>(null) }
+	val ancestors = remember { mutableStateListOf<Status>() }
+	val descendants = remember { mutableStateListOf<Status>() }
 
 	val listState = rememberLazyListState()
 
 	var ready by remember { mutableStateOf(false) }
 
-	val scrollState = rememberScrollState()
-
 	LaunchedEffect(Dispatchers.Default) {
-		// todo: handle errors
-		val req = getStatus(id)
-		if (req.error) return@LaunchedEffect
-		status = req.response
+		ancestors.clear()
+		descendants.clear()
 
-		threadStatuses.clear()
-		threadStatuses.add(status!!)
-		val res = getStatusContext(status!!.id!!)
+		val res = getStatusContext(id)
 		if (res.error) return@LaunchedEffect
 		if (res.response == null) return@LaunchedEffect
-		context.value = res.response
-		threadStatuses.addAll(0, res.response.ancestors)
-		threadStatuses.addAll(res.response.descendants)
+		ancestors.addAll(res.response.ancestors)
+		descendants.addAll(res.response.descendants)
 
 		ready = true
 
-		listState.scrollToItem(threadStatuses.indexOf(threadStatuses.find { sts -> status!!.id == sts.id }))
+		listState.scrollToItem(ancestors.size)
 	}
 
 	TopAppBar(
@@ -97,7 +91,20 @@ fun ThreadView(id: String, status: Status? = null) = ViewSurface {
 			state = listState,
 		) {
 			items(
-				items = threadStatuses,
+				items = ancestors,
+				key = { status ->
+					status.id!!
+				}
+			) { status ->
+				StatusComponent(status)
+			}
+
+			item(key = status!!.id) {
+				StatusComponent(status!!)
+			}
+
+			items(
+				items = descendants,
 				key = { status ->
 					status.id!!
 				}

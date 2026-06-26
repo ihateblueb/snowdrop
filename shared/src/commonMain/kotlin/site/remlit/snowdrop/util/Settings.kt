@@ -8,6 +8,7 @@ import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toBlockingSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.flow
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.cache.getCacheEntry
@@ -51,15 +52,15 @@ fun setupAppSettings() {
  * @return User
  * */
 @OptIn(ExperimentalSettingsApi::class)
-fun getCurrentAccountObjectFlow(): Flow<Account> = object : Flow<Account> {
-	override suspend fun collect(collector: FlowCollector<Account>) = safe {
-		if (getCurrentAccountId() == "")
-			return@safe
+fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
+	if (getCurrentAccountId() == "")
+		return@flow
 
-		if (getCacheEntry("account_${getCurrentAccountId()}") == null)
-			updateCurrentAccountObject()
+	if (getCacheEntry("account_${getCurrentAccountId()}") == null)
+		updateCurrentAccountObject()
 
-		collector.emit(
+	safe {
+		emit(
 			getCacheEntry("account_${getCurrentAccountId()}")!!
 				.getContent<Account>()
 		)
