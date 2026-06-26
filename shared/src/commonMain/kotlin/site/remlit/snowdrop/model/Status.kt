@@ -7,8 +7,8 @@ import kotlin.time.Instant
 
 @Serializable
 data class Status(
-	val id: String,
-	val account: User,
+	val id: String? = null,
+	val account: User? = null,
 
 	@SerialName("spoiler_text")
 	val spoilerText: String? = null,
@@ -50,7 +50,7 @@ data class Status(
 	val sensitive: Boolean = false,
 	val pinned: Boolean = false,
 
-	val visibility: String,
+	val visibility: String? = null,
 
 	val poll: Poll? = null,
 	val filtered: List<Filtered>? = null,
@@ -61,7 +61,7 @@ data class Status(
 	val reactions: List<Reaction> = listOf(),
 	val tags: List<Tag> = listOf(),
 
-	val card: String? = null,
+	val card: Unit? = null,
 	val application: Unit? = null,
 	val language: String? = null,
 
@@ -70,7 +70,7 @@ data class Status(
 	val quotedStatus: Status? = null,
 
 	@SerialName("created_at")
-	val createdAt: String,
+	val createdAt: String? = null,
 	@SerialName("edited_at")
 	val editedAt: String? = null,
 ) {
@@ -177,7 +177,7 @@ data class Status(
 			data class Original(
 				val width: Long = 0,
 				val height: Long = 0,
-				val size: String,
+				val size: String? = null,
 				val aspect: Double = 0.0,
 			)
 		}
@@ -204,6 +204,6 @@ data class Status(
 
 	// Instants
 	fun getCreatedAtTimestamp(): Instant? = safeReturnable {
-		Instant.parse(this.createdAt)
+		Instant.parse(this.createdAt!!)
 	}
 }

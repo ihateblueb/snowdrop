@@ -86,7 +86,7 @@ object MyProfileRoute : Destination(5)
 @Serializable
 data class ProfileRoute(val id: String) : Destination(6)
 @Serializable
-data class StatusRoute(val id: String) : Destination(7)
+data class ThreadRoute(val id: String) : Destination(7)
 @Serializable
 object ComposeRoute : Destination(8)
 
@@ -279,9 +279,9 @@ fun App() = safe {
 								else Text("Error")
 							}
 
-							composable<StatusRoute> {
-								val args = it.toRoute<StatusRoute>()
-								StatusView(args.id)
+							composable<ThreadRoute> {
+								val args = it.toRoute<ThreadRoute>()
+								ThreadView(args.id)
 							}
 							composable<ProfileRoute> {
 								val args = it.toRoute<ProfileRoute>()

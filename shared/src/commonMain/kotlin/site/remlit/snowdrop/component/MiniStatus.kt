@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import site.remlit.snowdrop.StatusRoute
+import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.extension.toRelativeString
@@ -36,7 +36,7 @@ fun MiniStatus(status: Status) {
 			.clip(RoundedCornerShape(10.dp))
 			.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
 			.clickable(onClick = {
-				navHandler.navigate(StatusRoute(status.id))
+				navHandler.navigate(ThreadRoute(status.id!!))
 			})
 	) {
 		Column(modifier = Modifier.padding(10.dp)) {
@@ -44,7 +44,7 @@ fun MiniStatus(status: Status) {
 				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				Avatar(status.account, small = true)
+				Avatar(status.account!!, small = true)
 				Text(
 					status.account.displayName ?: status.account.username,
 					fontWeight = FontWeight.Bold,
@@ -61,7 +61,7 @@ fun MiniStatus(status: Status) {
 						"${status.getCreatedAtTimestamp()?.toRelativeString()}",
 						fontSize = 13.sp
 					)
-					Visibility(status.visibility)
+					Visibility(status.visibility!!)
 				}
 			}
 

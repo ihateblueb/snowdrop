@@ -148,7 +148,7 @@ fun TimelineView() = ViewSurface {
 				items(
 					items = timeline,
 					key = { status ->
-						status.id
+						status.id!!
 					}
 				) { status ->
 					Status(status)

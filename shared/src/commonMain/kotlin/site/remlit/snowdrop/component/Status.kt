@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ProfileRoute
-import site.remlit.snowdrop.StatusRoute
+import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.User
@@ -87,7 +87,7 @@ fun Status(status: Status) {
 	var realStatus by remember { mutableStateOf(status) }
 	var isReblog by remember { mutableStateOf(false) }
 	var rebloggingAccount by remember { mutableStateOf<User?>(null) }
-	var isMine by remember { mutableStateOf(realStatus.account.id == currentAccount?.id) }
+	var isMine by remember { mutableStateOf(realStatus.account?.id == currentAccount?.id) }
 	//todo: or is admin? figure out how to do that
 
 	if (status.reblog != null) {
@@ -119,9 +119,9 @@ fun Status(status: Status) {
 	Column(
 		modifier = Modifier.clickable(
 				// todo: fix this when we add ascendants/descendants (idk how to get the id of the current view)
-				enabled = !atRoute<StatusRoute>(currentDest),
+				enabled = !atRoute<ThreadRoute>(currentDest),
 				onClick = {
-					navHandler.navigate(StatusRoute(realStatus.id))
+					navHandler.navigate(ThreadRoute(realStatus.id!!))
 				}
 			)
 	) {
@@ -175,26 +175,26 @@ fun Status(status: Status) {
 				Column(
 					modifier = Modifier.padding(end = 10.dp)
 						.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account.id))
+							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
 						})
 				) {
-					Avatar(realStatus.account)
+					Avatar(realStatus.account!!)
 				}
 
 				Column(
 					modifier = Modifier.weight(1f)
 						.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account.id))
+							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
 						})
 				) {
 					Text(
-						realStatus.account.displayName ?: realStatus.account.username,
+						realStatus.account?.displayName ?: realStatus.account?.username!!,
 						fontWeight = FontWeight.Medium,
 						overflow = TextOverflow.Ellipsis,
 						maxLines = 1
 					)
 					Text(
-						"@${realStatus.account.acct}",
+						"@${realStatus.account?.acct}",
 						overflow = TextOverflow.Ellipsis,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						fontSize = 13.sp,
@@ -208,7 +208,7 @@ fun Status(status: Status) {
 					Column(
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
-						Visibility(status.visibility)
+						Visibility(status.visibility!!)
 						Text(
 							"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
 							fontSize = 13.sp
@@ -381,7 +381,7 @@ fun Status(status: Status) {
 									Icon(painterResource(Res.drawable.icon_link_24px), null)
 								},
 								onClick = {
-									clipboardManager.setText(AnnotatedString(status.url))
+									clipboardManager.setText(AnnotatedString(realStatus.url!!))
 									showDropdown = !showDropdown
 								}
 							)
@@ -392,7 +392,7 @@ fun Status(status: Status) {
 									Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 								},
 								onClick = {
-									uriHandler.openUri(status.url)
+									uriHandler.openUri(realStatus.url!!)
 									showDropdown = !showDropdown
 								}
 							)
