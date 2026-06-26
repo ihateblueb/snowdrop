@@ -102,27 +102,32 @@ fun ComposeView() = ViewSurface {
 	) {
 		if (currentAccount != null) {
 			Row(
-				modifier = Modifier.padding(10.dp),
+				modifier = Modifier.padding(10.dp)
+					.fillMaxWidth(),
 				horizontalArrangement = Arrangement.spacedBy(10.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Avatar(currentAccount!!)
 
-				Column {
+				Column(
+					modifier = Modifier.weight(1f)
+				) {
 					Text(
 						currentAccount!!.displayName ?: currentAccount!!.username,
-						fontWeight = FontWeight.Medium
+						fontWeight = FontWeight.Medium,
+						overflow = TextOverflow.Ellipsis,
+						maxLines = 1
 					)
 					Text(
 						"@${currentAccount!!.acct}",
 						overflow = TextOverflow.Ellipsis,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
-						fontSize = 13.sp
+						fontSize = 13.sp,
+						maxLines = 1
 					)
 				}
 
 				Row(
-					modifier = Modifier.fillMaxWidth(),
 					horizontalArrangement = Arrangement.End
 				) {
 					Row {

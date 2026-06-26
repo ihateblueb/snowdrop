@@ -1,40 +1,40 @@
 name: Build Android APK
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build APK
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    build:
+        name: Build APK
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+                  cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+            - name: Grant execute permission for gradlew
+              run: chmod +x gradlew
 
-      - name: Build APK
-        run: ./gradlew assembleDebug --no-daemon
+            - name: Build APK
+              run: ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: androidApp/build/outputs/apk/debug/*.apk
+            - name: Upload APK
+              uses: actions/upload-artifact@v4
+              with:
+                  name: apk
+                  path: androidApp/build/outputs/apk/debug/*.apk
