@@ -194,7 +194,15 @@ data class Status(
 		val accounts: List<Account>? = emptyList(),
 		@SerialName("account_ids")
 		val accountIds: List<String> = emptyList()
-	)
+	) {
+		fun toEmoji(): Emoji? =
+			Emoji(
+				shortcode = name,
+				url = url ?: return null,
+				staticUrl = staticUrl ?: url,
+				visibleInPicker = true // doesnt matter here
+			)
+	}
 
 	@Serializable
 	data class Tag(

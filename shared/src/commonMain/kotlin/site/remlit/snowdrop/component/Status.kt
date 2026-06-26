@@ -6,16 +6,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +49,9 @@ import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.util.BoostColor
+import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
@@ -113,10 +121,12 @@ fun Status(status: Status) {
 	@Composable
 	fun FooterButton(
 		onClick: () -> Unit,
+		colors: ButtonColors? = null,
 		content: @Composable () -> Unit
 	) {
 		TextButton(
 			onClick = onClick,
+			colors = colors ?: ButtonDefaults.textButtonColors()
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
@@ -313,6 +323,33 @@ fun Status(status: Status) {
 			}
 
 			/*
+			* Reactions
+			*/
+			if (!realStatus.reactions.isEmpty()) {
+				LazyRow(
+					horizontalArrangement = Arrangement.spacedBy(5.dp)
+				) {
+					realStatus.reactions.forEach {
+						item {
+							OutlinedButton(
+								onClick = {},
+								contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
+							) {
+								Row(
+									horizontalArrangement = Arrangement.spacedBy(5.dp),
+									verticalAlignment = Alignment.CenterVertically
+								) {
+									val emoji = it.toEmoji()
+									if (emoji != null) Emoji(emoji) else Text(it.name)
+									Text("${it.count}")
+								}
+							}
+						}
+					}
+				}
+			}
+
+			/*
 			* Footer
 			*/
 			Row(
@@ -333,7 +370,12 @@ fun Status(status: Status) {
 						Text(realStatus.repliesCount.toFormatShort())
 				}
 
-				FooterButton(onClick = { }) {
+				FooterButton(
+					onClick = { },
+					colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
+						contentColor = BoostColor
+					) else null
+				) {
 					if (isMine || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
 						if (realStatus.reblogged) Icon(
 							painterResource(Res.drawable.icon_repeat_24px),
@@ -354,11 +396,16 @@ fun Status(status: Status) {
 					}
 				}
 
-				FooterButton(onClick = { }) {
+				FooterButton(
+					onClick = { },
+					colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
+						contentColor = LikeColor
+					) else null
+				) {
 					if (realStatus.favourited) Icon(
 						painterResource(Res.drawable.icon_star_filled_24px),
 						null,
-						tint = MaterialTheme.colorScheme.primary
+						tint = LikeColor
 					) else Icon(
 						painterResource(Res.drawable.icon_star_24px),
 						null
@@ -369,11 +416,7 @@ fun Status(status: Status) {
 				}
 
 				FooterButton(onClick = { }) {
-					if (realStatus.favourited) Icon(
-						painterResource(Res.drawable.icon_add_24px),
-						null,
-						tint = MaterialTheme.colorScheme.primary
-					) else Icon(
+					Icon(
 						painterResource(Res.drawable.icon_add_24px),
 						null
 					)
