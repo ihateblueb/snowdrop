@@ -20,7 +20,7 @@ expect val settings: FlowSettings
 @OptIn(ExperimentalSettingsApi::class)
 val blockingSettings = settings.toBlockingSettings()
 
-fun getAccounts() = blockingSettings.getString("accounts", "")
+fun getAccounts() = blockingSettings.getString("accounts", "").split(" ")
 fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
 fun getCurrentAccountHost() = blockingSettings.getString("account_${getCurrentAccountId()}_host", "")
 
@@ -34,7 +34,7 @@ fun logoutAccount(accountId: String) {
 
 	blockingSettings.putString(
 		"accounts",
-		getAccounts().split(" ").filter { it != accountId }
+		getAccounts().filter { it != accountId }
 			.joinToString(" ")
 	)
 }

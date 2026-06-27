@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -49,7 +48,6 @@ import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
-import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
