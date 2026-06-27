@@ -41,9 +41,11 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.response.CreateAppResponse
 import site.remlit.snowdrop.model.response.OauthToken
 import site.remlit.snowdrop.util.bg
+import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.blockingCache
 import site.remlit.snowdrop.util.cache.setupCache
+import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.updateCurrentAccountObject
@@ -123,7 +125,10 @@ fun LoginView(
 		blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
 		blockingSettings.putBoolean("logged_in", true)
 
-		runBlocking { updateCurrentAccountObject() }
+		bgIO {
+			updateCurrentAccountObject()
+			determineFeatures()
+		}
 
 		navigateToTimeline()
 	}

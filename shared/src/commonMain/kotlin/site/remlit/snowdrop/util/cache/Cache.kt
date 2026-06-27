@@ -67,6 +67,21 @@ inline fun <reified T> putCacheEntry(
 	)
 }
 
+@OptIn(ExperimentalSerializationApi::class)
+fun removeCacheEntry(id: String) {
+	val manifest = getCacheManifest()
+	blockingCache.putString(
+		"${getCurrentAccountId()}_manifest",
+		cbor.encodeToHexString(
+			manifest.copy(ids = manifest.ids.minus(id).distinct())
+		)
+	)
+
+	blockingCache.remove("${getCurrentAccountId()}_entry_$id")
+}
+
+fun clearCacheEntries() = getCacheManifest().ids.forEach { removeCacheEntry(it) }
+
 fun cleanExpiredCacheEntries() {
 
 }

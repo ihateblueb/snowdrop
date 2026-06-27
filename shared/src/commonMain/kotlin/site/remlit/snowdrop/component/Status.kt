@@ -64,6 +64,7 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
+import site.remlit.snowdrop.util.getFeature
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
@@ -316,17 +317,6 @@ fun Status(status: Status) {
 
 			}
 
-			if (realStatus.reactions.isEmpty()) {
-				Row(
-					horizontalArrangement = Arrangement.spacedBy(5.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					for (reaction in realStatus.reactions) {
-						Text("${reaction.name} ${reaction.count}")
-					}
-				}
-			}
-
 			if (realStatus.quotedStatus != null) {
 				MiniStatus(realStatus.quotedStatus!!)
 			}
@@ -334,7 +324,7 @@ fun Status(status: Status) {
 			/*
 			* Reactions
 			*/
-			if (!realStatus.reactions.isEmpty()) {
+			if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
 				LazyRow(
 					horizontalArrangement = Arrangement.spacedBy(5.dp)
 				) {
@@ -447,11 +437,14 @@ fun Status(status: Status) {
 						Text(realStatus.favouritesCount.toFormatShort())
 				}
 
-				FooterButton(onClick = { }) {
-					Icon(
-						painterResource(Res.drawable.icon_add_24px),
-						null
-					)
+				if (getFeature("reactions")) {
+					// todo: implement reaction adder
+					FooterButton(onClick = { }) {
+						Icon(
+							painterResource(Res.drawable.icon_add_24px),
+							null
+						)
+					}
 				}
 
 				Box {
