@@ -41,10 +41,6 @@ data class Account(
 
 	val locked: Boolean,
 	val bot: Boolean,
-	@SerialName("is_cat")
-	val isCat: Boolean = false,
-	@SerialName("speak_as_cat")
-	val speakAsCat: Boolean = false,
 	val discoverable: Boolean? = null,
 
 	val fields: List<Field>,

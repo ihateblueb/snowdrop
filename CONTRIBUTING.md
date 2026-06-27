@@ -2,7 +2,7 @@
 
 ## What API should I use as a reference?
 Always up-to-date Iceshrimp.NET with all non-essential values nullable. Most Iceshrimp.NET instances will have an API
-reference at `/swagger`. If you don't know any, you can use https://is.notfire.cc/.
+reference at `/swagger`. If you don't know any, you can use https://next.iceshrimp.dev/.
 
 ## Shared solutions before platform-specific solutions
 Too many platform-specific solutions can cause problems with either platform's implementation
