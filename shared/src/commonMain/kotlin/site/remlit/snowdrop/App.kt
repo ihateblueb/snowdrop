@@ -132,7 +132,7 @@ data class ComposeRoute(
 	val inReplyToId: String? = null,
 	val cw: String = "",
 	val content: String = ""
-) : Destination(9)
+) : Destination(10)
 
 @Serializable
 object SettingsRoute : Destination(100)

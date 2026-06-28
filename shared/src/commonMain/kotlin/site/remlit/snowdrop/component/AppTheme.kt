@@ -1,13 +1,14 @@
 package site.remlit.snowdrop.component
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val LightColorScheme = lightColorScheme()
-private val DarkColorScheme = darkColorScheme()
+@Composable
+expect fun getLightColorScheme(): ColorScheme
+@Composable
+expect fun getDarkColorScheme(): ColorScheme
 
 @Composable
 fun AppTheme(
@@ -15,7 +16,7 @@ fun AppTheme(
 	content: @Composable () -> Unit
 ) {
 	MaterialTheme(
-		colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
+		colorScheme = if (darkTheme) getDarkColorScheme() else getLightColorScheme(),
 		content = content
 	)
 }
