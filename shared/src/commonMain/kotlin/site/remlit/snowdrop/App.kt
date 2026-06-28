@@ -8,7 +8,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,12 +37,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,6 +61,8 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.component.AppTheme
@@ -98,6 +103,7 @@ import snowdrop.shared.generated.resources.icon_home_24px
 import snowdrop.shared.generated.resources.icon_home_filled_24px
 import snowdrop.shared.generated.resources.icon_notifications_24px
 import snowdrop.shared.generated.resources.icon_notifications_filled_24px
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Serializable
@@ -154,6 +160,28 @@ fun App() = safe {
 	val currentDest = navBackStackEntry?.destination
 
 	val haptics = LocalHapticFeedback.current
+	val viewConfiguration = LocalViewConfiguration.current
+	val accountSwitcherInteractionSource = remember { MutableInteractionSource() }
+
+	LaunchedEffect(accountSwitcherInteractionSource) {
+		var isLongPress = false
+
+		accountSwitcherInteractionSource.interactions.collectLatest { interaction ->
+			when (interaction) {
+				is PressInteraction.Press -> {
+					isLongPress = false
+					delay(viewConfiguration.longPressTimeoutMillis.milliseconds)
+					isLongPress = true
+					haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+					showAccountSwitcher = true
+				}
+
+				is PressInteraction.Release -> {
+					if (!isLongPress) navController.navigate(MyProfileRoute)
+				}
+			}
+		}
+	}
 
 	val snackbarHostState = remember { SnackbarHostState() }
 
@@ -258,7 +286,8 @@ fun App() = safe {
 
 									NavigationBarItem(
 										selected = atRoute<MyProfileRoute>(currentDest),
-										onClick = { navController.navigate(MyProfileRoute) },
+										onClick = {},
+										interactionSource = accountSwitcherInteractionSource, // handles the actual clicks
 										icon = {
 											if (account != null && account!!.avatarStatic != null) {
 												KamelImage(
@@ -268,34 +297,10 @@ fun App() = safe {
 													modifier = Modifier.clip(CircleShape)
 														.height(24.dp)
 														.width(24.dp)
-														.combinedClickable(
-															onClick = {
-																if (!atRoute<MyProfileRoute>(currentDest))
-																	navController.navigate(MyProfileRoute)
-														  	},
-															onLongClick = {
-																haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-																showAccountSwitcher = true
-															}
-														)
 												)
 											} else fallbackAvatarIcon()
 										},
-										label = {
-											Text(
-												"Profile",
-												modifier = Modifier.combinedClickable(
-													onClick = {
-														if (!atRoute<MyProfileRoute>(currentDest))
-															navController.navigate(MyProfileRoute)
-													},
-													onLongClick = {
-														haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-														showAccountSwitcher = true
-													}
-												)
-											)
-										},
+										label = { Text("Profile") }
 									)
 								}
 							}
