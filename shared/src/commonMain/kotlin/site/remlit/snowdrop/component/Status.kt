@@ -32,7 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -99,6 +101,7 @@ fun Status(status: Status) {
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current
+	val haptics = LocalHapticFeedback.current
 
 	/* Preferences */
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
@@ -416,6 +419,7 @@ fun Status(status: Status) {
 
 				FooterButton(
 					onClick = {
+						haptics.performHapticFeedback(HapticFeedbackType.Confirm)
 						bgIO {
 							val res: ApiResponse<Status> = if (realStatus.favourited) unfavouriteStatus(realStatus.id)
 							else favouriteStatus(realStatus.id)

@@ -40,6 +40,11 @@ fun logoutAccount(accountId: String) {
 	)
 }
 
+fun toggleLoggedInState() {
+	val current = blockingSettings.getBoolean("logged_in", false)
+	blockingSettings.putBoolean("logged_in", !current)
+}
+
 fun addNewAccount(navController: NavController) {
 	blockingSettings.putBoolean("logged_in", false)
 	blockingSettings.remove("current_account")

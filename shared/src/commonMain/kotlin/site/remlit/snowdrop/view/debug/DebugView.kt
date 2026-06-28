@@ -22,6 +22,7 @@ import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.clearCacheEntries
 import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.resetFeatures
+import site.remlit.snowdrop.util.toggleLoggedInState
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
@@ -70,6 +71,14 @@ fun DebugView() = ViewSurface {
 					modifier = Modifier.clickable {
 						navHandler.navigate(DebugStorageRoute(1))
 					}
+				)
+			}
+		}
+		item {
+			Card {
+				ListItem(
+					headlineContent = { Text("Toggle logged in state") },
+					modifier = Modifier.clickable { toggleLoggedInState() }
 				)
 			}
 		}
