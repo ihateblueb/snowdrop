@@ -342,7 +342,8 @@ fun App() = safe {
 													.clip(RoundedCornerShape(10.dp))
 													.fillMaxWidth()
 													.clickable {
-														switchAccount(it, navController)
+														if (it != getCurrentAccountId())
+															switchAccount(it, navController)
 													},
 												colors = CardDefaults.cardColors(
 													containerColor = if (getCurrentAccountId() == it)
