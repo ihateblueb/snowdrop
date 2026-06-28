@@ -130,7 +130,8 @@ data class StatusInteractionDetailRoute(
 data class ComposeRoute(
 	val inReplyToId: String? = null,
 	val cw: String = "",
-	val content: String = ""
+	val content: String = "",
+	val visibility: String? = null
 )
 
 @Serializable
@@ -426,7 +427,8 @@ fun App() = safe {
 									ComposeView(
 										args.inReplyToId,
 										args.cw,
-										args.content
+										args.content,
+										args.visibility
 									)
 								}
 

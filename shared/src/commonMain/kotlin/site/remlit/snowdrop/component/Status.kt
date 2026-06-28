@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.ThreadRoute
@@ -358,14 +359,26 @@ fun Status(status: Status) {
 			}
 
 			/*
+			*
+			*
 			* Footer
+			*
+			*
 			*/
 			Row(
 				modifier = Modifier.padding(start = 5.dp, end = 5.dp),
 				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				FooterButton(onClick = { }) {
+				FooterButton(onClick = {
+					navHandler.navigate(ComposeRoute(
+						inReplyToId = realStatus.id,
+						cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
+						// what a block
+						content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
+							realStatus.mentions.joinToString(separator = "") { "@${it.acct} " }
+					))
+				}) {
 					if (realStatus.inReplyToId != null) Icon(
 						painterResource(Res.drawable.icon_reply_all_24px),
 						null

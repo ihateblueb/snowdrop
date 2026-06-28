@@ -28,7 +28,10 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_warning_20px
 
 @Composable
-fun MiniStatus(status: Status) {
+fun MiniStatus(
+	status: Status,
+	showContentEvenIfCw: Boolean = false
+) {
 	val navHandler = LocalNavController.current
 
 	Column(
@@ -65,6 +68,15 @@ fun MiniStatus(status: Status) {
 				}
 			}
 
+			@Composable
+			fun Content() {
+				Row(
+					modifier = Modifier.padding(top = 5.dp)
+				) {
+					HtmlContent(status.content ?: "", status.mentions, maxLines = 3)
+				}
+			}
+
 			if (!status.spoilerText.isNullOrBlank()) {
 				Row(
 					modifier = Modifier.padding(top = 5.dp),
@@ -77,15 +89,9 @@ fun MiniStatus(status: Status) {
 						fontWeight = FontWeight.Medium
 					)
 				}
-			} else {
-				if (status.content != null) {
-					Row(
-						modifier = Modifier.padding(top = 5.dp)
-					) {
-						HtmlContent(status.content, status.mentions, maxLines = 3)
-					}
-				}
-			}
+
+				if (showContentEvenIfCw && status.content != null) Content()
+			} else if (status.content != null) Content()
 		}
 	}
 }

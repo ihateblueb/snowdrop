@@ -51,6 +51,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.model.request.CreateStatusRequest
@@ -58,6 +59,8 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchStatus
+import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
@@ -74,7 +77,8 @@ import snowdrop.shared.generated.resources.icon_warning_24px
 fun ComposeView(
 	inReplyToId: String? = null,
 	initialCw: String = "",
-	initialContent: String = ""
+	initialContent: String = "",
+	visibility: String? = null
 ) = ViewSurface {
 	val navHandler = LocalNavController.current
 
@@ -90,13 +94,20 @@ fun ComposeView(
 
 	var cw by remember { mutableStateOf(initialCw) }
 	var content by remember { mutableStateOf(initialContent) }
-	var visibility by remember { mutableStateOf(blockingSettings.getString("default_visibility", "public")) }
+	var visibility by remember {
+		mutableStateOf(visibility
+			?: blockingSettings.getString("default_visibility", "public"))
+	}
+
+	val replyTarget by fetchStatusOrNull(inReplyToId)
+		.collectAsStateWithLifecycle(null)
 
 	// can submit stuff
 	canSubmit = !content.isBlank()
 
 	suspend fun sendPost() {
 		val res = createStatus(CreateStatusRequest(
+			inReplyToId = inReplyToId,
 			status = content,
 			spoilerText = cw,
 			visibility = visibility
@@ -112,7 +123,8 @@ fun ComposeView(
 			}
 		},
 		title = {
-			Text("Compose")
+			if (inReplyToId != null) Text("Reply")
+			else Text("Compose")
 		}
 	)
 
@@ -159,6 +171,7 @@ fun ComposeView(
 							expanded = visibilityDropdownOpen,
 							onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
 						) {
+							// todo: do minimum visibility based on the view's visibility parameter
 							DropdownMenuItem(
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_globe_20px) ,null)
@@ -247,6 +260,14 @@ fun ComposeView(
 					}
 				}
 			}
+
+			if (replyTarget != null)
+				Column(
+					modifier = Modifier.padding(horizontal = 10.dp)
+				) {
+					MiniStatus(replyTarget!!, showContentEvenIfCw = true)
+				}
+
 
 			Column(
 				modifier = Modifier.fillMaxHeight().weight(1f),
