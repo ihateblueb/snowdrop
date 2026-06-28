@@ -21,8 +21,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,13 +69,13 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.view.InteractionViewType
-import site.remlit.snowdrop.view.StatusInteractionDetailView
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
@@ -339,18 +343,29 @@ fun Status(status: Status) {
 				) {
 					realStatus.reactions.forEach {
 						item {
-							OutlinedButton(
-								onClick = {},
-								contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
+							TooltipBox(
+								positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+									2.dp
+								),
+								tooltip = {
+									if (isUnicodeEmoji(it.name)) return@TooltipBox
+									PlainTooltip { Text(":${it.name}:") }
+								},
+								state = rememberTooltipState()
 							) {
-								Row(
-									horizontalArrangement = Arrangement.spacedBy(5.dp),
-									verticalAlignment = Alignment.CenterVertically
+								OutlinedButton(
+									onClick = {},
+									contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
 								) {
-									val emoji = it.toEmoji()
-									if (emoji != null) Emoji(emoji) else Text(it.name)
-									if (!blockingSettings.getBoolean("hide_interaction_counters", false))
-										Text("${it.count}")
+									Row(
+										horizontalArrangement = Arrangement.spacedBy(5.dp),
+										verticalAlignment = Alignment.CenterVertically
+									) {
+										val emoji = it.toEmoji()
+										if (emoji != null) Emoji(emoji) else Text(it.name)
+										if (!blockingSettings.getBoolean("hide_interaction_counters", false))
+											Text("${it.count}")
+									}
 								}
 							}
 						}
