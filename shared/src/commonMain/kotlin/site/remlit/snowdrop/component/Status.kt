@@ -415,7 +415,7 @@ fun Status(status: Status) {
 						if (realStatus.reblogged) Icon(
 							painterResource(Res.drawable.icon_repeat_24px),
 							null,
-							tint = MaterialTheme.colorScheme.primary
+							tint = BoostColor
 						) else Icon(
 							painterResource(Res.drawable.icon_repeat_24px),
 							null
