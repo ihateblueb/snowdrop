@@ -277,7 +277,7 @@ fun Status(status: Status) {
 			@Composable
 			fun renderContent() {
 				if (realStatus.content != null) {
-					HtmlContent(realStatus.content!!, realStatus.mentions)
+					HtmlContent(realStatus.content!!, mentions = realStatus.mentions)
 				}
 			}
 

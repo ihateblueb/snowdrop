@@ -1,6 +1,7 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -206,49 +208,59 @@ fun ProfileView(id: String) = ViewSurface {
 						}
 
 						// display name
-						Row(
-							modifier = Modifier.padding(bottom = 10.dp),
-						) {
+						Row {
 							Column {
 								Text(
 									account!!.displayName ?: account!!.username,
 									fontWeight = FontWeight.Bold,
 									fontSize = 24.sp
 								)
-								Text("@${account!!.acct}")
+								Text(
+									"@${account!!.acct}",
+									color = MaterialTheme.colorScheme.onSurface
+								)
 							}
 						}
 
-						// bio
-						if (account!!.note != null) {
-							HtmlContent(account!!.note!!)
-						}
+						// Bio
+						if (account!!.note != null)
+							Column(modifier = Modifier.padding(top = 10.dp)) { HtmlContent(account!!.note!!) }
 
-						/* UGLY...
-						if (!account!!.fields.isEmpty()) {
-							HorizontalDivider()
+						// Fields
+						if (!account!!.fields.isEmpty())
 							Column(
-								modifier = Modifier.padding(10.dp),
-								verticalArrangement = Arrangement.spacedBy(5.dp)
+								modifier = Modifier.padding(top = 10.dp)
+									.clip(RoundedCornerShape(10.dp))
+									.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
+									.background(MaterialTheme.colorScheme.surfaceContainer),
 							) {
-								account!!.fields.forEach { (name, value) ->
-									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-										Text(
-											name,
-											fontWeight = FontWeight.Bold
-										)
-										HtmlContent(value)
+								Column(
+									modifier = Modifier.padding(10.dp),
+									verticalArrangement = Arrangement.spacedBy(5.dp)
+								) {
+									account!!.fields.forEach { (name, value) ->
+										Row(
+											horizontalArrangement = Arrangement.spacedBy(5.dp)
+										) {
+											Text(
+												name,
+												modifier = Modifier.weight(0.50f),
+												color = MaterialTheme.colorScheme.primary
+											)
+											HtmlContent(
+												value,
+												modifier = Modifier.weight(1.75f)
+											)
+										}
 									}
 								}
 							}
-							HorizontalDivider()
-						}
-						 */
 
-						Row(
-							modifier = Modifier.padding(top = 10.dp)
-						) {
-							Text("Joined at " + account!!.createdAt)
+						Row(modifier = Modifier.padding(top = 10.dp)) {
+							Text(
+								"Joined at ${account!!.createdAt}",
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
 						}
 
 						// bottom of header

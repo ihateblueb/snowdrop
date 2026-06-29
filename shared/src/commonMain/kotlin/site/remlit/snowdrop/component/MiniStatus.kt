@@ -73,7 +73,7 @@ fun MiniStatus(
 				Row(
 					modifier = Modifier.padding(top = 5.dp)
 				) {
-					HtmlContent(status.content ?: "", status.mentions, maxLines = 3)
+					HtmlContent(status.content ?: "", mentions = status.mentions, maxLines = 3)
 				}
 			}
 
