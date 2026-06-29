@@ -6,19 +6,19 @@
 
 	<string name="add_account">Add account</string>
 	<string name="post">Post</string>
-	<string name="post_by">Post by %s</string>
+	<string name="post_by">Post by %1$s</string>
 
 	<string name="boosted_by">Boosted by</string>
 	<string name="liked_by">Liked by</string>
 	<string name="reacted_by">Reacted by</string>
 
-	<string name="x_posts">%s posts</string>
+	<string name="x_posts">%1$s posts</string>
 
 	<string name="edit_profile">Edit profile</string>
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
 
-	<string name="joined_at_x">Joined at %s</string>
+	<string name="joined_at_x">Joined at %1$s</string>
 
 	<string name="followers">followers</string>
 	<string name="following">following</string>
@@ -74,7 +74,7 @@
 	<string name="clear_settings">Clear settings</string>
 
 	<string name="liked_your_post">liked your post</string>
-	<string name="reacted_with_x">reacted with %s</string>
+	<string name="reacted_with_x">reacted with %1$s</string>
 	<string name="boosted_your_post">boosted your post</string>
 	<string name="edited_a_post">edited a post</string>
 	<string name="a_poll_you_have_voted_in_has_ended">A poll you have voted in has ended</string>
