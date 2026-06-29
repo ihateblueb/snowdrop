@@ -114,7 +114,10 @@ import snowdrop.shared.generated.resources.unbookmark
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun Status(status: Status) {
+fun Status(
+	status: Status,
+	onUpdate: (Status) -> Unit
+) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
 	val snackbarController = SnackbarController.current

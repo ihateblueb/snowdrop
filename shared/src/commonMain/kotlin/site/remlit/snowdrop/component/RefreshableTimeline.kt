@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -30,10 +31,13 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
+import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
+import kotlin.collections.forEach
 
 /**
  * Refreshable and infinitely scrollable timeline.
@@ -49,7 +53,14 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			minId: String?,
 			sinceId: String?
 		) -> ApiResponse<List<T>>,
-	timelineComponent: @Composable (item: T) -> Unit,
+	/**
+	 * item: Item from timeline
+	 * onUpdate: Function to return updated item to put in timeline list
+	 * */
+	timelineComponent: @Composable (
+			item: T,
+			onUpdate: (T) -> Unit
+		) -> Unit,
 	refreshKey: Int = 0,
 	countTowardsScrollingUpward: Boolean = false
 ) {
@@ -80,6 +91,32 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		timeline.addAll(res.response)
 		listState.scrollToItem(0)
 		isRefreshing = false
+	}
+
+	fun updateOccurrencesOfItem(old: T, new: T) = bg {
+		// insane block. probably terrible performance.
+		// find all versions of a note and update it
+		if (old is Status && new is Status) {
+			val tl = timeline as SnapshotStateList<Status>
+
+			tl.filter { it.id == old.id }.forEach { found ->
+				timeline[timeline.indexOf(found)] = new
+			}
+
+			tl.filter { it.reblog?.id == old.id }.forEach { found ->
+				timeline[timeline.indexOf(found)] = new
+			}
+
+			tl.filter {
+				it.quotedStatus?.id == old.id ||
+					it.quote?.id == old.id
+			}.forEach { found ->
+				val o = timeline[timeline.indexOf(found)]
+				timeline[timeline.indexOf(found)] = o.copy(quotedStatus = new, quote = new)
+			}
+		} else {
+			timeline[timeline.indexOf(old)] = new
+		}
 	}
 
 	LaunchedEffect(refreshKey) { addOrUpdateTimeline() }
@@ -132,7 +169,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				items = timeline,
 				key = { it.id }
 			) {
-				timelineComponent(it)
+				timelineComponent(it) { new -> updateOccurrencesOfItem(it, new) }
 			}
 		}
 	}
