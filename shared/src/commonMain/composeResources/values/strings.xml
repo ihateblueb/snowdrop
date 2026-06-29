@@ -27,7 +27,7 @@
 	<string name="posts_and_replies">Posts &amp; Replies</string>
 	<string name="media">Media</string>
 
-	<string name="no_notifications">No notifications...</string>
+	<string name="nothing_to_see_here">Nothing to see here...</string>
 
 	<string name="instance_host">Instance Host</string>
 	<string name="you_must_provide_a_valid_host">You must provide a valid host!</string>

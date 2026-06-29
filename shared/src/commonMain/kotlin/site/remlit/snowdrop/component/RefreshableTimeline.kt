@@ -1,9 +1,14 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -14,16 +19,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontStyle
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.view.ScrollEndCallback
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.nothing_to_see_here
 
 /**
  * Refreshable and infinitely scrollable timeline.
@@ -50,6 +60,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val listState = rememberLazyListState().also {
 		it.ScrollEndCallback {
 			coroutineScope.launch {
+				if (timeline.isEmpty()) return@launch
 				val res = fetchMethod(timeline.last().id, null, null)
 				if (res.error) return@launch
 				if (res.response == null) return@launch
@@ -105,7 +116,19 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			state = listState,
 			modifier = timelineModifier,
 		) {
-			items(
+			if (timeline.isEmpty() && !isRefreshing) item {
+				Column(
+					modifier = Modifier.fillMaxHeight()
+						.fillMaxWidth(),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.Center
+				) {
+					Text(
+						stringResource(Res.string.nothing_to_see_here),
+						fontStyle = FontStyle.Italic
+					)
+				}
+			} else items(
 				items = timeline,
 				key = { it.id }
 			) {
