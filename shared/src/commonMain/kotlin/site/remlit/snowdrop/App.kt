@@ -420,7 +420,18 @@ fun App() = safe {
 									else Text("Error")
 								}
 
-								composable<ThreadRoute> {
+								composable<ThreadRoute>(
+									enterTransition = { slideIntoContainer(
+										AnimatedContentTransitionScope.SlideDirection.Start, tween(
+											250
+										)
+									) },
+									exitTransition = { slideOutOfContainer(
+										AnimatedContentTransitionScope.SlideDirection.End, tween(
+											200
+										)
+									) }
+								) {
 									val args = it.toRoute<ThreadRoute>()
 									ThreadView(args.id)
 								}
@@ -428,12 +439,34 @@ fun App() = safe {
 									val args = it.toRoute<StatusInteractionDetailRoute>()
 									StatusInteractionDetailView(args.id, InteractionViewType.valueOf(args.type))
 								}
-								composable<ProfileRoute> {
+								composable<ProfileRoute>(
+									enterTransition = { slideIntoContainer(
+										AnimatedContentTransitionScope.SlideDirection.Start, tween(
+											250
+										)
+									) },
+									exitTransition = { slideOutOfContainer(
+										AnimatedContentTransitionScope.SlideDirection.End, tween(
+											200
+										)
+									) }
+								) {
 									val args = it.toRoute<ProfileRoute>()
 									ProfileView(args.id)
 								}
 
-								composable<ComposeRoute> {
+								composable<ComposeRoute>(
+									enterTransition = { slideIntoContainer(
+										AnimatedContentTransitionScope.SlideDirection.Start, tween(
+											250
+										)
+									) },
+									exitTransition = { slideOutOfContainer(
+										AnimatedContentTransitionScope.SlideDirection.End, tween(
+											200
+										)
+									) }
+								) {
 									val args = it.toRoute<ComposeRoute>()
 									ComposeView(
 										args.inReplyToId,
