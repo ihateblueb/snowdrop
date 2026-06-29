@@ -1,8 +1,10 @@
 package site.remlit.snowdrop
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -442,7 +444,18 @@ fun App() = safe {
 								}
 
 								// Settings
-								composable<SettingsRoute> { SettingsView() }
+								composable<SettingsRoute>(
+									enterTransition = { slideIntoContainer(
+										AnimatedContentTransitionScope.SlideDirection.Start, tween(
+											250
+										)
+									) },
+									exitTransition = { slideOutOfContainer(
+										AnimatedContentTransitionScope.SlideDirection.End, tween(
+											200
+										)
+									) }
+								) { SettingsView() }
 
 								// Debug
 								composable<DebugRoute> { DebugView() }
