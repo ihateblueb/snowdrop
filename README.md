@@ -8,11 +8,13 @@ Uses Material 3 (supporting dynamic color schemes) for UI and icons.
 
 ## Screenshots
 
-<img src=".github/assets/timeline.png" height="250px">
-<img src=".github/assets/settings.png" height="250px">
-<img src=".github/assets/account_switcher.png" height="250px">
-<img src=".github/assets/profile_top.png" height="250px">
-<img src=".github/assets/profile_bottom.png" height="250px">
+<div style="display: flex; align-content: center; gap: 10px;">
+	<img src=".github/assets/timeline.png" height="250px">
+	<img src=".github/assets/settings.png" height="250px">
+	<img src=".github/assets/account_switcher.png" height="250px">
+	<img src=".github/assets/profile_top.png" height="250px">
+	<img src=".github/assets/profile_bottom.png" height="250px">
+</div>
 
 ## Contributing
 
