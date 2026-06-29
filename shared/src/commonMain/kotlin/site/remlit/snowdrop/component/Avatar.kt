@@ -53,7 +53,7 @@ fun Avatar(
 
 	if (account.avatar != null) {
 		KamelImage(
-			{ asyncPainterResource(account.avatarStatic!!) },
+			{ asyncPainterResource(account.avatarStatic ?: account.avatar) },
 			account.avatarDescription,
 			onLoading = { fallback() },
 			modifier = Modifier.clip(RoundedCornerShape(radius))
