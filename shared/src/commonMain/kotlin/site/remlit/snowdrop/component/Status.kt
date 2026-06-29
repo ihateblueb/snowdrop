@@ -122,7 +122,7 @@ fun Status(status: Status) {
 	//todo: or is admin? figure out how to do that
 
 	if (status.reblog != null) {
-		realStatus = status.reblog
+		realStatus = status.reblog!!
 		isReblog = true
 		rebloggingAccount = status.account
 	}
@@ -419,7 +419,10 @@ fun Status(status: Status) {
 								res.handleError(snackbarController)
 								return@bgIO
 							}
-							realStatus = res.response
+							if (isReblog)
+								status.reblog = res.response
+							else
+								realStatus = res.response
 						}
 					},
 					colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -457,6 +460,10 @@ fun Status(status: Status) {
 								return@bgIO
 							}
 							realStatus = res.response
+							if (isReblog)
+								status.reblog = res.response
+							else
+								realStatus = res.response
 						}
 					},
 					colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(

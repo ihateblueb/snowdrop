@@ -23,7 +23,7 @@ data class Status(
 	@SerialName("in_reply_to_account_id")
 	val inReplyToAccountId: String? = null,
 
-	val reblog: Status? = null,
+	var reblog: Status? = null,
 	val quote: Status? = null,
 	@SerialName("quote_id")
 	val quoteId: String? = null,
