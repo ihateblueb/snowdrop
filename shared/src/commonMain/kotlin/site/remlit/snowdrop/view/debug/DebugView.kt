@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugStorageRoute
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -24,9 +25,17 @@ import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.resetFeatures
 import site.remlit.snowdrop.util.toggleLoggedInState
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.account
+import snowdrop.shared.generated.resources.cache
+import snowdrop.shared.generated.resources.clear_cache
+import snowdrop.shared.generated.resources.clear_settings
+import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_refresh_24px
+import snowdrop.shared.generated.resources.reset_feature_determinations
+import snowdrop.shared.generated.resources.storage
+import snowdrop.shared.generated.resources.toggle_logged_in_state
 
 @Composable
 fun DebugView() = ViewSurface {
@@ -39,7 +48,7 @@ fun DebugView() = ViewSurface {
 			}
 		},
 		title = {
-			Text("Debug")
+			Text(stringResource(Res.string.debug))
 		}
 	)
 
@@ -50,7 +59,7 @@ fun DebugView() = ViewSurface {
 		item {
 			Card {
 				ListItem(
-					headlineContent = { Text("Storage") },
+					headlineContent = { Text(stringResource(Res.string.storage)) },
 					trailingContent = {
 						Icon(painterResource(Res.drawable.icon_chevron_right_24px), null)
 					},
@@ -63,8 +72,7 @@ fun DebugView() = ViewSurface {
 		item {
 			Card {
 				ListItem(
-					headlineContent = { Text("Cache") },
-					supportingContent = { Text("May lag or crash app") },
+					headlineContent = { Text(stringResource(Res.string.cache)) },
 					trailingContent = {
 						Icon(painterResource(Res.drawable.icon_chevron_right_24px), null)
 					},
@@ -77,7 +85,7 @@ fun DebugView() = ViewSurface {
 		item {
 			Card {
 				ListItem(
-					headlineContent = { Text("Toggle logged in state") },
+					headlineContent = { Text(stringResource(Res.string.toggle_logged_in_state)) },
 					modifier = Modifier.clickable { toggleLoggedInState() }
 				)
 			}
@@ -86,7 +94,7 @@ fun DebugView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
-					headlineContent = { Text("Reset feature determinations") },
+					headlineContent = { Text(stringResource(Res.string.reset_feature_determinations)) },
 					modifier = Modifier.clickable { resetFeatures(); bgIO { determineFeatures() } }
 				)
 			}
@@ -95,7 +103,7 @@ fun DebugView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
-					headlineContent = { Text("Clear cache") },
+					headlineContent = { Text(stringResource(Res.string.clear_cache)) },
 					modifier = Modifier.clickable { bg { clearCacheEntries() } }
 				)
 			}
@@ -104,7 +112,7 @@ fun DebugView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
-					headlineContent = { Text("Clear settings") },
+					headlineContent = { Text(stringResource(Res.string.clear_settings)) },
 					modifier = Modifier.clickable { bg { blockingSettings.clear() } }
 				)
 			}

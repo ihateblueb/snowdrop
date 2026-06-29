@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.followRequest.authorizeFollowRequest
 import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
@@ -41,6 +42,14 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.a_poll_you_have_voted_in_has_ended
+import snowdrop.shared.generated.resources.accept
+import snowdrop.shared.generated.resources.bit_you
+import snowdrop.shared.generated.resources.bit_you_back
+import snowdrop.shared.generated.resources.bit_your_post
+import snowdrop.shared.generated.resources.boosted_your_post
+import snowdrop.shared.generated.resources.edited_a_post
+import snowdrop.shared.generated.resources.followed_you
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_close_24px
@@ -51,6 +60,11 @@ import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_poll_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
+import snowdrop.shared.generated.resources.just_posted
+import snowdrop.shared.generated.resources.liked_your_post
+import snowdrop.shared.generated.resources.reacted_with_x
+import snowdrop.shared.generated.resources.reject
+import snowdrop.shared.generated.resources.requested_to_follow_you
 
 @Composable
 fun Notification(notification: Notification) {
@@ -138,18 +152,18 @@ fun Notification(notification: Notification) {
 						}
 
 						when (notification.type) {
-							"favourite" -> message = "liked your post"
-							"pleroma:emoji_reaction" -> message = "reacted with ${notification.emoji}"
-							"reaction" -> message = "reacted with :${notification.reaction?.name}:"
-							"reblog" -> message = "boosted your post"
-							"update" -> message = "edited a post"
-							"poll" -> message = "A poll you have voted in has ended"
-							"status" -> message = "just posted"
-							"bite" -> message = if (notification.bite?.biteBack == true) "bit you back"
-								else if (notification.status != null) "bit your post"
-								else "bit you"
-							"follow_request" -> message = "requested to follow you"
-							"follow" -> message = "followed you"
+							"favourite" -> message = stringResource(Res.string.liked_your_post)
+							"pleroma:emoji_reaction" -> message = stringResource(Res.string.reacted_with_x, "${notification.emoji}")
+							"reaction" -> message = stringResource(Res.string.reacted_with_x, ":${notification.reaction?.name}:")
+							"reblog" -> message = stringResource(Res.string.boosted_your_post)
+							"update" -> message = stringResource(Res.string.edited_a_post)
+							"poll" -> message = stringResource(Res.string.a_poll_you_have_voted_in_has_ended)
+							"status" -> message = stringResource(Res.string.just_posted)
+							"bite" -> message = if (notification.bite?.biteBack == true) stringResource(Res.string.bit_you_back)
+								else if (notification.status != null) stringResource(Res.string.bit_your_post)
+								else stringResource(Res.string.bit_you)
+							"follow_request" -> message = stringResource(Res.string.requested_to_follow_you)
+							"follow" -> message = stringResource(Res.string.followed_you)
 						}
 
 						/*
@@ -215,11 +229,11 @@ fun Notification(notification: Notification) {
 					) {
 						FilledTonalButton(onClick = { bgIO { authorizeFollowRequest(notification.account.id) } }) {
 							Icon(painterResource(Res.drawable.icon_check_24px), null)
-							Text("Accept")
+							Text(stringResource(Res.string.accept))
 						}
 						OutlinedButton(onClick = { bgIO { rejectFollowRequest(notification.account.id) } }) {
 							Icon(painterResource(Res.drawable.icon_close_24px), null)
-							Text("Reject")
+							Text(stringResource(Res.string.reject))
 						}
 					}
 				}

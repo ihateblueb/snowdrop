@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.MiniStatus
@@ -65,6 +66,9 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.compose
+import snowdrop.shared.generated.resources.content_warning
+import snowdrop.shared.generated.resources.followers
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
@@ -73,6 +77,16 @@ import snowdrop.shared.generated.resources.icon_mail_20px
 import snowdrop.shared.generated.resources.icon_send_24px
 import snowdrop.shared.generated.resources.icon_swap_horiz_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.reply
+import snowdrop.shared.generated.resources.visibility_direct
+import snowdrop.shared.generated.resources.visibility_direct_description
+import snowdrop.shared.generated.resources.visibility_followers
+import snowdrop.shared.generated.resources.visibility_followers_description
+import snowdrop.shared.generated.resources.visibility_public
+import snowdrop.shared.generated.resources.visibility_public_description
+import snowdrop.shared.generated.resources.visibility_unlisted
+import snowdrop.shared.generated.resources.visibility_unlisted_description
+import snowdrop.shared.generated.resources.write_your_post_here
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -125,8 +139,8 @@ fun ComposeView(
 			}
 		},
 		title = {
-			if (inReplyToId != null) Text("Reply")
-			else Text("Compose")
+			if (inReplyToId != null) Text(stringResource(Res.string.reply))
+			else Text(stringResource(Res.string.compose))
 		}
 	)
 
@@ -182,11 +196,11 @@ fun ComposeView(
 								text = {
 									Column(modifier = Modifier.padding(vertical = 5.dp)) {
 										Text(
-											"Public",
+											stringResource(Res.string.visibility_public),
 											fontWeight = FontWeight.Medium
 										)
 										Text(
-											"Visible to anyone, shows on global timeline",
+											stringResource(Res.string.visibility_public_description),
 											fontSize = 13.sp
 										)
 									}
@@ -203,11 +217,11 @@ fun ComposeView(
 								text = {
 									Column(modifier = Modifier.padding(vertical = 5.dp)) {
 										Text(
-											"Unlisted",
+											stringResource(Res.string.visibility_unlisted),
 											fontWeight = FontWeight.Medium
 										)
 										Text(
-											"Visible to anyone, not shown on the global timeline",
+											stringResource(Res.string.visibility_unlisted_description),
 											fontSize = 13.sp
 										)
 									}
@@ -224,11 +238,11 @@ fun ComposeView(
 								text = {
 									Column(modifier = Modifier.padding(vertical = 5.dp)) {
 										Text(
-											"Followers",
+											stringResource(Res.string.visibility_followers),
 											fontWeight = FontWeight.Medium
 										)
 										Text(
-											"Visible to followers only",
+											stringResource(Res.string.visibility_followers_description),
 											fontSize = 13.sp
 										)
 									}
@@ -245,11 +259,11 @@ fun ComposeView(
 								text = {
 									Column(modifier = Modifier.padding(vertical = 5.dp)) {
 										Text(
-											"Direct",
+											stringResource(Res.string.visibility_direct),
 											fontWeight = FontWeight.Medium
 										)
 										Text(
-											"Visible to only to mentioned users",
+											stringResource(Res.string.visibility_direct_description),
 											fontSize = 13.sp
 										)
 									}
@@ -280,7 +294,7 @@ fun ComposeView(
 					TextField(
 						value = cw,
 						onValueChange = { cw = it },
-						placeholder = { Text("Content warning") },
+						placeholder = { Text(stringResource(Res.string.content_warning)) },
 						modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, top = 5.dp)
 							.clip(RoundedCornerShape(10.dp)),
 						maxLines = 1,
@@ -294,7 +308,7 @@ fun ComposeView(
 
 				TextField(
 					value = content,
-					placeholder = { Text("Write your post here...") },
+					placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
 					onValueChange = { content = it },
 					modifier = Modifier.imePadding()
 						.fillMaxWidth().fillMaxHeight(),

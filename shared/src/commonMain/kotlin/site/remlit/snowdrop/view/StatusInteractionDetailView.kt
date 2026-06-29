@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.ktor.websocket.Frame
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
 import site.remlit.snowdrop.api.statuses.getStatusReactions
 import site.remlit.snowdrop.api.statuses.getStatusRebloggedBy
@@ -38,7 +39,11 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.bgIO
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.boosted_by
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.liked_by
+import snowdrop.shared.generated.resources.post
+import snowdrop.shared.generated.resources.reacted_by
 
 enum class InteractionViewType {
 	Boost, Like, Reaction
@@ -79,9 +84,9 @@ fun StatusInteractionDetailView(
 		},
 		title = {
 			when (type) {
-				InteractionViewType.Boost -> Text("Boosted by")
-				InteractionViewType.Like -> Text("Liked by")
-				InteractionViewType.Reaction -> Text("Reacted by")
+				InteractionViewType.Boost -> Text(stringResource(Res.string.boosted_by))
+				InteractionViewType.Like -> Text(stringResource(Res.string.liked_by))
+				InteractionViewType.Reaction -> Text(stringResource(Res.string.reacted_by))
 			}
 		}
 	)

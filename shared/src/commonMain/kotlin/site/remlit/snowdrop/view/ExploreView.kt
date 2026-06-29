@@ -19,9 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.search
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.response.SearchResponse
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.explore
+import snowdrop.shared.generated.resources.followers
+import snowdrop.shared.generated.resources.search_for_posts_or_users
 
 @Composable
 fun ExploreView() = ViewSurface {
@@ -37,7 +42,7 @@ fun ExploreView() = ViewSurface {
 
 	TopAppBar(
 		title = {
-			Text("Explore")
+			Text(stringResource(Res.string.explore))
 		}
 	)
 
@@ -48,7 +53,7 @@ fun ExploreView() = ViewSurface {
 		OutlinedTextField(
 			value = query,
 			onValueChange = { query = it },
-			placeholder = { Text("Search for posts or users...") },
+			placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
 			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
 			keyboardActions = KeyboardActions(onGo = { runBlocking { submitSearch() } }),
 			modifier = Modifier.fillMaxWidth()

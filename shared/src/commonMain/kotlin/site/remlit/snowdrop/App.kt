@@ -74,6 +74,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.util.ExternalUriHandler
@@ -100,6 +101,8 @@ import site.remlit.snowdrop.view.debug.DebugView
 import site.remlit.snowdrop.view.debug.DebugStorageView
 import site.remlit.snowdrop.view.settings.*
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.add_account
+import snowdrop.shared.generated.resources.explore
 import snowdrop.shared.generated.resources.icon_account_circle_24px
 import snowdrop.shared.generated.resources.icon_account_circle_filled_24px
 import snowdrop.shared.generated.resources.icon_add_24px
@@ -111,6 +114,9 @@ import snowdrop.shared.generated.resources.icon_home_24px
 import snowdrop.shared.generated.resources.icon_home_filled_24px
 import snowdrop.shared.generated.resources.icon_notifications_24px
 import snowdrop.shared.generated.resources.icon_notifications_filled_24px
+import snowdrop.shared.generated.resources.notifications
+import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.timeline
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -279,7 +285,7 @@ fun App() = safe {
 										)
 										else Icon(painterResource(Res.drawable.icon_home_24px), null)
 									},
-									label = { Text("Timeline") }
+									label = { Text(stringResource(Res.string.timeline)) }
 								)
 
 								NavigationBarItem(
@@ -292,7 +298,7 @@ fun App() = safe {
 										)
 										else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
 									},
-									label = { Text("Notifications") }
+									label = { Text(stringResource(Res.string.notifications)) }
 								)
 
 								NavigationBarItem(
@@ -305,7 +311,7 @@ fun App() = safe {
 										)
 										else Icon(painterResource(Res.drawable.icon_explore_24px), null)
 									},
-									label = { Text("Explore") }
+									label = { Text(stringResource(Res.string.explore)) }
 								)
 
 								NavigationBarItem(
@@ -330,7 +336,7 @@ fun App() = safe {
 											}
 										} else fallbackAvatarIcon()
 									},
-									label = { Text("Profile") }
+									label = { Text(stringResource(Res.string.profile)) }
 								)
 							}
 						}
@@ -410,7 +416,7 @@ fun App() = safe {
 									}
 								) {
 									Icon(painterResource(Res.drawable.icon_add_24px), null)
-									Text("Add account")
+									Text(stringResource(Res.string.add_account))
 								}
 							}
 

@@ -9,11 +9,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import io.ktor.websocket.Frame
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_mail_20px
+import snowdrop.shared.generated.resources.liked_your_post
+import snowdrop.shared.generated.resources.visibility_direct
+import snowdrop.shared.generated.resources.visibility_followers
+import snowdrop.shared.generated.resources.visibility_public
+import snowdrop.shared.generated.resources.visibility_unlisted
 
 @Composable
 fun Visibility(visibility: String, showLabel: Boolean = false) {
@@ -30,10 +36,10 @@ fun Visibility(visibility: String, showLabel: Boolean = false) {
 
 		if (showLabel)
 			when (visibility) {
-				"public" -> Text("Public")
-				"unlisted" -> Text("Unlisted")
-				"private" -> Text("Followers")
-				"direct" -> Text("Direct")
+				"public" -> Text(stringResource(Res.string.visibility_public))
+				"unlisted" -> Text(stringResource(Res.string.visibility_unlisted))
+				"private" -> Text(stringResource(Res.string.visibility_followers))
+				"direct" -> Text(stringResource(Res.string.visibility_direct))
 			}
 	}
 }

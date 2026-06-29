@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.SettingsRoute
 import site.remlit.snowdrop.api.timeline.getHomeTimeline
 import site.remlit.snowdrop.component.Status
@@ -43,7 +44,9 @@ import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.scrollingUpward
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.add_account
 import snowdrop.shared.generated.resources.icon_settings_24px
+import snowdrop.shared.generated.resources.timeline
 
 @Composable
 inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
@@ -109,7 +112,7 @@ fun TimelineView() = ViewSurface {
 				}
 			),
 			title = {
-				Text("Timeline")
+				stringResource(Res.string.timeline)
 			},
 			actions = {
 				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {

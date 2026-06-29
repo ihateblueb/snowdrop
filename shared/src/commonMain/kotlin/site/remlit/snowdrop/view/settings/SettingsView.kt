@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.component.ViewSurface
@@ -47,6 +48,12 @@ import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.account
+import snowdrop.shared.generated.resources.debug
+import snowdrop.shared.generated.resources.default_post_visibility
+import snowdrop.shared.generated.resources.general
+import snowdrop.shared.generated.resources.hide_follow_counters
+import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_bug_report_24px
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
@@ -54,6 +61,15 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.icon_logout_24px
 import snowdrop.shared.generated.resources.icon_switch_account_24px
+import snowdrop.shared.generated.resources.logout
+import snowdrop.shared.generated.resources.settings
+import snowdrop.shared.generated.resources.switch_account
+import snowdrop.shared.generated.resources.visibility_direct
+import snowdrop.shared.generated.resources.visibility_followers
+import snowdrop.shared.generated.resources.visibility_public
+import snowdrop.shared.generated.resources.visibility_unlisted
+import snowdrop.shared.generated.resources.wellbeing
+import snowdrop.shared.generated.resources.write_your_post_here
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -76,7 +92,7 @@ fun SettingsView() = ViewSurface {
 			}
 		},
 		title = {
-			Text("Settings")
+			Text(stringResource(Res.string.settings))
 		}
 	)
 
@@ -85,7 +101,7 @@ fun SettingsView() = ViewSurface {
 	) {
 		item {
 			Text(
-				"General",
+				stringResource(Res.string.general),
 				style = MaterialTheme.typography.labelLarge,
 				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
 			)
@@ -98,7 +114,7 @@ fun SettingsView() = ViewSurface {
 
 			Card {
 				ListItem(
-					headlineContent = { Text("Default post visibility") },
+					headlineContent = { Text(stringResource(Res.string.default_post_visibility)) },
 					trailingContent = {
 						Row(
 							horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -141,7 +157,7 @@ fun SettingsView() = ViewSurface {
 							modifier = Modifier.padding(start = 10.dp)
 						)
 						Text(
-							"Public",
+							stringResource(Res.string.visibility_public),
 							modifier = Modifier.padding(start = 20.dp)
 						)
 					}
@@ -162,7 +178,7 @@ fun SettingsView() = ViewSurface {
 							modifier = Modifier.padding(start = 10.dp)
 						)
 						Text(
-							"Unlisted",
+							stringResource(Res.string.visibility_unlisted),
 							modifier = Modifier.padding(start = 20.dp)
 						)
 					}
@@ -183,7 +199,7 @@ fun SettingsView() = ViewSurface {
 							modifier = Modifier.padding(start = 10.dp)
 						)
 						Text(
-							"Followers",
+							stringResource(Res.string.visibility_followers),
 							modifier = Modifier.padding(start = 20.dp)
 						)
 					}
@@ -204,7 +220,7 @@ fun SettingsView() = ViewSurface {
 							modifier = Modifier.padding(start = 10.dp)
 						)
 						Text(
-							"Direct",
+							stringResource(Res.string.visibility_direct),
 							modifier = Modifier.padding(start = 20.dp)
 						)
 					}
@@ -215,7 +231,7 @@ fun SettingsView() = ViewSurface {
 
 		item {
 			Text(
-				"Wellness",
+				stringResource(Res.string.wellbeing),
 				style = MaterialTheme.typography.labelLarge,
 				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
 			)
@@ -226,7 +242,7 @@ fun SettingsView() = ViewSurface {
 
 			Card {
 				ListItem(
-					headlineContent = { Text("Hide interaction counters on posts") },
+					headlineContent = { Text(stringResource(Res.string.hide_interaction_counters)) },
 					trailingContent = {
 						Switch(
 							hideInteractionCounters,
@@ -242,7 +258,7 @@ fun SettingsView() = ViewSurface {
 
 			Card {
 				ListItem(
-					headlineContent = { Text("Hide follow counters") },
+					headlineContent = { Text(stringResource(Res.string.hide_follow_counters)) },
 					trailingContent = {
 						Switch(
 							hideFollowCounters,
@@ -259,7 +275,7 @@ fun SettingsView() = ViewSurface {
 					leadingContent = {
 						Icon(painterResource(Res.drawable.icon_bug_report_24px), null,)
 					},
-					headlineContent = { Text("Debug") },
+					headlineContent = { Text(stringResource(Res.string.debug)) },
 					trailingContent = {
 						Icon(painterResource(Res.drawable.icon_chevron_right_24px), null)
 					},
@@ -272,7 +288,7 @@ fun SettingsView() = ViewSurface {
 
 		item {
 			Text(
-				"Account",
+				stringResource(Res.string.account),
 				style = MaterialTheme.typography.labelLarge,
 				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
 			)
@@ -283,7 +299,7 @@ fun SettingsView() = ViewSurface {
 					leadingContent = {
 						Icon(painterResource(Res.drawable.icon_switch_account_24px), null,)
 					},
-					headlineContent = { Text("Switch account") },
+					headlineContent = { Text(stringResource(Res.string.switch_account)) },
 					modifier = Modifier.clickable {
 						showAccountSwitcher = true
 					}
@@ -299,7 +315,7 @@ fun SettingsView() = ViewSurface {
 							tint = MaterialTheme.colorScheme.error
 						)
 					},
-					headlineContent = { Text("Log out", color = MaterialTheme.colorScheme.error) },
+					headlineContent = { Text(stringResource(Res.string.logout), color = MaterialTheme.colorScheme.error) },
 					modifier = Modifier.clickable {
 						val id = getCurrentAccountId()
 						logoutAccount(id)

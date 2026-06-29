@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.api.oauth.authScopes
 import site.remlit.snowdrop.api.oauth.createApp
@@ -51,6 +52,13 @@ import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.updateCurrentAccountObject
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources._continue
+import snowdrop.shared.generated.resources.debug
+import snowdrop.shared.generated.resources.followers
+import snowdrop.shared.generated.resources.instance_host
+import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.you_must_provide_a_valid_host
 import kotlin.uuid.Uuid
 
 @Composable
@@ -162,19 +170,19 @@ fun LoginView(
 				onValueChange = { host = it },
 				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
 				keyboardActions = KeyboardActions(onGo = { continueButtonPressed() }),
-				label = { Text("Instance Host") },
+				label = { Text(stringResource(Res.string.instance_host)) },
 				placeholder = { Text("mastodon.social") }
 			)
 
 			if (showHostError) {
 				AlertDialog(
-					text = { Text("You must provide a valid host!") },
+					text = { Text(stringResource(Res.string.you_must_provide_a_valid_host)) },
 					onDismissRequest = { showHostError = false },
 					confirmButton = {
 						TextButton(
 							onClick = { showHostError = false }
 						) {
-							Text("Ok")
+							Text(stringResource(Res.string.ok))
 						}
 					},
 					properties = DialogProperties(
@@ -190,7 +198,7 @@ fun LoginView(
 				onClick = { continueButtonPressed() }
 			) {
 				if (waitingForNext) Text("...")
-				else Text("Continue")
+				else Text(stringResource(Res.string._continue))
 			}
 
 			TextButton(
@@ -198,7 +206,7 @@ fun LoginView(
 					.padding(top = 20.dp),
 				onClick = { navController.navigate(DebugRoute) },
 			) {
-				Text("Debug")
+				Text(stringResource(Res.string.debug))
 			}
 		}
 	} else {

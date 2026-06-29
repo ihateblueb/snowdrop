@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.cache.blockingCache
@@ -26,7 +27,10 @@ import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.getCacheManifest
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.account
+import snowdrop.shared.generated.resources.cache
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.storage
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
@@ -54,8 +58,8 @@ fun DebugStorageView(
 		},
 		title = {
 			when (storage) {
-				0 -> Text("Storage")
-				1 -> Text("Cache")
+				0 -> Text(stringResource(Res.string.storage))
+				1 -> Text(stringResource(Res.string.cache))
 			}
 		}
 	)

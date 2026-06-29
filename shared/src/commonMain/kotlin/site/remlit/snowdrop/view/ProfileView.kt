@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
@@ -56,7 +57,18 @@ import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.edit_profile
+import snowdrop.shared.generated.resources.follow
+import snowdrop.shared.generated.resources.followers
+import snowdrop.shared.generated.resources.following
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.joined_at_x
+import snowdrop.shared.generated.resources.media
+import snowdrop.shared.generated.resources.post
+import snowdrop.shared.generated.resources.posts
+import snowdrop.shared.generated.resources.posts_and_replies
+import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.x_posts
 
 const val headerHeight = 200
 
@@ -106,9 +118,9 @@ fun ProfileView(id: String) = ViewSurface {
 			},
 			title = {
 				if (account == null) Column {
-					Text("Profile")
+					Text(stringResource(Res.string.profile))
 					Text(
-						"0 posts",
+						stringResource(Res.string.x_posts, "0"),
 						fontSize = 14.sp
 					)
 				}
@@ -119,7 +131,7 @@ fun ProfileView(id: String) = ViewSurface {
 						overflow = TextOverflow.Ellipsis
 					)
 					Text(
-						"${formatNumber(account!!.statusesCount)} posts",
+						stringResource(Res.string.x_posts, formatNumber(account!!.statusesCount)),
 						fontSize = 14.sp
 					)
 				}
@@ -196,11 +208,11 @@ fun ProfileView(id: String) = ViewSurface {
 								Row {
 									if (isMe) {
 										OutlinedButton(onClick = {}) {
-											Text("Edit profile")
+											Text(stringResource(Res.string.edit_profile))
 										}
 									} else {
 										OutlinedButton(onClick = {}) {
-											Text("Follow")
+											Text(stringResource(Res.string.follow))
 										}
 									}
 								}
@@ -258,7 +270,7 @@ fun ProfileView(id: String) = ViewSurface {
 
 						Row(modifier = Modifier.padding(top = 10.dp)) {
 							Text(
-								"Joined at ${account!!.createdAt}",
+								stringResource(Res.string.joined_at_x, account!!.createdAt),
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
@@ -274,14 +286,14 @@ fun ProfileView(id: String) = ViewSurface {
 										"${account!!.followersCount}",
 										fontWeight = FontWeight.Bold
 									)
-									Text("followers")
+									Text(stringResource(Res.string.followers))
 								}
 								Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 									Text(
 										"${account!!.followingCount}",
 										fontWeight = FontWeight.Bold
 									)
-									Text("following")
+									Text(stringResource(Res.string.following))
 								}
 							}
 					}
@@ -292,9 +304,9 @@ fun ProfileView(id: String) = ViewSurface {
 						HorizontalDivider()
 
 						PrimaryTabRow(selectedTabIndex = selectedTab) {
-							Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("Posts") })
-							Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("Posts & Replies") })
-							Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text("Media") })
+							Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
+							Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.posts_and_replies)) })
+							Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
 						}
 
 					}

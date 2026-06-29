@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
@@ -77,6 +78,11 @@ import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.boosted
+import snowdrop.shared.generated.resources.copy_link
+import snowdrop.shared.generated.resources.delete
+import snowdrop.shared.generated.resources.edit
+import snowdrop.shared.generated.resources.hide_content
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
 import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
@@ -96,6 +102,15 @@ import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_star_filled_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.liked_your_post
+import snowdrop.shared.generated.resources.mute
+import snowdrop.shared.generated.resources.open_in_browser
+import snowdrop.shared.generated.resources.report
+import snowdrop.shared.generated.resources.show_boosts
+import snowdrop.shared.generated.resources.show_content
+import snowdrop.shared.generated.resources.show_likes
+import snowdrop.shared.generated.resources.show_reactions
+import snowdrop.shared.generated.resources.unbookmark
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -186,6 +201,7 @@ fun Status(status: Status) {
 					)
 					Row(
 						modifier = Modifier.weight(1f, fill = false),
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						Text(
@@ -198,7 +214,7 @@ fun Status(status: Status) {
 							modifier = Modifier.weight(1f, fill = false)
 						)
 						Text(
-							" boosted",
+							stringResource(Res.string.boosted),
 							color = MaterialTheme.colorScheme.secondary,
 							fontSize = 14.sp,
 							fontWeight = FontWeight.Medium
@@ -305,8 +321,8 @@ fun Status(status: Status) {
 									fontWeight = FontWeight.Medium
 								)
 								Text(
-									if (!cwOpen) "Show content"
-									else "Hide content",
+									if (!cwOpen) stringResource(Res.string.show_content)
+									else stringResource(Res.string.hide_content),
 									fontSize = 12.sp
 								)
 							}
@@ -507,7 +523,7 @@ fun Status(status: Status) {
 					) {
 						if (status.url != null) {
 							DropdownMenuItem(
-								text = { Text("Copy link") },
+								text = { Text(stringResource(Res.string.copy_link)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_link_24px), null)
 								},
@@ -518,7 +534,7 @@ fun Status(status: Status) {
 							)
 
 							DropdownMenuItem(
-								text = { Text("Open in browser") },
+								text = { Text(stringResource(Res.string.open_in_browser)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 								},
@@ -531,7 +547,7 @@ fun Status(status: Status) {
 
 						if (realStatus.bookmarked) {
 							DropdownMenuItem(
-								text = { Text("Unbookmark") },
+								text = { Text(stringResource(Res.string.unbookmark)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
 								},
@@ -539,7 +555,7 @@ fun Status(status: Status) {
 							)
 						} else {
 							DropdownMenuItem(
-								text = { Text("Bookmark") },
+								text = { Text(stringResource(Res.string.unbookmark)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
 								},
@@ -550,7 +566,7 @@ fun Status(status: Status) {
 						HorizontalDivider()
 
 						DropdownMenuItem(
-							text = { Text("Show boosts") },
+							text = { Text(stringResource(Res.string.show_boosts)) },
 							leadingIcon = {
 								Icon(painterResource(Res.drawable.icon_repeat_24px), null)
 							},
@@ -560,7 +576,7 @@ fun Status(status: Status) {
 						)
 
 						DropdownMenuItem(
-							text = { Text("Show likes") },
+							text = { Text(stringResource(Res.string.show_likes)) },
 							leadingIcon = {
 								Icon(painterResource(Res.drawable.icon_star_24px), null)
 							},
@@ -571,7 +587,7 @@ fun Status(status: Status) {
 
 						if (getFeature("reactions"))
 							DropdownMenuItem(
-								text = { Text("Show reactions") },
+								text = { Text(stringResource(Res.string.show_reactions)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_mood_24px), null)
 								},
@@ -583,7 +599,7 @@ fun Status(status: Status) {
 						HorizontalDivider()
 
 						DropdownMenuItem(
-							text = { Text("Mute") },
+							text = { Text(stringResource(Res.string.mute)) },
 							leadingIcon = {
 								Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
 							},
@@ -591,7 +607,7 @@ fun Status(status: Status) {
 						)
 
 						DangerDropdownItem(
-							text = { Text("Report") },
+							text = { Text(stringResource(Res.string.report)) },
 							leadingIcon = {
 								Icon(painterResource(Res.drawable.icon_flag_24px), null)
 							},
@@ -603,7 +619,7 @@ fun Status(status: Status) {
 							HorizontalDivider()
 
 							DropdownMenuItem(
-								text = { Text("Edit") },
+								text = { Text(stringResource(Res.string.edit)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_edit_24px), null)
 								},
@@ -611,7 +627,7 @@ fun Status(status: Status) {
 							)
 
 							DangerDropdownItem(
-								text = { Text("Delete") },
+								text = { Text(stringResource(Res.string.delete)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_delete_24px), null)
 								},
