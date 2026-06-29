@@ -112,7 +112,7 @@ fun TimelineView() = ViewSurface {
 				}
 			),
 			title = {
-				stringResource(Res.string.timeline)
+				Text(stringResource(Res.string.timeline))
 			},
 			actions = {
 				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
