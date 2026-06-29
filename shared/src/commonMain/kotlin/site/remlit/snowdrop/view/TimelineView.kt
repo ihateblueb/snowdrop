@@ -187,7 +187,7 @@ fun TimelineView() = ViewSurface {
 
 		RefreshableTimeline(
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-			timelineComponent = { Status(it) },
+			timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 			refreshKey = timelineType,
 			countTowardsScrollingUpward = true
 		)

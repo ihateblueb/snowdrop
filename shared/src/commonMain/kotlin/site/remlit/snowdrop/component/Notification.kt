@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
@@ -67,7 +66,10 @@ import snowdrop.shared.generated.resources.reject
 import snowdrop.shared.generated.resources.requested_to_follow_you
 
 @Composable
-fun Notification(notification: Notification) {
+fun Notification(
+	notification: Notification,
+	onUpdate: (Notification) -> Unit = {}
+) {
 	val navHandler = LocalNavController.current
 
 	// sharkey doesn't include the actual reactions in the notifications for some reason

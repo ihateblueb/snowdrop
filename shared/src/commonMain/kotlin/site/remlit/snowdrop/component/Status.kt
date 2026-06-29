@@ -55,6 +55,7 @@ import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.favouriteStatus
+import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.unfavouriteStatus
 import site.remlit.snowdrop.api.statuses.unreblogStatus
@@ -114,7 +115,10 @@ import snowdrop.shared.generated.resources.unbookmark
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun Status(status: Status) {
+fun Status(
+	status: Status,
+	onUpdate: (Status) -> Unit = {}
+) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
 	val snackbarController = SnackbarController.current
@@ -154,6 +158,13 @@ fun Status(status: Status) {
 	inThreadView = atRoute<ThreadRoute>(currentDest)
 	threadViewMainStatus = inThreadView && navHandler.currentBackStackEntry
 		?.toRoute<ThreadRoute>()?.id == realStatus.id
+
+
+	suspend fun updateOriginalStatus() {
+		val newBaseStatus = getStatus(status.id)
+		if (newBaseStatus.error || newBaseStatus.response == null) return
+		onUpdate(newBaseStatus.response)
+	}
 
 
 	@Composable
@@ -435,10 +446,12 @@ fun Status(status: Status) {
 								res.handleError(snackbarController)
 								return@bgIO
 							}
-							if (isReblog)
-								status.reblog = res.response
-							else
-								realStatus = res.response
+							// this sometimes might reply with the reblog post instead of the post you interacted with
+							if (isReblog && res.response.reblog != null) status.reblog = res.response.reblog!!
+							else if (res.response.reblog != null) realStatus = res.response.reblog!!
+							else realStatus = res.response
+
+							updateOriginalStatus()
 						}
 					},
 					colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -476,10 +489,10 @@ fun Status(status: Status) {
 								return@bgIO
 							}
 							realStatus = res.response
-							if (isReblog)
-								status.reblog = res.response
-							else
-								realStatus = res.response
+							if (isReblog) status.reblog = res.response
+							else realStatus = res.response
+
+							updateOriginalStatus()
 						}
 					},
 					colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
