@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -27,6 +29,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
@@ -94,25 +98,36 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	}
 
 	fun updateOccurrencesOfItem(old: T, new: T) = bg {
-		// insane block. probably terrible performance.
-		// find all versions of a note and update it
+		// not as bad as it once was but not great, probably
 		if (old is Status && new is Status) {
+			if (old == new) return@bg
 			val tl = timeline as SnapshotStateList<Status>
 
-			tl.filter { it.id == old.id }.forEach { found ->
-				timeline[timeline.indexOf(found)] = new
-			}
+			// todo: fix update on repeat of post not changing actual post
+			tl.indices.forEach { i ->
+				val current = tl[i]
+				var updated: Status = new
 
-			tl.filter { it.reblog?.id == old.id }.forEach { found ->
-				timeline[timeline.indexOf(found)] = new
-			}
+				if (
+					(current.id == old.id ||
+						current.id == old.reblog?.id ||
+						current.id == old.quote?.id ||
+						current.id == old.quotedStatus?.id) &&
+					current != updated
+				) tl[i] = updated
 
-			tl.filter {
-				it.quotedStatus?.id == old.id ||
-					it.quote?.id == old.id
-			}.forEach { found ->
-				val o = timeline[timeline.indexOf(found)]
-				timeline[timeline.indexOf(found)] = o.copy(quotedStatus = new, quote = new)
+				updated = current.copy(reblog = new)
+				if (
+					(current.reblog?.id == old.id) &&
+					current != updated
+				) tl[i] = updated
+
+				updated = current.copy(quotedStatus = new, quote = new)
+				if (
+					(current.quotedStatus?.id == old.id ||
+						current.quote?.id == old.id) &&
+					current != updated
+				) tl[i] = updated
 			}
 		} else {
 			timeline[timeline.indexOf(old)] = new
@@ -162,7 +177,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				) {
 					Text(
 						stringResource(Res.string.nothing_to_see_here),
-						fontStyle = FontStyle.Italic
+						modifier = Modifier.padding(vertical = 20.dp),
+						fontStyle = FontStyle.Italic,
+						fontSize = 13.sp,
+						color = MaterialTheme.colorScheme.onSurfaceVariant
 					)
 				}
 			} else items(
