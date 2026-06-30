@@ -40,6 +40,7 @@ import site.remlit.snowdrop.api.oauth.createApp
 import site.remlit.snowdrop.api.oauth.createToken
 import site.remlit.snowdrop.api.oauth.redirectUri
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.component.native.NativeTextField
 import site.remlit.snowdrop.model.response.CreateAppResponse
 import site.remlit.snowdrop.model.response.OauthToken
 import site.remlit.snowdrop.util.LocalNavController
@@ -169,14 +170,14 @@ fun LoginView(
 					.padding(bottom = 25.dp)
 			)
 
-			TextField(
+			NativeTextField(
 				host,
-				singleLine = true,
+				maxLines = 1,
 				onValueChange = { host = it },
 				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
 				keyboardActions = KeyboardActions(onGo = { continueButtonPressed() }),
-				label = { Text(stringResource(Res.string.instance_host)) },
-				placeholder = { Text("mastodon.social") }
+				label = stringResource(Res.string.instance_host),
+				placeholder = "mastodon.social"
 			)
 
 			if (showHostError) {
