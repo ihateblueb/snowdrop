@@ -42,6 +42,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PlatformImeOptions
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,28 +56,24 @@ import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.component.native.NativeTextArea
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
-import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
-import site.remlit.snowdrop.util.settings
-import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
-import snowdrop.shared.generated.resources.followers
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_mail_20px
 import snowdrop.shared.generated.resources.icon_send_24px
-import snowdrop.shared.generated.resources.icon_swap_horiz_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.reply
 import snowdrop.shared.generated.resources.visibility_direct
@@ -310,20 +307,13 @@ fun ComposeView(
 						)
 					)
 
-				TextField(
+				NativeTextArea(
 					value = content,
-					placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
+					placeholder = stringResource(Res.string.write_your_post_here),
 					onValueChange = { content = it },
-					modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-					colors = TextFieldDefaults.colors(
-						unfocusedContainerColor = Color(0x00000000),
-						unfocusedIndicatorColor = Color(0x00000000),
-						focusedContainerColor = Color(0x00000000),
-						focusedIndicatorColor = Color(0x00000000),
-					)
+					modifier = Modifier.fillMaxWidth().fillMaxHeight()
 				)
 			}
-
 			Row(
 				modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 					.padding(all = 5.dp)
