@@ -128,14 +128,14 @@ fun LoginView(
 		}
 	}
 
-	fun finishButtonPressed() = bg {
+	fun finishButtonPressed() = runBlocking {
 		val res = createToken(oauthCallbackCode!!)
 		Logger.d { res.toString() }
 		blockingSettings.remove("oauth_callback")
 
 		if (res.error || res.response == null) {
 			res.handleError(snackbarHandler)
-			return@bg
+			return@runBlocking
 		}
 
 		blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
