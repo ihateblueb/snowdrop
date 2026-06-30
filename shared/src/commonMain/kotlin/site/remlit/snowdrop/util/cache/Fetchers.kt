@@ -24,11 +24,10 @@ fun fetchAccount(id: String, snackbarHostState: SnackbarHostState? = null): Flow
 	val req = getAccount(id)
 	if (req.error || req.response == null) {
 		if (snackbarHostState != null) req.handleError(snackbarHostState)
-		return@flow
+	} else {
+		emit(req.response)
+		putCacheEntry("account_$id", req.response)
 	}
-
-	emit(req.response)
-	putCacheEntry("account_$id", req.response)
 }
 
 /**
@@ -52,11 +51,10 @@ fun fetchStatus(id: String, snackbarHostState: SnackbarHostState? = null): Flow<
 	val req = getStatus(id)
 	if (req.error || req.response == null) {
 		if (snackbarHostState != null) req.handleError(snackbarHostState)
-		return@flow
+	} else {
+		emit(req.response)
+		putCacheEntry("status_$id", req.response)
 	}
-
-	emit(req.response)
-	putCacheEntry("status_$id", req.response)
 }
 
 /**

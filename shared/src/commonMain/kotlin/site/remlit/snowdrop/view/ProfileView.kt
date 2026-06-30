@@ -1,5 +1,6 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,7 +47,9 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
+import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getRelationships
+import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.ViewSurface
@@ -54,6 +59,7 @@ import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.atRoute
+import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
@@ -70,6 +76,8 @@ import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.request_to_follow
+import snowdrop.shared.generated.resources.unfollow
 import snowdrop.shared.generated.resources.x_posts
 
 const val headerHeight = 200
@@ -98,17 +106,15 @@ fun ProfileView(id: String) = ViewSurface {
 
 	val scrollState = rememberScrollState()
 
-	/*
-	var relationships by remember { mutableStateOf<List<Relationship>?>(null) }
-	if (!isMe) bgIO {
-		val res = getRelationships(listOf(currentAccount!!.id, account!!.id))
+	var relationship by remember { mutableStateOf<Relationship?>(null) }
+	if (!isMe && account != null) bgIO {
+		val res = getRelationships(listOf(account!!.id))
 		if (res.error || res.response == null) {
 			res.handleError(snackbarHandler)
 			return@bgIO
 		}
-		relationships = res.response
+		relationship = res.response.first()
 	}
-	* */
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by remember { mutableStateOf(0) }
@@ -214,12 +220,49 @@ fun ProfileView(id: String) = ViewSurface {
 							) {
 								Row {
 									if (isMe) {
-										OutlinedButton(onClick = {}) {
+										OutlinedButton(onClick = {
+											bg { snackbarHandler.showSnackbar("Not implemented") }
+										}) {
 											Text(stringResource(Res.string.edit_profile))
 										}
-									} else {
-										OutlinedButton(onClick = {}) {
-											Text(stringResource(Res.string.follow))
+									} else if (relationship != null) {
+										if (relationship!!.following) {
+											OutlinedButton(
+												onClick = {
+													// todo: add confirmation to unfollow
+													bg {
+														val res = unfollowAccount(account!!.id)
+														if (res.error || res.response == null) {
+															res.handleError(snackbarHandler)
+															return@bg
+														}
+														relationship = res.response
+													}
+												},
+												border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
+												colors = ButtonDefaults.outlinedButtonColors(
+													contentColor = MaterialTheme.colorScheme.error
+												)
+											) {
+												Text(stringResource(Res.string.unfollow))
+											}
+										} else {
+											FilledTonalButton(
+												onClick = {
+													// todo: add confirmation to follow- only if account is locked
+													bg {
+														val res = followAccount(account!!.id)
+														if (res.error || res.response == null) {
+															res.handleError(snackbarHandler)
+															return@bg
+														}
+														relationship = res.response
+													}
+												}
+											) {
+												if (account!!.locked) Text(stringResource(Res.string.request_to_follow))
+												else Text(stringResource(Res.string.follow))
+											}
 										}
 									}
 								}
