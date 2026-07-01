@@ -85,6 +85,7 @@ import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.bookmark
 import snowdrop.shared.generated.resources.boosted
 import snowdrop.shared.generated.resources.copy_link
 import snowdrop.shared.generated.resources.delete
@@ -595,7 +596,7 @@ fun Status(status: Status) {
 							)
 						} else {
 							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.unbookmark)) },
+								text = { Text(stringResource(Res.string.bookmark)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
 								},
