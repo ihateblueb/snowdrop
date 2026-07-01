@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -361,7 +362,7 @@ fun Status(status: Status) {
 						item {
 							TooltipBox(
 								positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-									2.dp
+									TooltipAnchorPosition.Above
 								),
 								tooltip = {
 									if (isUnicodeEmoji(it.name)) return@TooltipBox

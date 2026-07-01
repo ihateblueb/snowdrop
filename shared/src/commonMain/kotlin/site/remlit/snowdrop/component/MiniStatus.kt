@@ -39,7 +39,7 @@ fun MiniStatus(
 			.clip(RoundedCornerShape(10.dp))
 			.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
 			.clickable(onClick = {
-				navHandler.navigate(ThreadRoute(status.id!!))
+				navHandler.navigate(ThreadRoute(status.id))
 			})
 	) {
 		Column(modifier = Modifier.padding(10.dp)) {
