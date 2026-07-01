@@ -16,7 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.util.extension.toPixels
+import site.remlit.snowdrop.util.extension.toPixelsRounded
 
 const val bigAvatarSize = 84
 const val avatarSize = 48
@@ -35,6 +39,8 @@ fun Avatar(
 	small: Boolean = false,
 	smaller: Boolean = false
 ) {
+	val context = LocalPlatformContext.current
+
 	val size = if (big) bigAvatarSize.dp
 		else if (small) smallAvatarSize.dp
 		else if (smaller) smallerAvatarSize.dp
@@ -59,7 +65,9 @@ fun Avatar(
 	if (account.avatar != null) {
 		Box {
 			AsyncImage(
-				model = account.avatarStatic ?: account.avatar,
+				model = ImageRequest.Builder(context).data(account.avatarStatic ?: account.avatar)
+					.size(size.toPixelsRounded())
+					.build(),
 				contentDescription = account.avatarDescription,
 				contentScale = ContentScale.Crop,
 				onSuccess = { isLoading = false },

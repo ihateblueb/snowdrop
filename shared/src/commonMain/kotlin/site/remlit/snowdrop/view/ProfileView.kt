@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,7 +65,9 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
+import site.remlit.snowdrop.util.extension.toPixelsRounded
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.getScreenWidth
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.edit_profile
@@ -88,6 +92,7 @@ fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = SnackbarController.current
 	val currentDest = navHandler.currentDestination
+	val context = LocalPlatformContext.current
 
 	/* Preferences */
 	val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
@@ -123,6 +128,9 @@ fun ProfileView(id: String) = ViewSurface {
 		TopAppBar(
 			navigationIcon = {
 				// not sure why you can't just check isMe.. if you do it just doesn't ever show up
+				//
+				// re: because then clicking on yourself from a status will act like MyProfile when it isn't the
+				//     MyProfile page, it shouldn't do that.
 				if (atRoute<ProfileRoute>(currentDest)) {
 					IconButton(onClick = { navHandler.popBackStack() }) {
 						Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
@@ -179,7 +187,9 @@ fun ProfileView(id: String) = ViewSurface {
 					if (account!!.header != null) {
 						Box {
 							AsyncImage(
-								model = account!!.headerStatic ?: account!!.header,
+								model = ImageRequest.Builder(context).data(account!!.headerStatic ?: account!!.header)
+									.size(200.dp.toPixelsRounded(), getScreenWidth())
+									.build(),
 								contentDescription = account!!.headerDescription,
 								contentScale = ContentScale.Crop,
 								onSuccess = { isHeaderLoading = false },

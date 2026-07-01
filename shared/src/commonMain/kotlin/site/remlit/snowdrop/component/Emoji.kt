@@ -14,19 +14,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.util.extension.toPixelsRounded
 
-val emojiSize = 20.dp
-val bigEmojiSize = 40.dp
+val emojiSize = 20
+val bigEmojiSize = 40
 
 @Composable
 fun Emoji(
 	emoji: Emoji,
 	big: Boolean = false
 ) {
+	val context = LocalPlatformContext.current
+
 	var isLoading by remember { mutableStateOf(true) }
 
-	val size = if (big) bigEmojiSize else emojiSize
+	val size = if (big) bigEmojiSize.dp else emojiSize.dp
 
 	@Composable
 	fun fallback() {
@@ -39,7 +44,9 @@ fun Emoji(
 
 	Box {
 		AsyncImage(
-			model = emoji.staticUrl ?: emoji.url,
+			model = ImageRequest.Builder(context).data(emoji.staticUrl ?: emoji.url)
+				.size(size.toPixelsRounded())
+				.build(),
 			contentDescription = emoji.shortcode,
 			contentScale = ContentScale.Fit,
 			onSuccess = { isLoading = false },
