@@ -269,9 +269,16 @@ fun App() = safe {
 		CompositionLocalProvider(LocalNavController provides navController) {
 			CompositionLocalProvider(SnackbarController provides snackbarHostState) {
 
+				val bottomNavEnterAnimation = fadeIn() + slideInVertically(initialOffsetY = { it })
+				val bottomNavExitAnimation = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+
 				Scaffold(
 					bottomBar = {
-						if (loggedIn == true && !shouldHideBottomBar()) {
+						AnimatedVisibility(
+							visible = (loggedIn == true && !shouldHideBottomBar()),
+							enter = bottomNavEnterAnimation,
+							exit = bottomNavExitAnimation,
+						) {
 							NavigationBar {
 								NavigationBarItem(
 									selected = atRoute<TimelineRoute>(currentDest),
@@ -345,8 +352,8 @@ fun App() = safe {
 					floatingActionButton = {
 						AnimatedVisibility(
 							visible = shouldShowComposeFab(),
-							enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-							exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+							enter = bottomNavEnterAnimation,
+							exit = bottomNavExitAnimation,
 						) {
 							FloatingActionButton(
 								onClick = { navController.navigate(ComposeRoute()) }
