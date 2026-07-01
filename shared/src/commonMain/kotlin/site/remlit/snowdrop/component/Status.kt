@@ -85,6 +85,7 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
+import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.view.InteractionViewType
@@ -455,7 +456,7 @@ fun Status(status: Status) {
 						cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
 						// what a block
 						content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
-							realStatus.mentions.joinToString(separator = "") { "@${it.acct} " },
+							realStatus.mentions.filter { it.id != currentAccount?.id }.joinToString(separator = "") { "@${it.acct} " },
 						visibility = realStatus.visibility
 					))
 				}) {
