@@ -12,14 +12,13 @@ import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
 
-// todo: test reaction parameter
 @OptIn(ExperimentalSettingsApi::class)
-suspend fun reactStatus(id: String, reaction: String): ApiResponse<Status> = safeApiRequest {
+suspend fun unreactFromStatus(id: String, emoji: String): ApiResponse<Status> = safeApiRequest {
 	val accountId = getCurrentAccountId()
 	val host = getCurrentAccountHost()
 	val token = settings.getString("account_${accountId}_token", "")
 
-	val req = httpClient.post("https://$host/api/v1/statuses/$id/react/$reaction") {
+	val req = httpClient.post("https://$host/api/v1/statuses/$id/unreact/$emoji") {
 		header("Authorization", "Bearer $token")
 	}
 

@@ -3,6 +3,7 @@ package site.remlit.snowdrop.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
@@ -49,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
@@ -56,8 +60,10 @@ import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.favouriteStatus
+import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.unfavouriteStatus
+import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.api.statuses.unreblogStatus
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
@@ -122,6 +128,8 @@ fun Status(status: Status) {
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current
 	val haptics = LocalHapticFeedback.current
+	val focusManager = LocalFocusManager.current
+	val coroutineScope = rememberCoroutineScope()
 
 	/* Preferences */
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
@@ -129,6 +137,7 @@ fun Status(status: Status) {
 
 	/* View variables */
 	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	var realStatus by remember { mutableStateOf(status) }
 	var isReblog by remember { mutableStateOf(false) }
@@ -371,8 +380,44 @@ fun Status(status: Status) {
 								state = rememberTooltipState()
 							) {
 								OutlinedButton(
-									onClick = {},
-									contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
+									onClick = {
+										val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
+										if (it.me) {
+											coroutineScope.launch {
+												val res = unreactFromStatus(realStatus.id, tempName)
+												if (isReblog)
+													status.reblog = res.response
+												else
+													realStatus = res.response!!
+											}
+										} else if (!it.name.contains("@")) {
+											coroutineScope.launch {
+												val res = reactToStatus(realStatus.id, tempName)
+												if (isReblog)
+													status.reblog = res.response
+												else
+													realStatus = res.response!!
+											}
+										} else {
+											coroutineScope.launch {
+												snackbarController.showSnackbar("You cannot react with a remote emoji")
+											}
+										}
+									},
+									contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
+									colors = ButtonColors(
+										containerColor =
+											// is there a better way? this feels stupid
+											if (it.me && !isSystemInDarkTheme())
+												Color.LightGray
+											else if (it.me)
+												Color.DarkGray
+											else
+												Color.Transparent,
+										contentColor = ButtonDefaults.outlinedButtonColors().contentColor,
+										disabledContainerColor = ButtonDefaults.outlinedButtonColors().disabledContainerColor,
+										disabledContentColor = ButtonDefaults.outlinedButtonColors().disabledContentColor
+									)
 								) {
 									Row(
 										horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -501,8 +546,7 @@ fun Status(status: Status) {
 				}
 
 				if (getFeature("reactions")) {
-					// todo: implement reaction adder
-					FooterButton(onClick = { }) {
+					FooterButton(onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() }) {
 						Icon(
 							painterResource(Res.drawable.icon_add_24px),
 							null
@@ -643,6 +687,22 @@ fun Status(status: Status) {
 		HorizontalDivider(
 			thickness = 1.dp,
 			color = MaterialTheme.colorScheme.surfaceContainer
+		)
+
+		EmojiPicker(
+			visible = showEmojiPicker,
+			onDismiss = { showEmojiPicker = !showEmojiPicker },
+			onSelectEmoji = {
+				coroutineScope.launch {
+					showEmojiPicker = !showEmojiPicker
+
+					val res = reactToStatus(realStatus.id, ":${it.shortcode}:")
+					if (isReblog)
+						status.reblog = res.response
+					else
+						realStatus = res.response!!
+				}
+			}
 		)
 	}
 }

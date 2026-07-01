@@ -44,36 +44,35 @@ fun EmojiPicker(
 	onDismiss: () -> Unit,
 	onSelectEmoji: (Emoji) -> Unit
 ) {
-	val emojis by fetchEmojis().collectAsStateWithLifecycle(emptyList())
-
-	val categorized = mutableMapOf<String, List<Emoji>>()
-
-	emojis.forEach {
-		val category = it.category ?: stringResource(Res.string.uncategorized)
-		categorized[category] = categorized.getOrElse(category) { mutableListOf() }.plus(it)
-	}
-
-
-	// category state nonsense
-	val categoryVisibility = mutableStateMapOf<String, Boolean>()
-	fun getHiddenKey(category: String) = "emojipicker_category_${category}_hidden"
-	categorized.forEach { (key) ->
-		categoryVisibility[key] = blockingSettings.getBoolean(getHiddenKey(key), false)
-	}
-
-	fun toggleCategory(category: String) {
-		fun getCategoryVisibility(category: String): Boolean = categoryVisibility[category] ?: true
-
-		categoryVisibility[category] = !getCategoryVisibility(category)
-		blockingSettings.putBoolean(getHiddenKey(category), getCategoryVisibility(category))
-	}
-
-
 	AnimatedVisibility(
 		visible = visible,
 		enter = bottomNavEnterAnimation,
 		exit = bottomNavExitAnimation
 	) {
+		val emojis by fetchEmojis().collectAsStateWithLifecycle(emptyList())
+
+		val categorized = mutableMapOf<String, List<Emoji>>()
+
+		emojis.forEach {
+			val category = it.category ?: stringResource(Res.string.uncategorized)
+			categorized[category] = categorized.getOrElse(category) { mutableListOf() }.plus(it)
+		}
+
+
+		// category state nonsense
+		val categoryVisibility = mutableStateMapOf<String, Boolean>()
+		fun getHiddenKey(category: String) = "emojipicker_category_${category}_hidden"
+		categorized.forEach { (key) ->
+			categoryVisibility[key] = blockingSettings.getBoolean(getHiddenKey(key), false)
+		}
+
+		fun toggleCategory(category: String) {
+			fun getCategoryVisibility(category: String): Boolean = categoryVisibility[category] ?: true
+
+			categoryVisibility[category] = !getCategoryVisibility(category)
+			blockingSettings.putBoolean(getHiddenKey(category), getCategoryVisibility(category))
+		}
+
 		ModalBottomSheet(
 			onDismissRequest = onDismiss
 		) {
@@ -95,7 +94,7 @@ fun EmojiPicker(
 									fontWeight = FontWeight.Medium
 								)
 
-								if (!(categoryVisibility[category] ?: true)) Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
+								if (categoryVisibility[category] ?: true) Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
 								else Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
 							}
 						}
