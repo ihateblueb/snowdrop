@@ -1,5 +1,8 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -75,6 +78,7 @@ import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_mail_20px
+import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_send_24px
 import snowdrop.shared.generated.resources.icon_swap_horiz_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
@@ -88,6 +92,7 @@ import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
 import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -107,6 +112,7 @@ fun ComposeView(
 
 	var visibilityDropdownOpen by remember { mutableStateOf(false) }
 	var showCwField by remember { mutableStateOf(false) }
+	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	if (!initialCw.isBlank()) showCwField = true
 
@@ -294,7 +300,11 @@ fun ComposeView(
 				modifier = Modifier.fillMaxHeight().weight(1f),
 				verticalArrangement = Arrangement.spacedBy(5.dp)
 			) {
-				if (showCwField)
+				AnimatedVisibility(
+					visible = showCwField,
+					enter = expandVertically(),
+					exit = shrinkVertically()
+				) {
 					TextField(
 						value = cw,
 						onValueChange = { cw = it },
@@ -309,6 +319,7 @@ fun ComposeView(
 							focusedIndicatorColor = Color(0x00000000)
 						)
 					)
+				}
 
 				TextField(
 					value = content,
@@ -333,6 +344,9 @@ fun ComposeView(
 			) {
 				IconButton(onClick = { showCwField = !showCwField }) {
 					Icon(painterResource(Res.drawable.icon_warning_24px), null)
+				}
+				IconButton(onClick = { showEmojiPicker = !showEmojiPicker }) {
+					Icon(painterResource(Res.drawable.icon_mood_24px), null)
 				}
 
 
