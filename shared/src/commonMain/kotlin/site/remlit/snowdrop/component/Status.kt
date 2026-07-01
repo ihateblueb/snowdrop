@@ -71,6 +71,7 @@ import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
@@ -85,6 +86,7 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmark
@@ -407,15 +409,10 @@ fun Status(status: Status) {
 									},
 									contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
 									colors = ButtonColors(
-										containerColor =
-											// is there a better way? this feels stupid
-											if (it.me && !isSystemInDarkTheme())
-												Color.LightGray
-											else if (it.me)
-												Color.DarkGray
-											else
-												Color.Transparent,
-										contentColor = ButtonDefaults.outlinedButtonColors().contentColor,
+										containerColor = if (it.me) MaterialTheme.colorScheme.secondaryContainer
+											else Color.Transparent,
+										contentColor = if (it.me) MaterialTheme.colorScheme.secondary
+											else ButtonDefaults.outlinedButtonColors().contentColor,
 										disabledContainerColor = ButtonDefaults.outlinedButtonColors().disabledContainerColor,
 										disabledContentColor = ButtonDefaults.outlinedButtonColors().disabledContentColor
 									)
@@ -425,7 +422,11 @@ fun Status(status: Status) {
 										verticalAlignment = Alignment.CenterVertically
 									) {
 										val emoji = it.toEmoji()
-										if (emoji != null) Emoji(emoji) else Text(it.name)
+										if (emoji != null) Emoji(emoji) else when (getPlatform()) {
+											Platform.ANDROID -> Text(it.name)
+											Platform.IOS -> Text(it.name, fontSize = 18.sp)
+										}
+
 										if (!blockingSettings.getBoolean("hide_interaction_counters", false))
 											Text("${it.count}")
 									}
