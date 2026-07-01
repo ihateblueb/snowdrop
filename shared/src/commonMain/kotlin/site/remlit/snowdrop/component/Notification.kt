@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
@@ -72,7 +71,7 @@ fun Notification(notification: Notification) {
 
 	// sharkey doesn't include the actual reactions in the notifications for some reason
 	// chuckya includes the reaction prop, so we should use that. otherwise there's no point in showing the notif
-	if (notification.type == "reaction" && notification.reaction == null) return
+	if (notification.type == "reaction" && notification.reaction == null && notification.emoji == null) return
 
 	if (notification.type == "mention" && notification.status != null) {
 		Status(notification.status)
@@ -154,7 +153,9 @@ fun Notification(notification: Notification) {
 						when (notification.type) {
 							"favourite" -> message = stringResource(Res.string.liked_your_post)
 							"pleroma:emoji_reaction" -> message = stringResource(Res.string.reacted_with_x, "${notification.emoji}")
-							"reaction" -> message = stringResource(Res.string.reacted_with_x, ":${notification.reaction?.name}:")
+							"reaction" -> message =
+								if (notification.reaction == null) stringResource(Res.string.reacted_with_x, "${notification.emoji}")
+								else stringResource(Res.string.reacted_with_x, ":${notification.reaction.name}:")
 							"reblog" -> message = stringResource(Res.string.boosted_your_post)
 							"update" -> message = stringResource(Res.string.edited_a_post)
 							"poll" -> message = stringResource(Res.string.a_poll_you_have_voted_in_has_ended)
