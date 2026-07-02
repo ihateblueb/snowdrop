@@ -20,3 +20,4 @@ captures
 node_modules/
 package.json
 package-lock.json
+project.pbxproj

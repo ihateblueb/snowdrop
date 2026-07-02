@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -155,6 +156,8 @@ data class ComposeRoute(
 
 @Serializable
 object SettingsRoute
+@Serializable
+object AboutInstanceRoute
 
 @Serializable
 object DebugRoute
@@ -450,6 +453,7 @@ fun App() = safe {
 							else Text("Error")
 						}
 
+						// todo: replace these animations and make them better
 						composable<ThreadRoute>(
 							enterTransition = { slideIntoContainer(
 								AnimatedContentTransitionScope.SlideDirection.Start, tween(
@@ -519,6 +523,18 @@ fun App() = safe {
 								)
 							) }
 						) { SettingsView() }
+						composable<AboutInstanceRoute>(
+							enterTransition = { slideIntoContainer(
+								AnimatedContentTransitionScope.SlideDirection.Start, tween(
+									250
+								)
+							) },
+							exitTransition = { slideOutOfContainer(
+								AnimatedContentTransitionScope.SlideDirection.End, tween(
+									200
+								)
+							) }
+						) { AboutInstanceView() }
 
 						// Debug
 						composable<DebugRoute> { DebugView() }

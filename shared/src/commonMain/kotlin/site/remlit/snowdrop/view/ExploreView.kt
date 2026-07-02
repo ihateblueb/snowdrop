@@ -5,11 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,10 +35,13 @@ import snowdrop.shared.generated.resources.explore
 import snowdrop.shared.generated.resources.followers
 import snowdrop.shared.generated.resources.search_for_posts_or_users
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreView() = ViewSurface {
 	var query by remember { mutableStateOf("") }
 	var results by remember { mutableStateOf<SearchResponse?>(null) }
+
+	val searchBarState = rememberSearchBarState()
 
 	suspend fun submitSearch() {
 		val res = search(query)
@@ -51,12 +60,18 @@ fun ExploreView() = ViewSurface {
 		modifier = Modifier.padding(10.dp)
 			.fillMaxWidth()
 	) {
-		OutlinedTextField(
-			value = query,
-			onValueChange = { query = it },
-			placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
-			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-			keyboardActions = KeyboardActions(onGo = { bgIO { submitSearch() } }),
+		SearchBar(
+			state = searchBarState,
+			inputField = {
+				SearchBarDefaults.InputField(
+					query = query,
+					onQueryChange = { query = it },
+					onSearch = { bgIO { submitSearch() } },
+					expanded = false,
+					onExpandedChange = {},
+					placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) }
+				)
+			},
 			modifier = Modifier.fillMaxWidth()
 		)
 	}

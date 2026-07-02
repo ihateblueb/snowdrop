@@ -1,6 +1,7 @@
 package site.remlit.snowdrop.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,8 +51,14 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			minId: String?,
 			sinceId: String?
 		) -> ApiResponse<List<T>>,
+	onRefresh: () -> Unit = {},
 	timelineComponent: @Composable (item: T) -> Unit,
+	leadingItem: @Composable () -> Unit = {},
+	trailingItem: @Composable () -> Unit = {},
+	modifier: Modifier = Modifier,
+	itemModifier: Modifier = Modifier,
 	refreshKey: Int = 0,
+	scrollToTopPostRefresh: Boolean = true,
 	countTowardsScrollingUpward: Boolean = false
 ) {
 	val snackbarHandler = SnackbarController.current
@@ -83,7 +90,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		if (res.response == null) return
 		timeline.clear()
 		timeline.addAll(res.response)
-		listState.scrollToItem(0)
+		if (scrollToTopPostRefresh) listState.scrollToItem(0)
 		isRefreshing = false
 	}
 
@@ -95,9 +102,12 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		onRefresh = {
 			coroutineScope.launch {
 				coroutineScope.launch { addOrUpdateTimeline() }
-				listState.scrollToItem(0)
+				if (scrollToTopPostRefresh) listState.scrollToItem(0)
 			}
-		}
+
+			onRefresh()
+		},
+		modifier = modifier
 	) {
 		var timelineModifier = Modifier.fillMaxSize()
 
@@ -119,8 +129,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 		LazyColumn(
 			state = listState,
-			modifier = timelineModifier,
+			modifier = timelineModifier.then(modifier)
 		) {
+			item { leadingItem() }
+
 			if (timeline.isEmpty() && !isRefreshing) item {
 				Column(
 					modifier = Modifier.fillMaxHeight()
@@ -137,8 +149,12 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				items = timeline,
 				key = { it.id }
 			) {
-				timelineComponent(it)
+				Box(modifier = itemModifier) {
+					timelineComponent(it)
+				}
 			}
+
+			item { trailingItem() }
 		}
 	}
 }

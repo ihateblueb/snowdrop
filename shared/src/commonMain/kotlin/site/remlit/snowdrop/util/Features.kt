@@ -82,6 +82,12 @@ suspend fun determineFeatures() {
 	putFeature("bubble_timeline_chuckya", true)
 	else putFeature("bubble_timeline_chuckya", false)
 
+	if (
+		software == Software.IceshrimpNET
+	)
+	putFeature("biting", true)
+	else putFeature("biting", false)
+
 	determiningFeatures = false
 }
 

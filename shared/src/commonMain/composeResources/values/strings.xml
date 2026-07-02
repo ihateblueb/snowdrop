@@ -101,6 +101,7 @@
 	<string name="open_in_browser">Open in browser</string>
 	<string name="bookmark">Bookmark</string>
 	<string name="unbookmark">Unbookmark</string>
+	<string name="bite_post">Bite this post</string>
 	<string name="show_boosts">Show boosts</string>
 	<string name="show_likes">Show likes</string>
 	<string name="show_reactions">Show reactions</string>
@@ -121,4 +122,10 @@
 	<string name="are_you_sure_you_want_to_cancel_your_follow_request">Are you sure you want to cancel your follow request to @%1$s?</string>
 	<string name="are_you_sure_you_want_to_unfollow">Are you sure you want to unfollow @%1$s?</string>
 	<string name="are_you_sure_you_want_to_send_a_follow_request">Are you sure you want to send a follow request to @%1$s?</string>
+
+	<string name="about_instance">About instance</string>
+	<string name="rules">Rules</string>
+	<string name="bubble_instances">Bubble instances</string>
+
+	<string name="bookmarks">Bookmarks</string>
 </resources>

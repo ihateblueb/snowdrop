@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.api.getEmojis
+import site.remlit.snowdrop.api.getInstance
 import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.safe
@@ -83,5 +85,24 @@ fun fetchEmojis(snackbarHostState: SnackbarHostState? = null): Flow<List<Emoji>>
 	} else {
 		emit(req.response)
 		putCacheEntry("emojis", req.response)
+	}
+}
+
+/**
+ * Gets the cached list of emojis (if available) before
+ * the request to get a fresh version finishes.
+ * */
+fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1> = flow {
+	val cached = getCacheEntry("instance")
+	if (cached != null) safe {
+		emit(cached.getContent<InstanceV1>())
+	}
+
+	val req = getInstance()
+	if (req.error || req.response == null) {
+		if (snackbarHostState != null) req.handleError(snackbarHostState)
+	} else {
+		emit(req.response)
+		putCacheEntry("instance", req.response)
 	}
 }

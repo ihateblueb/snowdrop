@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.AboutInstanceRoute
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.component.ViewSurface
@@ -48,6 +49,7 @@ import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.account
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
@@ -57,6 +59,7 @@ import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_bug_report_24px
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
+import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.icon_logout_24px
@@ -99,6 +102,19 @@ fun SettingsView() = ViewSurface {
 	LazyColumn(
 		modifier = Modifier.padding(horizontal = 10.dp)
 	) {
+		item {
+			Card {
+				ListItem(
+					leadingContent = {
+						Icon(painterResource(Res.drawable.icon_info_24px), null,)
+					},
+					headlineContent = { Text(stringResource(Res.string.about_instance)) },
+					modifier = Modifier.clickable {
+						navHandler.navigate(AboutInstanceRoute)
+					}
+				)
+			}
+		}
 		item {
 			Text(
 				stringResource(Res.string.general),
