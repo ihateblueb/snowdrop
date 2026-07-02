@@ -53,7 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
@@ -87,7 +86,6 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
-import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
@@ -703,6 +701,7 @@ fun Status(status: Status) {
 								onClick = {
 									coroutineScope.launch {
 										biteStatus(realStatus.id)
+										vibrate(true, haptics)
 
 										showDropdown = !showDropdown
 									}

@@ -32,11 +32,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,9 +47,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
+import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
@@ -70,7 +74,9 @@ import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request
@@ -82,6 +88,7 @@ import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.followers
 import snowdrop.shared.generated.resources.following
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_at_x
 import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.posts
@@ -100,6 +107,8 @@ fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = SnackbarController.current
 	val currentDest = navHandler.currentDestination
+	val haptics = LocalHapticFeedback.current
+	val coroutineScope = rememberCoroutineScope()
 
 	/* Preferences */
 	val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
@@ -159,6 +168,20 @@ fun ProfileView(id: String) = ViewSurface {
 						stringResource(Res.string.x_posts, formatNumber(account!!.statusesCount)),
 						fontSize = 14.sp
 					)
+				}
+			},
+			actions = {
+				if (getFeature("biting") && atRoute<ProfileRoute>(currentDest)) {
+					IconButton(
+						onClick = {
+							coroutineScope.launch {
+								biteAccount(account!!.id)
+								vibrate(true, haptics)
+							}
+						}
+					) {
+						Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+					}
 				}
 			}
 		)

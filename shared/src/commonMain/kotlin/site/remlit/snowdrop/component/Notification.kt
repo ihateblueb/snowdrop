@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.SpanStyle
@@ -34,18 +35,21 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
+import site.remlit.snowdrop.api.biteBack
 import site.remlit.snowdrop.api.followRequest.authorizeFollowRequest
 import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
+import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.a_poll_you_have_voted_in_has_ended
 import snowdrop.shared.generated.resources.accept
 import snowdrop.shared.generated.resources.bit_you
 import snowdrop.shared.generated.resources.bit_you_back
 import snowdrop.shared.generated.resources.bit_your_post
+import snowdrop.shared.generated.resources.bite_back
 import snowdrop.shared.generated.resources.boosted_your_post
 import snowdrop.shared.generated.resources.edited_a_post
 import snowdrop.shared.generated.resources.followed_you
@@ -68,6 +72,9 @@ import snowdrop.shared.generated.resources.requested_to_follow_you
 @Composable
 fun Notification(notification: Notification) {
 	val navHandler = LocalNavController.current
+	val haptics = LocalHapticFeedback.current
+
+	var bittenBack by remember { mutableStateOf(false) }
 
 	// sharkey doesn't include the actual reactions in the notifications for some reason
 	// chuckya includes the reaction prop, so we should use that. otherwise there's no point in showing the notif
@@ -113,7 +120,7 @@ fun Notification(notification: Notification) {
 							painterResource(Res.drawable.icon_notifications_active_24), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
-						"bite" -> Icon( // todo: tooth, and test bite notifs
+						"bite" -> Icon(
 							painterResource(Res.drawable.icon_tooth_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
@@ -234,6 +241,40 @@ fun Notification(notification: Notification) {
 						OutlinedButton(onClick = { bgIO { rejectFollowRequest(notification.account.id) } }) {
 							Icon(painterResource(Res.drawable.icon_close_24px), null)
 							Text(stringResource(Res.string.reject))
+						}
+					}
+				}
+
+				if (notification.type == "bite") {
+					Row(
+						modifier = Modifier.padding(top = 10.dp),
+						horizontalArrangement = Arrangement.spacedBy(10.dp)
+					) {
+						if (bittenBack) {
+							FilledTonalButton(
+								onClick = {
+									bgIO {
+										biteBack(notification.bite!!.id)
+										vibrate(true, haptics)
+									}
+								}
+							) {
+								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+								Text(stringResource(Res.string.bite_back))
+							}
+						} else {
+							OutlinedButton(
+								onClick = {
+									bgIO {
+										biteBack(notification.bite!!.id)
+										vibrate(true, haptics)
+										bittenBack = true
+									}
+								}
+							) {
+								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+								Text(stringResource(Res.string.bite_back))
+							}
 						}
 					}
 				}
