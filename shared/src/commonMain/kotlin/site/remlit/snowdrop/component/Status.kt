@@ -3,7 +3,6 @@ package site.remlit.snowdrop.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -59,6 +57,7 @@ import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.ThreadRoute
+import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
@@ -90,6 +89,7 @@ import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.bite_post
 import snowdrop.shared.generated.resources.bookmark
 import snowdrop.shared.generated.resources.boosted
 import snowdrop.shared.generated.resources.copy_link
@@ -113,6 +113,7 @@ import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_star_filled_24px
+import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.mute
@@ -622,6 +623,22 @@ fun Status(status: Status) {
 										realStatus = res.response!!
 										if (isReblog)
 											status.reblog = res.response
+
+										showDropdown = !showDropdown
+									}
+								}
+							)
+						}
+
+						if (getFeature("biting")) {
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.bite_post)) },
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+								},
+								onClick = {
+									coroutineScope.launch {
+										biteStatus(realStatus.id)
 
 										showDropdown = !showDropdown
 									}
