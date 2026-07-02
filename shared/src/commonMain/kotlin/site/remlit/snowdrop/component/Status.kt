@@ -85,9 +85,9 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
+import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmark
@@ -220,7 +220,7 @@ fun Status(status: Status) {
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						Text(
-							rebloggingAccount!!.displayName ?: rebloggingAccount!!.username,
+							rebloggingAccount!!.displayName(),
 							color = MaterialTheme.colorScheme.secondary,
 							fontSize = 14.sp,
 							fontWeight = FontWeight.Medium,
@@ -250,7 +250,7 @@ fun Status(status: Status) {
 				Column(
 					modifier = Modifier.padding(end = 10.dp)
 						.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
+							navHandler.navigate(ProfileRoute(realStatus.account!!.id))
 						})
 				) {
 					Avatar(
@@ -264,7 +264,7 @@ fun Status(status: Status) {
 						.padding(end = 10.dp)
 				) {
 					Text(
-						realStatus.account?.displayName ?: realStatus.account?.username!!,
+						realStatus.account!!.displayName(),
 						fontWeight = FontWeight.Medium,
 						overflow = TextOverflow.Ellipsis,
 						maxLines = 1,
@@ -387,20 +387,20 @@ fun Status(status: Status) {
 							) {
 								OutlinedButton(
 									onClick = {
+										vibrate(!it.me, haptics)
+
 										val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
 										if (it.me) {
 											coroutineScope.launch {
 												val res = unreactFromStatus(realStatus.id, tempName)
 												realStatus = res.response!!
-												if (isReblog)
-													status.reblog = res.response
+												if (isReblog) status.reblog = res.response
 											}
 										} else if (!it.name.contains("@")) {
 											coroutineScope.launch {
 												val res = reactToStatus(realStatus.id, tempName)
 												realStatus = res.response!!
-												if (isReblog)
-													status.reblog = res.response
+												if (isReblog) status.reblog = res.response
 											}
 										} else {
 											coroutineScope.launch {
@@ -473,20 +473,23 @@ fun Status(status: Status) {
 				}
 
 				FooterButton(
-					onClick = {
-						bgIO {
-							if (!isMine && realStatus.visibility != "public" && realStatus.visibility != "unlisted")
-								return@bgIO
+					onClick = c@{
+						if (!isMine && realStatus.visibility != "public" && realStatus.visibility != "unlisted")
+							return@c
 
+						vibrate(!realStatus.reblogged, haptics)
+
+						bgIO {
 							val res: ApiResponse<Status> = if (realStatus.reblogged) unreblogStatus(realStatus.id)
 							else reblogStatus(realStatus.id)
 							if (res.error || res.response == null) {
 								res.handleError(snackbarController)
 								return@bgIO
 							}
-							realStatus = res.response
-							if (isReblog)
-								status.reblog = res.response
+
+							// returns the status created for reblog, ooorr not sometimes.
+							realStatus = res.response.reblog ?: res.response
+							if (isReblog) status.reblog = res.response.reblog ?: res.response
 						}
 					},
 					colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -515,7 +518,8 @@ fun Status(status: Status) {
 
 				FooterButton(
 					onClick = {
-						haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+						vibrate(!realStatus.favourited, haptics)
+
 						bgIO {
 							val res: ApiResponse<Status> = if (realStatus.favourited) unfavouriteStatus(realStatus.id)
 							else favouriteStatus(realStatus.id)
@@ -524,8 +528,7 @@ fun Status(status: Status) {
 								return@bgIO
 							}
 							realStatus = res.response
-							if (isReblog)
-								status.reblog = res.response
+							if (isReblog) status.reblog = res.response
 						}
 					},
 					colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(

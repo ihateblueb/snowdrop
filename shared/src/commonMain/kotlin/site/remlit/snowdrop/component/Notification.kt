@@ -146,8 +146,7 @@ fun Notification(notification: Notification) {
 						when (notification.type) {
 							"favourite", "pleroma:emoji_reaction", "reaction", "reblog", "update", "status", "bite",
 								"follow_request", "follow" ->
-									displayName = notification.account.displayName
-										?: notification.account.username
+									displayName = notification.account.displayName()
 						}
 
 						when (notification.type) {

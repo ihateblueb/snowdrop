@@ -49,7 +49,7 @@ fun MiniStatus(
 			) {
 				Avatar(status.account!!, smaller = true)
 				Text(
-					status.account.displayName ?: status.account.username,
+					status.account.displayName(),
 					fontWeight = FontWeight.Bold,
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis,

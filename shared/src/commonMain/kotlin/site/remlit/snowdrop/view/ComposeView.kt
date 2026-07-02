@@ -165,7 +165,7 @@ fun ComposeView(
 						modifier = Modifier.weight(1f)
 					) {
 						Text(
-							currentAccount!!.displayName ?: currentAccount!!.username,
+							currentAccount!!.displayName(),
 							fontWeight = FontWeight.Medium,
 							overflow = TextOverflow.Ellipsis,
 							maxLines = 1

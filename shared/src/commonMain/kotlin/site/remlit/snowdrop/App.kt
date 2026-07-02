@@ -400,7 +400,7 @@ fun App() = safe {
 
 											Column {
 												Text(
-													account!!.displayName ?: account!!.url,
+													account!!.displayName(),
 													fontWeight = FontWeight.Medium
 												)
 												Text("@${account!!.acct}")

@@ -85,7 +85,7 @@ fun ThreadView(id: String) = ViewSurface {
 			} else Column {
 
 				Text(
-					stringResource(Res.string.post_by, "${status!!.account?.displayName ?: status!!.account?.username}"),
+					stringResource(Res.string.post_by, "${status!!.account?.displayName()}"),
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis
 				)

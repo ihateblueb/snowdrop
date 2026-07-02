@@ -151,10 +151,9 @@ fun ProfileView(id: String) = ViewSurface {
 						stringResource(Res.string.x_posts, "0"),
 						fontSize = 14.sp
 					)
-				}
-				else Column {
+				} else Column {
 					Text(
-						account!!.displayName ?: account!!.username,
+						account!!.displayName(),
 						maxLines = 1,
 						overflow = TextOverflow.Ellipsis
 					)
@@ -322,7 +321,7 @@ fun ProfileView(id: String) = ViewSurface {
 						Row {
 							Column {
 								Text(
-									account!!.displayName ?: account!!.username,
+									account!!.displayName(),
 									fontWeight = FontWeight.Bold,
 									fontSize = 24.sp
 								)

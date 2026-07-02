@@ -68,7 +68,7 @@ fun StatusInteractionDetailView(
 			Avatar(account)
 
 			Column {
-				Text(account.displayName ?: account.username, fontWeight = FontWeight.Medium)
+				Text(account.displayName(), fontWeight = FontWeight.Medium)
 				Text("@${account.acct}")
 			}
 		}
