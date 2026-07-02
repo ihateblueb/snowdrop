@@ -18,4 +18,6 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+package.json
+package-lock.json
 project.pbxproj
