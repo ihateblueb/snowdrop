@@ -129,7 +129,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 		LazyColumn(
 			state = listState,
-			modifier = modifier
+			modifier = timelineModifier.then(modifier)
 		) {
 			item { leadingItem() }
 
