@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.SettingsRoute
+import site.remlit.snowdrop.api.getBookmarks
 import site.remlit.snowdrop.api.timeline.getBubbleTimeline
 import site.remlit.snowdrop.api.timeline.getHomeTimeline
 import site.remlit.snowdrop.api.timeline.getPublicTimeline
@@ -45,9 +47,12 @@ import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.bookmark
+import snowdrop.shared.generated.resources.bookmarks
 import snowdrop.shared.generated.resources.bubble
 import snowdrop.shared.generated.resources.global
 import snowdrop.shared.generated.resources.home
+import snowdrop.shared.generated.resources.icon_bookmark_24px
 import snowdrop.shared.generated.resources.icon_bubble_chart_24px
 import snowdrop.shared.generated.resources.icon_globe_24px
 import snowdrop.shared.generated.resources.icon_home_24px
@@ -94,9 +99,10 @@ fun TimelineView() = ViewSurface {
 			return when (timelineType) {
 				0 -> getHomeTimeline(maxId = maxId, minId = minId, sinceId = sinceId)
 				1 -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, local = true)
-				2 -> getBubbleTimeline(maxId = maxId, minId = minId, sinceId = sinceId)
+				2 -> getBubbleTimeline(maxId = maxId, minId = minId, sinceId = sinceId) // todo: bubbleTimeline vs publicTimeline
 				3 -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, remote = true)
-				else -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, remote = true) // else also 3
+
+				else -> getBookmarks(maxId = maxId, minId = minId, sinceId = sinceId) // else 4
 			}
 		}
 
@@ -107,6 +113,8 @@ fun TimelineView() = ViewSurface {
 				1 -> Icon(painterResource(Res.drawable.icon_map_24px), null)
 				2 -> Icon(painterResource(Res.drawable.icon_bubble_chart_24px), null)
 				3 -> Icon(painterResource(Res.drawable.icon_globe_24px), null)
+
+				4 -> Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
 			}
 		}
 
@@ -136,6 +144,14 @@ fun TimelineView() = ViewSurface {
 					leadingIcon = { RenderTimelineTypeIcon(3) },
 					text = { Text(stringResource(Res.string.global)) },
 					onClick = { blockingSettings.putInt("timeline", 3); timelinePickerOpen = false }
+				)
+
+				HorizontalDivider()
+
+				DropdownMenuItem(
+					leadingIcon = { RenderTimelineTypeIcon(4) },
+					text = { Text(stringResource(Res.string.bookmarks)) },
+					onClick = { blockingSettings.putInt("timeline", 4); timelinePickerOpen = false }
 				)
 			}
 		}
@@ -172,6 +188,8 @@ fun TimelineView() = ViewSurface {
 						1 -> Text(stringResource(Res.string.local))
 						2 -> Text(stringResource(Res.string.bubble))
 						3 -> Text(stringResource(Res.string.global))
+
+						4 -> Text(stringResource(Res.string.bookmarks))
 					}
 
 					if (timelinePickerOpen) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
