@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.settings
@@ -21,7 +21,7 @@ fun StartView(
 	navigateToTimeline: () -> Unit
 ) = ViewSurface {
 	val loggedIn by settings.getBooleanOrNullFlow("logged_in")
-		.collectAsStateWithLifecycle(null)
+		.collectAsState(null)
 
 	Column(
 		modifier = Modifier.fillMaxHeight()

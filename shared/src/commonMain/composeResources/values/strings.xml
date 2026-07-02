@@ -122,4 +122,10 @@
 	<string name="are_you_sure_you_want_to_cancel_your_follow_request">Are you sure you want to cancel your follow request to @%1$s?</string>
 	<string name="are_you_sure_you_want_to_unfollow">Are you sure you want to unfollow @%1$s?</string>
 	<string name="are_you_sure_you_want_to_send_a_follow_request">Are you sure you want to send a follow request to @%1$s?</string>
+
+	<string name="about_instance">About instance</string>
+	<string name="rules">Rules</string>
+	<string name="bubble_instances">Bubble instances</string>
+
+	<string name="bookmarks">Bookmarks</string>
 </resources>

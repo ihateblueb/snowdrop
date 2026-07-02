@@ -33,6 +33,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -86,6 +87,7 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
@@ -148,10 +150,10 @@ fun Status(status: Status) {
 
 	/* Preferences */
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
-		.collectAsStateWithLifecycle(false)
+		.collectAsState(false)
 
 	/* View variables */
-	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+	val currentAccount by getCurrentAccountObjectFlow().collectAsState(null)
 	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	var realStatus by remember { mutableStateOf(status) }

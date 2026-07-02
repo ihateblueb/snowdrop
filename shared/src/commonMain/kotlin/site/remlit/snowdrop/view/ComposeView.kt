@@ -27,9 +27,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +59,7 @@ import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
@@ -118,8 +121,12 @@ fun ComposeView(
 		}
 	}
 
+	val instance by fetchInstance().collectAsState(null)
+	val maxChars = (instance?.maxTootChars ?: 500)
+	val remainingChars = maxChars - (content.length + cw.length)
+
 	// can submit stuff
-	canSubmit = !content.isBlank()
+	canSubmit = !content.isBlank() && remainingChars >= 0
 
 	suspend fun sendPost() {
 		val res = createStatus(CreateStatusRequest(
@@ -352,7 +359,15 @@ fun ComposeView(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.End
 					) {
-						Row {
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(5.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Text(
+								"$remainingChars",
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+
 							FilledTonalIconButton(
 								onClick = { bgIO { sendPost() }; navHandler.popBackStack() },
 								enabled = canSubmit
