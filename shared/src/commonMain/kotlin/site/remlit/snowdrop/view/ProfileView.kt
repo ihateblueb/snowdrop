@@ -361,12 +361,12 @@ fun ProfileView(id: String) = ViewSurface {
 											) {
 												Text(
 													name,
-													modifier = Modifier.weight(0.50f),
+													modifier = Modifier.weight(0.35f),
 													color = MaterialTheme.colorScheme.primary
 												)
 												HtmlContent(
 													value,
-													modifier = Modifier.weight(1.75f)
+													modifier = Modifier.weight(0.65f)
 												)
 											}
 										}

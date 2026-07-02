@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -87,15 +88,23 @@ fun EmojiPicker(
 							Row(
 								modifier = Modifier.clickable(onClick = { toggleCategory(category) })
 									.padding(10.dp)
-									.fillMaxWidth()
+									.fillMaxWidth(),
+								verticalAlignment = Alignment.CenterVertically
 							) {
 								Text(
 									category,
 									fontWeight = FontWeight.Medium
 								)
 
-								if (categoryVisibility[category] ?: true) Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
-								else Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
+								Column(
+									horizontalAlignment = Alignment.End,
+									modifier = Modifier.fillMaxWidth()
+								) {
+									Column {
+										if (categoryVisibility[category] ?: true) Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
+										else Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
+									}
+								}
 							}
 						}
 						item {

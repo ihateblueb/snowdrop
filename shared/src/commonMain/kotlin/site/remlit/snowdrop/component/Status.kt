@@ -6,10 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -50,6 +55,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -124,9 +131,10 @@ import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
+import kotlin.math.ceil
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
@@ -201,7 +209,7 @@ fun Status(status: Status) {
 	) {
 		Column(
 			modifier = Modifier.fillMaxWidth()
-				.padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
+				.padding(top = 10.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
 			// todo: not vertically centered correctly
 		) {
 			if (isReblog && rebloggingAccount != null) {
@@ -309,8 +317,59 @@ fun Status(status: Status) {
 
 			@Composable
 			fun renderContent() {
-				if (realStatus.content != null) {
-					HtmlContent(realStatus.content!!, mentions = realStatus.mentions)
+				Column(
+					verticalArrangement = Arrangement.spacedBy(10.dp)
+				) {
+					if (!realStatus.content.isNullOrBlank()) {
+						HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
+					}
+
+					@Composable
+					fun mediaFallback(blurhash: String? = null) {
+						Box(
+							modifier = Modifier.clip(RoundedCornerShape(10.dp))
+								.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+								.height(200.dp)
+								.fillMaxWidth()
+						)
+					}
+
+					if (!realStatus.mediaAttachments.isEmpty()) {
+						Grid({
+							// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
+							// grid should expand to full width
+
+							if (realStatus.mediaAttachments.size < 2) column(1f)
+							else repeat(2) { column(0.5f) }
+
+							if (realStatus.mediaAttachments.size < 2) row(1f)
+							else repeat(ceil(realStatus.mediaAttachments.size.toDouble() / 2).toInt()) {
+								row(0.5f)
+							}
+
+							flow = GridFlow.Column
+							gap(5.dp)
+						}) {
+							realStatus.mediaAttachments.forEach { media ->
+								Box {
+									mediaFallback(media.blurhash)
+									when (media.type.split("/").first()) {
+										"image" -> {
+											KamelImage(
+												resource = { asyncPainterResource(media.url) },
+												contentDescription = media.description,
+												contentScale = ContentScale.Fit,
+												modifier = Modifier.clip(RoundedCornerShape(10.dp))
+													.height(200.dp)
+													.fillMaxWidth(),
+											)
+										}
+										else -> Text(media.url)
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -368,11 +427,14 @@ fun Status(status: Status) {
 			}
 
 			/*
+			*
 			* Reactions
+			*
 			*/
 			if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
 				LazyRow(
-					horizontalArrangement = Arrangement.spacedBy(5.dp)
+					horizontalArrangement = Arrangement.spacedBy(5.dp),
+					modifier = Modifier.padding(start = 5.dp)
 				) {
 					realStatus.reactions.forEach {
 						item {
