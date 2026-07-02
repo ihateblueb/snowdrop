@@ -101,6 +101,7 @@
 	<string name="open_in_browser">Open in browser</string>
 	<string name="bookmark">Bookmark</string>
 	<string name="unbookmark">Unbookmark</string>
+	<string name="bite_post">Bite this post</string>
 	<string name="show_boosts">Show boosts</string>
 	<string name="show_likes">Show likes</string>
 	<string name="show_reactions">Show reactions</string>
