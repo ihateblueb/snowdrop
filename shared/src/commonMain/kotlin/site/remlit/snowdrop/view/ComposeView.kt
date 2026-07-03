@@ -121,7 +121,7 @@ fun ComposeView(
 		}
 	}
 
-	val instance by fetchInstance().collectAsState(null)
+	val instance by fetchInstance().collectAsStateWithLifecycle(null)
 	val maxChars = (instance?.maxTootChars ?: 500)
 	val remainingChars = maxChars - (content.length + cw.length)
 

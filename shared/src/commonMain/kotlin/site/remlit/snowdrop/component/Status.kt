@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
@@ -148,10 +149,10 @@ fun Status(status: Status) {
 
 	/* Preferences */
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
-		.collectAsState(false)
+		.collectAsStateWithLifecycle(false)
 
 	/* View variables */
-	val currentAccount by getCurrentAccountObjectFlow().collectAsState(null)
+	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
 	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	var realStatus by remember { mutableStateOf(status) }

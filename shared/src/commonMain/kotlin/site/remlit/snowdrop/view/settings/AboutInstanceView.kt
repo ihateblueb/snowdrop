@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
@@ -41,7 +42,7 @@ import snowdrop.shared.generated.resources.icon_arrow_back_24
 fun AboutInstanceView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
-	val instance by fetchInstance().collectAsState(null)
+	val instance by fetchInstance().collectAsStateWithLifecycle(null)
 
 	TopAppBar(
 		navigationIcon = {

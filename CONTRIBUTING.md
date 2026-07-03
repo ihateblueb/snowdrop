@@ -19,3 +19,11 @@ We use Material Icons, which you can find here: https://fonts.google.com/icons. 
 To add an icon, click on it, swap the tab to "Android" in the opened sidebar, and download the XML.
 Prefix that file with `icon_`, then drop it in `shared/commonMain/composeResources/drawable`.
 Change the color from `@android/*` to `#000000`, otherwise the app will instantly crash.
+
+## Using Flow<*> and collecting emissions as a state
+
+Use the collector with lifecycle over the one without. Collectors with lifecycles are better for performance long term.
+
+| Do                                                                                          | Don't                                                                          |
+|:--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| ```val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)``` | ```val currentAccount by getCurrentAccountObjectFlow().collectAsState(null)``` |

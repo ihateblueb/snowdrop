@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -22,10 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.accounts.patchProfile
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.request.PatchProfileRequest
+import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
@@ -33,12 +38,15 @@ import snowdrop.shared.generated.resources.automated_account
 import snowdrop.shared.generated.resources.discoverable
 import snowdrop.shared.generated.resources.discoverable_description
 import snowdrop.shared.generated.resources.edit_profile
+import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.locked_account
 import snowdrop.shared.generated.resources.locked_account_description
 import snowdrop.shared.generated.resources.save
 
 @Composable
 fun EditProfileView() = ViewSurface {
+	val navHandler = LocalNavController.current
+	val snackbarHandler = SnackbarController.current
 	val coroutineScope = rememberCoroutineScope()
 
 	val currentAccount by getCurrentAccountObjectFlow()
@@ -81,6 +89,11 @@ fun EditProfileView() = ViewSurface {
 
 
 	TopAppBar(
+		navigationIcon = {
+			IconButton(onClick = { navHandler.popBackStack() }) {
+				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
+			}
+		},
 		title = {
 			Text(stringResource(Res.string.edit_profile))
 		},
@@ -89,7 +102,7 @@ fun EditProfileView() = ViewSurface {
 				onClick = {
 					coroutineScope.launch {
 						// todo: doesn't work on iceshrimp.js
-						patchProfile(
+						val res = patchProfile(
 							PatchProfileRequest(
 								displayName = if (displayNameChanged) displayName else null,
 								note = if (noteChanged) note else null,
@@ -99,6 +112,10 @@ fun EditProfileView() = ViewSurface {
 								indexable = if (indexableChanged) indexable else null
 							)
 						)
+						if (res.error || res.response == null) {
+							res.handleError(snackbarHandler)
+							return@launch
+						}
 
 						updateCurrentAccountObject()
 					}
