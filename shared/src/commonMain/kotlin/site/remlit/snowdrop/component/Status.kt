@@ -67,6 +67,7 @@ import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
+import site.remlit.snowdrop.api.statuses.deleteStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
@@ -147,6 +148,8 @@ fun Status(status: Status) {
 	val focusManager = LocalFocusManager.current
 	val coroutineScope = rememberCoroutineScope()
 
+	var isVisible by remember { mutableStateOf(true) }
+
 	/* Preferences */
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
 		.collectAsStateWithLifecycle(false)
@@ -198,613 +201,642 @@ fun Status(status: Status) {
 		}
 	}
 
-
-	Column(
-		modifier = Modifier.clickable(
-			enabled = !inThreadView || (inThreadView && !threadViewMainStatus),
-			onClick = { navHandler.navigate(ThreadRoute(realStatus.id)) }
-		).background(
-			if (threadViewMainStatus) MaterialTheme.colorScheme.surfaceContainerLow
-			else Color.Unspecified
-		)
-	) {
+	AnimatedVisibility(isVisible) {
 		Column(
-			modifier = Modifier.fillMaxWidth()
-				.padding(top = 10.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
-			// todo: not vertically centered correctly
+			modifier = Modifier.clickable(
+				enabled = !inThreadView || (inThreadView && !threadViewMainStatus),
+				onClick = { navHandler.navigate(ThreadRoute(realStatus.id)) }
+			).background(
+				if (threadViewMainStatus) MaterialTheme.colorScheme.surfaceContainerLow
+				else Color.Unspecified
+			)
 		) {
-			if (isReblog && rebloggingAccount != null) {
-				Row(
-					modifier = Modifier.padding(start = 35.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Icon(
-						painterResource(Res.drawable.icon_repeat_24px),
-						null,
-						modifier = Modifier.padding(end = 5.dp),
-						tint = MaterialTheme.colorScheme.secondary
-					)
+			Column(
+				modifier = Modifier.fillMaxWidth()
+					.padding(top = 10.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
+				// todo: not vertically centered correctly
+			) {
+				if (isReblog && rebloggingAccount != null) {
 					Row(
-						modifier = Modifier.weight(1f, fill = false),
-						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						modifier = Modifier.padding(start = 35.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
+						Icon(
+							painterResource(Res.drawable.icon_repeat_24px),
+							null,
+							modifier = Modifier.padding(end = 5.dp),
+							tint = MaterialTheme.colorScheme.secondary
+						)
+						Row(
+							modifier = Modifier.weight(1f, fill = false),
+							horizontalArrangement = Arrangement.spacedBy(5.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Text(
+								rebloggingAccount!!.displayName(),
+								color = MaterialTheme.colorScheme.secondary,
+								fontSize = 14.sp,
+								fontWeight = FontWeight.Medium,
+								overflow = TextOverflow.Ellipsis,
+								maxLines = 1,
+								modifier = Modifier.weight(1f, fill = false)
+							)
+							Text(
+								stringResource(Res.string.boosted),
+								color = MaterialTheme.colorScheme.secondary,
+								fontSize = 14.sp,
+								fontWeight = FontWeight.Medium
+							)
+						}
+					}
+				}
+
+				/*
+				* Header
+				*/
+				Row(
+					modifier = Modifier.padding(5.dp)
+						.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					// todo: this needs to be clipped since it's casting the clickable effect outside of the avatar boundaries
+					Column(
+						modifier = Modifier.padding(end = 10.dp)
+							.clickable(onClick = {
+								navHandler.navigate(ProfileRoute(realStatus.account!!.id))
+							})
+					) {
+						Avatar(
+							realStatus.account!!,
+							small = inThreadView && !threadViewMainStatus,
+						)
+					}
+
+					Column(
+						modifier = Modifier.weight(1f)
+							.padding(end = 10.dp)
+					) {
 						Text(
-							rebloggingAccount!!.displayName(),
-							color = MaterialTheme.colorScheme.secondary,
-							fontSize = 14.sp,
+							realStatus.account!!.displayName(),
 							fontWeight = FontWeight.Medium,
 							overflow = TextOverflow.Ellipsis,
 							maxLines = 1,
-							modifier = Modifier.weight(1f, fill = false)
-						)
-						Text(
-							stringResource(Res.string.boosted),
-							color = MaterialTheme.colorScheme.secondary,
-							fontSize = 14.sp,
-							fontWeight = FontWeight.Medium
-						)
-					}
-				}
-			}
-
-			/*
-			* Header
-			*/
-			Row(
-				modifier = Modifier.padding(5.dp)
-					.fillMaxWidth(),
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				// todo: this needs to be clipped since it's casting the clickable effect outside of the avatar boundaries
-				Column(
-					modifier = Modifier.padding(end = 10.dp)
-						.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account!!.id))
-						})
-				) {
-					Avatar(
-						realStatus.account!!,
-						small = inThreadView && !threadViewMainStatus,
-					)
-				}
-
-				Column(
-					modifier = Modifier.weight(1f)
-						.padding(end = 10.dp)
-				) {
-					Text(
-						realStatus.account!!.displayName(),
-						fontWeight = FontWeight.Medium,
-						overflow = TextOverflow.Ellipsis,
-						maxLines = 1,
-						modifier = Modifier.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
-						})
-					)
-					Text(
-						"@${realStatus.account?.acct}",
-						overflow = TextOverflow.Ellipsis,
-						color = MaterialTheme.colorScheme.onSurfaceVariant,
-						fontSize = 13.sp,
-						maxLines = 1,
-						modifier = Modifier.clickable(onClick = {
-							navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
-						})
-					)
-				}
-
-				Column(
-					horizontalAlignment = Alignment.End
-				) {
-					Column(
-						horizontalAlignment = Alignment.CenterHorizontally
-					) {
-						Visibility(status.visibility!!)
-						Text(
-							"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
-							fontSize = 13.sp
-						)
-					}
-				}
-			}
-
-
-			/*
-			*
-			*  Content
-			*
-			*/
-
-			@Composable
-			fun renderContent() {
-				Column(
-					verticalArrangement = Arrangement.spacedBy(10.dp)
-				) {
-					if (!realStatus.content.isNullOrBlank()) {
-						HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
-					}
-
-					@Composable
-					fun mediaFallback(blurhash: String? = null) {
-						Box(
-							modifier = Modifier.clip(RoundedCornerShape(10.dp))
-								.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-								.height(200.dp)
-								.fillMaxWidth()
-						)
-					}
-
-					if (!realStatus.mediaAttachments.isEmpty()) {
-						Grid({
-							// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
-							// grid should expand to full width
-
-							if (realStatus.mediaAttachments.size < 2) column(1f)
-							else repeat(2) { column(0.5f) }
-
-							if (realStatus.mediaAttachments.size < 2) row(1f)
-							else repeat(ceil(realStatus.mediaAttachments.size.toDouble() / 2).toInt()) {
-								row(0.5f)
-							}
-
-							flow = GridFlow.Column
-							gap(5.dp)
-						}) {
-							realStatus.mediaAttachments.forEach { media ->
-								Box {
-									mediaFallback(media.blurhash)
-									when (media.type.split("/").first()) {
-										"image" -> {
-											KamelImage(
-												resource = { asyncPainterResource(media.url) },
-												contentDescription = media.description,
-												contentScale = ContentScale.Fit,
-												modifier = Modifier.clip(RoundedCornerShape(10.dp))
-													.height(200.dp)
-													.fillMaxWidth(),
-											)
-										}
-										else -> Text(media.url)
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
-				if (realStatus.spoilerText != null && !realStatus.spoilerText!!.isBlank()) {
-					Column(
-						modifier = Modifier.fillMaxWidth()
-							.clip(RoundedCornerShape(10.dp))
-							.background(WarningColor25)
-							.clickable(onClick = {
-								cwOpen = !cwOpen
+							modifier = Modifier.clickable(onClick = {
+								navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
 							})
+						)
+						Text(
+							"@${realStatus.account?.acct}",
+							overflow = TextOverflow.Ellipsis,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+							fontSize = 13.sp,
+							maxLines = 1,
+							modifier = Modifier.clickable(onClick = {
+								navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
+							})
+						)
+					}
+
+					Column(
+						horizontalAlignment = Alignment.End
 					) {
-						Row(
-							modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
-								.fillMaxWidth(),
-							horizontalArrangement = Arrangement.spacedBy(10.dp),
-							verticalAlignment = Alignment.CenterVertically
-						) {
-							Icon(painterResource(Res.drawable.icon_warning_24px), null)
-
-							Column {
-								Text(
-									realStatus.spoilerText!!,
-									fontWeight = FontWeight.Medium
-								)
-								Text(
-									if (!cwOpen) stringResource(Res.string.show_content)
-									else stringResource(Res.string.hide_content),
-									fontSize = 12.sp
-								)
-							}
-
-							Spacer(Modifier.weight(1f))
-
-							if (realStatus.mediaAttachments.isNotEmpty()) {
-								Icon(painterResource(Res.drawable.icon_image_24), null)
-							}
-						}
-					}
-
-					AnimatedVisibility(cwOpen) {
 						Column(
-							modifier = Modifier.padding(top = 10.dp)
+							horizontalAlignment = Alignment.CenterHorizontally
 						) {
-							renderContent()
+							Visibility(status.visibility!!)
+							Text(
+								"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
+								fontSize = 13.sp
+							)
 						}
 					}
-				} else renderContent()
+				}
 
-			}
 
-			if (realStatus.quotedStatus != null) {
-				MiniStatus(realStatus.quotedStatus!!)
-			}
+				/*
+				*
+				*  Content
+				*
+				*/
 
-			/*
-			*
-			* Reactions
-			*
-			*/
-			if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
-				LazyRow(
-					horizontalArrangement = Arrangement.spacedBy(5.dp),
-					modifier = Modifier.padding(start = 5.dp)
-				) {
-					realStatus.reactions.forEach {
-						item {
-							TooltipBox(
-								positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-									TooltipAnchorPosition.Above
-								),
-								tooltip = {
-									if (isUnicodeEmoji(it.name)) return@TooltipBox
-									PlainTooltip { Text(":${it.name}:") }
-								},
-								state = rememberTooltipState()
-							) {
-								OutlinedButton(
-									onClick = {
-										vibrate(!it.me, haptics)
+				@Composable
+				fun renderContent() {
+					Column(
+						verticalArrangement = Arrangement.spacedBy(10.dp)
+					) {
+						if (!realStatus.content.isNullOrBlank()) {
+							HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
+						}
 
-										val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
-										if (it.me) {
-											coroutineScope.launch {
-												val res = unreactFromStatus(realStatus.id, tempName)
-												realStatus = res.response!!
-												if (isReblog) status.reblog = res.response
+						@Composable
+						fun mediaFallback(blurhash: String? = null) {
+							Box(
+								modifier = Modifier.clip(RoundedCornerShape(10.dp))
+									.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+									.height(200.dp)
+									.fillMaxWidth()
+							)
+						}
+
+						if (!realStatus.mediaAttachments.isEmpty()) {
+							Grid({
+								// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
+								// grid should expand to full width
+
+								if (realStatus.mediaAttachments.size < 2) column(1f)
+								else repeat(2) { column(0.5f) }
+
+								if (realStatus.mediaAttachments.size < 2) row(1f)
+								else repeat(ceil(realStatus.mediaAttachments.size.toDouble() / 2).toInt()) {
+									row(0.5f)
+								}
+
+								flow = GridFlow.Column
+								gap(5.dp)
+							}) {
+								realStatus.mediaAttachments.forEach { media ->
+									Box {
+										mediaFallback(media.blurhash)
+										when (media.type.split("/").first()) {
+											"image" -> {
+												KamelImage(
+													resource = { asyncPainterResource(media.url) },
+													contentDescription = media.description,
+													contentScale = ContentScale.Fit,
+													modifier = Modifier.clip(RoundedCornerShape(10.dp))
+														.height(200.dp)
+														.fillMaxWidth(),
+												)
 											}
-										} else if (!it.name.contains("@")) {
-											coroutineScope.launch {
-												val res = reactToStatus(realStatus.id, tempName)
-												realStatus = res.response!!
-												if (isReblog) status.reblog = res.response
-											}
-										} else {
-											coroutineScope.launch {
-												snackbarController.showSnackbar("You cannot react with a remote emoji")
-											}
+
+											else -> Text(media.url)
 										}
-									},
-									contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-									colors = ButtonColors(
-										containerColor = if (it.me) MaterialTheme.colorScheme.secondaryContainer
-											else Color.Transparent,
-										contentColor = if (it.me) MaterialTheme.colorScheme.secondary
-											else ButtonDefaults.outlinedButtonColors().contentColor,
-										disabledContainerColor = ButtonDefaults.outlinedButtonColors().disabledContainerColor,
-										disabledContentColor = ButtonDefaults.outlinedButtonColors().disabledContentColor
-									)
-								) {
-									Row(
-										horizontalArrangement = Arrangement.spacedBy(5.dp),
-										verticalAlignment = Alignment.CenterVertically
-									) {
-										val emoji = it.toEmoji()
-										if (emoji != null) Emoji(emoji) else when (getPlatform()) {
-											Platform.ANDROID -> Text(it.name)
-											Platform.IOS -> Text(it.name, fontSize = 18.sp)
-										}
-
-										if (!blockingSettings.getBoolean("hide_interaction_counters", false))
-											Text("${it.count}")
 									}
 								}
 							}
 						}
 					}
 				}
-			}
 
-			/*
-			*
-			*
-			* Footer
-			*
-			*
-			*/
-			Row(
-				modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-				horizontalArrangement = Arrangement.spacedBy(5.dp),
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				FooterButton(onClick = {
-					navHandler.navigate(ComposeRoute(
-						inReplyToId = realStatus.id,
-						cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
-						// what a block
-						content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
-							realStatus.mentions.filter { it.id != currentAccount?.id }.joinToString(separator = "") { "@${it.acct} " },
-						visibility = realStatus.visibility
-					))
-				}) {
-					if (realStatus.inReplyToId != null) Icon(
-						painterResource(Res.drawable.icon_reply_all_24px),
-						null
-					) else Icon(
-						painterResource(Res.drawable.icon_reply_24px),
-						null
-					)
+				Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
+					if (realStatus.spoilerText != null && !realStatus.spoilerText!!.isBlank()) {
+						Column(
+							modifier = Modifier.fillMaxWidth()
+								.clip(RoundedCornerShape(10.dp))
+								.background(WarningColor25)
+								.clickable(onClick = {
+									cwOpen = !cwOpen
+								})
+						) {
+							Row(
+								modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
+									.fillMaxWidth(),
+								horizontalArrangement = Arrangement.spacedBy(10.dp),
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								Icon(painterResource(Res.drawable.icon_warning_24px), null)
 
-					if (!hideInteractionCounters)
-						Text(realStatus.repliesCount.toFormatShort())
+								Column {
+									Text(
+										realStatus.spoilerText!!,
+										fontWeight = FontWeight.Medium
+									)
+									Text(
+										if (!cwOpen) stringResource(Res.string.show_content)
+										else stringResource(Res.string.hide_content),
+										fontSize = 12.sp
+									)
+								}
+
+								Spacer(Modifier.weight(1f))
+
+								if (realStatus.mediaAttachments.isNotEmpty()) {
+									Icon(painterResource(Res.drawable.icon_image_24), null)
+								}
+							}
+						}
+
+						AnimatedVisibility(cwOpen) {
+							Column(
+								modifier = Modifier.padding(top = 10.dp)
+							) {
+								renderContent()
+							}
+						}
+					} else renderContent()
+
 				}
 
-				FooterButton(
-					onClick = c@{
-						if (!isMine && realStatus.visibility != "public" && realStatus.visibility != "unlisted")
-							return@c
+				if (realStatus.quotedStatus != null) {
+					MiniStatus(realStatus.quotedStatus!!)
+				}
 
-						vibrate(!realStatus.reblogged, haptics)
+				/*
+				*
+				* Reactions
+				*
+				*/
+				if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
+					LazyRow(
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						modifier = Modifier.padding(start = 5.dp)
+					) {
+						realStatus.reactions.forEach {
+							item {
+								TooltipBox(
+									positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+										TooltipAnchorPosition.Above
+									),
+									tooltip = {
+										if (isUnicodeEmoji(it.name)) return@TooltipBox
+										PlainTooltip { Text(":${it.name}:") }
+									},
+									state = rememberTooltipState()
+								) {
+									OutlinedButton(
+										onClick = {
+											vibrate(!it.me, haptics)
 
-						bgIO {
-							val res: ApiResponse<Status> = if (realStatus.reblogged) unreblogStatus(realStatus.id)
-							else reblogStatus(realStatus.id)
-							if (res.error || res.response == null) {
-								res.handleError(snackbarController)
-								return@bgIO
+											val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
+											if (it.me) {
+												coroutineScope.launch {
+													val res = unreactFromStatus(realStatus.id, tempName)
+													realStatus = res.response!!
+													if (isReblog) status.reblog = res.response
+												}
+											} else if (!it.name.contains("@")) {
+												coroutineScope.launch {
+													val res = reactToStatus(realStatus.id, tempName)
+													realStatus = res.response!!
+													if (isReblog) status.reblog = res.response
+												}
+											} else {
+												coroutineScope.launch {
+													snackbarController.showSnackbar("You cannot react with a remote emoji")
+												}
+											}
+										},
+										contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
+										colors = ButtonColors(
+											containerColor = if (it.me) MaterialTheme.colorScheme.secondaryContainer
+											else Color.Transparent,
+											contentColor = if (it.me) MaterialTheme.colorScheme.secondary
+											else ButtonDefaults.outlinedButtonColors().contentColor,
+											disabledContainerColor = ButtonDefaults.outlinedButtonColors().disabledContainerColor,
+											disabledContentColor = ButtonDefaults.outlinedButtonColors().disabledContentColor
+										)
+									) {
+										Row(
+											horizontalArrangement = Arrangement.spacedBy(5.dp),
+											verticalAlignment = Alignment.CenterVertically
+										) {
+											val emoji = it.toEmoji()
+											if (emoji != null) Emoji(emoji) else when (getPlatform()) {
+												Platform.ANDROID -> Text(it.name)
+												Platform.IOS -> Text(it.name, fontSize = 18.sp)
+											}
+
+											if (!blockingSettings.getBoolean("hide_interaction_counters", false))
+												Text("${it.count}")
+										}
+									}
+								}
 							}
-
-							// returns the status created for reblog, ooorr not sometimes.
-							realStatus = res.response.reblog ?: res.response
-							if (isReblog) status.reblog = res.response.reblog ?: res.response
 						}
-					},
-					colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
-						contentColor = BoostColor
-					) else null
+					}
+				}
+
+				/*
+				*
+				*
+				* Footer
+				*
+				*
+				*/
+				Row(
+					modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+					horizontalArrangement = Arrangement.spacedBy(5.dp),
+					verticalAlignment = Alignment.CenterVertically
 				) {
-					if (isMine || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
-						if (realStatus.reblogged) Icon(
-							painterResource(Res.drawable.icon_repeat_24px),
-							null,
-							tint = BoostColor
+					FooterButton(onClick = {
+						navHandler.navigate(
+							ComposeRoute(
+								inReplyToId = realStatus.id,
+								cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
+								// what a block
+								content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
+									realStatus.mentions.filter { it.id != currentAccount?.id }
+										.joinToString(separator = "") { "@${it.acct} " },
+								visibility = realStatus.visibility
+							)
+						)
+					}) {
+						if (realStatus.inReplyToId != null) Icon(
+							painterResource(Res.drawable.icon_reply_all_24px),
+							null
 						) else Icon(
-							painterResource(Res.drawable.icon_repeat_24px),
+							painterResource(Res.drawable.icon_reply_24px),
 							null
 						)
 
 						if (!hideInteractionCounters)
-							Text(realStatus.reblogsCount.toFormatShort())
-					} else	 {
-						Icon(
-							painterResource(Res.drawable.icon_lock_24px),
-							null
-						)
+							Text(realStatus.repliesCount.toFormatShort())
 					}
-				}
 
-				FooterButton(
-					onClick = {
-						vibrate(!realStatus.favourited, haptics)
+					FooterButton(
+						onClick = c@{
+							if (!isMine && realStatus.visibility != "public" && realStatus.visibility != "unlisted")
+								return@c
 
-						bgIO {
-							val res: ApiResponse<Status> = if (realStatus.favourited) unfavouriteStatus(realStatus.id)
-							else favouriteStatus(realStatus.id)
-							if (res.error || res.response == null) {
-								res.handleError(snackbarController)
-								return@bgIO
+							vibrate(!realStatus.reblogged, haptics)
+
+							bgIO {
+								val res: ApiResponse<Status> = if (realStatus.reblogged) unreblogStatus(realStatus.id)
+								else reblogStatus(realStatus.id)
+								if (res.error || res.response == null) {
+									res.handleError(snackbarController)
+									return@bgIO
+								}
+
+								// returns the status created for reblog, ooorr not sometimes.
+								realStatus = res.response.reblog ?: res.response
+								if (isReblog) status.reblog = res.response.reblog ?: res.response
 							}
-							realStatus = res.response
-							if (isReblog) status.reblog = res.response
-						}
-					},
-					colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
-						contentColor = LikeColor
-					) else null
-				) {
-					if (realStatus.favourited) Icon(
-						painterResource(Res.drawable.icon_star_filled_24px),
-						null,
-						tint = LikeColor
-					) else Icon(
-						painterResource(Res.drawable.icon_star_24px),
-						null
-					)
-
-					if (!hideInteractionCounters)
-						Text(realStatus.favouritesCount.toFormatShort())
-				}
-
-				if (getFeature("reactions")) {
-					FooterButton(onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() }) {
-						Icon(
-							painterResource(Res.drawable.icon_add_24px),
-							null
-						)
-					}
-				}
-
-				Box {
-					FooterButton(onClick = { showDropdown = !showDropdown }) {
-						Icon(
-							painterResource(Res.drawable.icon_more_horiz_24px),
-							null
-						)
-					}
-
-					DropdownMenu(
-						expanded = showDropdown,
-						onDismissRequest = { showDropdown = false }
+						},
+						colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
+							contentColor = BoostColor
+						) else null
 					) {
-						if (status.url != null) {
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.copy_link)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_link_24px), null)
-								},
-								onClick = {
-									clipboardManager.setText(AnnotatedString(realStatus.url!!))
-									showDropdown = !showDropdown
-								}
+						if (isMine || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
+							if (realStatus.reblogged) Icon(
+								painterResource(Res.drawable.icon_repeat_24px),
+								null,
+								tint = BoostColor
+							) else Icon(
+								painterResource(Res.drawable.icon_repeat_24px),
+								null
 							)
 
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.open_in_browser)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
-								},
-								onClick = {
-									uriHandler.openUri(realStatus.url!!)
-									showDropdown = !showDropdown
-								}
-							)
-						}
-
-						if (realStatus.bookmarked) {
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.unbookmark)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
-								},
-								onClick = {
-									coroutineScope.launch {
-										val res = unbookmarkStatus(realStatus.id)
-										realStatus = res.response!!
-										if (isReblog)
-											status.reblog = res.response
-
-										showDropdown = !showDropdown
-									}
-								}
-							)
+							if (!hideInteractionCounters)
+								Text(realStatus.reblogsCount.toFormatShort())
 						} else {
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.bookmark)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
-								},
-								onClick = {
-									coroutineScope.launch {
-										val res = bookmarkStatus(realStatus.id)
-										realStatus = res.response!!
-										if (isReblog)
-											status.reblog = res.response
+							Icon(
+								painterResource(Res.drawable.icon_lock_24px),
+								null
+							)
+						}
+					}
 
-										showDropdown = !showDropdown
-									}
+					FooterButton(
+						onClick = {
+							vibrate(!realStatus.favourited, haptics)
+
+							bgIO {
+								val res: ApiResponse<Status> = if (realStatus.favourited) unfavouriteStatus(realStatus.id)
+								else favouriteStatus(realStatus.id)
+								if (res.error || res.response == null) {
+									res.handleError(snackbarController)
+									return@bgIO
 								}
+								realStatus = res.response
+								if (isReblog) status.reblog = res.response
+							}
+						},
+						colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
+							contentColor = LikeColor
+						) else null
+					) {
+						if (realStatus.favourited) Icon(
+							painterResource(Res.drawable.icon_star_filled_24px),
+							null,
+							tint = LikeColor
+						) else Icon(
+							painterResource(Res.drawable.icon_star_24px),
+							null
+						)
+
+						if (!hideInteractionCounters)
+							Text(realStatus.favouritesCount.toFormatShort())
+					}
+
+					if (getFeature("reactions")) {
+						FooterButton(onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() }) {
+							Icon(
+								painterResource(Res.drawable.icon_add_24px),
+								null
+							)
+						}
+					}
+
+					Box {
+						FooterButton(onClick = { showDropdown = !showDropdown }) {
+							Icon(
+								painterResource(Res.drawable.icon_more_horiz_24px),
+								null
 							)
 						}
 
-						if (getFeature("biting")) {
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.bite_post)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_tooth_24px), null)
-								},
-								onClick = {
-									coroutineScope.launch {
-										biteStatus(realStatus.id)
-										vibrate(true, haptics)
-
+						DropdownMenu(
+							expanded = showDropdown,
+							onDismissRequest = { showDropdown = false }
+						) {
+							if (status.url != null) {
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.copy_link)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_link_24px), null)
+									},
+									onClick = {
+										clipboardManager.setText(AnnotatedString(realStatus.url!!))
 										showDropdown = !showDropdown
 									}
-								}
-							)
-						}
+								)
 
-						HorizontalDivider()
-
-						DropdownMenuItem(
-							text = { Text(stringResource(Res.string.show_boosts)) },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_repeat_24px), null)
-							},
-							onClick = {
-								navHandler.navigate(StatusInteractionDetailRoute(realStatus.id, InteractionViewType.Boost.toString()))
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.open_in_browser)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
+									},
+									onClick = {
+										uriHandler.openUri(realStatus.url!!)
+										showDropdown = !showDropdown
+									}
+								)
 							}
-						)
 
-						DropdownMenuItem(
-							text = { Text(stringResource(Res.string.show_likes)) },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_star_24px), null)
-							},
-							onClick = {
-								navHandler.navigate(StatusInteractionDetailRoute(realStatus.id, InteractionViewType.Like.toString()))
+							if (realStatus.bookmarked) {
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.unbookmark)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
+									},
+									onClick = {
+										coroutineScope.launch {
+											val res = unbookmarkStatus(realStatus.id)
+											realStatus = res.response!!
+											if (isReblog)
+												status.reblog = res.response
+
+											showDropdown = !showDropdown
+										}
+									}
+								)
+							} else {
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.bookmark)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
+									},
+									onClick = {
+										coroutineScope.launch {
+											val res = bookmarkStatus(realStatus.id)
+											realStatus = res.response!!
+											if (isReblog)
+												status.reblog = res.response
+
+											showDropdown = !showDropdown
+										}
+									}
+								)
 							}
-						)
 
-						if (getFeature("reactions"))
-							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.show_reactions)) },
-								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_mood_24px), null)
-								},
-								onClick = {
-									navHandler.navigate(StatusInteractionDetailRoute(realStatus.id, InteractionViewType.Reaction.toString()))
-								}
-							)
+							if (getFeature("biting")) {
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.bite_post)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+									},
+									onClick = {
+										coroutineScope.launch {
+											biteStatus(realStatus.id)
+											vibrate(true, haptics)
 
-						HorizontalDivider()
+											showDropdown = !showDropdown
+										}
+									}
+								)
+							}
 
-						DropdownMenuItem(
-							text = { Text(stringResource(Res.string.mute)) },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
-							},
-							onClick = { }
-						)
-
-						DangerDropdownItem(
-							text = { Text(stringResource(Res.string.report)) },
-							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_flag_24px), null)
-							},
-							onClick = { }
-						)
-
-						// if mine
-						if (isMine) {
 							HorizontalDivider()
 
 							DropdownMenuItem(
-								text = { Text(stringResource(Res.string.edit)) },
+								text = { Text(stringResource(Res.string.show_boosts)) },
 								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_edit_24px), null)
+									Icon(painterResource(Res.drawable.icon_repeat_24px), null)
+								},
+								onClick = {
+									navHandler.navigate(
+										StatusInteractionDetailRoute(
+											realStatus.id,
+											InteractionViewType.Boost.toString()
+										)
+									)
+								}
+							)
+
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.show_likes)) },
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_star_24px), null)
+								},
+								onClick = {
+									navHandler.navigate(
+										StatusInteractionDetailRoute(
+											realStatus.id,
+											InteractionViewType.Like.toString()
+										)
+									)
+								}
+							)
+
+							if (getFeature("reactions"))
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.show_reactions)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_mood_24px), null)
+									},
+									onClick = {
+										navHandler.navigate(
+											StatusInteractionDetailRoute(
+												realStatus.id,
+												InteractionViewType.Reaction.toString()
+											)
+										)
+									}
+								)
+
+							HorizontalDivider()
+
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.mute)) },
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
 								},
 								onClick = { }
 							)
 
 							DangerDropdownItem(
-								text = { Text(stringResource(Res.string.delete)) },
+								text = { Text(stringResource(Res.string.report)) },
 								leadingIcon = {
-									Icon(painterResource(Res.drawable.icon_delete_24px), null)
+									Icon(painterResource(Res.drawable.icon_flag_24px), null)
 								},
 								onClick = { }
 							)
+
+							// if mine
+							if (isMine) {
+								HorizontalDivider()
+
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.edit)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_edit_24px), null)
+									},
+									onClick = { }
+								)
+
+								DangerDropdownItem(
+									text = { Text(stringResource(Res.string.delete)) },
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_delete_24px), null)
+									},
+									onClick = {
+										coroutineScope.launch {
+											val req = deleteStatus(realStatus.id)
+											if (req.error) {
+												req.handleError(snackbarController)
+												return@launch
+											}
+											isVisible = false
+										}
+									}
+								)
+							}
 						}
 					}
 				}
 			}
-		}
 
-		HorizontalDivider(
-			thickness = 1.dp,
-			color = MaterialTheme.colorScheme.surfaceContainer
-		)
+			HorizontalDivider(
+				thickness = 1.dp,
+				color = MaterialTheme.colorScheme.surfaceContainer
+			)
 
-		EmojiPicker(
-			visible = showEmojiPicker,
-			onDismiss = { showEmojiPicker = !showEmojiPicker },
-			onSelectEmoji = {
-				coroutineScope.launch {
-					showEmojiPicker = !showEmojiPicker
+			EmojiPicker(
+				visible = showEmojiPicker,
+				onDismiss = { showEmojiPicker = !showEmojiPicker },
+				onSelectEmoji = {
+					coroutineScope.launch {
+						showEmojiPicker = !showEmojiPicker
 
-					val res = reactToStatus(realStatus.id, ":${it.shortcode}:")
-					if (isReblog)
-						status.reblog = res.response
-					else
-						realStatus = res.response!!
+						val res = reactToStatus(realStatus.id, ":${it.shortcode}:")
+						if (isReblog)
+							status.reblog = res.response
+						else
+							realStatus = res.response!!
+					}
 				}
-			}
-		)
+			)
+		}
 	}
 }
