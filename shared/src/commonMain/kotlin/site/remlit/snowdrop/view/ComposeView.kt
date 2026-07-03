@@ -52,6 +52,7 @@ import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
@@ -116,12 +117,17 @@ fun ComposeView(
 
 	var replyTarget by remember { mutableStateOf<Status?>(null) }
 	LaunchedEffect(inReplyToId) {
-		if (inReplyToId != null) fetchStatus(inReplyToId).collect {
+		if (inReplyToId != null) fetchStatus(inReplyToId, snackbarHandler).collect {
 			replyTarget = it
 		}
 	}
 
-	val instance by fetchInstance().collectAsStateWithLifecycle(null)
+	var instance by remember { mutableStateOf<InstanceV1?>(null) }
+	LaunchedEffect(instance) {
+		if (instance != null) fetchInstance(snackbarHandler).collect {
+			instance = it
+		}
+	}
 	val maxChars = (instance?.maxTootChars ?: 500)
 	val remainingChars = maxChars - (content.length + cw.length)
 

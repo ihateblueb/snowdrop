@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import site.remlit.snowdrop.api.accounts.patchProfile
+import site.remlit.snowdrop.api.accounts.updateCredentials
 import site.remlit.snowdrop.component.ViewSurface
-import site.remlit.snowdrop.model.request.PatchProfileRequest
+import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -62,7 +62,7 @@ fun EditProfileView() = ViewSurface {
 	var botChanged by remember { mutableStateOf(false) }
 
 	var locked by remember { mutableStateOf(false) }
-	var lockedChange by remember { mutableStateOf(false) }
+	var lockedChanged by remember { mutableStateOf(false) }
 
 	var discoverable by remember { mutableStateOf(false) }
 	var discoverableChanged by remember { mutableStateOf(false) }
@@ -71,7 +71,16 @@ fun EditProfileView() = ViewSurface {
 	var indexableChanged by remember { mutableStateOf(false) }
 
 
-	val profileChanged = displayNameChanged || noteChanged || botChanged || lockedChange || discoverableChanged
+	fun resetChangedBooleans() {
+		displayNameChanged = false
+		noteChanged = false
+		botChanged = false
+		lockedChanged = false
+		discoverableChanged = false
+		indexableChanged = false
+	}
+
+	val profileChanged = displayNameChanged || noteChanged || botChanged || lockedChanged || discoverableChanged
 		|| indexableChanged
 
 	// todo: language
@@ -102,12 +111,12 @@ fun EditProfileView() = ViewSurface {
 				onClick = {
 					coroutineScope.launch {
 						// todo: doesn't work on iceshrimp.js
-						val res = patchProfile(
-							PatchProfileRequest(
+						val res = updateCredentials(
+							UpdateCredentialsRequest(
 								displayName = if (displayNameChanged) displayName else null,
 								note = if (noteChanged) note else null,
 								bot = if (botChanged) bot else null,
-								locked = if (lockedChange) locked else null,
+								locked = if (lockedChanged) locked else null,
 								discoverable = if (discoverableChanged) discoverable else null,
 								indexable = if (indexableChanged) indexable else null
 							)
@@ -117,6 +126,7 @@ fun EditProfileView() = ViewSurface {
 							return@launch
 						}
 
+						resetChangedBooleans()
 						updateCurrentAccountObject()
 					}
 				},
@@ -173,7 +183,7 @@ fun EditProfileView() = ViewSurface {
 					trailingContent = {
 						Switch(
 							locked,
-							onCheckedChange = { locked = it; lockedChange = true }
+							onCheckedChange = { locked = it; lockedChanged = true }
 						)
 					}
 				)

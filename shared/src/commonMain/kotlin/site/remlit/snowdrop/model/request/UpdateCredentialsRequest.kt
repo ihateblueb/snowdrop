@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import site.remlit.snowdrop.model.Account
 
 @Serializable
-data class PatchProfileRequest(
+data class UpdateCredentialsRequest(
 	@SerialName("display_name")
 	val displayName: String? = null,
 	val note: String? = null,
