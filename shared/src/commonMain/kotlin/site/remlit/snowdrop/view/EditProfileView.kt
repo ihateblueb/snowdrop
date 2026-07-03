@@ -9,6 +9,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,6 +39,7 @@ import snowdrop.shared.generated.resources.automated_account
 import snowdrop.shared.generated.resources.discoverable
 import snowdrop.shared.generated.resources.discoverable_description
 import snowdrop.shared.generated.resources.edit_profile
+import snowdrop.shared.generated.resources.editing_profile
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.locked_account
 import snowdrop.shared.generated.resources.locked_account_description
@@ -88,7 +90,7 @@ fun EditProfileView() = ViewSurface {
 
 	LaunchedEffect(currentAccount) {
 		displayName = currentAccount?.displayName ?: ""
-		note = currentAccount?.note ?: ""
+		note = currentAccount?.source?.note ?: ""
 
 		bot = currentAccount?.bot ?: false
 		locked = currentAccount?.locked ?: false
@@ -104,7 +106,7 @@ fun EditProfileView() = ViewSurface {
 			}
 		},
 		title = {
-			Text(stringResource(Res.string.edit_profile))
+			Text(stringResource(Res.string.editing_profile))
 		},
 		actions = {
 			FilledTonalButton(
@@ -143,7 +145,7 @@ fun EditProfileView() = ViewSurface {
 			verticalArrangement = Arrangement.spacedBy(10.dp)
 		) {
 			item {
-				TextField(
+				OutlinedTextField(
 					value = displayName,
 					onValueChange = { displayName = it; displayNameChanged = true },
 					maxLines = 1,
@@ -155,7 +157,7 @@ fun EditProfileView() = ViewSurface {
 
 			item {
 				// todo: make it source and not html
-				TextField(
+				OutlinedTextField(
 					value = note,
 					onValueChange = { note = it; noteChanged = true },
 					label = { Text("Description") },

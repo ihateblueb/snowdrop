@@ -132,6 +132,7 @@
 
 	<string name="bookmarks">Bookmarks</string>
 
+	<string name="editing_profile">Editing profile</string>
 	<string name="automated_account">Automated account</string>
 	<string name="locked_account">Locked account</string>
 	<string name="locked_account_description">New followers will have to be approved before following you</string>
