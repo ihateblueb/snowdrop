@@ -2,14 +2,12 @@ package site.remlit.snowdrop.util
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toBlockingSettings
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.verifyCredentials
@@ -78,12 +76,8 @@ fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
 	if (getCacheEntry(id, "account_$id") == null)
 		emit(null)
 
-	safe {
-		emit(
-			getCacheEntry(id, "account_$id")!!
-				.getContent<Account>()
-		)
-	}
+	val account = getCacheEntry(id, "account_$id")?.getContent<Account>()
+	if (account != null) emit(account)
 }
 
 
@@ -108,13 +102,12 @@ fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
 }
 
 suspend fun updateCurrentAccountObject() {
-	val verifyRes = verifyCredentials()
-	if (verifyRes.error) return
-	if (verifyRes.response !is Account) return
+	val res = verifyCredentials()
+	if (res.error || res.response == null) return
 
 	putCacheEntry(
 		"account_${getCurrentAccountId()}",
-		verifyRes.response
+		res.response
 	)
 }
 

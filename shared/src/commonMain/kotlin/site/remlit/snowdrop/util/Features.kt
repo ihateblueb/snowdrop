@@ -71,16 +71,11 @@ suspend fun determineFeatures() {
 
 	if (
 		software == Software.Akkoma ||
+		software == Software.Chuckya ||
+		software == Software.IceshrimpJS ||
 		software == Software.IceshrimpNET
-	)
-	putFeature("bubble_timeline", true)
+	) putFeature("bubble_timeline", true)
 	else putFeature("bubble_timeline", false)
-
-	if (
-		software == Software.Chuckya
-	)
-	putFeature("bubble_timeline_chuckya", true)
-	else putFeature("bubble_timeline_chuckya", false)
 
 	if (
 		software == Software.IceshrimpNET
