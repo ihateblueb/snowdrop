@@ -59,6 +59,7 @@ import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.followers
 import snowdrop.shared.generated.resources.instance_host
 import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.reset
 import snowdrop.shared.generated.resources.you_must_provide_a_valid_host
 import kotlin.uuid.Uuid
 
@@ -228,6 +229,18 @@ fun LoginView(
 				verticalArrangement = Arrangement.spacedBy(10.dp)
 			) {
 				CircularProgressIndicator()
+
+				TextButton(
+					modifier = Modifier
+						.padding(top = 20.dp),
+					onClick = {
+						continued = false
+						waitingForNext = false
+						host = ""
+					},
+				) {
+					Text(stringResource(Res.string.reset))
+				}
 			}
 		}
 	}

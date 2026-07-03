@@ -42,6 +42,7 @@
 	<string name="no">No</string>
 
 	<string name="debug">Debug</string>
+	<string name="reset">Reset</string>
 
 	<string name="search_for_posts_or_users">Search for posts or users...</string>
 	<string name="reply">Reply</string>
@@ -89,6 +90,7 @@
 	<string name="requested_to_follow_you">requested to follow you</string>
 	<string name="followed_you">followed you</string>
 
+	<string name="save">Save</string>
 	<string name="accept">Accept</string>
 	<string name="reject">Reject</string>
 	<string name="bite_back">Bite back</string>
@@ -129,4 +131,10 @@
 	<string name="bubble_instances">Bubble instances</string>
 
 	<string name="bookmarks">Bookmarks</string>
+
+	<string name="automated_account">Automated account</string>
+	<string name="locked_account">Locked account</string>
+	<string name="locked_account_description">New followers will have to be approved before following you</string>
+	<string name="discoverable">Discoverable</string>
+	<string name="discoverable_description">You may be featured in collections, and your public posts may show up in trending</string>
 </resources>

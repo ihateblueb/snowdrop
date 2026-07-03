@@ -50,6 +50,7 @@ import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.EditProfileRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.followAccount
@@ -313,7 +314,7 @@ fun ProfileView(id: String) = ViewSurface {
 
 										if (isMe) {
 											OutlinedButton(onClick = {
-												bg { snackbarHandler.showSnackbar("Not implemented") }
+												navHandler.navigate(EditProfileRoute)
 											}) {
 												Text(stringResource(Res.string.edit_profile))
 											}

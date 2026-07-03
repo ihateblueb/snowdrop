@@ -135,6 +135,8 @@ object ExploreRoute
 @Serializable
 object MyProfileRoute
 @Serializable
+object EditProfileRoute
+@Serializable
 data class ProfileRoute(val id: String)
 @Serializable
 data class ThreadRoute(val id: String)
@@ -452,6 +454,7 @@ fun App() = safe {
 							if (account != null) ProfileView(account!!.id)
 							else Text("Error")
 						}
+						composable<EditProfileRoute> { EditProfileView() }
 
 						// todo: replace these animations and make them better
 						composable<ThreadRoute>(
