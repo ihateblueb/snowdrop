@@ -26,7 +26,7 @@ data class InstanceV1(
 	val urls: Urls? = null,
 	val configuration: Configuration? = null,
 
-	val rules: List<Rule>,
+	val rules: List<Rule> = emptyList(),
 	val thumbnail: String? = null
 ) {
 	@Serializable

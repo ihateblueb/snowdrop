@@ -69,18 +69,23 @@ suspend fun determineFeatures() {
 	) putFeature("reactions", true)
 	else putFeature("reactions", false)
 
+	// sharkey has a bubble tl but its unlikely it has good mastoapi support
 	if (
-		software == Software.Akkoma ||
 		software == Software.Chuckya ||
 		software == Software.IceshrimpJS ||
 		software == Software.IceshrimpNET
 	) putFeature("bubble_timeline", true)
 	else putFeature("bubble_timeline", false)
 
+	// and akkoma has a different route!
+	if (
+		software == Software.Akkoma
+	) putFeature("bubble_timeline_akkoma", true)
+	else putFeature("bubble_timeline_akkoma", false)
+
 	if (
 		software == Software.IceshrimpNET
-	)
-	putFeature("biting", true)
+	) putFeature("biting", true)
 	else putFeature("biting", false)
 
 	determiningFeatures = false
