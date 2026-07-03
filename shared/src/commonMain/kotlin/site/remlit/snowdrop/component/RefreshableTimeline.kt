@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +28,14 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontStyle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.scrollingUpward
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
@@ -44,6 +47,7 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * @param timelineComponent Component to use for items in the timeline
  * @param refreshKey Mutable state that can be updated to refresh the timeline
  * */
+@OptIn(ExperimentalSettingsApi::class)
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	fetchMethod: suspend (
@@ -62,12 +66,14 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	countTowardsScrollingUpward: Boolean = false
 ) {
 	val snackbarHandler = SnackbarController.current
-
 	val coroutineScope = rememberCoroutineScope()
 
-	val timeline = remember { mutableStateListOf<T>() }
+	val timeline = rememberSaveable { mutableStateListOf<T>() }
 	val refreshState = rememberPullToRefreshState()
-	val listState = rememberLazyListState().also {
+	var isRefreshing by rememberSaveable { mutableStateOf(false) }
+
+	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+	listState.also {
 		it.ScrollEndCallback {
 			coroutineScope.launch {
 				if (timeline.isEmpty()) return@launch
@@ -80,8 +86,6 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			}
 		}
 	}
-
-	var isRefreshing by remember { mutableStateOf(false) }
 
 	suspend fun addOrUpdateTimeline() {
 		isRefreshing = true
