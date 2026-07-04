@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.0.2-alpha] - 2026/07/04
+
 ### Added
 - Confirmation dialogs to follow/unfollow
 - Ability to bite posts (Iceshrimp.NET)
@@ -18,12 +20,12 @@
 - Post timestamps now update every 10 seconds
 - Make default visibility a per-user setting
 - Add host to account switcher
-- Fix state performance bugs
 
 ### Fixed
 - Don't include dependency metadata in built APKs
 - Contrast on like button in light mode
 - Bubble timeline on iceshrimp-js
+- State performance bugs
 
 ## [0.0.1-alpha] - 2026/07/01
 Initial alpha release, too much to mention here. Check out the [feature matrix](https://github.com/ihateblueb/snowdrop/wiki/Feature-Matrix/672b7003dd142f90466358e19831a45a5dfeaba0) as it was when this release was published to see what was supported :3
