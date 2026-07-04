@@ -33,7 +33,9 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +59,7 @@ import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -133,6 +136,7 @@ import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
 import kotlin.math.ceil
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
@@ -181,6 +185,14 @@ fun Status(status: Status) {
 	inThreadView = atRoute<ThreadRoute>(currentDest)
 	threadViewMainStatus = inThreadView && navHandler.currentBackStackEntry
 		?.toRoute<ThreadRoute>()?.id == realStatus.id
+
+	var timestampKey by remember { mutableStateOf(0) }
+	LaunchedEffect(Unit) {
+		while (true) {
+			delay(10.seconds)
+			timestampKey++
+		}
+	}
 
 
 	@Composable
@@ -303,10 +315,13 @@ fun Status(status: Status) {
 							horizontalAlignment = Alignment.CenterHorizontally
 						) {
 							Visibility(status.visibility!!)
-							Text(
-								"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
-								fontSize = 13.sp
-							)
+
+							key(timestampKey) {
+								Text(
+									"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
+									fontSize = 13.sp
+								)
+							}
 						}
 					}
 				}

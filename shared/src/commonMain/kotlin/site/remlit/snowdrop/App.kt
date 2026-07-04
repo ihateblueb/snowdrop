@@ -273,6 +273,7 @@ fun App() = safe {
 		}
 	}
 
+	// app really starts here
 	AppTheme {
 		Provided {
 
