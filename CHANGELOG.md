@@ -16,6 +16,9 @@
 - "Reset" button on oauth callback page in case something goes wrong
 - Persistent timeline state
 - Post timestamps now update every 10 seconds
+- Make default visibility a per-user setting
+- Add host to account switcher
+- Fix state performance bugs
 
 ### Fixed
 - Don't include dependency metadata in built APKs
