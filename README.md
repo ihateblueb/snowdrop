@@ -1,6 +1,6 @@
 # Snowdrop
 
-[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/)
+[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/) ![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg)
 
 An attempt to make a Mastodon client that is multiplatform (iOS and Android)
 and supports extensions brought by Mastodon API compatible software
