@@ -45,10 +45,10 @@ fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = SnackbarController.current
 
-	val currentAccount by getCurrentAccountObjectFlow()
+	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
 
-	val status by fetchStatus(id, snackbarHandler)
+	val status by remember { fetchStatus(id, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 
 	val ancestors = remember { mutableStateListOf<Status>() }

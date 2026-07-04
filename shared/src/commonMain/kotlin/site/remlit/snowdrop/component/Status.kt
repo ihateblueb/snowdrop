@@ -158,7 +158,7 @@ fun Status(status: Status) {
 		.collectAsStateWithLifecycle(false)
 
 	/* View variables */
-	val currentAccount by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+	val currentAccount by remember { getCurrentAccountObjectFlow() }.collectAsStateWithLifecycle(null)
 	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	var realStatus by remember { mutableStateOf(status) }

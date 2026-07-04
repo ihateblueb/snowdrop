@@ -1,5 +1,4 @@
 # Snowdrop Changelog
-Hello :3 :3 :3
 
 ## [Unreleased]
 

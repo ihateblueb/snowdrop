@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.createStatus
@@ -62,6 +63,7 @@ import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatus
+import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.compose
@@ -115,19 +117,11 @@ fun ComposeView(
 			?: blockingSettings.getString("default_visibility", "public"))
 	}
 
-	var replyTarget by remember { mutableStateOf<Status?>(null) }
-	LaunchedEffect(inReplyToId) {
-		if (inReplyToId != null) fetchStatus(inReplyToId, snackbarHandler).collect {
-			replyTarget = it
-		}
-	}
+	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
+		.collectAsStateWithLifecycle(null)
 
-	var instance by remember { mutableStateOf<InstanceV1?>(null) }
-	LaunchedEffect(instance) {
-		if (instance != null) fetchInstance(snackbarHandler).collect {
-			instance = it
-		}
-	}
+	val instance by remember { fetchInstance(snackbarHandler) }
+		.collectAsStateWithLifecycle(null)
 	val maxChars = (instance?.maxTootChars ?: 500)
 	val remainingChars = maxChars - (content.length + cw.length)
 
