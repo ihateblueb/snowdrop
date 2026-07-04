@@ -23,7 +23,8 @@ val blockingSettings = settings.toBlockingSettings()
 
 fun getAccounts() = blockingSettings.getString("accounts", "").split(" ").filter { !it.isBlank() }
 fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
-fun getCurrentAccountHost() = blockingSettings.getString("account_${getCurrentAccountId()}_host", "")
+fun getCurrentAccountHost() = getAccountHost(getCurrentAccountId())
+fun getAccountHost(id: String) = blockingSettings.getString("account_${id}_host", "")
 
 fun logoutAccount(accountId: String) {
 	blockingSettings.putBoolean("logged_in", false)

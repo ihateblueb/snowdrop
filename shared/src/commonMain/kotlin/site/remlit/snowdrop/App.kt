@@ -89,6 +89,7 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
 import site.remlit.snowdrop.util.config.kamelConfig
+import site.remlit.snowdrop.util.getAccountHost
 import site.remlit.snowdrop.util.getAccountObjectFlow
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.getCurrentAccountId
@@ -409,7 +410,7 @@ fun App() = safe {
 													account!!.displayName(),
 													fontWeight = FontWeight.Medium
 												)
-												Text("@${account!!.acct}")
+												Text("@${account!!.username}@${getAccountHost(it)}")
 											}
 										}
 									}
