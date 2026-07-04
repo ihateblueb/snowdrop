@@ -39,6 +39,12 @@ fun logoutAccount(accountId: String) {
 	)
 }
 
+@OptIn(ExperimentalSettingsApi::class)
+fun getDefaultVisibility() = settings.getStringFlow("default_visibility_${getCurrentAccountId()}", "public")
+
+@OptIn(ExperimentalSettingsApi::class)
+fun putDefaultVisibility(value: String) = blockingSettings.putString("default_visibility_${getCurrentAccountId()}", value)
+
 fun toggleLoggedInState() {
 	val current = blockingSettings.getBoolean("logged_in", false)
 	blockingSettings.putBoolean("logged_in", !current)

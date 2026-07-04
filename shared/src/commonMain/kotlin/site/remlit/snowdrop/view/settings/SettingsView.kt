@@ -45,7 +45,9 @@ import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.getDefaultVisibility
 import site.remlit.snowdrop.util.logoutAccount
+import site.remlit.snowdrop.util.putDefaultVisibility
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
@@ -123,7 +125,7 @@ fun SettingsView() = ViewSurface {
 			)
 		}
 		item {
-			val defaultVisibility by settings.getStringFlow("default_visibility", "public")
+			val defaultVisibility by remember { getDefaultVisibility() }
 				.collectAsStateWithLifecycle("public")
 
 			var showVisibilityPicker by remember { mutableStateOf(false) }
@@ -164,7 +166,7 @@ fun SettingsView() = ViewSurface {
 							.selectable(
 								selected = defaultVisibility == "public",
 								role = Role.RadioButton,
-								onClick = { blockingSettings.putString("default_visibility", "public") }
+								onClick = { putDefaultVisibility("public") }
 							)
 					) {
 						RadioButton(
@@ -185,7 +187,7 @@ fun SettingsView() = ViewSurface {
 							.selectable(
 								selected = defaultVisibility == "unlisted",
 								role = Role.RadioButton,
-								onClick = { blockingSettings.putString("default_visibility", "unlisted") }
+								onClick = { putDefaultVisibility("unlisted") }
 							)
 					) {
 						RadioButton(
@@ -206,7 +208,7 @@ fun SettingsView() = ViewSurface {
 							.selectable(
 								selected = defaultVisibility == "private",
 								role = Role.RadioButton,
-								onClick = { blockingSettings.putString("default_visibility", "private") }
+								onClick = { putDefaultVisibility("private") }
 							)
 					) {
 						RadioButton(
@@ -227,7 +229,7 @@ fun SettingsView() = ViewSurface {
 							.selectable(
 								selected = defaultVisibility == "direct",
 								role = Role.RadioButton,
-								onClick = { blockingSettings.putString("default_visibility", "direct") }
+								onClick = { putDefaultVisibility("direct") }
 							)
 					) {
 						RadioButton(
