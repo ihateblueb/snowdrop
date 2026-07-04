@@ -68,7 +68,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val snackbarHandler = SnackbarController.current
 	val coroutineScope = rememberCoroutineScope()
 
-	val timeline = rememberSaveable { mutableStateListOf<T>() }
+	val timeline = remember { mutableStateListOf<T>() }
 	val refreshState = rememberPullToRefreshState()
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
 
