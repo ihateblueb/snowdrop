@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -46,6 +47,7 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmarks
 import snowdrop.shared.generated.resources.bubble
@@ -84,6 +86,7 @@ fun TimelineView() = ViewSurface {
 		verticalArrangement = Arrangement.Center
 	) {
 		val navHandler = LocalNavController.current
+		val haptics = LocalHapticFeedback.current
 
 		// 0 - home, 1 - local, 2 - bubble, 3 - global
 		val timelineType by settings.getIntFlow("timeline", 0)
@@ -127,23 +130,39 @@ fun TimelineView() = ViewSurface {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(0) },
 					text = { Text(stringResource(Res.string.home)) },
-					onClick = { blockingSettings.putInt("timeline", 0); timelinePickerOpen = false }
+					onClick = {
+						blockingSettings.putInt("timeline", 0)
+						vibrate(true, haptics)
+						timelinePickerOpen = false
+					}
 				)
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(1) },
 					text = { Text(stringResource(Res.string.local)) },
-					onClick = { blockingSettings.putInt("timeline", 1); timelinePickerOpen = false }
+					onClick = {
+						blockingSettings.putInt("timeline", 1)
+						vibrate(true, haptics)
+						timelinePickerOpen = false
+					}
 				)
 				if (getFeature("bubble_timeline") || getFeature("bubble_timeline_akkoma"))
 					DropdownMenuItem(
 						leadingIcon = { RenderTimelineTypeIcon(2) },
 						text = { Text(stringResource(Res.string.bubble)) },
-						onClick = { blockingSettings.putInt("timeline", 2); timelinePickerOpen = false }
+						onClick = {
+							blockingSettings.putInt("timeline", 2)
+							vibrate(true, haptics)
+							timelinePickerOpen = false
+						}
 					)
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(3) },
 					text = { Text(stringResource(Res.string.global)) },
-					onClick = { blockingSettings.putInt("timeline", 3); timelinePickerOpen = false }
+					onClick = {
+						blockingSettings.putInt("timeline", 3)
+						vibrate(true, haptics)
+						timelinePickerOpen = false
+					}
 				)
 
 				HorizontalDivider()
@@ -151,7 +170,11 @@ fun TimelineView() = ViewSurface {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(4) },
 					text = { Text(stringResource(Res.string.bookmarks)) },
-					onClick = { blockingSettings.putInt("timeline", 4); timelinePickerOpen = false }
+					onClick = {
+						blockingSettings.putInt("timeline", 4)
+						vibrate(true, haptics)
+						timelinePickerOpen = false
+					}
 				)
 			}
 		}

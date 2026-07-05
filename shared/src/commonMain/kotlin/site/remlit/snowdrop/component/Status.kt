@@ -662,6 +662,7 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										clipboardManager.setText(AnnotatedString(realStatus.url!!))
+										vibrate(true, haptics)
 										showDropdown = !showDropdown
 									}
 								)
@@ -690,6 +691,7 @@ fun Status(status: Status) {
 											realStatus = res.response!!
 											if (isReblog)
 												status.reblog = res.response
+											vibrate(false, haptics)
 
 											showDropdown = !showDropdown
 										}
@@ -707,6 +709,7 @@ fun Status(status: Status) {
 											realStatus = res.response!!
 											if (isReblog)
 												status.reblog = res.response
+											vibrate(true, haptics)
 
 											showDropdown = !showDropdown
 										}
