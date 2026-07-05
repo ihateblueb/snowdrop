@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+- AMOLED dark theme
+- Haptics for copying links, bookmarking, and selecting timelines
+- CW state shown with filled/unfilled icon in composer
+- Option to swap order of notifications and explore tabs
+
+### Fixed
+- Crash when app is put into the background
+
 ## [0.0.2-alpha] - 2026/07/04
 
 ### Added
