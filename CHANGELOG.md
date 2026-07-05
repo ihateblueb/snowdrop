@@ -12,6 +12,7 @@
 ### Fixed
 - Crash when app is put into the background
 - Don't allow biting your own posts
+- Emojis now get inserted wherever the cursor is
 
 ## [0.0.2-alpha] - 2026/07/04
 

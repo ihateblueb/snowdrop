@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.insert
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalIconButton
@@ -110,11 +112,11 @@ fun ComposeView(
 	var visibilityDropdownOpen by remember { mutableStateOf(false) }
 	var showCwField by remember { mutableStateOf(false) }
 	var showEmojiPicker by remember { mutableStateOf(false) }
+	val textFieldState = rememberTextFieldState(initialContent)
 
 	if (!initialCw.isBlank()) showCwField = true
 
 	var cw by remember { mutableStateOf(initialCw) }
-	var content by remember { mutableStateOf(initialContent) }
 	var visibility by remember {
 		mutableStateOf(visibility
 			?: blockingSettings.getString("default_visibility", "public"))
@@ -126,15 +128,15 @@ fun ComposeView(
 	val instance by remember { fetchInstance(snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 	val maxChars = (instance?.maxTootChars ?: 500)
-	val remainingChars = maxChars - (content.length + cw.length)
+	val remainingChars = maxChars - (textFieldState.text.length + cw.length)
 
 	// can submit stuff
-	canSubmit = !content.isBlank() && remainingChars >= 0
+	canSubmit = !textFieldState.text.isBlank() && remainingChars >= 0
 
 	suspend fun sendPost() {
 		val res = createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
-			status = content,
+			status = textFieldState.text as String?,
 			spoilerText = cw,
 			visibility = visibility
 		))
@@ -332,9 +334,9 @@ fun ComposeView(
 					}
 
 					TextField(
-						value = content,
+						state = textFieldState,
 						placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
-						onValueChange = { content = it },
+						//onValueChange = { textFieldState.edit { i } = it },
 						modifier = Modifier
 							.focusRequester(focusRequester)
 							.onFocusChanged {
@@ -407,7 +409,7 @@ fun ComposeView(
 		EmojiPicker(
 			visible = showEmojiPicker,
 			onDismiss = { showEmojiPicker = !showEmojiPicker },
-			onSelectEmoji = { content += ":${it.shortcode}:" }
+			onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:")};  }
 		)
 	}
 }
