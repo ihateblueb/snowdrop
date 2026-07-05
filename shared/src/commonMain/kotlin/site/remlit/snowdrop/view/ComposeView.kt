@@ -26,6 +26,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,14 +34,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.createStatus
@@ -80,6 +86,7 @@ import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
 import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -92,6 +99,8 @@ fun ComposeView(
 	val navHandler = LocalNavController.current
 	val snackbarHandler = SnackbarController.current
 	val focusManager = LocalFocusManager.current
+	val focusRequester = remember { FocusRequester() }
+	val keyboardController = LocalSoftwareKeyboardController.current
 
 	val currentAccount by getCurrentAccountObjectFlow()
 		.collectAsStateWithLifecycle(null)
@@ -133,6 +142,12 @@ fun ComposeView(
 			res.handleError(snackbarHandler)
 			return
 		}
+	}
+
+	LaunchedEffect(Unit) {
+		// kinda jank but there's no good way around this
+		delay(50.milliseconds)
+		focusRequester.requestFocus()
 	}
 
 	TopAppBar(
@@ -320,7 +335,15 @@ fun ComposeView(
 						value = content,
 						placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
 						onValueChange = { content = it },
-						modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+						modifier = Modifier
+							.focusRequester(focusRequester)
+							.onFocusChanged {
+								if (it.hasFocus) {
+									keyboardController?.show()
+								}
+							}
+							.fillMaxWidth()
+							.fillMaxHeight(),
 						colors = TextFieldDefaults.colors(
 							unfocusedContainerColor = Color(0x00000000),
 							unfocusedIndicatorColor = Color(0x00000000),
