@@ -717,7 +717,7 @@ fun Status(status: Status) {
 								)
 							}
 
-							if (getFeature("biting")) {
+							if (getFeature("biting") && !isMine) {
 								DropdownMenuItem(
 									text = { Text(stringResource(Res.string.bite_post)) },
 									leadingIcon = {
