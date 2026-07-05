@@ -69,6 +69,7 @@ import snowdrop.shared.generated.resources.icon_logout_24px
 import snowdrop.shared.generated.resources.icon_switch_account_24px
 import snowdrop.shared.generated.resources.logout
 import snowdrop.shared.generated.resources.settings
+import snowdrop.shared.generated.resources.swap_notifications_and_explore_order
 import snowdrop.shared.generated.resources.switch_account
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
@@ -256,6 +257,22 @@ fun SettingsView() = ViewSurface {
 						Switch(
 							amoledBlack,
 							onCheckedChange = { blockingSettings.putBoolean("amoled_black", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val swapExploreAndNotifs by settings.getBooleanFlow("swapped_middle_navs", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.swap_notifications_and_explore_order)) },
+					trailingContent = {
+						Switch(
+							swapExploreAndNotifs,
+							onCheckedChange = { blockingSettings.putBoolean("swapped_middle_navs", it) }
 						)
 					}
 				)

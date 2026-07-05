@@ -67,6 +67,7 @@
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>
 	<string name="hide_follow_counters">Hide follow counters</string>
 	<string name="amoled_dark_theme">AMOLED dark theme</string>
+	<string name="swap_notifications_and_explore_order">Swap order of Notifications and Explore tabs</string>
 
 	<string name="account">Account</string>
 	<string name="switch_account">Switch account</string>

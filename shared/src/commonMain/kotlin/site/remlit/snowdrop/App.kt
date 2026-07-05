@@ -13,7 +13,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,9 +41,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -220,6 +216,9 @@ fun App() = safe {
 	val account by getCurrentAccountObjectFlow()
 		.collectAsStateWithLifecycle(null)
 
+	val swappedMiddleNavs by settings.getBooleanFlow("swapped_middle_navs", false)
+		.collectAsStateWithLifecycle(false)
+
 
 	DisposableEffect(Unit) {
 		ExternalUriHandler.listener = { uri ->
@@ -301,31 +300,59 @@ fun App() = safe {
 								label = { Text(stringResource(Res.string.timeline)) }
 							)
 
-							NavigationBarItem(
-								selected = atRoute<NotificationsRoute>(currentDest),
-								onClick = { navController.navigate(NotificationsRoute) },
-								icon = {
-									if (atRoute<NotificationsRoute>(currentDest)) Icon(
-										painterResource(Res.drawable.icon_notifications_filled_24px),
-										null
-									)
-									else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
-								},
-								label = { Text(stringResource(Res.string.notifications)) }
-							)
+							if (swappedMiddleNavs) {
+								NavigationBarItem(
+									selected = atRoute<ExploreRoute>(currentDest),
+									onClick = { navController.navigate(ExploreRoute) },
+									icon = {
+										if (atRoute<ExploreRoute>(currentDest)) Icon(
+											painterResource(Res.drawable.icon_explore_filled_24px),
+											null
+										)
+										else Icon(painterResource(Res.drawable.icon_explore_24px), null)
+									},
+									label = { Text(stringResource(Res.string.explore)) }
+								)
 
-							NavigationBarItem(
-								selected = atRoute<ExploreRoute>(currentDest),
-								onClick = { navController.navigate(ExploreRoute) },
-								icon = {
-									if (atRoute<ExploreRoute>(currentDest)) Icon(
-										painterResource(Res.drawable.icon_explore_filled_24px),
-										null
-									)
-									else Icon(painterResource(Res.drawable.icon_explore_24px), null)
-								},
-								label = { Text(stringResource(Res.string.explore)) }
-							)
+								NavigationBarItem(
+									selected = atRoute<NotificationsRoute>(currentDest),
+									onClick = { navController.navigate(NotificationsRoute) },
+									icon = {
+										if (atRoute<NotificationsRoute>(currentDest)) Icon(
+											painterResource(Res.drawable.icon_notifications_filled_24px),
+											null
+										)
+										else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
+									},
+									label = { Text(stringResource(Res.string.notifications)) }
+								)
+							} else {
+								NavigationBarItem(
+									selected = atRoute<NotificationsRoute>(currentDest),
+									onClick = { navController.navigate(NotificationsRoute) },
+									icon = {
+										if (atRoute<NotificationsRoute>(currentDest)) Icon(
+											painterResource(Res.drawable.icon_notifications_filled_24px),
+											null
+										)
+										else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
+									},
+									label = { Text(stringResource(Res.string.notifications)) }
+								)
+
+								NavigationBarItem(
+									selected = atRoute<ExploreRoute>(currentDest),
+									onClick = { navController.navigate(ExploreRoute) },
+									icon = {
+										if (atRoute<ExploreRoute>(currentDest)) Icon(
+											painterResource(Res.drawable.icon_explore_filled_24px),
+											null
+										)
+										else Icon(painterResource(Res.drawable.icon_explore_24px), null)
+									},
+									label = { Text(stringResource(Res.string.explore)) }
+								)
+							}
 
 							NavigationBarItem(
 								selected = atRoute<MyProfileRoute>(currentDest),
