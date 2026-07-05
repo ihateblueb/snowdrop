@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.0.3-alpha] - 2026/07/05
+
 ### Added
 - AMOLED dark theme
 - Haptics for copying links, bookmarking, and selecting timelines
