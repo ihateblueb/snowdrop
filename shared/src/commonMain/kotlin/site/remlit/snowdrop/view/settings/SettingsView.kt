@@ -53,6 +53,7 @@ import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.account
+import snowdrop.shared.generated.resources.amoled_dark_theme
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
@@ -74,7 +75,6 @@ import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 import snowdrop.shared.generated.resources.wellbeing
-import snowdrop.shared.generated.resources.write_your_post_here
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -108,7 +108,7 @@ fun SettingsView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_info_24px), null,)
+						Icon(painterResource(Res.drawable.icon_info_24px), null)
 					},
 					headlineContent = { Text(stringResource(Res.string.about_instance)) },
 					modifier = Modifier.clickable {
@@ -245,6 +245,22 @@ fun SettingsView() = ViewSurface {
 				}
 			}
 		}
+		item {
+			val amoledBlack by settings.getBooleanFlow("amoled_black", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.amoled_dark_theme)) },
+					trailingContent = {
+						Switch(
+							amoledBlack,
+							onCheckedChange = { blockingSettings.putBoolean("amoled_black", it) }
+						)
+					}
+				)
+			}
+		}
 		/* item { Divider() } */
 
 		item {
@@ -291,7 +307,7 @@ fun SettingsView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_bug_report_24px), null,)
+						Icon(painterResource(Res.drawable.icon_bug_report_24px), null)
 					},
 					headlineContent = { Text(stringResource(Res.string.debug)) },
 					trailingContent = {
@@ -315,7 +331,7 @@ fun SettingsView() = ViewSurface {
 			Card {
 				ListItem(
 					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_switch_account_24px), null,)
+						Icon(painterResource(Res.drawable.icon_switch_account_24px), null)
 					},
 					headlineContent = { Text(stringResource(Res.string.switch_account)) },
 					modifier = Modifier.clickable {
