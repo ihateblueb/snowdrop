@@ -26,12 +26,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.createStatus
@@ -53,8 +49,6 @@ import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
-import site.remlit.snowdrop.model.InstanceV1
-import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
@@ -62,7 +56,6 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchInstance
-import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
@@ -76,6 +69,7 @@ import snowdrop.shared.generated.resources.icon_mail_20px
 import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_send_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.icon_warning_filled_24px
 import snowdrop.shared.generated.resources.reply
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_direct_description
@@ -346,9 +340,16 @@ fun ComposeView(
 						.imePadding(),
 					verticalAlignment = Alignment.CenterVertically
 				) {
-					IconButton(onClick = { showCwField = !showCwField }) {
-						Icon(painterResource(Res.drawable.icon_warning_24px), null)
+					if (showCwField) {
+						IconButton(onClick = { showCwField = !showCwField }) {
+							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
+						}
+					} else {
+						IconButton(onClick = { showCwField = !showCwField }) {
+							Icon(painterResource(Res.drawable.icon_warning_24px), null)
+						}
 					}
+
 					IconButton(onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() }) {
 						Icon(painterResource(Res.drawable.icon_mood_24px), null)
 					}
