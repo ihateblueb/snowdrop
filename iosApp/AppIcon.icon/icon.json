@@ -25,21 +25,48 @@
             },
             {
               "appearance" : "dark",
-              "value" : "system-light"
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.60553,0.85731,0.60787,1.00000",
+                  "display-p3:0.81696,1.00000,0.76851,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.5,
+                    "y" : 1
+                  },
+                  "stop" : {
+                    "x" : 0.5,
+                    "y" : 0
+                  }
+                }
+              }
             },
             {
               "appearance" : "tinted",
               "value" : "system-light"
             }
           ],
-          "glass" : true,
-          "image-name" : "snowdrop-square.svg",
-          "name" : "snowdrop-square",
+          "image-name" : "snowdrop-square 2.svg",
+          "name" : "snowdrop-square 2",
+          "opacity-specializations" : [
+            {
+              "value" : 0.95
+            },
+            {
+              "appearance" : "dark",
+              "value" : 0.85
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 1
+            }
+          ],
           "position" : {
-            "scale" : 5,
+            "scale" : 4,
             "translation-in-points" : [
-              -23.41847003958594,
-              -61.56366217654738
+              -0.0005140076708585184,
+              0.0001801494115056812
             ]
           }
         }

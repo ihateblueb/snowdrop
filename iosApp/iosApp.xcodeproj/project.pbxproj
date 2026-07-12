@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		22A20C4030033FE400A9AE3E /* snowdrop.icon in Resources */ = {isa = PBXBuildFile; fileRef = 22A20C3F30033FE400A9AE3E /* snowdrop.icon */; };
+		2226DBAF30034566007592C4 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2226DBAE30034566007592C4 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		22A20C3F30033FE400A9AE3E /* snowdrop.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = snowdrop.icon; sourceTree = "<group>"; };
+		2226DBAE30034566007592C4 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		A4245D690197D3E13A97CBC1 /* snowdrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowdrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -66,7 +66,7 @@
 				CEB42BF229A9D5F450310744 /* Configuration */,
 				3AC85AB77A4ACE0E2FA07AE8 /* iosApp */,
 				0D1B0F4FE6FD09937FAA41CB /* Products */,
-				22A20C3F30033FE400A9AE3E /* snowdrop.icon */,
+				2226DBAE30034566007592C4 /* AppIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,7 +135,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22A20C4030033FE400A9AE3E /* snowdrop.icon in Resources */,
+				2226DBAF30034566007592C4 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
