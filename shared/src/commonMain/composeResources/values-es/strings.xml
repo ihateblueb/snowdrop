@@ -4,13 +4,25 @@
     <string name="profile">Perfil</string>
     <string name="add_account">Añadir cuenta</string>
     <string name="post">Publicación</string>
+<<<<<<< HEAD
+    <string name="notifications">Notificaciones</string>
+    <string name="reacted_by">Reaccionado por</string>
+    <string name="x_posts">{count} publicaciones</string>
+=======
+    <string name="post_by">Publicación por %1$s</string>
     <string name="notifications">Notificaciones</string>
     <string name="reacted_by">Reaccionado por</string>
     <string name="x_posts">%1$s publicaciones</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="edit_profile">Editar perfil</string>
     <string name="cancel_request">Cancelar solicitud</string>
     <string name="follow">Seguir</string>
     <string name="unfollow">Dejar de seguir</string>
+<<<<<<< HEAD
+=======
+    <string name="followers">seguidores</string>
+    <string name="following">siguiendo</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="posts">Publicaciones</string>
     <string name="finish">Terminar</string>
     <string name="_continue">Continuar</string>
@@ -37,7 +49,19 @@
     <string name="storage">Almacenamiento</string>
     <string name="cache">Caché</string>
     <string name="clear_cache">Vaciar caché</string>
+<<<<<<< HEAD
     <string name="a_poll_you_have_voted_in_has_ended">Una encuesta en la que votaste ha terminado</string>
+=======
+    <string name="reacted_with_x">reaccionó con %1$s</string>
+    <string name="edited_a_post">editó una publicación</string>
+    <string name="a_poll_you_have_voted_in_has_ended">Una encuesta en la que votaste ha terminado</string>
+    <string name="just_posted">acaba de publicar algo</string>
+    <string name="bit_you">te mordió</string>
+    <string name="bit_you_back">te mordió de vuelta</string>
+    <string name="bit_your_post">mordió tu publicación</string>
+    <string name="requested_to_follow_you">pidió seguirte</string>
+    <string name="followed_you">te siguió</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="save">Guardar</string>
     <string name="accept">Aceptar</string>
     <string name="reject">Rechazar</string>
@@ -61,9 +85,17 @@
     <string name="emoji">Emoji</string>
     <string name="add_emoji">Añadir emoji</string>
     <string name="uncategorized">Sin categorizar</string>
+<<<<<<< HEAD
+    <string name="timeline">Cronología</string>
+    <string name="boosted_by">impulsado por</string>
+    <string name="joined_at_x">Se unió el {date_time}</string>
+=======
+    <string name="are_you_sure_you_want_to_cancel_your_follow_request">¿Deseas cancelar tu solicitud de seguimiento a @%1$s?</string>
+    <string name="are_you_sure_you_want_to_unfollow">¿Deseas dejar de seguir a @%1$s?</string>
     <string name="timeline">Cronología</string>
     <string name="boosted_by">impulsado por</string>
     <string name="joined_at_x">Se unió el %1$s</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="posts_and_replies">Publicaciones y respuestas</string>
     <string name="media">Multimedia</string>
     <string name="instance_host">Servidor</string>
@@ -79,12 +111,22 @@
     <string name="toggle_logged_in_state">Altenar entre conectado y desconectado</string>
     <string name="reset_feature_determinations">Restablecer la configuración de funciones</string>
     <string name="clear_settings">Borrar los ajustes</string>
+<<<<<<< HEAD
+=======
+    <string name="liked_your_post">le ha dado me gusta a tu publicación</string>
+    <string name="boosted_your_post">Promocionó tu publicación</string>
+    <string name="boosted">Impulsada</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="show_boosts">Mostrar los incrementos</string>
     <string name="show_likes">Mostrar los me gusta</string>
     <string name="about_instance">Acerca de la instancia</string>
     <string name="bubble_instances">Instancias de burbuja</string>
     <string name="locked_account">Cuenta bloqueada</string>
     <string name="locked_account_description">Los nuevos seguidores deberán ser aprobados antes de poder seguirte</string>
+<<<<<<< HEAD
+=======
+    <string name="are_you_sure_you_want_to_send_a_follow_request">¿Deseas enviar una solicitud de seguimiento a @%1$s?</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="rules">Reglas</string>
     <string name="bookmarks">Marcadores</string>
     <string name="editing_profile">Editando perfil</string>
@@ -96,4 +138,24 @@
     <string name="nothing_to_see_here">Nada que ver aquí...</string>
     <string name="amoled_dark_theme">Tema oscuro AMOLED</string>
     <string name="swap_notifications_and_explore_order">Intercambiar el orden de las pestañas «Notificaciones» y «Explorar»</string>
+<<<<<<< HEAD
+    <string name="x_requested_to_follow_you">{clickable_display_name} solicitó seguirte</string>
+    <string name="x_followed_you">{clickable_display_name} te siguió</string>
+    <string name="post_by_x">Publicación de {display_name}</string>
+    <string name="x_followers">{count} seguidores</string>
+    <string name="x_following">{count} siguiendo</string>
+    <string name="x_liked_your_post">{clickable_display_name} le dio Me gusta a tu publicación</string>
+    <string name="x_reacted_with_x">{clickable_display_name} reaccionó con {emoji}</string>
+    <string name="x_boosted_your_post">{clickable_display_name} compartió tu publicación</string>
+    <string name="x_edited_a_post">{clickable_display_name} editó una publicación</string>
+    <string name="x_just_posted">{clickable_display_name} acaba de publicar</string>
+    <string name="x_bit_you">{clickable_display_name} reaccionó a tu publicación</string>
+    <string name="x_bit_you_back">{clickable_display_name} reaccionó te devolvió la publicación</string>
+    <string name="x_bit_your_post">{clickable_display_name} reaccionó a tu publicación</string>
+    <string name="x_boosted">{clickable_display_name} compartió</string>
+    <string name="are_you_sure_you_want_to_cancel_your_follow_request_to_x">¿Estás seguro de que quieres cancelar tu solicitud para seguir a {handle}?</string>
+    <string name="are_you_sure_you_want_to_unfollow_x">¿Estás seguro de que quieres dejar de seguir a {handle}?</string>
+    <string name="are_you_sure_you_want_to_send_a_follow_request_to_x">¿Estás seguro de que quieres enviar una solicitud de seguimiento a {handle}?</string>
+=======
+>>>>>>> 54e9521 (Merge in translations from Weblate)
 </resources>

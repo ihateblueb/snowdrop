@@ -3,6 +3,10 @@
     <string name="notifications">Уведомления</string>
     <string name="profile">Профиль</string>
     <string name="add_account">Добавить аккаунт</string>
+<<<<<<< HEAD
+=======
+    <string name="post_by">Пост от %1$s</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="x_posts">%1$s постов</string>
     <string name="edit_profile">Редактировать профиль</string>
     <string name="cancel_request">Отменить запрос</string>
@@ -56,6 +60,12 @@
     <string name="global">Глобальная</string>
     <string name="emoji">Эмодзи</string>
     <string name="add_emoji">Добавить эмодзи</string>
+<<<<<<< HEAD
+=======
+    <string name="are_you_sure_you_want_to_cancel_your_follow_request">Вы уверены, что хотите отменить запрос на подписку на @%1$s?</string>
+    <string name="are_you_sure_you_want_to_unfollow">Вы уверены, что хотите отписаться от @%1$s?</string>
+    <string name="are_you_sure_you_want_to_send_a_follow_request">Вы уверены, что хотите отправить запрос на подписку на @%1$s?</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="rules">Правила</string>
     <string name="bookmarks">Закладки</string>
     <string name="automated_account">Автоматизированный аккаунт</string>
@@ -65,6 +75,11 @@
     <string name="boosted_by">Продвинуто</string>
     <string name="timeline">Лента</string>
     <string name="request_to_follow">Запросить подписаться</string>
+<<<<<<< HEAD
+=======
+    <string name="followers">подписчиков</string>
+    <string name="following">подписок</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="nothing_to_see_here">Пока что тут ничего нет...</string>
     <string name="instance_host">Имя сервера</string>
     <string name="you_must_provide_a_valid_host">Вы должны предоставить корректное имя сервера!</string>
@@ -78,6 +93,20 @@
     <string name="toggle_logged_in_state">Переключить состояние входа</string>
     <string name="reset_feature_determinations">Сбросить найденные возможности</string>
     <string name="clear_cache">Очистить временные данные</string>
+<<<<<<< HEAD
+=======
+    <string name="liked_your_post">лайкнул(а) ваш пост</string>
+    <string name="reacted_with_x">добавил(а) реакцию %1$s на ваш пост</string>
+    <string name="boosted_your_post">продвинул(а) ваш пост</string>
+    <string name="edited_a_post">отредактировал(а) пост</string>
+    <string name="just_posted">опубликовал(а) пост</string>
+    <string name="bit_you">укусил(а) вас</string>
+    <string name="bit_you_back">укусил(а) вас в ответ</string>
+    <string name="bit_your_post">укусил(а) ваш пост</string>
+    <string name="requested_to_follow_you">отправил(а) запрос на подписку</string>
+    <string name="followed_you">подписал(ся/ась) на вас</string>
+    <string name="boosted">продвинул(а)</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="bookmark">В закладки</string>
     <string name="show_likes">Показать лайки</string>
     <string name="about_instance">О сервере</string>

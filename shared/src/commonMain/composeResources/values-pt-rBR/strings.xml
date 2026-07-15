@@ -6,6 +6,10 @@
     <string name="profile">Perfil</string>
     <string name="add_account">Adicionar conta</string>
     <string name="post">Postagem</string>
+<<<<<<< HEAD
+=======
+    <string name="post_by">Postagem de %1$s</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="boosted_by">Impulsionada por</string>
     <string name="liked_by">Curtida por</string>
     <string name="reacted_by">Reagido por</string>
@@ -16,6 +20,11 @@
     <string name="follow">Seguir</string>
     <string name="unfollow">Deixar de seguir</string>
     <string name="joined_at_x">Entrou às %1$s</string>
+<<<<<<< HEAD
+=======
+    <string name="followers">seguidores</string>
+    <string name="following">seguindo</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="posts">Postagens</string>
     <string name="posts_and_replies">Postagens &amp; Repostas</string>
     <string name="media">Mídia</string>
@@ -58,11 +67,29 @@
     <string name="reset_feature_determinations">Restaurar determinações de funcionalidades</string>
     <string name="clear_cache">Limpar cache</string>
     <string name="clear_settings">Restaurar configurações</string>
+<<<<<<< HEAD
     <string name="a_poll_you_have_voted_in_has_ended">Uma enquete na qual você votou acabou</string>
+=======
+    <string name="liked_your_post">curtiu sua postagem</string>
+    <string name="reacted_with_x">reagiu com %1$s</string>
+    <string name="boosted_your_post">impulsionou sua postagem</string>
+    <string name="edited_a_post">editou uma postagem</string>
+    <string name="a_poll_you_have_voted_in_has_ended">Uma enquete na qual você votou acabou</string>
+    <string name="just_posted">acabou de postar</string>
+    <string name="bit_you">mordeu você</string>
+    <string name="bit_you_back">mordeu você de volta</string>
+    <string name="bit_your_post">mordeu sua postagem</string>
+    <string name="requested_to_follow_you">pediu para te seguir</string>
+    <string name="followed_you">te seguiu</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="save">Salvar</string>
     <string name="accept">Aceitar</string>
     <string name="reject">Recusar</string>
     <string name="bite_back">Morder de volta</string>
+<<<<<<< HEAD
+=======
+    <string name="boosted">impulsionou</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="show_content">Mostrar conteúdo</string>
     <string name="hide_content">Esconder conteúdo</string>
     <string name="copy_link">Copiar link</string>
@@ -84,6 +111,12 @@
     <string name="emoji">Emoji</string>
     <string name="add_emoji">Adicionar emoji</string>
     <string name="uncategorized">Não-categorizado</string>
+<<<<<<< HEAD
+=======
+    <string name="are_you_sure_you_want_to_cancel_your_follow_request">Tem certeza que quer cancelar seu pedido para seguir @%1$s?</string>
+    <string name="are_you_sure_you_want_to_unfollow">Tem certeza que quer deixar de seguir @%1$s?</string>
+    <string name="are_you_sure_you_want_to_send_a_follow_request">Tem certeza que quer solicitar seguir @%1$s?</string>
+>>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="about_instance">Sobre a instância</string>
     <string name="rules">Regras</string>
     <string name="bubble_instances">Instâncias da bolha</string>
