@@ -16,10 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,14 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -61,8 +55,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
 import kotlinx.coroutines.delay
@@ -72,12 +64,15 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
+import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.addNewAccount
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.navigationBarNavigate
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.safe
 import site.remlit.snowdrop.util.scrollingUpward
@@ -85,10 +80,14 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
 import site.remlit.snowdrop.util.config.kamelConfig
+import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getAccountHost
 import site.remlit.snowdrop.util.getAccountObjectFlow
 import site.remlit.snowdrop.util.getAccounts
+import site.remlit.snowdrop.util.getNavigationBarOrder
+import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.switchAccount
@@ -98,21 +97,9 @@ import site.remlit.snowdrop.view.debug.DebugStorageView
 import site.remlit.snowdrop.view.settings.*
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.add_account
-import snowdrop.shared.generated.resources.explore
-import snowdrop.shared.generated.resources.icon_account_circle_24px
-import snowdrop.shared.generated.resources.icon_account_circle_filled_24px
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_edit_square_24px
-import snowdrop.shared.generated.resources.icon_explore_24px
-import snowdrop.shared.generated.resources.icon_explore_filled_24px
-import snowdrop.shared.generated.resources.icon_home_24px
-import snowdrop.shared.generated.resources.icon_home_filled_24px
-import snowdrop.shared.generated.resources.icon_notifications_24px
-import snowdrop.shared.generated.resources.icon_notifications_filled_24px
-import snowdrop.shared.generated.resources.notifications
-import snowdrop.shared.generated.resources.profile
-import snowdrop.shared.generated.resources.timeline
 import kotlin.time.Duration.Companion.milliseconds
 
 
@@ -252,15 +239,6 @@ fun App() = safe {
 	* UI Begins
 	*/
 
-	@Composable
-	fun fallbackAvatarIcon() {
-		if (currentDest != null && currentDest.hasRoute<MyProfileRoute>()) Icon(
-			painterResource(Res.drawable.icon_account_circle_filled_24px),
-			null
-		)
-		else Icon(painterResource(Res.drawable.icon_account_circle_24px), null)
-	}
-
 	// this composable makes it easier to view and understand the composition
 	// local providers which wrap the app
 	@Composable
@@ -286,94 +264,17 @@ fun App() = safe {
 						exit = bottomNavExitAnimation,
 					) {
 						NavigationBar {
-							NavigationBarItem(
-								selected = atRoute<TimelineRoute>(currentDest),
-								onClick = {
-									navController.navigate(TimelineRoute)
-								},
-								icon = {
-									if (atRoute<TimelineRoute>(currentDest)) Icon(
-										painterResource(Res.drawable.icon_home_filled_24px),
-										null
+							val navigationBarOrder by remember { getNavigationBarOrder() }.collectAsStateWithLifecycle(defaultNavigationBarOrder)
+
+							navigationBarOrder.mapToNavigationOptions()
+								.forEach { item ->
+									NavigationBarItem(
+										selected = atRoute(item.toRouteClass(), currentDest),
+										onClick = { navigationBarNavigate(item, navController) },
+										icon = { NavigationBarIcon(item) },
+										label = { Text(NavigationBarLabel(item)) }
 									)
-									else Icon(painterResource(Res.drawable.icon_home_24px), null)
-								},
-								label = { Text(stringResource(Res.string.timeline)) }
-							)
-
-							if (swappedMiddleNavs) {
-								NavigationBarItem(
-									selected = atRoute<ExploreRoute>(currentDest),
-									onClick = { navController.navigate(ExploreRoute) },
-									icon = {
-										if (atRoute<ExploreRoute>(currentDest)) Icon(
-											painterResource(Res.drawable.icon_explore_filled_24px),
-											null
-										)
-										else Icon(painterResource(Res.drawable.icon_explore_24px), null)
-									},
-									label = { Text(stringResource(Res.string.explore)) }
-								)
-
-								NavigationBarItem(
-									selected = atRoute<NotificationsRoute>(currentDest),
-									onClick = { navController.navigate(NotificationsRoute) },
-									icon = {
-										if (atRoute<NotificationsRoute>(currentDest)) Icon(
-											painterResource(Res.drawable.icon_notifications_filled_24px),
-											null
-										)
-										else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
-									},
-									label = { Text(stringResource(Res.string.notifications)) }
-								)
-							} else {
-								NavigationBarItem(
-									selected = atRoute<NotificationsRoute>(currentDest),
-									onClick = { navController.navigate(NotificationsRoute) },
-									icon = {
-										if (atRoute<NotificationsRoute>(currentDest)) Icon(
-											painterResource(Res.drawable.icon_notifications_filled_24px),
-											null
-										)
-										else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
-									},
-									label = { Text(stringResource(Res.string.notifications)) }
-								)
-
-								NavigationBarItem(
-									selected = atRoute<ExploreRoute>(currentDest),
-									onClick = { navController.navigate(ExploreRoute) },
-									icon = {
-										if (atRoute<ExploreRoute>(currentDest)) Icon(
-											painterResource(Res.drawable.icon_explore_filled_24px),
-											null
-										)
-										else Icon(painterResource(Res.drawable.icon_explore_24px), null)
-									},
-									label = { Text(stringResource(Res.string.explore)) }
-								)
-							}
-
-							NavigationBarItem(
-								selected = atRoute<MyProfileRoute>(currentDest),
-								onClick = {},
-								interactionSource = accountSwitcherInteractionSource, // handles the actual clicks
-								icon = {
-									if (account != null && account!!.avatar != null) {
-										KamelImage(
-											resource = { asyncPainterResource(account!!.avatarStatic ?: account!!.avatar!!) },
-											contentDescription = account!!.avatarDescription,
-											contentScale = ContentScale.Crop,
-											onLoading = { fallbackAvatarIcon() },
-											modifier = Modifier.clip(CircleShape)
-												.height(24.dp)
-												.width(24.dp)
-										)
-									} else fallbackAvatarIcon()
-								},
-								label = { Text(stringResource(Res.string.profile)) }
-							)
+								}
 						}
 					}
 				},
@@ -468,7 +369,12 @@ fun App() = safe {
 						composable<StartRoute> {
 							StartView(
 								navigateToLogin = { navController.navigate(LoginRoute) },
-								navigateToTimeline = { navController.navigate(TimelineRoute) },
+								navigateToFirstPage = {
+									navigationBarNavigate(
+										getNavigationBarOrderBlocking().mapToNavigationOptions().first(),
+										navController
+									)
+								},
 							)
 						}
 

@@ -20,13 +20,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,20 +36,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableColumn
 import site.remlit.snowdrop.AboutInstanceRoute
 import site.remlit.snowdrop.AboutSnowdropRoute
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
+import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getDefaultVisibility
 import site.remlit.snowdrop.util.logoutAccount
+import site.remlit.snowdrop.util.mapToNavigationOptions
+import site.remlit.snowdrop.util.putNavigationBarOrder
 import site.remlit.snowdrop.util.putDefaultVisibility
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
@@ -56,7 +64,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.about_snowdrop
 import snowdrop.shared.generated.resources.account
-import snowdrop.shared.generated.resources.amoled_dark_theme
 import snowdrop.shared.generated.resources.appearance
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
@@ -66,14 +73,15 @@ import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_bug_report_24px
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
+import snowdrop.shared.generated.resources.icon_drag_indicator_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.icon_logout_24px
 import snowdrop.shared.generated.resources.icon_switch_account_24px
 import snowdrop.shared.generated.resources.logout
+import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.settings
-import snowdrop.shared.generated.resources.swap_notifications_and_explore_order
 import snowdrop.shared.generated.resources.switch_account
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.visibility_direct
@@ -185,9 +193,7 @@ fun SettingsView() = ViewSurface {
 				) {
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier
-							.fillMaxWidth()
-							.height(42.dp)
+						modifier = Modifier.fillMaxWidth().height(42.dp)
 							.selectable(
 								selected = defaultVisibility == "public",
 								role = Role.RadioButton,
@@ -206,9 +212,7 @@ fun SettingsView() = ViewSurface {
 					}
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier
-							.fillMaxWidth()
-							.height(42.dp)
+						modifier = Modifier.fillMaxWidth().height(42.dp)
 							.selectable(
 								selected = defaultVisibility == "unlisted",
 								role = Role.RadioButton,
@@ -227,9 +231,7 @@ fun SettingsView() = ViewSurface {
 					}
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier
-							.fillMaxWidth()
-							.height(42.dp)
+						modifier = Modifier.fillMaxWidth().height(42.dp)
 							.selectable(
 								selected = defaultVisibility == "private",
 								role = Role.RadioButton,
@@ -248,9 +250,7 @@ fun SettingsView() = ViewSurface {
 					}
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier
-							.fillMaxWidth()
-							.height(42.dp)
+						modifier = Modifier.fillMaxWidth().height(42.dp)
 							.selectable(
 								selected = defaultVisibility == "direct",
 								role = Role.RadioButton,
@@ -296,7 +296,77 @@ fun SettingsView() = ViewSurface {
 				)
 			}
 		}
-		// todo: implement tab order
+		item {
+			var tabOrder by remember { mutableStateOf(getNavigationBarOrderBlocking().mapToNavigationOptions()) }
+
+			LaunchedEffect(tabOrder) {
+				Logger.d { "(launched effect) taborder $tabOrder" }
+				putNavigationBarOrder(tabOrder.joinToString(separator = " "))
+			}
+
+			var showBottomBarTabOrder by remember { mutableStateOf(false) }
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.navigation_bar_tab_order)) },
+					trailingContent = {
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(10.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							if (showBottomBarTabOrder) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
+							else Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
+						}
+					},
+					modifier = Modifier.clickable {
+						showBottomBarTabOrder = !showBottomBarTabOrder
+					}
+				)
+			}
+			AnimatedVisibility(
+				visible = showBottomBarTabOrder,
+				enter = slideInVertically() + fadeIn(),
+				exit = fadeOut() + slideOutVertically(),
+			) {
+				ReorderableColumn(
+					list = tabOrder,
+					onSettle = { from, to ->
+						tabOrder = tabOrder.toMutableList().apply {
+							add(to, removeAt(from))
+						}
+					},
+					modifier = Modifier.padding(horizontal = 10.dp)
+				) { _, item, _ ->
+					key(item) {
+						ReorderableItem {
+							Row(
+								Modifier.fillMaxWidth().padding(vertical = 5.dp, horizontal = 16.dp),
+								horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								NavigationBarIcon(item)
+								Text(NavigationBarLabel(item))
+
+								Row(
+									modifier = Modifier.weight(1f),
+									horizontalArrangement = Arrangement.End
+								) {
+									IconButton(
+										modifier = Modifier.draggableHandle(
+											onDragStarted = {},
+											onDragStopped = {},
+										),
+										onClick = {},
+									) {
+										Icon(painterResource(Res.drawable.icon_drag_indicator_24px), contentDescription = "Reorder")
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		//</editor-fold>
 
 		//<editor-fold name="Wellbeing">

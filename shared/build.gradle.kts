@@ -75,6 +75,7 @@ kotlin {
 
 			implementation(libs.kermit)
 			implementation(libs.htmlconverter)
+			implementation(libs.reorderable)
 
 			// kamel, image handling
 			implementation(libs.kamel.image)

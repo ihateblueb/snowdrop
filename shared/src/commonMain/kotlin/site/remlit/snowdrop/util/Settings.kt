@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.flow
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.putCacheEntry
 
@@ -130,6 +131,7 @@ suspend fun updateCurrentAccountObject() {
 //</editor-fold>
 
 //<editor-fold name="Specific Settings">
+// default visibility
 /**
  * Get default visibility setting for current user.
  * @since 0.0.2-alpha
@@ -142,8 +144,19 @@ fun getDefaultVisibility() = settings.getStringFlow("default_visibility_${getCur
  * @param value Visibility
  * @since 0.0.2-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class)
 fun putDefaultVisibility(value: String) = blockingSettings.putString("default_visibility_${getCurrentAccountId()}", value)
+
+// bottom bar order
+val defaultNavigationBarOrder = listOf(NavigationBarOption.Timeline, NavigationBarOption.Notifications, NavigationBarOption.Explore,
+	NavigationBarOption.MyProfile).joinToString(separator = " ")
+
+@OptIn(ExperimentalSettingsApi::class)
+fun getNavigationBarOrder() = settings.getStringFlow("bottom_bar_order", defaultNavigationBarOrder)
+
+fun getNavigationBarOrderBlocking() = blockingSettings.getString("bottom_bar_order", defaultNavigationBarOrder)
+
+@OptIn(ExperimentalSettingsApi::class)
+fun putNavigationBarOrder(value: String) = blockingSettings.putString("bottom_bar_order", value)
 //</editor-fold>
 
 

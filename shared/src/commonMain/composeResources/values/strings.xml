@@ -70,7 +70,7 @@
 
 	<string name="appearance">Appearance</string>
 	<string name="use_amoled_dark_theme">Use AMOLED dark theme</string>
-	<string name="change_order_of_bottm_bar_tabs">Change order of bottom bar tabs</string>
+	<string name="navigation_bar_tab_order">Navigation bar tab order</string>
 
 	<string name="account">Account</string>
 	<string name="switch_account">Switch account</string>

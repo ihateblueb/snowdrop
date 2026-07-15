@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +18,7 @@ import site.remlit.snowdrop.util.settings
 @OptIn(ExperimentalSettingsApi::class)
 fun StartView(
 	navigateToLogin: () -> Unit,
-	navigateToTimeline: () -> Unit
+	navigateToFirstPage: () -> Unit
 ) = ViewSurface {
 	val loggedIn by settings.getBooleanOrNullFlow("logged_in")
 		.collectAsStateWithLifecycle(null)
@@ -33,7 +32,7 @@ fun StartView(
 		CircularProgressIndicator()
 	}
 
-	if (loggedIn == true) navigateToTimeline()
+	if (loggedIn == true) navigateToFirstPage()
 	else if (loggedIn == false) navigateToLogin()
 	// else, just load until it reads
 }
