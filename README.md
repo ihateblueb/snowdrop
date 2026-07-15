@@ -1,4 +1,10 @@
-# Snowdrop
+<h1>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="branding/wordmark-white.svg">
+        <source media="(prefers-color-scheme: light)" srcset="branding/wordmark-black.svg">
+        <img height="50" alt="Aster" src="branding/wordmark-black.svg">
+    </picture>
+</h1>
 
 [![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/) ![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg)
 
