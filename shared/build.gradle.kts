@@ -1,4 +1,7 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import java.io.ByteArrayOutputStream
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -6,6 +9,7 @@ plugins {
 	alias(libs.plugins.composeMultiplatform)
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.kotlinSerialization)
+	alias(libs.plugins.buildKonfig)
 }
 
 kotlin {
@@ -86,4 +90,50 @@ kotlin {
 
 dependencies {
 	androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+//
+// past this point the gradle config is very messy
+//
+
+abstract class GitBranchValueSource : ValueSource<String, ValueSourceParameters.None> {
+	@get:Inject
+	abstract val execOperations: ExecOperations
+
+	override fun obtain(): String {
+		val stdout = ByteArrayOutputStream()
+		execOperations.exec {
+			commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+}
+
+abstract class GitCommitValueSource : ValueSource<String, ValueSourceParameters.None> {
+	@get:Inject
+	abstract val execOperations: ExecOperations
+
+	override fun obtain(): String {
+		val stdout = ByteArrayOutputStream()
+		execOperations.exec {
+			commandLine("git", "rev-parse", "--short", "HEAD")
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+}
+
+buildkonfig {
+	packageName = "site.remlit.snowdrop"
+	objectName = "GradleVariables"
+
+	val gitBranch = providers.of(GitBranchValueSource::class) {}
+	val gitCommit = providers.of(GitCommitValueSource::class) {}
+
+	defaultConfigs {
+		buildConfigField(STRING, "version", rootProject.version.toString())
+		buildConfigField(STRING, "gitBranch", gitBranch.get())
+		buildConfigField(STRING, "gitCommit", gitCommit.get())
+	}
 }

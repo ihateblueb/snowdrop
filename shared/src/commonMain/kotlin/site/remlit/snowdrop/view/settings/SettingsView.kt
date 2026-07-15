@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.AboutInstanceRoute
+import site.remlit.snowdrop.AboutSnowdropRoute
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.component.ViewSurface
@@ -52,8 +54,10 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
+import snowdrop.shared.generated.resources.about_snowdrop
 import snowdrop.shared.generated.resources.account
 import snowdrop.shared.generated.resources.amoled_dark_theme
+import snowdrop.shared.generated.resources.appearance
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
@@ -71,6 +75,7 @@ import snowdrop.shared.generated.resources.logout
 import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.swap_notifications_and_explore_order
 import snowdrop.shared.generated.resources.switch_account
+import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
@@ -105,6 +110,7 @@ fun SettingsView() = ViewSurface {
 	LazyColumn(
 		modifier = Modifier.padding(horizontal = 10.dp)
 	) {
+		// about instance
 		item {
 			Card {
 				ListItem(
@@ -118,13 +124,31 @@ fun SettingsView() = ViewSurface {
 				)
 			}
 		}
+		// about snowdrop
+		item {
+			Card {
+				ListItem(
+					leadingContent = {
+						Icon(painterResource(Res.drawable.icon_info_24px), null)
+					},
+					headlineContent = { Text(stringResource(Res.string.about_snowdrop)) },
+					modifier = Modifier.clickable {
+						navHandler.navigate(AboutSnowdropRoute)
+					}
+				)
+			}
+		}
+
+		//<editor-fold name="General">
+		//general
 		item {
 			Text(
 				stringResource(Res.string.general),
 				style = MaterialTheme.typography.labelLarge,
-				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+				modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 10.dp)
 			)
 		}
+		//default post vis
 		item {
 			val defaultVisibility by remember { getDefaultVisibility() }
 				.collectAsStateWithLifecycle("public")
@@ -246,13 +270,23 @@ fun SettingsView() = ViewSurface {
 				}
 			}
 		}
+		//</editor-fold>
+
+		//<editor-fold name="Appearance">
+		item {
+			Text(
+				stringResource(Res.string.appearance),
+				style = MaterialTheme.typography.labelLarge,
+				modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 10.dp)
+			)
+		}
 		item {
 			val amoledBlack by settings.getBooleanFlow("amoled_black", false)
 				.collectAsStateWithLifecycle(false)
 
 			Card {
 				ListItem(
-					headlineContent = { Text(stringResource(Res.string.amoled_dark_theme)) },
+					headlineContent = { Text(stringResource(Res.string.use_amoled_dark_theme)) },
 					trailingContent = {
 						Switch(
 							amoledBlack,
@@ -262,29 +296,15 @@ fun SettingsView() = ViewSurface {
 				)
 			}
 		}
-		item {
-			val swapExploreAndNotifs by settings.getBooleanFlow("swapped_middle_navs", false)
-				.collectAsStateWithLifecycle(false)
+		// todo: implement tab order
+		//</editor-fold>
 
-			Card {
-				ListItem(
-					headlineContent = { Text(stringResource(Res.string.swap_notifications_and_explore_order)) },
-					trailingContent = {
-						Switch(
-							swapExploreAndNotifs,
-							onCheckedChange = { blockingSettings.putBoolean("swapped_middle_navs", it) }
-						)
-					}
-				)
-			}
-		}
-		/* item { Divider() } */
-
+		//<editor-fold name="Wellbeing">
 		item {
 			Text(
 				stringResource(Res.string.wellbeing),
 				style = MaterialTheme.typography.labelLarge,
-				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+				modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 10.dp)
 			)
 		}
 		item {
@@ -319,6 +339,7 @@ fun SettingsView() = ViewSurface {
 				)
 			}
 		}
+		//</editor-fold>
 
 		item {
 			Card {
@@ -337,11 +358,12 @@ fun SettingsView() = ViewSurface {
 			}
 		}
 
+		//<editor-fold name="Account">
 		item {
 			Text(
 				stringResource(Res.string.account),
 				style = MaterialTheme.typography.labelLarge,
-				modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+				modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 10.dp)
 			)
 		}
 		item {
@@ -375,5 +397,6 @@ fun SettingsView() = ViewSurface {
 				)
 			}
 		}
+		//</editor-fold>
 	}
 }

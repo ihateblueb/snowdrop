@@ -157,6 +157,8 @@ data class ComposeRoute(
 object SettingsRoute
 @Serializable
 object AboutInstanceRoute
+@Serializable
+object AboutSnowdropRoute
 
 @Serializable
 object DebugRoute
@@ -169,7 +171,6 @@ val bottomNavExitAnimation = slideOutVertically(targetOffsetY = { it }) + fadeOu
 
 
 @Composable
-@Preview
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
 	setupAppSettings()
@@ -567,6 +568,18 @@ fun App() = safe {
 								)
 							) }
 						) { AboutInstanceView() }
+						composable<AboutSnowdropRoute>(
+							enterTransition = { slideIntoContainer(
+								AnimatedContentTransitionScope.SlideDirection.Start, tween(
+									250
+								)
+							) },
+							exitTransition = { slideOutOfContainer(
+								AnimatedContentTransitionScope.SlideDirection.End, tween(
+									200
+								)
+							) }
+						) { AboutSnowdropView() }
 
 						// Debug
 						composable<DebugRoute> { DebugView() }

@@ -42,9 +42,9 @@ fun AppTheme(
 	MaterialTheme(
 		colorScheme = if (darkTheme && amoledBlack)
 			getDarkColorScheme().copy(
-				surface = Color.Black,         // top bar
-				background = Color.Black,      // background
-				surfaceContainer = Color.Black // navbar
+				surface = Color(0,0,0,255), // top bar
+				background = Color(0,0,0,255), // background
+				surfaceContainer = Color(10,10,10,255) // navbar
 			)
 		else if (darkTheme) getDarkColorScheme() else getLightColorScheme(),
 

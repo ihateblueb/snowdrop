@@ -62,12 +62,15 @@
 
 	<string name="settings">Settings</string>
 	<string name="general">General</string>
-	<string name="wellbeing">Wellbeing</string>
 	<string name="default_post_visibility">Default post visibility</string>
+
+	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>
 	<string name="hide_follow_counters">Hide follow counters</string>
-	<string name="amoled_dark_theme">AMOLED dark theme</string>
-	<string name="swap_notifications_and_explore_order">Swap order of Notifications and Explore tabs</string>
+
+	<string name="appearance">Appearance</string>
+	<string name="use_amoled_dark_theme">Use AMOLED dark theme</string>
+	<string name="change_order_of_bottm_bar_tabs">Change order of bottom bar tabs</string>
 
 	<string name="account">Account</string>
 	<string name="switch_account">Switch account</string>
@@ -129,6 +132,7 @@
 	<string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Are you sure you want to send a follow request to {handle}?</string>
 
 	<string name="about_instance">About instance</string>
+	<string name="about_snowdrop">About Snowdrop</string>
 	<string name="rules">Rules</string>
 	<string name="bubble_instances">Bubble instances</string>
 
@@ -140,4 +144,8 @@
 	<string name="locked_account_description">New followers will have to be approved before following you</string>
 	<string name="discoverable">Discoverable</string>
 	<string name="discoverable_description">You may be featured in collections, and your public posts may show up in trending</string>
+
+	<string name="report_bug">Report bug</string>
+	<string name="view_source">View source</string>
+	<string name="support_development">Support development</string>
 </resources>
