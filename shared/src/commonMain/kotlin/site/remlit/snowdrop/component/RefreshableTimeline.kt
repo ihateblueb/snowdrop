@@ -35,7 +35,6 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.scrollingUpward
-import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
@@ -44,8 +43,17 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * Refreshable and infinitely scrollable timeline.
  *
  * @param fetchMethod Method following basic pagination requirements
- * @param timelineComponent Component to use for items in the timeline
+ * @param onRefresh Called upon refresh of the timeline
+ * @param timelineComponent Component to use for items in the timeline, must accept T as first parameter
+ * @param leadingItem Item leading before the timeline content
+ * @param trailingItem Item trailing after the timeline content
+ * @param itemModifier Modifier for each timeline item's Box
  * @param refreshKey Mutable state that can be updated to refresh the timeline
+ * @param scrollToTopPostRefresh If the timeline should scroll to top after refreshing
+ * @param countTowardsScrollingUpward If scrolling should be observed for the compose post FAB, usually no
+ *
+ * @sample site.remlit.snowdrop.view.NotificationsView
+ * @since 0.0.2-alpha
  * */
 @OptIn(ExperimentalSettingsApi::class)
 @Composable

@@ -69,6 +69,11 @@ import snowdrop.shared.generated.resources.reacted_with_x
 import snowdrop.shared.generated.resources.reject
 import snowdrop.shared.generated.resources.requested_to_follow_you
 
+/**
+ * Notification component.
+ *
+ * @param notification Notification to display
+ * */
 @Composable
 fun Notification(notification: Notification) {
 	val navHandler = LocalNavController.current

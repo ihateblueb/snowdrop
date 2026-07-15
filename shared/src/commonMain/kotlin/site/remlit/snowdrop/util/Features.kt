@@ -18,13 +18,17 @@ enum class Software {
 }
 
 /**
- * If determineFeatures() is actively running.
+ * If determineFeatures method is actively running.
+ *
+ * @since 0.0.1-alpha
  * */
 var determiningFeatures by mutableStateOf(false)
 
 /**
- * Object of mutable states which advertise the current supported
- * features of the logged in account.
+ * Check what the currently logged in API supports and note it so
+ * the app can change its behavior accordingly.
+ *
+ * @since 0.0.1-alpha
  * */
 suspend fun determineFeatures() {
 	determiningFeatures = true
@@ -91,16 +95,31 @@ suspend fun determineFeatures() {
 	determiningFeatures = false
 }
 
+/**
+ * Removes feature determinations so it will be run again.
+ *
+ * @since 0.0.1-alpha
+ * */
 fun resetFeatures() = blockingSettings.keys.filter {
 	it.startsWith("feature_${getCurrentAccountId()}")
 }.forEach {
 	blockingSettings.remove(it)
 }
 
+/**
+ * Sets a feature determination
+ *
+ * @since 0.0.1-alpha
+ * */
 fun putFeature(feature: String, value: Boolean) = blockingSettings.putBoolean(
 	"feature_${getCurrentAccountId()}_$feature", value
 )
 
+/**
+ * Gets a feature determination
+ *
+ * @since 0.0.1-alpha
+ * */
 fun getFeature(feature: String): Boolean {
 	val enabled = blockingSettings.getBooleanOrNull(
 		"feature_${getCurrentAccountId()}_$feature"

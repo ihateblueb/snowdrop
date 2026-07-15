@@ -19,6 +19,18 @@ import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 
+/**
+ * HTML content element. Will render HTML, handle mention links, emojis,
+ * and other rich content.
+ *
+ * @param string Source string
+ * @param modifier Modifier for text
+ * @param mentions List of mentions from the status model
+ * @param emojis List of emojis
+ * @param maxLines Maximum amount of lines that the text element should allow
+ *
+ * @since 0.0.1-alpha
+ * */
 @Composable
 fun HtmlContent(
 	string: String,

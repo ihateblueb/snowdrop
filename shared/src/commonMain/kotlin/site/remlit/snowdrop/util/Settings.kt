@@ -21,11 +21,34 @@ expect val settings: FlowSettings
 @OptIn(ExperimentalSettingsApi::class)
 val blockingSettings = settings.toBlockingSettings()
 
+/** Initialize the settings store */
+fun setupAppSettings() {
+	if (!blockingSettings.getBoolean("setup", false)) {
+		blockingSettings.putBoolean("logged_in", false)
+		blockingSettings.putBoolean("setup", true)
+	}
+
+	if (getCurrentAccountId() != "" && getCurrentAccountHost() == "")
+		logoutAccount(getCurrentAccountId())
+}
+
+//<editor-fold name="Account State">
+/** Get a list of account IDs that are currently logged in */
 fun getAccounts() = blockingSettings.getString("accounts", "").split(" ").filter { !it.isBlank() }
+/** Get ID of current user */
 fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
+/** Get host/instance of the current user */
 fun getCurrentAccountHost() = getAccountHost(getCurrentAccountId())
+/** Get host/instance of any logged in user */
 fun getAccountHost(id: String) = blockingSettings.getString("account_${id}_host", "")
 
+/**
+ * Sets up settings state to log out the specified account ID.
+ * After running, navigate to [site.remlit.snowdrop.StartRoute] to properly route the user.
+ *
+ * @param accountId Account ID of user to log out.
+ * @since 0.0.1-alpha
+ * */
 fun logoutAccount(accountId: String) {
 	blockingSettings.putBoolean("logged_in", false)
 	blockingSettings.remove("current_account")
@@ -39,12 +62,7 @@ fun logoutAccount(accountId: String) {
 	)
 }
 
-@OptIn(ExperimentalSettingsApi::class)
-fun getDefaultVisibility() = settings.getStringFlow("default_visibility_${getCurrentAccountId()}", "public")
-
-@OptIn(ExperimentalSettingsApi::class)
-fun putDefaultVisibility(value: String) = blockingSettings.putString("default_visibility_${getCurrentAccountId()}", value)
-
+/** Debug only function to toggle logged in state. */
 fun toggleLoggedInState() {
 	val current = blockingSettings.getBoolean("logged_in", false)
 	blockingSettings.putBoolean("logged_in", !current)
@@ -61,19 +79,13 @@ fun switchAccount(accountId: String, navController: NavController) {
 	navController.navigate(StartRoute)
 }
 
-fun setupAppSettings() {
-	if (!blockingSettings.getBoolean("setup", false)) {
-		blockingSettings.putBoolean("logged_in", false)
-		blockingSettings.putBoolean("setup", true)
-	}
-
-	if (getCurrentAccountId() != "" && getCurrentAccountHost() == "")
-		logoutAccount(getCurrentAccountId())
-}
-
 /**
- * Gets the current account's user object from the verify credentials endpoint.
- * @return User
+ * Gets an account's user object from the verify credentials endpoint.
+ *
+ * @param id ID of account
+ *
+ * @return User flow
+ * @since 0.0.2-alpha
  * */
 @OptIn(ExperimentalSettingsApi::class)
 fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
@@ -90,7 +102,9 @@ fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
 
 /**
  * Gets the current account's user object from the verify credentials endpoint.
+ *
  * @return User
+ * @since 0.0.1-alpha
  * */
 @OptIn(ExperimentalSettingsApi::class)
 fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
@@ -100,12 +114,8 @@ fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
 	if (getCacheEntry("account_${getCurrentAccountId()}") == null)
 		updateCurrentAccountObject()
 
-	safe {
-		emit(
-			getCacheEntry("account_${getCurrentAccountId()}")!!
-				.getContent<Account>()
-		)
-	}
+	val account = getCacheEntry("account_${getCurrentAccountId()}")?.getContent<Account>()
+	if (account != null) emit(account)
 }
 
 suspend fun updateCurrentAccountObject() {
@@ -117,6 +127,29 @@ suspend fun updateCurrentAccountObject() {
 		res.response
 	)
 }
+//</editor-fold>
+
+//<editor-fold name="Specific Settings">
+/**
+ * Get default visibility setting for current user.
+ * @since 0.0.2-alpha
+ * */
+@OptIn(ExperimentalSettingsApi::class)
+fun getDefaultVisibility() = settings.getStringFlow("default_visibility_${getCurrentAccountId()}", "public")
+
+/**
+ * Put default visibility setting for current user.
+ * @param value Visibility
+ * @since 0.0.2-alpha
+ * */
+@OptIn(ExperimentalSettingsApi::class)
+fun putDefaultVisibility(value: String) = blockingSettings.putString("default_visibility_${getCurrentAccountId()}", value)
+//</editor-fold>
+
+
+/*
+* Global mutable states
+* */
 
 /** Used for compose post FAB */
 var scrollingUpward by mutableStateOf(true)

@@ -25,6 +25,16 @@ const val avatarRadius = 15
 const val smallAvatarRadius = 10
 const val smallerAvatarRadius = 8
 
+/**
+ * Avatar component.
+ *
+ * Only use one of big/small/smaller, not more than one.
+ *
+ * @param account Account data
+ * @param big If avatar should be big
+ * @param small If avatar should be small
+ * @param smaller If avatar should be smaller
+ * */
 @Composable
 fun Avatar(
 	account: Account,

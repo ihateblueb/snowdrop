@@ -39,6 +39,16 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.uncategorized
 import kotlin.collections.forEach
 
+/**
+ * Emoji picker component. Make sure this is lazy loaded, otherwise it will cause
+ * extreme lag.
+ *
+ * @param visible If the bottom sheet should be visible
+ * @param onDismiss Action to do after dismiss signal received
+ * @param onSelectEmoji Action to do after an emoji is picked
+ *
+ * @since 0.0.2-alpha
+ * */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSettingsApi::class)
 @Composable
 fun EmojiPicker(

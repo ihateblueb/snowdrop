@@ -138,6 +138,13 @@ import snowdrop.shared.generated.resources.unbookmark
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Status element
+ *
+ * @param status Status to be shown
+ *
+ * @since 0.0.1-alpha
+ * */
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
 fun Status(status: Status) {

@@ -27,6 +27,14 @@ import site.remlit.snowdrop.util.extension.toRelativeString
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_warning_20px
 
+/**
+ * Mini status component.
+ *
+ * @param status Status to show
+ * @param showContentEvenIfCw If content should be shown even if a CW is present
+ *
+ * @since 0.0.1-alpha
+ * */
 @Composable
 fun MiniStatus(
 	status: Status,
