@@ -39,8 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,6 +72,7 @@ import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
@@ -77,11 +81,15 @@ import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.edit_profile
@@ -97,6 +105,8 @@ import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.unfollow
+import snowdrop.shared.generated.resources.x_followers
+import snowdrop.shared.generated.resources.x_following
 import snowdrop.shared.generated.resources.x_posts
 import snowdrop.shared.generated.resources.yes
 
@@ -154,9 +164,12 @@ fun ProfileView(id: String) = ViewSurface {
 			},
 			title = {
 				if (account == null) Column {
-					Text(stringResource(Res.string.profile))
+					Text(translation(Res.string.profile))
 					Text(
-						stringResource(Res.string.x_posts, "0"),
+						translation(
+							Res.string.x_posts,
+							mapOf("count" to simpleAnnotatedString("0"))
+						),
 						fontSize = 14.sp
 					)
 				} else Column {
@@ -166,7 +179,10 @@ fun ProfileView(id: String) = ViewSurface {
 						overflow = TextOverflow.Ellipsis
 					)
 					Text(
-						stringResource(Res.string.x_posts, formatNumber(account!!.statusesCount)),
+						translation(
+							Res.string.x_posts,
+							mapOf("count" to simpleAnnotatedString(formatNumber(account!!.statusesCount)))
+						),
 						fontSize = 14.sp
 					)
 				}
@@ -283,10 +299,18 @@ fun ProfileView(id: String) = ViewSurface {
 											AlertDialog(
 												text = {
 													if (relationship!!.following || relationship!!.requested) {
-														if (relationship!!.requested) Text(stringResource(Res.string.are_you_sure_you_want_to_cancel_your_follow_request, account!!.acct))
-														else Text(stringResource(Res.string.are_you_sure_you_want_to_unfollow, account!!.acct))
+														if (relationship!!.requested) Text(translation(
+															Res.string.are_you_sure_you_want_to_cancel_your_follow_request_to_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														)) else Text(translation(
+															Res.string.are_you_sure_you_want_to_unfollow_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														))
 													} else {
-														if (account!!.locked) Text(stringResource(Res.string.are_you_sure_you_want_to_send_a_follow_request, account!!.acct))
+														if (account!!.locked) Text(translation(
+															Res.string.are_you_sure_you_want_to_send_a_follow_request_to_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														))
 													}
 												},
 												dismissButton = {
@@ -398,8 +422,9 @@ fun ProfileView(id: String) = ViewSurface {
 								}
 
 							Row(modifier = Modifier.padding(top = 10.dp)) {
+								// todo: format this, it's just an ugly timestamp right now
 								Text(
-									stringResource(Res.string.joined_at_x, account!!.createdAt),
+									translation(Res.string.joined_at_x, mapOf("date_time" to simpleAnnotatedString(account!!.createdAt))),
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
 							}
@@ -410,20 +435,19 @@ fun ProfileView(id: String) = ViewSurface {
 									modifier = Modifier.padding(top = 10.dp),
 									horizontalArrangement = Arrangement.spacedBy(10.dp)
 								) {
-									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-										Text(
-											"${account!!.followersCount}",
+									Text(translation(Res.string.x_followers, mapOf("count" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
 											fontWeight = FontWeight.Bold
-										)
-										Text(stringResource(Res.string.followers))
-									}
-									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-										Text(
-											"${account!!.followingCount}",
+										)) { append("${account!!.followersCount}") }
+										toAnnotatedString()
+									})))
+
+									Text(translation(Res.string.x_following, mapOf("count" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
 											fontWeight = FontWeight.Bold
-										)
-										Text(stringResource(Res.string.following))
-									}
+										)) { append("${account!!.followingCount}") }
+										toAnnotatedString()
+									})))
 								}
 						}
 

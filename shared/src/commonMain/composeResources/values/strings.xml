@@ -6,13 +6,13 @@
 
 	<string name="add_account">Add account</string>
 	<string name="post">Post</string>
-	<string name="post_by">Post by %1$s</string>
+	<string name="post_by_x">Post by {display_name}</string>
 
 	<string name="boosted_by">Boosted by</string>
 	<string name="liked_by">Liked by</string>
 	<string name="reacted_by">Reacted by</string>
 
-	<string name="x_posts">%1$s posts</string>
+	<string name="x_posts">{count} posts</string>
 
 	<string name="edit_profile">Edit profile</string>
 	<string name="request_to_follow">Request to follow</string>
@@ -20,10 +20,10 @@
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
 
-	<string name="joined_at_x">Joined at %1$s</string>
+	<string name="joined_at_x">Joined at {date_time}</string>
 
-	<string name="followers">followers</string>
-	<string name="following">following</string>
+	<string name="x_followers">{count} followers</string>
+	<string name="x_following">{count} following</string>
 
 	<string name="posts">Posts</string>
 	<string name="posts_and_replies">Posts &amp; Replies</string>
@@ -80,24 +80,24 @@
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_settings">Clear settings</string>
 
-	<string name="liked_your_post">liked your post</string>
-	<string name="reacted_with_x">reacted with %1$s</string>
-	<string name="boosted_your_post">boosted your post</string>
-	<string name="edited_a_post">edited a post</string>
+	<string name="x_liked_your_post">{clickable_display_name} liked your post</string>
+	<string name="x_reacted_with_x">{clickable_display_name} reacted with {emoji}</string>
+	<string name="x_boosted_your_post">{clickable_display_name} boosted your post</string>
+	<string name="x_edited_a_post">{clickable_display_name} edited a post</string>
 	<string name="a_poll_you_have_voted_in_has_ended">A poll you have voted in has ended</string>
-	<string name="just_posted">just posted</string>
-	<string name="bit_you">bit you</string>
-	<string name="bit_you_back">bit you back</string>
-	<string name="bit_your_post">bit your post</string>
-	<string name="requested_to_follow_you">requested to follow you</string>
-	<string name="followed_you">followed you</string>
+	<string name="x_just_posted">{clickable_display_name} just posted</string>
+	<string name="x_bit_you">{clickable_display_name} bit you</string>
+	<string name="x_bit_you_back">{clickable_display_name} bit you back</string>
+	<string name="x_bit_your_post">{clickable_display_name} bit your post</string>
+	<string name="x_requested_to_follow_you">{clickable_display_name} requested to follow you</string>
+	<string name="x_followed_you">{clickable_display_name} followed you</string>
 
 	<string name="save">Save</string>
 	<string name="accept">Accept</string>
 	<string name="reject">Reject</string>
 	<string name="bite_back">Bite back</string>
 
-	<string name="boosted">boosted</string>
+	<string name="x_boosted">{clickable_display_name} boosted</string>
 
 	<string name="show_content">Show content</string>
 	<string name="hide_content">Hide content</string>
@@ -124,9 +124,9 @@
 	<string name="add_emoji">Add emoji</string>
 	<string name="uncategorized">Uncategorized</string>
 
-	<string name="are_you_sure_you_want_to_cancel_your_follow_request">Are you sure you want to cancel your follow request to @%1$s?</string>
-	<string name="are_you_sure_you_want_to_unfollow">Are you sure you want to unfollow @%1$s?</string>
-	<string name="are_you_sure_you_want_to_send_a_follow_request">Are you sure you want to send a follow request to @%1$s?</string>
+	<string name="are_you_sure_you_want_to_cancel_your_follow_request_to_x">Are you sure you want to cancel your follow request to {handle}?</string>
+	<string name="are_you_sure_you_want_to_unfollow_x">Are you sure you want to unfollow {handle}?</string>
+	<string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Are you sure you want to send a follow request to {handle}?</string>
 
 	<string name="about_instance">About instance</string>
 	<string name="rules">Rules</string>

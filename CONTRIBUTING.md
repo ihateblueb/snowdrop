@@ -44,3 +44,12 @@ in the app that aren't the same as their ID on their instance. These IDs are pre
 are for Snowdrop use only. Sometimes confusing because we use similar language everywhere to reference app accounts and 
 server accounts, but if it involves logout and other app account state things, assume internal account IDs are being used
 and not remote ones.
+
+## Merging Weblate Changes
+Only to be done before a release.
+
+1. Make sure no errors or warnings are present on the Weblate repository.
+2. Add Weblate repository: `git remote add weblate https://translate.codeberg.org/git/snowdrop/snowdrop/`
+3. Fetch changes: `git fetch weblate`
+4. Merge: `git merge weblate/master`
+5. Push: `git push origin master`

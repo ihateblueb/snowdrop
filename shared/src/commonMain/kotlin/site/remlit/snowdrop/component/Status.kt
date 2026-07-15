@@ -50,8 +50,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -87,6 +90,7 @@ import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.WarningColor25
+import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
@@ -97,12 +101,12 @@ import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
+import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bite_post
 import snowdrop.shared.generated.resources.bookmark
-import snowdrop.shared.generated.resources.boosted
 import snowdrop.shared.generated.resources.copy_link
 import snowdrop.shared.generated.resources.delete
 import snowdrop.shared.generated.resources.edit
@@ -135,6 +139,7 @@ import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
+import snowdrop.shared.generated.resources.x_boosted
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 
@@ -251,16 +256,17 @@ fun Status(status: Status) {
 							verticalAlignment = Alignment.CenterVertically
 						) {
 							Text(
-								rebloggingAccount!!.displayName(),
-								color = MaterialTheme.colorScheme.secondary,
-								fontSize = 14.sp,
-								fontWeight = FontWeight.Medium,
-								overflow = TextOverflow.Ellipsis,
-								maxLines = 1,
-								modifier = Modifier.weight(1f, fill = false)
-							)
-							Text(
-								stringResource(Res.string.boosted),
+								translation(
+									Res.string.x_boosted,
+									mapOf("clickable_display_name" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
+											color = MaterialTheme.colorScheme.secondary,
+											fontSize = 14.sp,
+										)) { withAccountLink(rebloggingAccount!!) }
+
+										toAnnotatedString()
+									})
+								),
 								color = MaterialTheme.colorScheme.secondary,
 								fontSize = 14.sp,
 								fontWeight = FontWeight.Medium
