@@ -1,8 +1,8 @@
 {
   "fill" : {
     "linear-gradient" : [
-      "display-p3:0.81696,1.00000,0.76851,1.00000",
-      "display-p3:0.60553,0.85731,0.60787,1.00000"
+      "display-p3:0.81569,1.00000,0.76863,1.00000",
+      "display-p3:0.60392,0.85882,0.60784,1.00000"
     ],
     "orientation" : {
       "start" : {
@@ -24,9 +24,19 @@
               "appearance" : "dark",
               "value" : {
                 "linear-gradient" : [
-                  "display-p3:0.81696,1.00000,0.76851,1.00000",
-                  "display-p3:0.53530,0.90358,0.62647,1.00000"
-                ]
+                  "display-p3:0.63994,1.00000,0.69273,1.00000",
+                  "display-p3:0.93956,1.00000,0.94990,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0,
+                    "y" : 0
+                  },
+                  "stop" : {
+                    "x" : 0.5000000000000001,
+                    "y" : 0.5414669283185832
+                  }
+                }
               }
             },
             {
@@ -34,17 +44,28 @@
               "value" : "system-light"
             }
           ],
-          "image-name" : "snowdrop-square-extended.svg",
-          "name" : "snowdrop-square-extended",
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "snowdrop-square.svg",
+          "name" : "snowdrop-square",
+          "opacity" : 0.8,
           "position" : {
-            "scale" : 4.5,
+            "scale" : 1,
             "translation-in-points" : [
-              -44.06098111155893,
-              -41.649765517157334
+              -0.0001285019177146296,
+              4.50373528764203e-05
             ]
           }
         }
       ],
+      "opacity" : 1,
+      "position" : {
+        "scale" : 4,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 0.6

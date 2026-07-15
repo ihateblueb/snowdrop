@@ -25,8 +25,11 @@ Pull requests are welcome! Translations can also be submitted on our [Weblate](h
 
 ## Acknowledgments
 
+Thank you to rabbithawk256 for creating Snowdrop's app icon!
+
 ## License
-Copyright (C) 2026 Snowdrop Developers
+
+Copyright © 2026 Snowdrop Developers
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
