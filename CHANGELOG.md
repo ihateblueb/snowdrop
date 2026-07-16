@@ -7,11 +7,13 @@
 - "About Snowdrop" page in settings
 - Ability to reorder the items in the navigation bar
 - Lots of translations!
+- Recently Used category at the top of the emoji picker
 
 ### Fixed
 - AMOLED theme has better contrast on some surfaces
 - Translation system uses named parameters now
 - Misc documentation and other small codebase improvements
+- Long pressing the Profile button doing nothing instead of opening the account switcher
 
 ## [0.0.3-alpha] - 2026/07/05
 

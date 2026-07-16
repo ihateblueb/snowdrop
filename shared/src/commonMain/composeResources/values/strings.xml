@@ -148,4 +148,6 @@
 	<string name="report_bug">Report bug</string>
 	<string name="view_source">View source</string>
 	<string name="support_development">Support development</string>
+
+	<string name="recently_used">Recently Used</string>
 </resources>

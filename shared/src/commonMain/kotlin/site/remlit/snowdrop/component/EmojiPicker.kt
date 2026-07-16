@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.bottomNavEnterAnimation
@@ -33,9 +35,12 @@ import site.remlit.snowdrop.bottomNavExitAnimation
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchEmojis
+import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.recently_used
 import snowdrop.shared.generated.resources.uncategorized
 import kotlin.collections.forEach
 
@@ -56,6 +61,8 @@ fun EmojiPicker(
 	onDismiss: () -> Unit,
 	onSelectEmoji: (Emoji) -> Unit
 ) {
+	val coroutineScope = rememberCoroutineScope()
+
 	AnimatedVisibility(
 		visible = visible,
 		enter = bottomNavEnterAnimation,
@@ -63,7 +70,18 @@ fun EmojiPicker(
 	) {
 		val emojis by remember { fetchEmojis() }.collectAsStateWithLifecycle(emptyList())
 
+		// these contain shortcodes, find them in emojis list and then only if they are found should they be shown
+		val recentlyUsedShortcodes by remember { settings.getStringFlow("emojis_recently_used_${getCurrentAccountId()}", "") }
+			.collectAsStateWithLifecycle("")
+
 		val categorized = mutableMapOf<String, List<Emoji>>()
+
+		val recentlyUsed = mutableListOf<Emoji>()
+		recentlyUsedShortcodes.split(" ").forEach { r ->
+			// todo: test
+			emojis.firstOrNull { it.shortcode == r }?.let { recentlyUsed.add(it) }
+		}
+		categorized[stringResource(Res.string.recently_used)] = recentlyUsed
 
 		emojis.forEach {
 			val category = it.category ?: stringResource(Res.string.uncategorized)
@@ -127,7 +145,21 @@ fun EmojiPicker(
 								FlowRow(modifier = Modifier.fillMaxWidth()) {
 									emojis.forEach {
 										Box(
-											modifier = Modifier.clickable(onClick = { onSelectEmoji(it) })
+											modifier = Modifier.clickable(onClick = {
+												onSelectEmoji(it)
+
+												coroutineScope.launch {
+													val newRecentlyUsed = recentlyUsedShortcodes.split(" ")
+														.toMutableList()
+
+													newRecentlyUsed.add(0, it.shortcode)
+
+													settings.putString(
+														"emojis_recently_used_${getCurrentAccountId()}",
+														newRecentlyUsed.distinct().take(20).joinToString(separator = " ")
+													)
+												}
+											})
 												.padding(5.dp)
 										) {
 											Emoji(it, big = true)
