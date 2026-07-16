@@ -38,6 +38,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,8 +58,6 @@ import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -88,6 +87,7 @@ import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.mapToNavigationOptions
+import site.remlit.snowdrop.util.navigationBarInteractionSource
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.switchAccount
@@ -100,7 +100,6 @@ import snowdrop.shared.generated.resources.add_account
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_edit_square_24px
-import kotlin.time.Duration.Companion.milliseconds
 
 
 /*
@@ -172,30 +171,6 @@ fun App() = safe {
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDest = navBackStackEntry?.destination
 
-	val haptics = LocalHapticFeedback.current
-	val viewConfiguration = LocalViewConfiguration.current
-	val accountSwitcherInteractionSource = remember { MutableInteractionSource() }
-
-	LaunchedEffect(accountSwitcherInteractionSource) {
-		var isLongPress = false
-
-		accountSwitcherInteractionSource.interactions.collectLatest { interaction ->
-			when (interaction) {
-				is PressInteraction.Press -> {
-					isLongPress = false
-					delay(viewConfiguration.longPressTimeoutMillis.milliseconds)
-					isLongPress = true
-					haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-					showAccountSwitcher = true
-				}
-
-				is PressInteraction.Release -> {
-					if (!isLongPress) navController.navigate(MyProfileRoute)
-				}
-			}
-		}
-	}
-
 	val snackbarHostState = remember { SnackbarHostState() }
 
 
@@ -203,9 +178,6 @@ fun App() = safe {
 		.collectAsStateWithLifecycle(null)
 	val account by getCurrentAccountObjectFlow()
 		.collectAsStateWithLifecycle(null)
-
-	val swappedMiddleNavs by settings.getBooleanFlow("swapped_middle_navs", false)
-		.collectAsStateWithLifecycle(false)
 
 
 	DisposableEffect(Unit) {
@@ -252,6 +224,7 @@ fun App() = safe {
 		}
 	}
 
+
 	// app really starts here
 	AppTheme {
 		Provided {
@@ -264,17 +237,21 @@ fun App() = safe {
 						exit = bottomNavExitAnimation,
 					) {
 						NavigationBar {
-							val navigationBarOrder by remember { getNavigationBarOrder() }.collectAsStateWithLifecycle(defaultNavigationBarOrder)
+							val navigationBarOrder by remember { getNavigationBarOrder() }
+								.collectAsStateWithLifecycle(defaultNavigationBarOrder)
 
-							navigationBarOrder.mapToNavigationOptions()
-								.forEach { item ->
-									NavigationBarItem(
-										selected = atRoute(item.toRouteClass(), currentDest),
-										onClick = { navigationBarNavigate(item, navController) },
-										icon = { NavigationBarIcon(item) },
-										label = { Text(NavigationBarLabel(item)) }
-									)
-								}
+							key(navigationBarOrder) {
+								navigationBarOrder.mapToNavigationOptions()
+									.forEach { item ->
+										NavigationBarItem(
+											selected = atRoute(item.toRouteClass(), currentDest),
+											onClick = { /* unimportant due to interaction source */ },
+											interactionSource = navigationBarInteractionSource(item),
+											icon = { NavigationBarIcon(item) },
+											label = { Text(NavigationBarLabel(item)) }
+										)
+									}
+							}
 						}
 					}
 				},
@@ -293,9 +270,7 @@ fun App() = safe {
 					}
 				},
 				floatingActionButtonPosition = FabPosition.End,
-				snackbarHost = {
-					SnackbarHost(hostState = snackbarHostState)
-				}
+				snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
 			) { bottomPadding ->
 				Column(
 					modifier = Modifier.padding(bottom = bottomPadding.calculateBottomPadding())
