@@ -5,9 +5,6 @@
     <string name="profile">Profiel</string>
     <string name="add_account">Account toevoegen</string>
     <string name="post">Post</string>
-<<<<<<< HEAD
-=======
     <string name="post_by">Post van %1$s</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="boosted_by">Hergedeeld door</string>
 </resources>

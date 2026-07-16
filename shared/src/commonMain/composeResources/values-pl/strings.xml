@@ -6,10 +6,7 @@
     <string name="profile">Profil</string>
     <string name="add_account">Dodaj konto</string>
     <string name="post">Post</string>
-<<<<<<< HEAD
-=======
     <string name="post_by">Post użytkownika %1$s</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="boosted_by">Boostowane przez</string>
     <string name="liked_by">Polubione przez</string>
     <string name="reacted_by">Zareagowane przez</string>
@@ -20,11 +17,8 @@
     <string name="cancel_request">Anuluj prośbę</string>
     <string name="request_to_follow">Wyślij prośbę o obserwację</string>
     <string name="joined_at_x">Dołączył(a) %1$s</string>
-<<<<<<< HEAD
-=======
     <string name="followers">obserwujących</string>
     <string name="following">obserwowanych</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="posts">Posty</string>
     <string name="posts_and_replies">Posty i odpowiedzi</string>
     <string name="media">Media</string>
@@ -60,9 +54,6 @@
     <string name="account">Konto</string>
     <string name="switch_account">Przełącz konto</string>
     <string name="logout">Wyloguj</string>
-<<<<<<< HEAD
-    <string name="a_poll_you_have_voted_in_has_ended">Ankieta, w której brałeś(aś) udział, zakończyła się</string>
-=======
     <string name="liked_your_post">polubił(a) twój post</string>
     <string name="reacted_with_x">zareagował(a) %1$s</string>
     <string name="boosted_your_post">zboostował(a) Twój post</string>
@@ -74,15 +65,11 @@
     <string name="bit_your_post">ugryzł(a) Twój post</string>
     <string name="requested_to_follow_you">wysłał(a) prośbę o obserwowanie</string>
     <string name="followed_you">zaobserwował(a) Cię</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="save">Zapisz</string>
     <string name="accept">Zaakceptuj</string>
     <string name="reject">Odrzuć</string>
     <string name="bite_back">Ugryź z powrotem</string>
-<<<<<<< HEAD
-=======
     <string name="boosted">zboostował(a)</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="show_content">Pokaż zawartość</string>
     <string name="hide_content">Ukryj zawartość</string>
     <string name="copy_link">Kopiuj link</string>
@@ -103,12 +90,9 @@
     <string name="emoji">Emoji</string>
     <string name="add_emoji">Dodaj emoji</string>
     <string name="uncategorized">Nieskategoryzowane</string>
-<<<<<<< HEAD
-=======
     <string name="are_you_sure_you_want_to_cancel_your_follow_request">Czy na pewno anulować prośbę o obserwowanie @%1$s?</string>
     <string name="are_you_sure_you_want_to_unfollow">Czy na pewno przestać obserwować @%1$s?</string>
     <string name="are_you_sure_you_want_to_send_a_follow_request">Czy na pewno wysłać prośbę o obserwowanie @%1$s?</string>
->>>>>>> 54e9521 (Merge in translations from Weblate)
     <string name="about_instance">O serwerze</string>
     <string name="rules">Zasady</string>
     <string name="bookmarks">Zakładki</string>
