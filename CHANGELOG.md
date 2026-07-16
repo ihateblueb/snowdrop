@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Added
+- App icon
+- "About Snowdrop" page in settings
+- Ability to reorder the items in the navigation bar
+- Lots of translations!
+
+### Fixed
+- AMOLED theme has better contrast on some surfaces
+- Translation system uses named parameters now
+- Misc documentation and other small codebase improvements
+
 ## [0.0.3-alpha] - 2026/07/05
 
 ### Added
