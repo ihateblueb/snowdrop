@@ -19,6 +19,7 @@ reorderable = "3.1.0"
 startupRuntime = "1.2.0"
 ktor = "3.5.0"
 buildKonfig = "0.22.0"
+zoomimageCompose = "1.4.0" # 1.6.0 requires android sdk 37 as target
 
 [libraries]
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -53,6 +54,7 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+zoomimage-compose = { module = "io.github.panpf.zoomimage:zoomimage-compose", version.ref = "zoomimageCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

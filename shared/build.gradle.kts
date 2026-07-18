@@ -82,6 +82,8 @@ kotlin {
 			implementation(libs.kamel.image.default)
 			implementation(libs.kamel.decoder.animated.image)
 			implementation(libs.kamel.decoder.image.bitmap)
+
+			implementation(libs.zoomimage.compose)
 		}
 		commonTest.dependencies {
 			implementation(libs.kotlin.test)

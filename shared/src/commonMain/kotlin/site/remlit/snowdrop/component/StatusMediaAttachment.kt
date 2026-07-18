@@ -26,6 +26,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.rememberZoomState
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
@@ -88,12 +92,29 @@ fun StatusMediaAttachment(
 		}
 
 		when (val type = attachment.type.split("/").first()) {
-			"image" -> KamelImage(
-				resource = { asyncPainterResource(attachment.url) },
-				contentDescription = attachment.description,
-				contentScale = ContentScale.Fit,
-				modifier = itemModifier.fillMaxWidth(),
-			)
+			"image" -> if (supportZoomGestures) {
+				val zoomState = rememberZoomState()
+
+				when (val res = asyncPainterResource(attachment.url)) {
+					is Resource.Success -> {
+						ZoomImage(
+							painter = res.value,
+							contentDescription = attachment.description,
+							modifier = Modifier.fillMaxSize(),
+							zoomState = zoomState,
+							scrollBar = ScrollBarSpec(size = 0.dp)
+						)
+					}
+					else -> {}
+				}
+			} else {
+				KamelImage(
+					resource = { asyncPainterResource(attachment.url) },
+					contentDescription = attachment.description,
+					contentScale = ContentScale.Fit,
+					modifier = itemModifier.fillMaxWidth(),
+				)
+			}
 
 			else -> {
 				Column(
