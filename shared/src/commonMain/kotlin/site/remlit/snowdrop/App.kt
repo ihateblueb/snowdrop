@@ -10,8 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,16 +34,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -132,6 +126,11 @@ data class StatusInteractionDetailRoute(
 	val type: String
 )
 @Serializable
+data class StatusMediaAttachmentRoute(
+	val id: String,
+	val startingPosition: Int
+)
+@Serializable
 data class ComposeRoute(
 	val inReplyToId: String? = null,
 	val cw: String = "",
@@ -199,7 +198,8 @@ fun App() = safe {
 		atRoute<ComposeRoute>(currentDest) ||
 			atRoute<SettingsRoute>(currentDest) ||
 			atRoute<DebugRoute>(currentDest) ||
-			atRoute<DebugStorageRoute>(currentDest)
+			atRoute<DebugStorageRoute>(currentDest) ||
+			atRoute<StatusMediaAttachmentRoute>(currentDest)
 
 	fun shouldShowComposeFab(): Boolean =
 		loggedIn == true &&
@@ -387,6 +387,10 @@ fun App() = safe {
 							val args = it.toRoute<StatusInteractionDetailRoute>()
 							StatusInteractionDetailView(args.id, InteractionViewType.valueOf(args.type))
 						}
+						composable<StatusMediaAttachmentRoute> {
+							val args = it.toRoute<StatusMediaAttachmentRoute>()
+							StatusMediaAttachmentView(args.id, args.startingPosition)
+						}
 						composable<ProfileRoute>(
 							enterTransition = { slideIntoContainer(
 								AnimatedContentTransitionScope.SlideDirection.Start, tween(
@@ -471,7 +475,6 @@ fun App() = safe {
 					}
 				}
 			}
-
 		}
 	}
 }

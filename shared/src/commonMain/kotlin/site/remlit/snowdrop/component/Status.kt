@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -69,6 +71,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
+import site.remlit.snowdrop.StatusMediaAttachmentRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
@@ -355,16 +358,6 @@ fun Status(status: Status) {
 							HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
 						}
 
-						@Composable
-						fun mediaFallback(blurhash: String? = null) {
-							Box(
-								modifier = Modifier.clip(RoundedCornerShape(10.dp))
-									.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-									.height(200.dp)
-									.fillMaxWidth()
-							)
-						}
-
 						if (!realStatus.mediaAttachments.isEmpty()) {
 							Grid({
 								// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
@@ -378,27 +371,23 @@ fun Status(status: Status) {
 									row(0.5f)
 								}
 
-								flow = GridFlow.Column
+								flow = GridFlow.Row
 								gap(5.dp)
 							}) {
 								realStatus.mediaAttachments.forEach { media ->
-									Box {
-										mediaFallback(media.blurhash)
-										when (media.type.split("/").first()) {
-											"image" -> {
-												KamelImage(
-													resource = { asyncPainterResource(media.url) },
-													contentDescription = media.description,
-													contentScale = ContentScale.Fit,
-													modifier = Modifier.clip(RoundedCornerShape(10.dp))
-														.height(200.dp)
-														.fillMaxWidth(),
+									StatusMediaAttachment(
+										media,
+										includeFallback = true,
+										modifier = Modifier.height(200.dp),
+										onClick = {
+											navHandler.navigate(
+												StatusMediaAttachmentRoute(
+													realStatus.id,
+													realStatus.mediaAttachments.indexOf(media)
 												)
-											}
-
-											else -> Text(media.url)
+											)
 										}
-									}
+									)
 								}
 							}
 						}
