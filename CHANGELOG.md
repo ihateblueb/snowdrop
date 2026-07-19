@@ -15,6 +15,7 @@
 - Notification filtering selection in notifications page (potentially going to be redesigned, not set in stone yet!)
 - Remove debug button in settings, instead open debug after clicking the version information on the About Snowdrop page 5 times
 - Soft vibration on starting a refresh of a timeline
+- Vibrate on click of certain actions (bite action button, post menu delete, bookmark, etc.) and vibrate and show snackbar on error
 
 ### Fixed
 - AMOLED theme has better contrast on some surfaces

@@ -101,6 +101,8 @@ import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.vibrateError
+import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bite_post
@@ -662,9 +664,11 @@ fun Status(status: Status) {
 										Icon(painterResource(Res.drawable.icon_link_24px), null)
 									},
 									onClick = {
-										clipboardManager.setText(AnnotatedString(realStatus.url!!))
-										vibrate(true, haptics)
-										showDropdown = !showDropdown
+										coroutineScope.launch {
+											clipboardManager.setText(AnnotatedString(realStatus.url!!))
+											vibrateSoft(haptics)
+											showDropdown = false
+										}
 									}
 								)
 
@@ -675,7 +679,7 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										uriHandler.openUri(realStatus.url!!)
-										showDropdown = !showDropdown
+										showDropdown = false
 									}
 								)
 							}
@@ -688,13 +692,17 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											val res = unbookmarkStatus(realStatus.id)
-											realStatus = res.response!!
-											if (isReblog)
-												status.reblog = res.response
-											vibrate(false, haptics)
+											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = unbookmarkStatus(realStatus.id)
+											if (res.error || res.response == null) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											realStatus = res.response!!
+											if (isReblog) status.reblog = res.response
+											showDropdown = false
 										}
 									}
 								)
@@ -706,13 +714,17 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											val res = bookmarkStatus(realStatus.id)
-											realStatus = res.response!!
-											if (isReblog)
-												status.reblog = res.response
 											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = bookmarkStatus(realStatus.id)
+											if (res.error || res.response == null) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											realStatus = res.response!!
+											if (isReblog) status.reblog = res.response
+											showDropdown = false
 										}
 									}
 								)
@@ -726,10 +738,15 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											biteStatus(realStatus.id)
 											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = biteStatus(realStatus.id)
+											if (res.error) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											showDropdown = false
 										}
 									}
 								)
@@ -820,9 +837,12 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
+											vibrate(true, haptics)
+
 											val req = deleteStatus(realStatus.id)
 											if (req.error) {
 												req.handleError(snackbarController)
+												vibrateError(haptics)
 												return@launch
 											}
 											isVisible = false
