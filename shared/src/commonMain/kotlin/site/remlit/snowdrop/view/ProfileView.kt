@@ -85,6 +85,7 @@ import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
@@ -185,12 +186,17 @@ fun ProfileView(id: String) = ViewSurface {
 				}
 			},
 			actions = {
-				if (getFeature("biting") && atRoute<ProfileRoute>(currentDest)) {
+				if (getFeature("biting") && !isMe) {
 					IconButton(
 						onClick = {
 							coroutineScope.launch {
-								biteAccount(account!!.id)
 								vibrate(true, haptics)
+
+								val res = biteAccount(account!!.id)
+								if (res.error) {
+									res.handleError(snackbarHandler)
+									vibrateError(haptics)
+								}
 							}
 						}
 					) {

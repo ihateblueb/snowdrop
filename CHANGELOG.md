@@ -12,8 +12,9 @@
 - Better handling of unsupported media types, allowing users to open them in their browsers
 - StatusMediaAttachment component for reusing the same logic across status media previews and the full viewer
 - transitionedComposable function which automatically applies correct transitions to the page
-- Notification filtering selection in notifications page
+- Notification filtering selection in notifications page (potentially going to be redesigned, not set in stone yet!)
 - Remove debug button in settings, instead open debug after clicking the version information on the About Snowdrop page 5 times
+- Soft vibration on starting a refresh of a timeline
 
 ### Fixed
 - AMOLED theme has better contrast on some surfaces

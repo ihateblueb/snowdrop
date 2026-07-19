@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontStyle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.scrollingUpward
+import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
@@ -74,6 +76,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	countTowardsScrollingUpward: Boolean = false
 ) {
 	val snackbarHandler = SnackbarController.current
+	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
 	val timeline = remember { mutableStateListOf<T>() }
@@ -113,6 +116,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		state = refreshState,
 		onRefresh = {
 			coroutineScope.launch {
+				vibrateSoft(haptics)
 				coroutineScope.launch { addOrUpdateTimeline() }
 				if (scrollToTopPostRefresh) listState.scrollToItem(0)
 			}

@@ -54,3 +54,26 @@ fun vibrateNegative(haptics: HapticFeedback) {
 		Platform.IOS -> haptics.performHapticFeedback(HapticFeedbackType.ToggleOff)
 	}
 }
+
+/**
+ * Vibrates in a way indicating something has failed. Useful for menu/button actions,
+ * should be accompanied by launching an error snackbar.
+ *
+ * @param haptics HapticFeedback controller
+ *
+ * @since 0.0.4-alpha
+ * */
+fun vibrateError(haptics: HapticFeedback) {
+	haptics.performHapticFeedback(HapticFeedbackType.Reject)
+}
+
+/**
+ * Vibrates in a soft way indicating a small adjustment, like a timeline refresh starting.
+ *
+ * @param haptics HapticFeedback controller
+ *
+ * @since 0.0.4-alpha
+ * */
+fun vibrateSoft(haptics: HapticFeedback) {
+	haptics.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+}

@@ -449,8 +449,8 @@ fun Status(status: Status) {
 				*/
 				if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
 					LazyRow(
+						contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
 						horizontalArrangement = Arrangement.spacedBy(5.dp),
-						modifier = Modifier.padding(start = 5.dp)
 					) {
 						realStatus.reactions.forEach {
 							item {
