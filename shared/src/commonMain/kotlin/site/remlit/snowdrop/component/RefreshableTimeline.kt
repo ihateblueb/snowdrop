@@ -69,7 +69,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	trailingItem: @Composable () -> Unit = {},
 	modifier: Modifier = Modifier,
 	itemModifier: Modifier = Modifier,
-	refreshKey: Int = 0,
+	refreshKey: Any = 0,
 	scrollToTopPostRefresh: Boolean = true,
 	countTowardsScrollingUpward: Boolean = false
 ) {

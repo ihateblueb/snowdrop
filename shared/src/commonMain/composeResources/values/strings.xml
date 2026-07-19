@@ -151,4 +151,13 @@
 
 	<string name="recently_used">Recently Used</string>
 	<string name="unknown_media_type_x">Unknown media type {type}</string>
+
+	<string name="mention">Mention</string>
+	<string name="like">Like</string>
+	<string name="boost">Boost</string>
+	<string name="reaction">Reaction</string>
+	<string name="post_edit">Post edit</string>
+	<string name="poll">Poll</string>
+	<string name="bite">Bite</string>
+	<string name="follow_request">Follow request</string>
 </resources>

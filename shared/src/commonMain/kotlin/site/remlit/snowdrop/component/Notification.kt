@@ -26,6 +26,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.touchlab.kermit.Logger
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -126,8 +127,7 @@ fun Notification(notification: Notification) {
 	// show toggle on point
 	if (translationKey != null) show = true
 
-
-	if (show && (notification.type == "mention" && notification.status != null)) {
+	if (notification.type == "mention" && notification.status != null) {
 		Status(notification.status)
 	} else if (show) {
 		Column {
