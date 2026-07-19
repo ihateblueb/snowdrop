@@ -4,8 +4,6 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import site.remlit.snowdrop.model.ApiResponse
-import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.endOfRequestNoBody
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.getCurrentAccountHost

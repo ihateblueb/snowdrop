@@ -3,7 +3,6 @@ package site.remlit.snowdrop.api
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.post
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.util.config.endOfRequest

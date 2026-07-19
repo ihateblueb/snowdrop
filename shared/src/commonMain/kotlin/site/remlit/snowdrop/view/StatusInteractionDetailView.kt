@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.ktor.websocket.Frame
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
@@ -43,7 +42,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.boosted_by
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.liked_by
-import snowdrop.shared.generated.resources.post
 import snowdrop.shared.generated.resources.reacted_by
 
 enum class InteractionViewType {
