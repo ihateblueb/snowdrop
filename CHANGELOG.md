@@ -1,6 +1,8 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.4-alpha)]
+## [Unreleased]
+
+## [0.0.4-alpha] - 2026/07/19
 
 ### Added
 - App icon
