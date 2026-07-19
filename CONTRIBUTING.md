@@ -48,8 +48,17 @@ and not remote ones.
 ## Merging Weblate Changes
 Only to be done before a release.
 
-1. Make sure no errors or warnings are present on the Weblate repository.
+1. Make sure no errors or warnings are present on the Weblate repository, then [lock Weblate and pull changes](https://translate.codeberg.org/projects/snowdrop/#repository).
 2. Add Weblate repository: `git remote add weblate https://translate.codeberg.org/git/snowdrop/snowdrop/`
 3. Fetch changes: `git fetch weblate`
 4. Merge: `git merge --squash weblate/master` (please ensure it's squashed otherwise we'll have like 30 weblate commits)
-5. Push: `git push origin master`
+5. Commit.
+6. Push: `git push origin master`
+7. Run "Reset all changes in the Weblate repository" on Weblate
+
+## Release Checklist
+- [ ] Bump version code in [/build.gradle.kts](/build.gradle.kts) and [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts) and commit
+- [ ] Checkout the latest commit as detached HEAD
+- [ ] Build -> Generate Signed App Bundle or APK...
+- [ ] Rename built APK to `snowdrop-release-versionhere.apk`
+- [ ] Create GitHub release with APK

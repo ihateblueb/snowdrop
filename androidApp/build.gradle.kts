@@ -29,8 +29,8 @@ android {
 		applicationId = "site.remlit.snowdrop"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = rootProject.extraProperties.get("versionCode").toString().toInt()
-		versionName = rootProject.version.toString()
+		versionCode = 4
+		versionName = "0.0.4-alpha"
 	}
 	packaging {
 		resources {
