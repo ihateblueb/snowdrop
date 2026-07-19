@@ -1,10 +1,10 @@
 package site.remlit.snowdrop.view.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -95,6 +95,9 @@ import snowdrop.shared.generated.resources.wellbeing
 fun SettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
+	val dropdownEnterAnimation = expandVertically() + fadeIn()
+	val dropdownExitAnimation = fadeOut() + shrinkVertically()
+
 	@Composable
 	fun Divider() {
 		HorizontalDivider(
@@ -182,11 +185,10 @@ fun SettingsView() = ViewSurface {
 					}
 				)
 			}
-			// todo: replace this
 			AnimatedVisibility(
 				visible = showVisibilityPicker,
-				enter = slideInVertically() + fadeIn(),
-				exit = fadeOut() + slideOutVertically(),
+				enter = dropdownEnterAnimation,
+				exit = dropdownExitAnimation
 			) {
 				Column(
 					modifier = Modifier.padding(horizontal = 10.dp)
@@ -325,8 +327,8 @@ fun SettingsView() = ViewSurface {
 			}
 			AnimatedVisibility(
 				visible = showBottomBarTabOrder,
-				enter = slideInVertically() + fadeIn(),
-				exit = fadeOut() + slideOutVertically(),
+				enter = dropdownEnterAnimation,
+				exit = dropdownExitAnimation
 			) {
 				ReorderableColumn(
 					list = tabOrder,

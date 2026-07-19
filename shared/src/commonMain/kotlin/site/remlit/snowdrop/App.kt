@@ -1,18 +1,18 @@
 package site.remlit.snowdrop
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -85,6 +85,7 @@ import site.remlit.snowdrop.util.navigationBarInteractionSource
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.switchAccount
+import site.remlit.snowdrop.util.transitionedComposable
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugView
 import site.remlit.snowdrop.view.debug.DebugStorageView
@@ -197,6 +198,8 @@ fun App() = safe {
 	fun shouldHideBottomBar(): Boolean =
 		atRoute<ComposeRoute>(currentDest) ||
 			atRoute<SettingsRoute>(currentDest) ||
+			atRoute<AboutInstanceRoute>(currentDest) ||
+			atRoute<AboutSnowdropRoute>(currentDest) ||
 			atRoute<DebugRoute>(currentDest) ||
 			atRoute<DebugStorageRoute>(currentDest) ||
 			atRoute<StatusMediaAttachmentRoute>(currentDest)
@@ -272,10 +275,11 @@ fun App() = safe {
 				floatingActionButtonPosition = FabPosition.End,
 				snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
 			) { bottomPadding ->
-				Column(
+				Box(
 					modifier = Modifier.padding(bottom = bottomPadding.calculateBottomPadding())
+						.fillMaxSize()
 				) {
-					if (showAccountSwitcher)
+					if (showAccountSwitcher) {
 						ModalBottomSheet(
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
@@ -332,6 +336,7 @@ fun App() = safe {
 								Text(stringResource(Res.string.add_account))
 							}
 						}
+					}
 
 					NavHost(
 						navController = navController,
@@ -365,60 +370,26 @@ fun App() = safe {
 							if (account != null) ProfileView(account!!.id)
 							else Text("Error")
 						}
-						composable<EditProfileRoute> { EditProfileView() }
+						transitionedComposable<EditProfileRoute> { EditProfileView() }
 
-						// todo: replace these animations and make them better
-						composable<ThreadRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) {
+						transitionedComposable<ThreadRoute> {
 							val args = it.toRoute<ThreadRoute>()
 							ThreadView(args.id)
 						}
-						composable<StatusInteractionDetailRoute> {
+						transitionedComposable<StatusInteractionDetailRoute> {
 							val args = it.toRoute<StatusInteractionDetailRoute>()
 							StatusInteractionDetailView(args.id, InteractionViewType.valueOf(args.type))
 						}
-						composable<StatusMediaAttachmentRoute> {
+						transitionedComposable<StatusMediaAttachmentRoute> {
 							val args = it.toRoute<StatusMediaAttachmentRoute>()
 							StatusMediaAttachmentView(args.id, args.startingPosition)
 						}
-						composable<ProfileRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) {
+						transitionedComposable<ProfileRoute> {
 							val args = it.toRoute<ProfileRoute>()
 							ProfileView(args.id)
 						}
 
-						composable<ComposeRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) {
+						transitionedComposable<ComposeRoute> {
 							val args = it.toRoute<ComposeRoute>()
 							ComposeView(
 								args.inReplyToId,
@@ -429,46 +400,13 @@ fun App() = safe {
 						}
 
 						// Settings
-						composable<SettingsRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) { SettingsView() }
-						composable<AboutInstanceRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) { AboutInstanceView() }
-						composable<AboutSnowdropRoute>(
-							enterTransition = { slideIntoContainer(
-								AnimatedContentTransitionScope.SlideDirection.Start, tween(
-									250
-								)
-							) },
-							exitTransition = { slideOutOfContainer(
-								AnimatedContentTransitionScope.SlideDirection.End, tween(
-									200
-								)
-							) }
-						) { AboutSnowdropView() }
+						transitionedComposable<SettingsRoute> { SettingsView() }
+						transitionedComposable<AboutInstanceRoute> { AboutInstanceView() }
+						transitionedComposable<AboutSnowdropRoute> { AboutSnowdropView() }
 
 						// Debug
-						composable<DebugRoute> { DebugView() }
-						composable<DebugStorageRoute> {
+						transitionedComposable<DebugRoute> { DebugView() }
+						transitionedComposable<DebugStorageRoute> {
 							val args = it.toRoute<DebugStorageRoute>()
 							DebugStorageView(args.storage)
 						}

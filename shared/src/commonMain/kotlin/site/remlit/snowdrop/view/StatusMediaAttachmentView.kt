@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
@@ -96,8 +97,9 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 										modifier = Modifier.verticalScroll(scrollState)
 									) {
 										Text(
-											modifier = Modifier.padding(5.dp),
+											modifier = Modifier.padding(10.dp),
 											color = MaterialTheme.colorScheme.onSurface,
+											fontSize = 13.sp,
 											text = alt
 										)
 									}

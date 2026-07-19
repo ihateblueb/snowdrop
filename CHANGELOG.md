@@ -1,6 +1,6 @@
 # Snowdrop Changelog
 
-## [Unreleased]
+## [Unreleased (0.0.4-alpha)]
 
 ### Added
 - App icon
@@ -8,12 +8,18 @@
 - Ability to reorder the items in the navigation bar
 - Lots of translations!
 - Recently Used category at the top of the emoji picker
+- An expanded media view which shows alt text at the bottom as a card
+- Better handling of unsupported media types, allowing users to open them in their browsers
+- StatusMediaAttachment component for reusing the same logic across status media previews and the full viewer
+- transitionedComposable function which automatically applies correct transitions to the page
 
 ### Fixed
 - AMOLED theme has better contrast on some surfaces
 - Translation system uses named parameters now
 - Misc documentation and other small codebase improvements
 - Long pressing the Profile button doing nothing instead of opening the account switcher
+- Made animations for dropdown parts of the settings view less awkward
+- Improved page animations
 
 ## [0.0.3-alpha] - 2026/07/05
 

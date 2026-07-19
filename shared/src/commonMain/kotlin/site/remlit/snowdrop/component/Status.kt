@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -62,8 +61,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -509,7 +506,11 @@ fun Status(status: Status) {
 											val emoji = it.toEmoji()
 											if (emoji != null) Emoji(emoji) else when (getPlatform()) {
 												Platform.ANDROID -> Text(it.name)
-												Platform.IOS -> Text(it.name, fontSize = 18.sp)
+												Platform.IOS -> Text(
+													it.name,
+													fontSize = 18.sp,
+													// todo: make this use apple color emoji explicitly, sometimes it uses a non-emoji glyph when one is available. distracting & ugly & unintended
+												)
 											}
 
 											if (!blockingSettings.getBoolean("hide_interaction_counters", false))
