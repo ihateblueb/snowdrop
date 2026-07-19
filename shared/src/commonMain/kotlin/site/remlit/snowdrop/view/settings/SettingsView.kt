@@ -84,6 +84,7 @@ import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.switch_account
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
+import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
@@ -289,6 +290,7 @@ fun SettingsView() = ViewSurface {
 			Card {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.use_amoled_dark_theme)) },
+					supportingContent = { Text(stringResource(Res.string.using_on_a_nonamoled_screen_may_cause_contrast_issues)) },
 					trailingContent = {
 						Switch(
 							amoledBlack,
@@ -412,23 +414,6 @@ fun SettingsView() = ViewSurface {
 			}
 		}
 		//</editor-fold>
-
-		item {
-			Card {
-				ListItem(
-					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_bug_report_24px), null)
-					},
-					headlineContent = { Text(stringResource(Res.string.debug)) },
-					trailingContent = {
-						Icon(painterResource(Res.drawable.icon_chevron_right_24px), null)
-					},
-					modifier = Modifier.clickable {
-						navHandler.navigate(DebugRoute)
-					}
-				)
-			}
-		}
 
 		//<editor-fold name="Account">
 		item {
