@@ -1,5 +1,10 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +27,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +38,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.bottomNavEnterAnimation
+import site.remlit.snowdrop.bottomNavExitAnimation
 import site.remlit.snowdrop.component.StatusMediaAttachment
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -46,22 +54,34 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	val status by remember { fetchStatus(id) }.collectAsStateWithLifecycle(null)
 	val pager = rememberPagerState(startingPosition) { status?.mediaAttachments?.size ?: 0 }
 
+	// todo: certain actions (single tap, zoom in) should trigger this to be false and certain
+	//  should make it true (single tap, zoom out)
+	var showDecorations by remember { mutableStateOf(true) }
+
 	Column(
 		modifier = Modifier.background(Color.Black)
 			.fillMaxSize()
 	) {
-		TopAppBar(
-			navigationIcon = {
-				IconButton(onClick = { navHandler.popBackStack() }) {
-					Icon(painterResource(Res.drawable.icon_close_24px), null)
-				}
-			},
-			title = {},
-			colors = TopAppBarDefaults.topAppBarColors(
-				containerColor = Color(0x80000000),
-				navigationIconContentColor = Color.White
-			),
-		)
+		AnimatedVisibility(
+			showDecorations,
+			enter = fadeIn() + slideInVertically(),
+			exit = slideOutVertically() + fadeOut()
+		) {
+			// todo: image should not be clipped so it can overflow and be shown behind the top app bar
+			//  without it having to start there
+			TopAppBar(
+				navigationIcon = {
+					IconButton(onClick = { navHandler.popBackStack() }) {
+						Icon(painterResource(Res.drawable.icon_close_24px), null)
+					}
+				},
+				title = {},
+				colors = TopAppBarDefaults.topAppBarColors(
+					containerColor = Color(0x80000000),
+					navigationIconContentColor = Color.White
+				),
+			)
+		}
 
 		if (status != null) {
 			Column(
@@ -83,25 +103,31 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 							// this is a card for multiple reasons, mainly to respect someone's
 							// light mode setting in case it's for text readability
 							val alt = media.description
-							if (alt != null) {
+							if (!alt.isNullOrBlank()) {
 								val scrollState = rememberScrollState()
-								Card(
-									colors = CardDefaults.cardColors(
-										containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
-									),
-									modifier = Modifier.padding(10.dp)
-										.heightIn(max = 100.dp)
-										.fillMaxWidth()
+								AnimatedVisibility(
+									showDecorations,
+									enter = bottomNavEnterAnimation,
+									exit = bottomNavExitAnimation
 								) {
-									Column(
-										modifier = Modifier.verticalScroll(scrollState)
+									Card(
+										colors = CardDefaults.cardColors(
+											containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+										),
+										modifier = Modifier.padding(10.dp)
+											.heightIn(max = 100.dp)
+											.fillMaxWidth()
 									) {
-										Text(
-											modifier = Modifier.padding(10.dp),
-											color = MaterialTheme.colorScheme.onSurface,
-											fontSize = 13.sp,
-											text = alt
-										)
+										Column(
+											modifier = Modifier.verticalScroll(scrollState)
+										) {
+											Text(
+												modifier = Modifier.padding(10.dp),
+												color = MaterialTheme.colorScheme.onSurface,
+												fontSize = 13.sp,
+												text = alt
+											)
+										}
 									}
 								}
 							}

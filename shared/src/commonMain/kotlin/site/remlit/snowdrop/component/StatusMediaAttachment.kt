@@ -62,7 +62,8 @@ fun StatusMediaAttachment(
 	includeFallback: Boolean,
 	supportZoomGestures: Boolean = false, // todo: implement
 	modifier: Modifier = Modifier,
-	onClick: () -> Unit = {}
+	onClick: () -> Unit = {},
+	onZoom: () -> Unit = {},
 ) {
 	val uriHandler = LocalUriHandler.current
 	val interactionSource = remember { MutableInteractionSource() }

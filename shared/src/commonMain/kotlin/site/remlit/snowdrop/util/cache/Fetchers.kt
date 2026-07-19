@@ -1,9 +1,11 @@
 package site.remlit.snowdrop.util.cache
 
 import androidx.compose.material3.SnackbarHostState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.api.getEmojis
 import site.remlit.snowdrop.api.getInstance
@@ -12,7 +14,6 @@ import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.safe
 
 /**
@@ -32,7 +33,7 @@ fun fetchAccount(id: String, snackbarHostState: SnackbarHostState? = null): Flow
 		emit(req.response)
 		putCacheEntry("account_$id", req.response)
 	}
-}
+}.flowOn(Dispatchers.IO)
 
 /**
  * Gets the cached representation of an account (if available) before
@@ -59,7 +60,7 @@ fun fetchStatus(id: String, snackbarHostState: SnackbarHostState? = null): Flow<
 		emit(req.response)
 		putCacheEntry("status_$id", req.response)
 	}
-}
+}.flowOn(Dispatchers.IO)
 
 /**
  * Gets the cached representation of a status (if available) before
@@ -86,10 +87,10 @@ fun fetchEmojis(snackbarHostState: SnackbarHostState? = null): Flow<List<Emoji>>
 		emit(req.response)
 		putCacheEntry("emojis", req.response)
 	}
-}
+}.flowOn(Dispatchers.IO)
 
 /**
- * Gets the cached list of emojis (if available) before
+ * Gets the cached instance metadata (if available) before
  * the request to get a fresh version finishes.
  * */
 fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1> = flow {
@@ -105,4 +106,4 @@ fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1
 		emit(req.response)
 		putCacheEntry("instance", req.response)
 	}
-}
+}.flowOn(Dispatchers.IO)
