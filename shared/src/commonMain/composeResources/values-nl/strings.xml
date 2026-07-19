@@ -5,6 +5,5 @@
     <string name="profile">Profiel</string>
     <string name="add_account">Account toevoegen</string>
     <string name="post">Post</string>
-    <string name="post_by">Post van %1$s</string>
     <string name="boosted_by">Hergedeeld door</string>
 </resources>
