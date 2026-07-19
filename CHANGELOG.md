@@ -20,6 +20,9 @@
 - Long pressing the Profile button doing nothing instead of opening the account switcher
 - Made animations for dropdown parts of the settings view less awkward
 - Improved page animations
+- Made fetchers run on IO dispatcher
+- getCurrentAccountObjectFlow not re-emitting when current account changes
+- Certain mutable states not being wrapped in remember
 
 ## [0.0.3-alpha] - 2026/07/05
 

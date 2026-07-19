@@ -4,17 +4,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toBlockingSettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.putCacheEntry
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -107,17 +114,31 @@ fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
  * @return User
  * @since 0.0.1-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalUuidApi::class)
 fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
 	if (!settings.getBoolean("logged_in", false))
 		return@flow
 
-	if (getCacheEntry("account_${getCurrentAccountId()}") == null)
+	var currentAccountId = getCurrentAccountId()
+	if (getCacheEntry("account_$currentAccountId") == null)
 		updateCurrentAccountObject()
 
-	val account = getCacheEntry("account_${getCurrentAccountId()}")?.getContent<Account>()
-	if (account != null) emit(account)
-}
+	suspend fun emitAccount() {
+		val account = getCacheEntry("account_$currentAccountId")?.getContent<Account>()
+		if (account != null) emit(account)
+	}
+
+	emitAccount()
+	settings.getStringFlow("current_account", "")
+		.collect { new ->
+			if (currentAccountId == new)
+				return@collect
+
+			currentAccountId = new
+			emitAccount()
+		}
+
+}.flowOn(Dispatchers.IO)
 
 suspend fun updateCurrentAccountObject() {
 	val res = verifyCredentials()

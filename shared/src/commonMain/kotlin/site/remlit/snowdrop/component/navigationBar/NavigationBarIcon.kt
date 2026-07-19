@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -38,7 +39,8 @@ fun NavigationBarIcon(tab: NavigationBarOption) {
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDest = navBackStackEntry?.destination
 
-	val account by getCurrentAccountObjectFlow().collectAsStateWithLifecycle(null)
+	val account by remember { getCurrentAccountObjectFlow() }
+		.collectAsStateWithLifecycle(null)
 
 	when (tab) {
 		NavigationBarOption.Timeline -> if (atRoute<ExploreRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_home_filled_24px), null)

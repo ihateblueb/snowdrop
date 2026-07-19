@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.KamelImage
@@ -84,18 +86,13 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
-import snowdrop.shared.generated.resources.followers
-import snowdrop.shared.generated.resources.following
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_at_x
@@ -122,14 +119,14 @@ fun ProfileView(id: String) = ViewSurface {
 	val coroutineScope = rememberCoroutineScope()
 
 	/* Preferences */
-	val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
+	val hideFollowCounters by remember { settings.getBooleanFlow("hide_follow_counters", false) }
 		.collectAsStateWithLifecycle(false)
 
 	/* View variables */
-	val currentAccount by getCurrentAccountObjectFlow()
+	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
 
-	val account by fetchAccount(id, snackbarHandler)
+	val account by remember { fetchAccount(id, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 
 	var isMe by remember { mutableStateOf(false) }
@@ -294,7 +291,6 @@ fun ProfileView(id: String) = ViewSurface {
 										}
 
 										var showRelationshipActionWarning by remember { mutableStateOf(false) }
-
 										if (showRelationshipActionWarning)
 											AlertDialog(
 												text = {
