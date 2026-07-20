@@ -344,13 +344,12 @@ fun ComposeView(
 					TextField(
 						state = textFieldState,
 						placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
+						// wtf was this used for?
 						//onValueChange = { textFieldState.edit { i } = it },
 						modifier = Modifier
 							.focusRequester(focusRequester)
 							.onFocusChanged {
-								if (it.hasFocus) {
-									keyboardController?.show()
-								}
+								if (it.hasFocus) keyboardController?.show()
 							}
 							.fillMaxWidth()
 							.fillMaxHeight(),

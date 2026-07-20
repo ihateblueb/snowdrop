@@ -109,7 +109,7 @@ object TimelineRoute
 @Serializable
 object NotificationsRoute
 @Serializable
-object ExploreRoute
+data class ExploreRoute(val immediateFocus: Boolean)
 @Serializable
 object MyProfileRoute
 @Serializable
@@ -369,7 +369,10 @@ fun App() = safe {
 						}
 						composable<TimelineRoute> { TimelineView() }
 						composable<NotificationsRoute> { NotificationsView() }
-						composable<ExploreRoute> { ExploreView() }
+						composable<ExploreRoute> {
+							val args = it.toRoute<ExploreRoute>()
+							ExploreView(args.immediateFocus)
+						}
 						composable<MyProfileRoute> {
 							if (account != null) ProfileView(account!!.id)
 							else Text("Error")

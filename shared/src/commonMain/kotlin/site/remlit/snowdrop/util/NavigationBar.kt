@@ -30,7 +30,7 @@ fun navigationBarNavigate(tab: NavigationBarOption, navController: NavController
 	when (tab) {
 		NavigationBarOption.Timeline -> navController.navigate(TimelineRoute)
 		NavigationBarOption.Notifications -> navController.navigate(NotificationsRoute)
-		NavigationBarOption.Explore -> navController.navigate(ExploreRoute)
+		NavigationBarOption.Explore -> navController.navigate(ExploreRoute(false))
 		NavigationBarOption.MyProfile -> navController.navigate(MyProfileRoute)
 	}
 }
@@ -69,6 +69,10 @@ fun navigationBarInteractionSource(
 						NavigationBarOption.MyProfile -> {
 							haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 							showAccountSwitcher = true
+						}
+						NavigationBarOption.Explore -> {
+							haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+							navController.navigate(ExploreRoute(true))
 						}
 						else -> {}
 					}

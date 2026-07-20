@@ -7,9 +7,14 @@
 - Subtle haptics on clicking navigation bar tabs
 - Success and error haptics for sending a post
 - AccountRow component for consistency between places that share the simple account row with avatar, display name, and handle
+- Long press on Explore to automatically focus search bar
+- Broken avatars now show an icon to indicate they are broken rather than taking a long time to load
+- Setting to always show compose button regardless of scroll direction
+- Setting to hide navigation bar labels
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController
+- Spacing of timeline header icon to be more consistent with navigation icons
 
 ## [0.0.4-alpha] - 2026/07/19
 

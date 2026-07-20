@@ -6,22 +6,36 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -43,41 +57,53 @@ import snowdrop.shared.generated.resources.search_results
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreView() = ViewSurface {
-	val searchBarState = rememberSearchBarState()
+fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
+	val focusRequester = remember { FocusRequester() }
+	val keyboardController = LocalSoftwareKeyboardController.current
 
 	var query by remember { mutableStateOf("") }
 	var showResults by remember { mutableStateOf(false) }
 	var refreshKey by remember { mutableStateOf(0) }
 
-		TopAppBar(
-			navigationIcon = {
-				if (showResults)
-					IconButton(onClick = { showResults = false; query = "" }) {
-						Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-					}
-			},
-			title = {
-				if (!showResults) Text(stringResource(Res.string.explore))
-				else Text(stringResource(Res.string.search_results))
-			}
-		)
+	LaunchedEffect(immediateFocus) {
+		if (!immediateFocus) return@LaunchedEffect
+		focusRequester.requestFocus()
+		keyboardController?.show()
+	}
 
-	SearchBar(
-		state = searchBarState,
-		modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
-			.fillMaxWidth(),
-		inputField = {
-			SearchBarDefaults.InputField(
-				query = query,
-				onQueryChange = { query = it },
-				onSearch = { showResults = true; refreshKey++ },
-				expanded = false,
-				onExpandedChange = {},
-				placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
-				leadingIcon = { Icon(painterResource(Res.drawable.icon_search_24px), null) }
-			)
+	TopAppBar(
+		navigationIcon = {
+			if (showResults)
+				IconButton(onClick = { showResults = false; query = "" }) {
+					Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
+				}
 		},
+		title = {
+			if (!showResults) Text(stringResource(Res.string.explore))
+			else Text(stringResource(Res.string.search_results))
+		}
+	)
+
+	TextField(
+		value = query,
+		onValueChange = { query = it },
+		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+		keyboardActions = KeyboardActions(onSearch = { showResults = true; refreshKey++ }),
+
+		placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
+		leadingIcon = { Icon(painterResource(Res.drawable.icon_search_24px), null) },
+
+		maxLines = 1,
+		modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
+			.clip(RoundedCornerShape(100))
+			.focusRequester(focusRequester)
+			.fillMaxWidth(),
+		colors = TextFieldDefaults.colors(
+			unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+			unfocusedIndicatorColor = Color(0x00000000),
+			focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+			focusedIndicatorColor = Color(0x00000000),
+		)
 	)
 
 	if (!showResults) {
