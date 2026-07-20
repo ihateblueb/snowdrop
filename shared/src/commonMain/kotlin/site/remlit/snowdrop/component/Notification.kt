@@ -49,6 +49,7 @@ import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
+import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_notifications_active_24
 import snowdrop.shared.generated.resources.icon_person_add_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
@@ -142,12 +143,8 @@ fun Notification(notification: Notification) {
 							painterResource(Res.drawable.icon_star_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
-						"pleroma:emoji_reaction" -> Icon(
-							painterResource(Res.drawable.icon_add_24px), null,
-							tint = MaterialTheme.colorScheme.primary
-						)
-						"reaction" -> Icon(
-							painterResource(Res.drawable.icon_add_24px), null,
+						"pleroma:emoji_reaction", "reaction" -> Icon(
+							painterResource(Res.drawable.icon_mood_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"reblog" -> Icon(

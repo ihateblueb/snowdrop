@@ -134,6 +134,9 @@
 	<string name="are_you_sure_you_want_to_unfollow_x">Are you sure you want to unfollow {handle}?</string>
 	<string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Are you sure you want to send a follow request to {handle}?</string>
 
+	<string name="mutuals">Mutuals</string>
+	<string name="follows_you">Follows you</string>
+
 	<string name="about_instance">About instance</string>
 	<string name="about_snowdrop">About Snowdrop</string>
 	<string name="rules">Rules</string>

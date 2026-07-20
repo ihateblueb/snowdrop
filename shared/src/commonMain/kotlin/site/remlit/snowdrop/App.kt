@@ -55,8 +55,8 @@ import io.ktor.http.Url
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import site.remlit.snowdrop.component.AccountRow
 import site.remlit.snowdrop.component.AppTheme
+import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.ExternalUriHandler
@@ -74,6 +74,7 @@ import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
 import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
+import site.remlit.snowdrop.util.getAccountHost
 import site.remlit.snowdrop.util.getAccountObjectFlow
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.getNavigationBarOrder
@@ -311,11 +312,21 @@ fun App() = safe {
 											else MaterialTheme.colorScheme.onSurface,
 										)
 									) {
-										AccountRow(
-											account!!,
-											navigateToProfileOnClick = false,
-											includeHorizontalDivider = false
-										)
+										Row(
+											modifier = Modifier.padding(10.dp),
+											horizontalArrangement = Arrangement.spacedBy(10.dp),
+											verticalAlignment = Alignment.CenterVertically
+										) {
+											Avatar(account!!)
+
+											Column {
+												Text(
+													account!!.displayName(),
+													fontWeight = FontWeight.Medium
+												)
+												Text("@${account!!.username}@${getAccountHost(it)}")
+											}
+										}
 									}
 								}
 							}

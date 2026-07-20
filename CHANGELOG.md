@@ -12,6 +12,7 @@
 - Setting to always show compose button regardless of scroll direction
 - Setting to hide navigation bar labels
 - Adopt AccountRow in more places for consistency
+- Mutuals/Follows you indicator on profiles
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController

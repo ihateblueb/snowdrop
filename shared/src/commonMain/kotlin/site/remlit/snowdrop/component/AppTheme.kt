@@ -44,7 +44,8 @@ fun AppTheme(
 			getDarkColorScheme().copy(
 				surface = Color(0,0,0,255), // top bar
 				background = Color(0,0,0,255), // background
-				surfaceContainer = Color(10,10,10,255) // navbar
+				surfaceContainer = Color(10,10,10,255), // navbar
+				surfaceContainerHigh =  Color(20,20,20,255) // search bar, compose view bottom bar
 			)
 		else if (darkTheme) getDarkColorScheme() else getLightColorScheme(),
 

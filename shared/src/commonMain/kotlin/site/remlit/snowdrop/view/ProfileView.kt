@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.SpanStyle
@@ -92,10 +95,14 @@ import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
+import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_arrow_forward_20px
+import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_at_x
 import snowdrop.shared.generated.resources.media
+import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
@@ -237,16 +244,20 @@ fun ProfileView(id: String) = ViewSurface {
 			RefreshableTimeline(
 				leadingItem = {
 					Column {
-						if (account!!.header != null) {
-							KamelImage(
-								resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
-								contentDescription = account!!.headerDescription,
-								contentScale = ContentScale.Crop,
-								onLoading = { fallbackHeader() },
-								modifier = Modifier.height(headerHeight.dp)
-									.fillMaxWidth(),
-							)
-						} else fallbackHeader()
+						Box(
+							contentAlignment = Alignment.BottomEnd
+						) {
+							if (account!!.header != null) {
+								KamelImage(
+									resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
+									contentDescription = account!!.headerDescription,
+									contentScale = ContentScale.Crop,
+									onLoading = { fallbackHeader() },
+									modifier = Modifier.height(headerHeight.dp)
+										.fillMaxWidth(),
+								)
+							} else fallbackHeader()
+						}
 
 						// The Rest
 						Column(
@@ -375,15 +386,43 @@ fun ProfileView(id: String) = ViewSurface {
 							// display name
 							Row {
 								Column {
-									Text(
-										account!!.displayName(),
-										fontWeight = FontWeight.Bold,
-										fontSize = 24.sp
-									)
-									Text(
-										"@${account!!.acct}",
-										color = MaterialTheme.colorScheme.onSurface
-									)
+									FlowRow(
+										horizontalArrangement = Arrangement.spacedBy(5.dp),
+										verticalArrangement = Arrangement.Center
+									) {
+										Text(
+											account!!.displayName(),
+											fontWeight = FontWeight.Bold,
+											fontSize = 24.sp
+										)
+
+										if (relationship != null)
+											Row(
+												modifier = Modifier.clip(RoundedCornerShape(10.dp))
+													.background(MaterialTheme.colorScheme.surfaceContainer)
+													.padding(vertical = 0.dp, horizontal = 4.dp),
+												horizontalArrangement = Arrangement.spacedBy(2.dp),
+												verticalAlignment = Alignment.CenterVertically
+											) {
+												if (relationship!!.followedBy && relationship!!.following) {
+													Icon(painterResource(Res.drawable.icon_compare_arrows_20px), null)
+													Text(stringResource(Res.string.mutuals), fontSize = 13.sp)
+												} else if (relationship!!.followedBy) {
+													Icon(painterResource(Res.drawable.icon_arrow_forward_20px), null)
+													Text(stringResource(Res.string.follows_you), fontSize = 13.sp)
+												}
+											}
+									}
+
+									FlowRow(
+										horizontalArrangement = Arrangement.spacedBy(5.dp),
+										verticalArrangement = Arrangement.Center
+									) {
+										Text(
+											"@${account!!.acct}",
+											color = MaterialTheme.colorScheme.onSurface
+										)
+									}
 								}
 							}
 
