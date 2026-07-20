@@ -1,6 +1,15 @@
 # Snowdrop Changelog
 
-## [Unreleased]
+## [Unreleased (0.0.5-alpha)]
+
+### Added
+- Search for posts and accounts
+- Subtle haptics on clicking navigation bar tabs
+- Success and error haptics for sending a post
+- AccountRow component for consistency between places that share the simple account row with avatar, display name, and handle
+
+### Fixed
+- Awkward naming of SnackbarController, renamed it LocalSnackbarController
 
 ## [0.0.4-alpha] - 2026/07/19
 

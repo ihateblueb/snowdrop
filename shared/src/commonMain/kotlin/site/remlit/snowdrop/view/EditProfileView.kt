@@ -30,7 +30,7 @@ import site.remlit.snowdrop.api.accounts.updateCredentials
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
@@ -46,7 +46,7 @@ import snowdrop.shared.generated.resources.save
 @Composable
 fun EditProfileView() = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 	val coroutineScope = rememberCoroutineScope()
 
 	val currentAccount by getCurrentAccountObjectFlow()

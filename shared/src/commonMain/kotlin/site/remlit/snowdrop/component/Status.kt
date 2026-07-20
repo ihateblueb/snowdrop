@@ -86,7 +86,7 @@ import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.atRoute
@@ -155,7 +155,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
-	val snackbarController = SnackbarController.current
+	val snackbarController = LocalSnackbarController.current
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current

@@ -41,6 +41,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,13 +60,16 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.vibrateConfirm
+import site.remlit.snowdrop.util.vibrateError
+import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
@@ -99,7 +103,8 @@ fun ComposeView(
 	visibility: String? = null
 ) = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
+	val haptics = LocalHapticFeedback.current
 	val focusManager = LocalFocusManager.current
 	val focusRequester = remember { FocusRequester() }
 	val keyboardController = LocalSoftwareKeyboardController.current
@@ -134,16 +139,20 @@ fun ComposeView(
 	canSubmit = !textFieldState.text.isBlank() && remainingChars >= 0
 
 	suspend fun sendPost() {
+		vibrateSoft(haptics)
 		val res = createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
 			spoilerText = cw,
 			visibility = visibility
 		))
+
 		if (res.error || res.response == null) {
 			res.handleError(snackbarHandler)
+			vibrateError(haptics)
 			return
 		}
+		vibrateConfirm(haptics)
 	}
 
 	LaunchedEffect(Unit) {

@@ -24,10 +24,9 @@ suspend fun search(
 	excludeUnreviewed: Boolean? = null,
 
 	maxId: String? = null,
-	sinceId: String? = null,
 	minId: String? = null,
-	offset: Int? = null,
 	limit: Int? = null,
+	offset: Int? = null,
 ): ApiResponse<SearchResponse> = safeApiRequest {
 	val currentAccountId = getCurrentAccountId()
 	val host = getCurrentAccountHost()
@@ -44,10 +43,9 @@ suspend fun search(
 		if (excludeUnreviewed != null) parameter("exclude_unreviewed", excludeUnreviewed)
 
 		if (maxId != null) parameter("max_id", maxId)
-		if (sinceId != null) parameter("since_id", sinceId)
 		if (minId != null) parameter("min_id", minId)
-		if (offset != null) parameter("offset", offset)
 		if (limit != null) parameter("limit", limit)
+		if (offset != null) parameter("offset", offset)
 	}
 
 	endOfRequest(req)

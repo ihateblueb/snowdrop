@@ -61,7 +61,7 @@ import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.addNewAccount
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
@@ -219,7 +219,7 @@ fun App() = safe {
 	@Composable
 	fun Provided(content: @Composable () -> Unit) {
 		CompositionLocalProvider(LocalNavController provides navController) {
-			CompositionLocalProvider(SnackbarController provides snackbarHostState) {
+			CompositionLocalProvider(LocalSnackbarController provides snackbarHostState) {
 				CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
 					content()
 				}

@@ -1,11 +1,18 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSearchBarState
@@ -16,65 +23,118 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.search
+import site.remlit.snowdrop.component.AccountRow
+import site.remlit.snowdrop.component.RefreshableTimeline
+import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
-import site.remlit.snowdrop.model.response.SearchResponse
-import site.remlit.snowdrop.util.bgIO
+import site.remlit.snowdrop.model.ApiResponse
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.accounts
 import snowdrop.shared.generated.resources.explore
+import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_search_24px
+import snowdrop.shared.generated.resources.nothing_to_see_here
+import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.search_for_posts_or_users
+import snowdrop.shared.generated.resources.search_results
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreView() = ViewSurface {
-	var query by remember { mutableStateOf("") }
-	var results by remember { mutableStateOf<SearchResponse?>(null) }
-
 	val searchBarState = rememberSearchBarState()
 
-	suspend fun submitSearch() {
-		val res = search(query)
-		if (res.error) return
-		if (res.response == null) return
-		results = res.response
-	}
+	var query by remember { mutableStateOf("") }
+	var showResults by remember { mutableStateOf(false) }
+	var refreshKey by remember { mutableStateOf(0) }
 
-	TopAppBar(
-		title = {
-			Text(stringResource(Res.string.explore))
-		}
+		TopAppBar(
+			navigationIcon = {
+				if (showResults)
+					IconButton(onClick = { showResults = false; query = "" }) {
+						Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
+					}
+			},
+			title = {
+				if (!showResults) Text(stringResource(Res.string.explore))
+				else Text(stringResource(Res.string.search_results))
+			}
+		)
+
+	SearchBar(
+		state = searchBarState,
+		modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
+			.fillMaxWidth(),
+		inputField = {
+			SearchBarDefaults.InputField(
+				query = query,
+				onQueryChange = { query = it },
+				onSearch = { showResults = true; refreshKey++ },
+				expanded = false,
+				onExpandedChange = {},
+				placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
+				leadingIcon = { Icon(painterResource(Res.drawable.icon_search_24px), null) }
+			)
+		},
 	)
 
-	Column(
-		modifier = Modifier.padding(10.dp)
-			.fillMaxWidth()
-	) {
-		SearchBar(
-			state = searchBarState,
-			inputField = {
-				SearchBarDefaults.InputField(
-					query = query,
-					onQueryChange = { query = it },
-					onSearch = { bgIO { submitSearch() } },
-					expanded = false,
-					onExpandedChange = {},
-					placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) }
-				)
-			},
-			modifier = Modifier.fillMaxWidth()
-		)
-	}
-
-	if (results == null) {
+	if (!showResults) {
 		Column(
-			modifier = Modifier.fillMaxWidth()
-				.fillMaxWidth()
+			modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
+				.fillMaxSize()
 		) {
-			// todo: trending
-			Text("TODO: Trending")
+			Text("Trending")
 		}
 	} else {
+		var selectedTab by remember { mutableStateOf(0) }
 
+		PrimaryTabRow(
+			selectedTabIndex = selectedTab
+		) {
+			Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
+			Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.accounts)) })
+			// todo: implement hashtags in search results
+			// Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.hashtags)) })
+		}
+
+		// pagination is very different with search, and just uses an offset/limit system
+		// sooo... it works weird.
+		if (!showResults) {
+			Row(
+				modifier = Modifier.padding(10.dp),
+				horizontalArrangement = Arrangement.Center
+			) {
+				Text(stringResource(Res.string.nothing_to_see_here))
+			}
+		} else {
+			val limit = 20
+			var offset by remember { mutableStateOf(0) }
+			when (selectedTab) {
+				0 -> RefreshableTimeline(
+					fetchMethod = { _, _, _ ->
+						val res = search(query, resolve = true, offset = offset, limit = limit, type = "statuses")
+						offset += limit
+						ApiResponse(error = res.error, message = res.message, response = res.response?.statuses)
+					},
+					onRefresh = { offset = 0 },
+					refreshKey = refreshKey,
+					timelineComponent = { Status(it) },
+					distinctCheck = true
+				)
+				1 -> RefreshableTimeline(
+					fetchMethod = { _, _, _ ->
+						val res = search(query, resolve = true, offset = offset, limit = limit, type = "accounts")
+						offset += limit
+						ApiResponse(error = res.error, message = res.message, response = res.response?.accounts)
+					},
+					onRefresh = { offset = 0 },
+					refreshKey = refreshKey,
+					timelineComponent = { AccountRow(it) },
+					distinctCheck = true
+				)
+			}
+		}
 	}
 }

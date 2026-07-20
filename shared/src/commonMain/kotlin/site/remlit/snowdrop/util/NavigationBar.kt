@@ -75,7 +75,10 @@ fun navigationBarInteractionSource(
 				}
 
 				is PressInteraction.Release -> {
-					if (!isLongPress) navigationBarNavigate(tab, navController)
+					if (!isLongPress) {
+						vibrateSoft(haptics)
+						navigationBarNavigate(tab, navController)
+					}
 				}
 			}
 		}

@@ -1,10 +1,7 @@
 package site.remlit.snowdrop.model
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.bg
 
 /**

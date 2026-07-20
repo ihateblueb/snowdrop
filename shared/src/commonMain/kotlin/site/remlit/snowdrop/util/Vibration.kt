@@ -28,6 +28,17 @@ fun vibrate(direction: Boolean, haptics: HapticFeedback) = when (direction) {
 * */
 
 /**
+ * Vibrates in certain confirmation, useful for affirming something like posting.
+ *
+ * @param haptics HapticFeedback controller
+ *
+ * @since 0.0.5-alpha
+ * */
+fun vibrateConfirm(haptics: HapticFeedback) {
+	haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+}
+
+/**
  * Vibrates positively, or in a way that signals something was confirmed/accepted or toggled on.
  *
  * @param haptics HapticFeedback controller

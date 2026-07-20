@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.ScrollEndCallback
@@ -53,6 +53,7 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * @param refreshKey Mutable state that can be updated to refresh the timeline
  * @param scrollToTopPostRefresh If the timeline should scroll to top after refreshing
  * @param countTowardsScrollingUpward If scrolling should be observed for the compose post FAB, usually no
+ * @param distinctCheck If timeline should remove duplicate elements before rendering, necessary for certain endpoints unfortunately
  *
  * @sample site.remlit.snowdrop.view.NotificationsView
  * @since 0.0.2-alpha
@@ -73,9 +74,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	itemModifier: Modifier = Modifier,
 	refreshKey: Any = 0,
 	scrollToTopPostRefresh: Boolean = true,
-	countTowardsScrollingUpward: Boolean = false
+	countTowardsScrollingUpward: Boolean = false,
+	distinctCheck: Boolean = false
 ) {
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
@@ -101,7 +103,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	suspend fun addOrUpdateTimeline() {
 		isRefreshing = true
 		val res = fetchMethod(null, null, null)
-		if (res.error) return
+		if (res.error) {
+			res.handleError(snackbarHandler)
+			return
+		}
 		if (res.response == null) return
 		timeline.clear()
 		timeline.addAll(res.response)
@@ -109,7 +114,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isRefreshing = false
 	}
 
-	LaunchedEffect(refreshKey) { addOrUpdateTimeline() }
+	LaunchedEffect(refreshKey) { addOrUpdateTimeline(); onRefresh() }
 
 	PullToRefreshBox(
 		isRefreshing = isRefreshing,
@@ -156,13 +161,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 					horizontalAlignment = Alignment.CenterHorizontally,
 					verticalArrangement = Arrangement.Center
 				) {
-					Text(
-						stringResource(Res.string.nothing_to_see_here),
-						fontStyle = FontStyle.Italic
-					)
+					Text(stringResource(Res.string.nothing_to_see_here))
 				}
-			} else items(
-				items = timeline,
+			} else if (!isRefreshing) items(
+				items = if (distinctCheck) timeline.distinctBy { it.id } else timeline,
 				key = { it.id }
 			) {
 				Box(modifier = itemModifier) {

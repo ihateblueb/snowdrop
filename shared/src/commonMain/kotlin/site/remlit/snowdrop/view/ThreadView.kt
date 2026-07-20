@@ -30,7 +30,7 @@ import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -44,7 +44,7 @@ import site.remlit.snowdrop.component.Status as StatusComponent
 @Composable
 fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)

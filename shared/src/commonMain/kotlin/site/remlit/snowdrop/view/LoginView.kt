@@ -40,7 +40,7 @@ import site.remlit.snowdrop.api.oauth.createToken
 import site.remlit.snowdrop.api.oauth.redirectUri
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
@@ -63,7 +63,7 @@ fun LoginView(
 ) = ViewSurface {
 	val navController = LocalNavController.current
 	val uriHandler = LocalUriHandler.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 
 
 	// Text field states

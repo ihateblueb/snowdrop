@@ -71,7 +71,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bg
@@ -112,7 +112,7 @@ const val headerHeight = 200
 @OptIn(ExperimentalSettingsApi::class)
 fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 	val currentDest = navHandler.currentDestination
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
