@@ -3,16 +3,20 @@ package site.remlit.snowdrop.view
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -186,26 +190,28 @@ fun TimelineView() = ViewSurface {
 		 *
 		 */
 		TopAppBar(
-			modifier = Modifier.clickable(
-				interactionSource = MutableInteractionSource(),
-				indication = null,
-				onClick = {
-					/*
-					coroutineScope.launch {
-						listState.animateScrollToItem(0)
-					}
-					*/
-
-					timelinePickerOpen = !timelinePickerOpen
+			navigationIcon = {
+				Box(
+					modifier = Modifier.minimumInteractiveComponentSize()
+						.size(IconButtonDefaults.smallContainerSize()),
+					contentAlignment = Alignment.Center,
+				) {
+					RenderTimelineTypeIcon()
 				}
-			),
+			},
 			title = {
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(10.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					RenderTimelineTypeIcon()
+					verticalAlignment = Alignment.CenterVertically,
 
+					modifier = Modifier.clickable(
+						interactionSource = MutableInteractionSource(),
+						indication = null,
+						onClick = {
+							timelinePickerOpen = !timelinePickerOpen
+						}
+					)
+				) {
 					when (timelineType) {
 						0 -> Text(stringResource(Res.string.home))
 						1 -> Text(stringResource(Res.string.local))

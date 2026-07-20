@@ -195,20 +195,21 @@ fun App() = safe {
 	}
 
 
-	fun shouldHideBottomBar(): Boolean =
-		atRoute<ComposeRoute>(currentDest) ||
-			atRoute<SettingsRoute>(currentDest) ||
-			atRoute<AboutInstanceRoute>(currentDest) ||
-			atRoute<AboutSnowdropRoute>(currentDest) ||
-			atRoute<DebugRoute>(currentDest) ||
-			atRoute<DebugStorageRoute>(currentDest) ||
-			atRoute<StatusMediaAttachmentRoute>(currentDest)
+	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
+		atRoute<SettingsRoute>(currentDest) ||
+		atRoute<AboutInstanceRoute>(currentDest) ||
+		atRoute<AboutSnowdropRoute>(currentDest) ||
+		atRoute<DebugRoute>(currentDest) ||
+		atRoute<DebugStorageRoute>(currentDest) ||
+		atRoute<StatusMediaAttachmentRoute>(currentDest)
 
-	fun shouldShowComposeFab(): Boolean =
-		loggedIn == true &&
-			(atRoute<TimelineRoute>(currentDest) ||
-				atRoute<ProfileRoute>(currentDest)) &&
-			scrollingUpward
+	val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
+		.collectAsStateWithLifecycle(false)
+
+	val shouldShowComposeFab = loggedIn == true &&
+		(atRoute<TimelineRoute>(currentDest) ||
+			atRoute<ProfileRoute>(currentDest)) &&
+		(scrollingUpward || alwaysShowComposeButton)
 
 	/*
 	* UI Begins
@@ -235,13 +236,16 @@ fun App() = safe {
 			Scaffold(
 				bottomBar = {
 					AnimatedVisibility(
-						visible = (loggedIn == true && !shouldHideBottomBar()),
+						visible = (loggedIn == true && !shouldHideBottomBar),
 						enter = bottomNavEnterAnimation,
 						exit = bottomNavExitAnimation,
 					) {
 						NavigationBar {
 							val navigationBarOrder by remember { getNavigationBarOrder() }
 								.collectAsStateWithLifecycle(defaultNavigationBarOrder)
+
+							val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
+								.collectAsStateWithLifecycle(true)
 
 							key(navigationBarOrder) {
 								navigationBarOrder.mapToNavigationOptions()
@@ -251,7 +255,7 @@ fun App() = safe {
 											onClick = { /* unimportant due to interaction source */ },
 											interactionSource = navigationBarInteractionSource(item),
 											icon = { NavigationBarIcon(item) },
-											label = { Text(NavigationBarLabel(item)) }
+											label = { if (showNavigationBarLabels) Text(NavigationBarLabel(item)) }
 										)
 									}
 							}
@@ -260,7 +264,7 @@ fun App() = safe {
 				},
 				floatingActionButton = {
 					AnimatedVisibility(
-						visible = shouldShowComposeFab(),
+						visible = shouldShowComposeFab,
 						enter = bottomNavEnterAnimation,
 						exit = bottomNavExitAnimation,
 					) {

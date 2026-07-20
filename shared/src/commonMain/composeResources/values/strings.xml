@@ -71,6 +71,8 @@
 	<string name="appearance">Appearance</string>
 	<string name="use_amoled_dark_theme">Use AMOLED dark theme</string>
 	<string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Using on a non-AMOLED screen may cause contrast issues</string>
+	<string name="show_navigation_bar_labels">Show navigation bar labels</string>
+	<string name="always_show_compose_button">Always show compose button</string>
 	<string name="navigation_bar_tab_order">Navigation bar tab order</string>
 
 	<string name="account">Account</string>

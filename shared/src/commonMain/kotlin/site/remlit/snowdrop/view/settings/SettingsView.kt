@@ -64,6 +64,7 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.about_snowdrop
 import snowdrop.shared.generated.resources.account
+import snowdrop.shared.generated.resources.always_show_compose_button
 import snowdrop.shared.generated.resources.appearance
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
@@ -82,6 +83,7 @@ import snowdrop.shared.generated.resources.icon_switch_account_24px
 import snowdrop.shared.generated.resources.logout
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.settings
+import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.switch_account
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
@@ -295,6 +297,38 @@ fun SettingsView() = ViewSurface {
 						Switch(
 							amoledBlack,
 							onCheckedChange = { blockingSettings.putBoolean("amoled_black", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.always_show_compose_button)) },
+					trailingContent = {
+						Switch(
+							alwaysShowComposeButton,
+							onCheckedChange = { blockingSettings.putBoolean("always_show_compose_button", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val showNavigationBarLabels by settings.getBooleanFlow("show_navigation_bar_labels", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.show_navigation_bar_labels)) },
+					trailingContent = {
+						Switch(
+							showNavigationBarLabels,
+							onCheckedChange = { blockingSettings.putBoolean("show_navigation_bar_labels", it) }
 						)
 					}
 				)
