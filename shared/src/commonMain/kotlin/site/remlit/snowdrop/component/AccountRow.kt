@@ -14,30 +14,56 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.LocalNavController
 
 @Composable
-fun AccountRow(account: Account) {
+fun AccountRow(
+	account: Account,
+	navigateToProfileOnClick: Boolean = true,
+	includeHorizontalDivider: Boolean = true,
+	onClick: (() -> Unit)? = null,
+	leadingContent: @Composable () -> Unit = {},
+	trailingContent: @Composable () -> Unit = {},
+	modifier: Modifier = Modifier
+) {
 	val navHandler = LocalNavController.current
 
 	Row(
-		modifier = Modifier.clickable(onClick = { navHandler.navigate(ProfileRoute(account.id)) })
-			.padding(10.dp)
+		modifier = modifier.let {
+			if (onClick != null || navigateToProfileOnClick) it.clickable {
+				if (navigateToProfileOnClick) navHandler.navigate(ProfileRoute(account.id))
+				if (onClick != null) onClick()
+			} else it
+		}.padding(10.dp)
 			.fillMaxWidth(),
 		horizontalArrangement = Arrangement.spacedBy(10.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
+		leadingContent()
+
 		Avatar(account)
 
 		Column {
-			Text(account.displayName(), fontWeight = FontWeight.Medium)
-			Text("@${account.acct}")
+			Text(
+				account.displayName(),
+				fontWeight = FontWeight.Medium
+			)
+			Text(
+				"@${account.acct}",
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				fontSize = 13.sp,
+			)
 		}
+
+		trailingContent()
 	}
-	HorizontalDivider(
-		thickness = 1.dp,
-		color = MaterialTheme.colorScheme.surfaceContainer
-	)
+
+	if (includeHorizontalDivider)
+		HorizontalDivider(
+			thickness = 1.dp,
+			color = MaterialTheme.colorScheme.surfaceContainer
+		)
 }

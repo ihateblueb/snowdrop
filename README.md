@@ -18,6 +18,9 @@ Uses Material 3 (supporting dynamic color schemes) for UI and icons.
 
 <div style="display: flex; align-content: center; gap: 10px;">
 	<img src=".github/assets/timeline.png" height="250px">
+	<img src=".github/assets/filtered_notifications.png" height="250px">
+	<img src=".github/assets/post_search.png" height="250px">
+	<img src=".github/assets/user_search.png" height="250px">
 	<img src=".github/assets/settings.png" height="250px">
 	<img src=".github/assets/account_switcher.png" height="250px">
 	<img src=".github/assets/profile_top.png" height="250px">

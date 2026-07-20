@@ -11,10 +11,12 @@
 - Broken avatars now show an icon to indicate they are broken rather than taking a long time to load
 - Setting to always show compose button regardless of scroll direction
 - Setting to hide navigation bar labels
+- Adopt AccountRow in more places for consistency
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController
 - Spacing of timeline header icon to be more consistent with navigation icons
+- Hide account switcher after selecting an account
 
 ## [0.0.4-alpha] - 2026/07/19
 
