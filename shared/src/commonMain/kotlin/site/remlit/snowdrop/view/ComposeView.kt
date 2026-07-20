@@ -139,7 +139,6 @@ fun ComposeView(
 	canSubmit = !textFieldState.text.isBlank() && remainingChars >= 0
 
 	suspend fun sendPost() {
-		vibrateSoft(haptics)
 		val res = createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
