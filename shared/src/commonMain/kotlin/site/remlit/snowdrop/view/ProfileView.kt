@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,10 +39,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -68,7 +74,8 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
@@ -77,26 +84,32 @@ import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request
-import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
-import snowdrop.shared.generated.resources.followers
-import snowdrop.shared.generated.resources.following
+import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_arrow_forward_20px
+import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_at_x
 import snowdrop.shared.generated.resources.media
+import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.unfollow
+import snowdrop.shared.generated.resources.x_followers
+import snowdrop.shared.generated.resources.x_following
 import snowdrop.shared.generated.resources.x_posts
 import snowdrop.shared.generated.resources.yes
 
@@ -106,20 +119,20 @@ const val headerHeight = 200
 @OptIn(ExperimentalSettingsApi::class)
 fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 	val currentDest = navHandler.currentDestination
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
 	/* Preferences */
-	val hideFollowCounters by settings.getBooleanFlow("hide_follow_counters", false)
+	val hideFollowCounters by remember { settings.getBooleanFlow("hide_follow_counters", false) }
 		.collectAsStateWithLifecycle(false)
 
 	/* View variables */
-	val currentAccount by getCurrentAccountObjectFlow()
+	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
 
-	val account by fetchAccount(id, snackbarHandler)
+	val account by remember { fetchAccount(id, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 
 	var isMe by remember { mutableStateOf(false) }
@@ -154,9 +167,12 @@ fun ProfileView(id: String) = ViewSurface {
 			},
 			title = {
 				if (account == null) Column {
-					Text(stringResource(Res.string.profile))
+					Text(translation(Res.string.profile))
 					Text(
-						stringResource(Res.string.x_posts, "0"),
+						translation(
+							Res.string.x_posts,
+							mapOf("count" to simpleAnnotatedString("0"))
+						),
 						fontSize = 14.sp
 					)
 				} else Column {
@@ -166,18 +182,26 @@ fun ProfileView(id: String) = ViewSurface {
 						overflow = TextOverflow.Ellipsis
 					)
 					Text(
-						stringResource(Res.string.x_posts, formatNumber(account!!.statusesCount)),
+						translation(
+							Res.string.x_posts,
+							mapOf("count" to simpleAnnotatedString(formatNumber(account!!.statusesCount)))
+						),
 						fontSize = 14.sp
 					)
 				}
 			},
 			actions = {
-				if (getFeature("biting") && atRoute<ProfileRoute>(currentDest)) {
+				if (getFeature("biting") && !isMe) {
 					IconButton(
 						onClick = {
 							coroutineScope.launch {
-								biteAccount(account!!.id)
 								vibrate(true, haptics)
+
+								val res = biteAccount(account!!.id)
+								if (res.error) {
+									res.handleError(snackbarHandler)
+									vibrateError(haptics)
+								}
 							}
 						}
 					) {
@@ -220,16 +244,20 @@ fun ProfileView(id: String) = ViewSurface {
 			RefreshableTimeline(
 				leadingItem = {
 					Column {
-						if (account!!.header != null) {
-							KamelImage(
-								resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
-								contentDescription = account!!.headerDescription,
-								contentScale = ContentScale.Crop,
-								onLoading = { fallbackHeader() },
-								modifier = Modifier.height(headerHeight.dp)
-									.fillMaxWidth(),
-							)
-						} else fallbackHeader()
+						Box(
+							contentAlignment = Alignment.BottomEnd
+						) {
+							if (account!!.header != null) {
+								KamelImage(
+									resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
+									contentDescription = account!!.headerDescription,
+									contentScale = ContentScale.Crop,
+									onLoading = { fallbackHeader() },
+									modifier = Modifier.height(headerHeight.dp)
+										.fillMaxWidth(),
+								)
+							} else fallbackHeader()
+						}
 
 						// The Rest
 						Column(
@@ -278,15 +306,22 @@ fun ProfileView(id: String) = ViewSurface {
 										}
 
 										var showRelationshipActionWarning by remember { mutableStateOf(false) }
-
 										if (showRelationshipActionWarning)
 											AlertDialog(
 												text = {
 													if (relationship!!.following || relationship!!.requested) {
-														if (relationship!!.requested) Text(stringResource(Res.string.are_you_sure_you_want_to_cancel_your_follow_request, account!!.acct))
-														else Text(stringResource(Res.string.are_you_sure_you_want_to_unfollow, account!!.acct))
+														if (relationship!!.requested) Text(translation(
+															Res.string.are_you_sure_you_want_to_cancel_your_follow_request_to_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														)) else Text(translation(
+															Res.string.are_you_sure_you_want_to_unfollow_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														))
 													} else {
-														if (account!!.locked) Text(stringResource(Res.string.are_you_sure_you_want_to_send_a_follow_request, account!!.acct))
+														if (account!!.locked) Text(translation(
+															Res.string.are_you_sure_you_want_to_send_a_follow_request_to_x,
+															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+														))
 													}
 												},
 												dismissButton = {
@@ -351,15 +386,43 @@ fun ProfileView(id: String) = ViewSurface {
 							// display name
 							Row {
 								Column {
-									Text(
-										account!!.displayName(),
-										fontWeight = FontWeight.Bold,
-										fontSize = 24.sp
-									)
-									Text(
-										"@${account!!.acct}",
-										color = MaterialTheme.colorScheme.onSurface
-									)
+									FlowRow(
+										horizontalArrangement = Arrangement.spacedBy(5.dp),
+										verticalArrangement = Arrangement.Center
+									) {
+										Text(
+											account!!.displayName(),
+											fontWeight = FontWeight.Bold,
+											fontSize = 24.sp
+										)
+
+										if (relationship != null)
+											Row(
+												modifier = Modifier.clip(RoundedCornerShape(10.dp))
+													.background(MaterialTheme.colorScheme.surfaceContainer)
+													.padding(vertical = 0.dp, horizontal = 4.dp),
+												horizontalArrangement = Arrangement.spacedBy(2.dp),
+												verticalAlignment = Alignment.CenterVertically
+											) {
+												if (relationship!!.followedBy && relationship!!.following) {
+													Icon(painterResource(Res.drawable.icon_compare_arrows_20px), null)
+													Text(stringResource(Res.string.mutuals), fontSize = 13.sp)
+												} else if (relationship!!.followedBy) {
+													Icon(painterResource(Res.drawable.icon_arrow_forward_20px), null)
+													Text(stringResource(Res.string.follows_you), fontSize = 13.sp)
+												}
+											}
+									}
+
+									FlowRow(
+										horizontalArrangement = Arrangement.spacedBy(5.dp),
+										verticalArrangement = Arrangement.Center
+									) {
+										Text(
+											"@${account!!.acct}",
+											color = MaterialTheme.colorScheme.onSurface
+										)
+									}
 								}
 							}
 
@@ -398,8 +461,9 @@ fun ProfileView(id: String) = ViewSurface {
 								}
 
 							Row(modifier = Modifier.padding(top = 10.dp)) {
+								// todo: format this, it's just an ugly timestamp right now
 								Text(
-									stringResource(Res.string.joined_at_x, account!!.createdAt),
+									translation(Res.string.joined_at_x, mapOf("date_time" to simpleAnnotatedString(account!!.createdAt))),
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
 							}
@@ -410,20 +474,19 @@ fun ProfileView(id: String) = ViewSurface {
 									modifier = Modifier.padding(top = 10.dp),
 									horizontalArrangement = Arrangement.spacedBy(10.dp)
 								) {
-									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-										Text(
-											"${account!!.followersCount}",
+									Text(translation(Res.string.x_followers, mapOf("count" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
 											fontWeight = FontWeight.Bold
-										)
-										Text(stringResource(Res.string.followers))
-									}
-									Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-										Text(
-											"${account!!.followingCount}",
+										)) { append("${account!!.followersCount}") }
+										toAnnotatedString()
+									})))
+
+									Text(translation(Res.string.x_following, mapOf("count" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
 											fontWeight = FontWeight.Bold
-										)
-										Text(stringResource(Res.string.following))
-									}
+										)) { append("${account!!.followingCount}") }
+										toAnnotatedString()
+									})))
 								}
 						}
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="timeline">Tijdlijn</string>
+    <string name="notifications">Meldingen</string>
+    <string name="profile">Profiel</string>
+    <string name="add_account">Account toevoegen</string>
+    <string name="post">Post</string>
+    <string name="boosted_by">Hergedeeld door</string>
+</resources>

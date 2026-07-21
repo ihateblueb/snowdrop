@@ -128,7 +128,7 @@ data class Status(
 
 			@SerialName("filter_action")
 			val filterAction: String,
-			val keywords: List<Keyword>,
+			val keywords: List<Keyword> = listOf(),
 			val statuses: List<String> = listOf(),
 
 			@SerialName("expires_at")

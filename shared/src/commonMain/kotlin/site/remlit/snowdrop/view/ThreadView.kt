@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,19 +30,21 @@ import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.post
-import snowdrop.shared.generated.resources.post_by
+import snowdrop.shared.generated.resources.post_by_x
 import site.remlit.snowdrop.component.Status as StatusComponent
 
 @Composable
 fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
@@ -85,7 +86,10 @@ fun ThreadView(id: String) = ViewSurface {
 			} else Column {
 
 				Text(
-					stringResource(Res.string.post_by, "${status!!.account?.displayName()}"),
+					translation(
+						Res.string.post_by_x,
+						mapOf("display_name" to simpleAnnotatedString(status!!.account!!.displayName()))
+					),
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis
 				)

@@ -7,7 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import io.ktor.websocket.Frame
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snowdrop.shared.generated.resources.Res
@@ -15,12 +14,19 @@ import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_mail_20px
-import snowdrop.shared.generated.resources.liked_your_post
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 
+/**
+ * Visibility icon with optional label.
+ *
+ * @param visibility Visibility
+ * @param showLabel If the name of the visibility should be shown as a label
+ * 
+ * @since 0.0.1-alpha
+ * */
 @Composable
 fun Visibility(visibility: String, showLabel: Boolean = false) {
 	Row(

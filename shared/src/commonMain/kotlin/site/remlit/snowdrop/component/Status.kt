@@ -44,21 +44,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -66,6 +66,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
+import site.remlit.snowdrop.StatusMediaAttachmentRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
@@ -85,8 +86,9 @@ import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
+import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
@@ -97,12 +99,14 @@ import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
+import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.vibrateError
+import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.InteractionViewType
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bite_post
 import snowdrop.shared.generated.resources.bookmark
-import snowdrop.shared.generated.resources.boosted
 import snowdrop.shared.generated.resources.copy_link
 import snowdrop.shared.generated.resources.delete
 import snowdrop.shared.generated.resources.edit
@@ -135,15 +139,23 @@ import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
+import snowdrop.shared.generated.resources.x_boosted
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Status element
+ *
+ * @param status Status to be shown
+ *
+ * @since 0.0.1-alpha
+ * */
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
 fun Status(status: Status) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
-	val snackbarController = SnackbarController.current
+	val snackbarController = LocalSnackbarController.current
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
 	val uriHandler = LocalUriHandler.current
@@ -244,16 +256,17 @@ fun Status(status: Status) {
 							verticalAlignment = Alignment.CenterVertically
 						) {
 							Text(
-								rebloggingAccount!!.displayName(),
-								color = MaterialTheme.colorScheme.secondary,
-								fontSize = 14.sp,
-								fontWeight = FontWeight.Medium,
-								overflow = TextOverflow.Ellipsis,
-								maxLines = 1,
-								modifier = Modifier.weight(1f, fill = false)
-							)
-							Text(
-								stringResource(Res.string.boosted),
+								translation(
+									Res.string.x_boosted,
+									mapOf("clickable_display_name" to buildAnnotatedString {
+										withStyle(style = SpanStyle(
+											color = MaterialTheme.colorScheme.secondary,
+											fontSize = 14.sp,
+										)) { withAccountLink(rebloggingAccount!!) }
+
+										toAnnotatedString()
+									})
+								),
 								color = MaterialTheme.colorScheme.secondary,
 								fontSize = 14.sp,
 								fontWeight = FontWeight.Medium
@@ -342,16 +355,6 @@ fun Status(status: Status) {
 							HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
 						}
 
-						@Composable
-						fun mediaFallback(blurhash: String? = null) {
-							Box(
-								modifier = Modifier.clip(RoundedCornerShape(10.dp))
-									.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-									.height(200.dp)
-									.fillMaxWidth()
-							)
-						}
-
 						if (!realStatus.mediaAttachments.isEmpty()) {
 							Grid({
 								// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
@@ -365,27 +368,23 @@ fun Status(status: Status) {
 									row(0.5f)
 								}
 
-								flow = GridFlow.Column
+								flow = GridFlow.Row
 								gap(5.dp)
 							}) {
 								realStatus.mediaAttachments.forEach { media ->
-									Box {
-										mediaFallback(media.blurhash)
-										when (media.type.split("/").first()) {
-											"image" -> {
-												KamelImage(
-													resource = { asyncPainterResource(media.url) },
-													contentDescription = media.description,
-													contentScale = ContentScale.Fit,
-													modifier = Modifier.clip(RoundedCornerShape(10.dp))
-														.height(200.dp)
-														.fillMaxWidth(),
+									StatusMediaAttachment(
+										media,
+										includeFallback = true,
+										modifier = Modifier.height(200.dp),
+										onClick = {
+											navHandler.navigate(
+												StatusMediaAttachmentRoute(
+													realStatus.id,
+													realStatus.mediaAttachments.indexOf(media)
 												)
-											}
-
-											else -> Text(media.url)
+											)
 										}
-									}
+									)
 								}
 							}
 						}
@@ -452,8 +451,8 @@ fun Status(status: Status) {
 				*/
 				if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
 					LazyRow(
+						contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
 						horizontalArrangement = Arrangement.spacedBy(5.dp),
-						modifier = Modifier.padding(start = 5.dp)
 					) {
 						realStatus.reactions.forEach {
 							item {
@@ -507,7 +506,11 @@ fun Status(status: Status) {
 											val emoji = it.toEmoji()
 											if (emoji != null) Emoji(emoji) else when (getPlatform()) {
 												Platform.ANDROID -> Text(it.name)
-												Platform.IOS -> Text(it.name, fontSize = 18.sp)
+												Platform.IOS -> Text(
+													it.name,
+													fontSize = 18.sp,
+													// todo: make this use apple color emoji explicitly, sometimes it uses a non-emoji glyph when one is available. distracting & ugly & unintended
+												)
 											}
 
 											if (!blockingSettings.getBoolean("hide_interaction_counters", false))
@@ -661,8 +664,11 @@ fun Status(status: Status) {
 										Icon(painterResource(Res.drawable.icon_link_24px), null)
 									},
 									onClick = {
-										clipboardManager.setText(AnnotatedString(realStatus.url!!))
-										showDropdown = !showDropdown
+										coroutineScope.launch {
+											clipboardManager.setText(AnnotatedString(realStatus.url!!))
+											vibrateSoft(haptics)
+											showDropdown = false
+										}
 									}
 								)
 
@@ -673,7 +679,7 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										uriHandler.openUri(realStatus.url!!)
-										showDropdown = !showDropdown
+										showDropdown = false
 									}
 								)
 							}
@@ -686,12 +692,17 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											val res = unbookmarkStatus(realStatus.id)
-											realStatus = res.response!!
-											if (isReblog)
-												status.reblog = res.response
+											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = unbookmarkStatus(realStatus.id)
+											if (res.error || res.response == null) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											realStatus = res.response!!
+											if (isReblog) status.reblog = res.response
+											showDropdown = false
 										}
 									}
 								)
@@ -703,18 +714,23 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											val res = bookmarkStatus(realStatus.id)
-											realStatus = res.response!!
-											if (isReblog)
-												status.reblog = res.response
+											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = bookmarkStatus(realStatus.id)
+											if (res.error || res.response == null) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											realStatus = res.response!!
+											if (isReblog) status.reblog = res.response
+											showDropdown = false
 										}
 									}
 								)
 							}
 
-							if (getFeature("biting")) {
+							if (getFeature("biting") && !isMine) {
 								DropdownMenuItem(
 									text = { Text(stringResource(Res.string.bite_post)) },
 									leadingIcon = {
@@ -722,10 +738,15 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
-											biteStatus(realStatus.id)
 											vibrate(true, haptics)
 
-											showDropdown = !showDropdown
+											val res = biteStatus(realStatus.id)
+											if (res.error) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											showDropdown = false
 										}
 									}
 								)
@@ -816,9 +837,12 @@ fun Status(status: Status) {
 									},
 									onClick = {
 										coroutineScope.launch {
+											vibrate(true, haptics)
+
 											val req = deleteStatus(realStatus.id)
 											if (req.error) {
 												req.handleError(snackbarController)
+												vibrateError(haptics)
 												return@launch
 											}
 											isVisible = false

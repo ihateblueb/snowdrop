@@ -1,10 +1,11 @@
 package site.remlit.snowdrop.util
 
 /**
- * Handler for snowdrop:// URIs being forwarded
- * to the app.
+ * Handler for snowdrop:// URIs being forwarded to the app.
  *
  * https://kotlinlang.org/docs/multiplatform/compose-navigation-deep-links.html#handle-received-deep-links
+ *
+ * @since 0.0.1-alpha
  * */
 object ExternalUriHandler {
 	private var cached: String? = null

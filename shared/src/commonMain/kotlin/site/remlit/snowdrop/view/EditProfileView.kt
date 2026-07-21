@@ -12,7 +12,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,14 +30,13 @@ import site.remlit.snowdrop.api.accounts.updateCredentials
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.SnackbarController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.automated_account
 import snowdrop.shared.generated.resources.discoverable
 import snowdrop.shared.generated.resources.discoverable_description
-import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.editing_profile
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.locked_account
@@ -48,7 +46,7 @@ import snowdrop.shared.generated.resources.save
 @Composable
 fun EditProfileView() = ViewSurface {
 	val navHandler = LocalNavController.current
-	val snackbarHandler = SnackbarController.current
+	val snackbarHandler = LocalSnackbarController.current
 	val coroutineScope = rememberCoroutineScope()
 
 	val currentAccount by getCurrentAccountObjectFlow()

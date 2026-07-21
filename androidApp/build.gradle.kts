@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
 plugins {
 	alias(libs.plugins.androidApplication)
@@ -28,8 +29,8 @@ android {
 		applicationId = "site.remlit.snowdrop"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 2
-		versionName = "0.0.2-alpha"
+		versionCode = 4
+		versionName = "0.0.4-alpha"
 	}
 	packaging {
 		resources {

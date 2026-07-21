@@ -5,6 +5,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
 
+/**
+ * Danger dropdown item component. Will set text color and icons to be
+ * the MaterialTheme error color.
+ *
+ * @param text Text of dropdown item
+ * @param leadingIcon Leading dropdown icon
+ * @param onClick Action on click of dropdown item
+ *
+ * @since 0.0.1-alpha
+ * */
 @Composable
 fun DangerDropdownItem(
 	text: @Composable () -> Unit,

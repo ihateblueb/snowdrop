@@ -1,4 +1,7 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import java.io.ByteArrayOutputStream
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -6,6 +9,7 @@ plugins {
 	alias(libs.plugins.composeMultiplatform)
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.kotlinSerialization)
+	alias(libs.plugins.buildKonfig)
 }
 
 kotlin {
@@ -19,7 +23,7 @@ kotlin {
 		}
 	}
 
-	androidLibrary {
+	android {
 		namespace = "site.remlit.snowdrop.shared"
 		compileSdk = libs.versions.android.compileSdk.get().toInt()
 		minSdk = libs.versions.android.minSdk.get().toInt()
@@ -71,12 +75,15 @@ kotlin {
 
 			implementation(libs.kermit)
 			implementation(libs.htmlconverter)
+			implementation(libs.reorderable)
 
 			// kamel, image handling
 			implementation(libs.kamel.image)
 			implementation(libs.kamel.image.default)
 			implementation(libs.kamel.decoder.animated.image)
 			implementation(libs.kamel.decoder.image.bitmap)
+
+			implementation(libs.zoomimage.compose)
 		}
 		commonTest.dependencies {
 			implementation(libs.kotlin.test)
@@ -86,4 +93,50 @@ kotlin {
 
 dependencies {
 	androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+//
+// past this point the gradle config is very messy
+//
+
+abstract class GitBranchValueSource : ValueSource<String, ValueSourceParameters.None> {
+	@get:Inject
+	abstract val execOperations: ExecOperations
+
+	override fun obtain(): String {
+		val stdout = ByteArrayOutputStream()
+		execOperations.exec {
+			commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+}
+
+abstract class GitCommitValueSource : ValueSource<String, ValueSourceParameters.None> {
+	@get:Inject
+	abstract val execOperations: ExecOperations
+
+	override fun obtain(): String {
+		val stdout = ByteArrayOutputStream()
+		execOperations.exec {
+			commandLine("git", "rev-parse", "--short", "HEAD")
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+}
+
+buildkonfig {
+	packageName = "site.remlit.snowdrop"
+	objectName = "GradleVariables"
+
+	val gitBranch = providers.of(GitBranchValueSource::class) {}
+	val gitCommit = providers.of(GitCommitValueSource::class) {}
+
+	defaultConfigs {
+		buildConfigField(STRING, "version", rootProject.version.toString())
+		buildConfigField(STRING, "gitBranch", gitBranch.get())
+		buildConfigField(STRING, "gitCommit", gitCommit.get())
+	}
 }

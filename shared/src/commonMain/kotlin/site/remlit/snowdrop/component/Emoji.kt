@@ -13,9 +13,17 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import site.remlit.snowdrop.model.Emoji
 
-val emojiSize = 20
-val bigEmojiSize = 40
+const val emojiSize = 20
+const val bigEmojiSize = 40
 
+/**
+ * Emoji component.
+ *
+ * @param emoji Emoji data
+ * @param big If the emoji should be big
+ *
+ * @since 0.0.2-alpha
+ * */
 @Composable
 fun Emoji(
 	emoji: Emoji,
