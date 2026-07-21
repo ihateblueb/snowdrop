@@ -138,13 +138,14 @@ fun NotificationsView() = ViewSurface {
 					label = { Text(translation(Res.string.boost)) }
 				)
 			}
-			item {
-				FilterChip(
-					selected = reactions,
-					onClick = { blockingSettings.putBoolean("notifications_filter_reactions", !reactions) },
-					label = { Text(translation(Res.string.reaction)) }
-				)
-			}
+			if (getFeature("reactions"))
+				item {
+					FilterChip(
+						selected = reactions,
+						onClick = { blockingSettings.putBoolean("notifications_filter_reactions", !reactions) },
+						label = { Text(translation(Res.string.reaction)) }
+					)
+				}
 			item {
 				FilterChip(
 					selected = follows,

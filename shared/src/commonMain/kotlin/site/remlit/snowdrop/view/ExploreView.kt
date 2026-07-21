@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,9 +58,9 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	val focusRequester = remember { FocusRequester() }
 	val keyboardController = LocalSoftwareKeyboardController.current
 
-	var query by remember { mutableStateOf("") }
-	var showResults by remember { mutableStateOf(false) }
-	var refreshKey by remember { mutableStateOf(0) }
+	var query by rememberSaveable { mutableStateOf("") }
+	var showResults by rememberSaveable { mutableStateOf(false) }
+	var refreshKey by rememberSaveable { mutableStateOf(0) }
 
 	LaunchedEffect(immediateFocus) {
 		if (!immediateFocus) return@LaunchedEffect
@@ -110,7 +111,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 			Text("Trending")
 		}
 	} else {
-		var selectedTab by remember { mutableStateOf(0) }
+		var selectedTab by rememberSaveable { mutableStateOf(0) }
 
 		PrimaryTabRow(
 			selectedTabIndex = selectedTab

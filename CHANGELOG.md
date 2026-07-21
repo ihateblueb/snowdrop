@@ -13,11 +13,14 @@
 - Setting to hide navigation bar labels
 - Adopt AccountRow in more places for consistency
 - Mutuals/Follows you indicator on profiles
+- /api/v2/instance support for improved feature detection
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController
 - Spacing of timeline header icon to be more consistent with navigation icons
 - Hide account switcher after selecting an account
+- Only show reactions notification filter when that feature is available
+- Remember explore page state
 
 ## [0.0.4-alpha] - 2026/07/19
 

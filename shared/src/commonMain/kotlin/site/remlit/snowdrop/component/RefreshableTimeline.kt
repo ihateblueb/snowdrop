@@ -81,6 +81,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
+	// todo: make rememberSaveable
 	val timeline = remember { mutableStateListOf<T>() }
 	val refreshState = rememberPullToRefreshState()
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
