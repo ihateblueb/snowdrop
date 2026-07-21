@@ -28,13 +28,24 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontStyle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.http.HttpMethod
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
+import site.remlit.snowdrop.model.streaming.StreamEventResponse
+import site.remlit.snowdrop.model.streaming.StreamSubscribeRequest
 import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.config.httpClient
+import site.remlit.snowdrop.util.config.json
+import site.remlit.snowdrop.util.getCurrentAccountHost
+import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.ScrollEndCallback
@@ -45,12 +56,14 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * Refreshable and infinitely scrollable timeline.
  *
  * @param fetchMethod Method following basic pagination requirements
+ *
  * @param onRefresh Called upon refresh of the timeline
  * @param timelineComponent Component to use for items in the timeline, must accept T as first parameter
  * @param leadingItem Item leading before the timeline content
  * @param trailingItem Item trailing after the timeline content
  * @param itemModifier Modifier for each timeline item's Box
  * @param refreshKey Mutable state that can be updated to refresh the timeline
+ *
  * @param scrollToTopPostRefresh If the timeline should scroll to top after refreshing
  * @param countTowardsScrollingUpward If scrolling should be observed for the compose post FAB, usually no
  * @param distinctCheck If timeline should remove duplicate elements before rendering, necessary for certain endpoints unfortunately
@@ -66,6 +79,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			minId: String?,
 			sinceId: String?
 		) -> ApiResponse<List<T>>,
+
 	onRefresh: () -> Unit = {},
 	timelineComponent: @Composable (item: T) -> Unit,
 	leadingItem: @Composable () -> Unit = {},
@@ -73,9 +87,15 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
 	itemModifier: Modifier = Modifier,
 	refreshKey: Any = 0,
+
 	scrollToTopPostRefresh: Boolean = true,
 	countTowardsScrollingUpward: Boolean = false,
-	distinctCheck: Boolean = false
+	distinctCheck: Boolean = false,
+
+	streamingEndpoint: String? = null,
+	onStreamEvent: (StreamEventResponse) -> Unit = {},
+	applyReceivedEventsKey: Any = 0,
+	scrollToTopKey: Any = 0,
 ) {
 	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
@@ -84,6 +104,8 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val timeline = remember { mutableStateListOf<T>() }
 	val refreshState = rememberPullToRefreshState()
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
+
+	val recievedEvents = rememberSaveable { mutableStateListOf<StreamEventResponse>() }
 
 	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 	listState.also {
@@ -114,7 +136,41 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isRefreshing = false
 	}
 
-	LaunchedEffect(refreshKey) { addOrUpdateTimeline(); onRefresh() }
+	var streamingJob by remember { mutableStateOf<Job?>(null) }
+
+	LaunchedEffect(refreshKey) { addOrUpdateTimeline(); streamingJob?.cancel(); onRefresh() }
+	LaunchedEffect(scrollToTopKey) { listState.scrollToItem(0) }
+
+	// todo: ensure streaming host is correct before connecting
+	LaunchedEffect(streamingEndpoint) {
+		if (streamingEndpoint == null) return@LaunchedEffect
+
+		streamingJob = coroutineScope.launch {
+			httpClient.webSocket(
+				method = HttpMethod.Get,
+				host = getCurrentAccountHost(),
+				path = streamingEndpoint
+			) {
+				while (true) {
+					val raw = incoming.receive() as? Frame.Text ?: continue
+					val event = safeReturnable {
+						json.decodeFromString<StreamEventResponse>(raw.readText())
+					}
+					if (event != null) {
+						onStreamEvent(event)
+						recievedEvents.add(event)
+					}
+				}
+			}
+		}
+	}
+
+	LaunchedEffect(applyReceivedEventsKey) {
+		recievedEvents.forEach {
+			// add to top of timeline
+		}
+		recievedEvents.clear()
+	}
 
 	PullToRefreshBox(
 		isRefreshing = isRefreshing,

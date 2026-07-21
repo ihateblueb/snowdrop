@@ -66,6 +66,7 @@ kotlin {
 			implementation(libs.multiplatform.settings)
 			implementation(libs.multiplatform.settings.coroutines)
 			implementation(libs.ktor.client.content.negotiation)
+			implementation(libs.ktor.client.websockets)
 			implementation(libs.ktor.serialization.kotlinx.json)
 
 			implementation(libs.ktor.client.core)
