@@ -95,7 +95,6 @@ import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
 fun ComposeView(
 	inReplyToId: String? = null,
 	initialCw: String = "",

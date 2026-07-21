@@ -331,7 +331,7 @@ fun Status(status: Status) {
 
 							key(timestampKey) {
 								Text(
-									"${realStatus.getCreatedAtTimestamp()?.toRelativeString()}",
+									"${realStatus.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
 									fontSize = 13.sp
 								)
 							}
@@ -388,6 +388,8 @@ fun Status(status: Status) {
 								}
 							}
 						}
+
+						if (realStatus.poll != null) Poll(realStatus)
 					}
 				}
 

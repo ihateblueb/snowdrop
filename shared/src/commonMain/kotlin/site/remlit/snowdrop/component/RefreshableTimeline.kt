@@ -28,8 +28,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontStyle
-import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
@@ -58,7 +56,6 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * @sample site.remlit.snowdrop.view.NotificationsView
  * @since 0.0.2-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class)
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	fetchMethod: suspend (

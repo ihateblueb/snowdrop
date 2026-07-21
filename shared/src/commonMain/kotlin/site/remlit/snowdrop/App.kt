@@ -364,11 +364,7 @@ fun App() = safe {
 							)
 						}
 
-						composable<LoginRoute> {
-							LoginView(
-								navigateToTimeline = { navController.navigate(TimelineRoute) },
-							)
-						}
+						composable<LoginRoute> { LoginView() }
 						composable<TimelineRoute> { TimelineView() }
 						composable<NotificationsRoute> { NotificationsView() }
 						composable<ExploreRoute> {

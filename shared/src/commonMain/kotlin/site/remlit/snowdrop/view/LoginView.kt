@@ -34,6 +34,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
+import site.remlit.snowdrop.TimelineRoute
 import site.remlit.snowdrop.api.oauth.authScopes
 import site.remlit.snowdrop.api.oauth.createApp
 import site.remlit.snowdrop.api.oauth.createToken
@@ -58,9 +59,7 @@ import kotlin.uuid.Uuid
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun LoginView(
-	navigateToTimeline: () -> Unit
-) = ViewSurface {
+fun LoginView() = ViewSurface {
 	val navController = LocalNavController.current
 	val uriHandler = LocalUriHandler.current
 	val snackbarHandler = LocalSnackbarController.current
@@ -140,7 +139,7 @@ fun LoginView(
 			determineFeatures()
 		}
 
-		navigateToTimeline()
+		navController.navigate(TimelineRoute)
 	}
 
 	if (!oauthCallbackCode.isNullOrBlank())

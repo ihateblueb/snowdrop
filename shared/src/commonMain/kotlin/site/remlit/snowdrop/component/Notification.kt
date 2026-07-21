@@ -197,7 +197,7 @@ fun Notification(notification: Notification) {
 							lineHeight = with(LocalDensity.current) { smallerAvatarSize.dp.toSp() }
 						)
 
-						val timestamp = "${notification.getCreatedAtTimestamp()?.toRelativeString()}"
+						val timestamp = "${notification.getCreatedAtTimestamp()?.toRelativeString(short = true)}"
 
 						Text(
 							text = timestamp,

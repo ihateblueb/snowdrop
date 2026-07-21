@@ -14,6 +14,9 @@
 - Adopt AccountRow in more places for consistency
 - Mutuals/Follows you indicator on profiles
 - /api/v2/instance support for improved feature detection
+- Attachment, poll, and quote post indicator on mini status
+- Poll viewing and voting on statuses
+- Translations for relative time
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController

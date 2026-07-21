@@ -170,4 +170,48 @@
 	<string name="search_results">Search results</string>
 	<string name="accounts">Accounts</string>
 	<string name="hashtags">Hashtags</string>
+
+	<string name="1_poll">1 poll</string>
+	<string name="x_attachment_s_">{count} attachment(s)</string>
+	<string name="1_quoted_post">1 quoted post</string>
+
+	<string name="ends_in_x">Ends in {time}</string>
+	<string name="ends_soon">Ends soon</string>
+	<string name="poll_ended">Poll ended</string>
+	<string name="x_vote_s_">{count} vote(s)</string>
+
+	<string name="soon">soon</string>
+	<string name="now">now</string>
+
+	<string name="x_second_simple">{time}s</string>
+	<string name="x_second">{time} second</string>
+	<string name="x_seconds">{time} seconds</string>
+
+	<string name="x_minute_simple">{time}m</string>
+	<string name="x_minute">{time} minute</string>
+	<string name="x_minutes">{time} minutes</string>
+
+	<string name="x_hour_simple">{time}h</string>
+	<string name="x_hour">{time} hour</string>
+	<string name="x_hours">{time} hours</string>
+
+	<string name="x_day_simple">{time}d</string>
+	<string name="x_day">{time} day</string>
+	<string name="x_days">{time} days</string>
+
+	<string name="x_week_simple">{time}w</string>
+	<string name="x_week">{time} week</string>
+	<string name="x_weeks">{time} weeks</string>
+
+	<string name="x_month_simple">{time}mo</string>
+	<string name="x_month">{time} month</string>
+	<string name="x_months">{time} months</string>
+
+	<string name="x_year_simple">{time}y</string>
+	<string name="x_year">{time} year</string>
+	<string name="x_years">{time} years</string>
+
+	<string name="show_results">Show results</string>
+	<string name="hide_results">Hide results</string>
+	<string name="vote">Vote</string>
 </resources>

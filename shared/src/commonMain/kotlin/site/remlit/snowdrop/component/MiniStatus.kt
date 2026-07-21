@@ -15,17 +15,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.extension.toRelativeString
+import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources._1_poll
+import snowdrop.shared.generated.resources._1_quoted_post
+import snowdrop.shared.generated.resources.icon_attachment_20px
 import snowdrop.shared.generated.resources.icon_warning_20px
+import snowdrop.shared.generated.resources.x_attachment_s_
 
 /**
  * Mini status component.
@@ -69,7 +79,7 @@ fun MiniStatus(
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					Text(
-						"${status.getCreatedAtTimestamp()?.toRelativeString()}",
+						"${status.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
 						fontSize = 13.sp
 					)
 					Visibility(status.visibility!!)
@@ -78,10 +88,54 @@ fun MiniStatus(
 
 			@Composable
 			fun Content() {
-				Row(
-					modifier = Modifier.padding(top = 5.dp)
+				Column(
+					modifier = Modifier.padding(top = 5.dp),
+					verticalArrangement = Arrangement.spacedBy(5.dp)
 				) {
 					HtmlContent(status.content ?: "", mentions = status.mentions, maxLines = 3)
+
+
+					val attachmentStrings = mutableListOf<AnnotatedString>()
+
+					if (status.mediaAttachments.isNotEmpty())
+						attachmentStrings.add(translation(
+							Res.string.x_attachment_s_,
+							mapOf("count" to simpleAnnotatedString("${status.mediaAttachments.size}"))
+						))
+
+					if (status.poll != null)
+						attachmentStrings.add(translation(Res.string._1_poll))
+
+					if (status.quote != null || status.quotedStatus != null)
+						attachmentStrings.add(translation(Res.string._1_quoted_post))
+
+					if (attachmentStrings.isNotEmpty())
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(5.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Icon(
+								painterResource(Res.drawable.icon_attachment_20px), null,
+								tint = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+
+							Text(
+								buildAnnotatedString {
+									withStyle(style = SpanStyle(
+										fontSize = 14.sp,
+										color = MaterialTheme.colorScheme.onSurfaceVariant
+									)) {
+										attachmentStrings.forEach {
+											append(it)
+											if (attachmentStrings.indexOf(it) != (attachmentStrings.size - 1))
+												append(", ")
+										}
+									}
+
+									toAnnotatedString()
+								}
+							)
+						}
 				}
 			}
 
