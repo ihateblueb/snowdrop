@@ -4,7 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import co.touchlab.kermit.Logger
-import site.remlit.snowdrop.api.getInstance
+import site.remlit.snowdrop.api.instance.getInstanceV1
+import site.remlit.snowdrop.api.instance.getInstanceV2
+import site.remlit.snowdrop.model.InstanceV1
+import site.remlit.snowdrop.model.InstanceV2
 
 enum class Software {
 	Mastodon,
@@ -34,35 +37,49 @@ suspend fun determineFeatures() {
 	determiningFeatures = true
 	var software = Software.Mastodon
 
-	val res = getInstance(auth = true)
-	if (res.error || res.response == null) return
-	val instance = res.response
+	var v2: InstanceV2?
+	val resV2 = getInstanceV2(auth = true)
+	v2 = if (resV2.error || resV2.response == null) null else resV2.response
+
+	var v1: InstanceV1? = null
+	if (v2 == null) {
+		val resV1 = getInstanceV1(auth = true)
+		if (resV1.error || resV1.response == null) return
+		v1 = resV1.response
+	}
 
 
-	if (instance.version.contains(".*\\+chuckya".toRegex()))
-		software = Software.Chuckya
+	val version = v2?.version ?: v1?.version ?: ""
 
+	// order is important here, check forks of a software *after* the software, otherwise chuckya would be marked as glitch
+	// for also supporting it's api version
+	// todo: find a real glitch version string
+	if (version.contains(".*\\+glitch".toRegex()) ||
+		(v2?.apiVersions?.glitch != null && v2.apiVersions.glitch > 0)
+	) software = Software.Glitch
 
-	// todo: detect glitch
+	if (version.contains(".*\\+chuckya".toRegex()) ||
+		(v2?.apiVersions?.chuckya != null && v2.apiVersions.chuckya > 0)
+	) software = Software.Chuckya
 
 	// todo: test pleroma softwareMode
-	if ("""\(compatible; Pleroma .*\)""".toRegex().containsMatchIn(instance.version))
+	if ("""\(compatible; Pleroma .*\)""".toRegex().containsMatchIn(version))
 		software = Software.Pleroma
 
-	if ("""\(compatible; Akkoma .*\)""".toRegex().containsMatchIn(instance.version))
+	if ("""\(compatible; Akkoma .*\)""".toRegex().containsMatchIn(version))
 		software = Software.Akkoma
 
-	if ("""\(compatible; Sharkey .*; like Akkoma\)""".toRegex().containsMatchIn(instance.version))
+	if ("""\(compatible; Sharkey .*; like Akkoma\)""".toRegex().containsMatchIn(version))
 		software = Software.Sharkey
 
-	if ("""\(compatible; Iceshrimp .*\)""".toRegex().containsMatchIn(instance.version))
+	if ("""\(compatible; Iceshrimp .*\)""".toRegex().containsMatchIn(version))
 		software = Software.IceshrimpJS
 
-	if ("""\(compatible; Iceshrimp\.NET/.*\)""".toRegex().containsMatchIn(instance.version))
+	if ("""\(compatible; Iceshrimp\.NET/.*\)""".toRegex().containsMatchIn(version))
 		software = Software.IceshrimpNET
 
 
-	Logger.d { "Detected software $software from version string \"${instance.version}\"" }
+	Logger.d { "Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
 		software == Software.Chuckya ||

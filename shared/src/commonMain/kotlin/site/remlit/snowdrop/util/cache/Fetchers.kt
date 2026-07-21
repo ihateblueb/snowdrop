@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.api.getEmojis
-import site.remlit.snowdrop.api.getInstance
+import site.remlit.snowdrop.api.instance.getInstanceV1
 import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.Emoji
@@ -99,7 +99,7 @@ fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1
 		emit(cached.getContent<InstanceV1>())
 	}
 
-	val req = getInstance()
+	val req = getInstanceV1()
 	if (req.error || req.response == null) {
 		if (snackbarHostState != null) req.handleError(snackbarHostState)
 	} else {
