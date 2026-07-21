@@ -18,7 +18,10 @@ data class InstanceV2(
 	val languages: List<String> = emptyList(),
 	val configuration: Configuration = Configuration(),
 
-	val apiVersions: ApiVersions = ApiVersions()
+	@SerialName("api_versions")
+	val apiVersions: ApiVersions = ApiVersions(),
+	val contact: Contact = Contact(),
+	val rules: List<InstanceV1.Rule> = emptyList()
 ) {
 	@Serializable
 	data class Usage(
@@ -164,5 +167,11 @@ data class InstanceV2(
 		val netIceshrimpScheduledBoosts: Int? = null,
 		@SerialName("download.synth.keyword_lists")
 		val downloadSynthKeywordLists: Int? = null
+	)
+
+	@Serializable
+	data class Contact(
+		val email: String? = null,
+		val account: Account? = null
 	)
 }

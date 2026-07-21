@@ -2,17 +2,15 @@ package site.remlit.snowdrop.util.cache
 
 import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.api.getEmojis
-import site.remlit.snowdrop.api.getInstance
+import site.remlit.snowdrop.api.instance.getInstanceV1
 import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.SnackbarController
 import site.remlit.snowdrop.util.safe
 
 /**
@@ -98,7 +96,7 @@ fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1
 		emit(cached.getContent<InstanceV1>())
 	}
 
-	val req = getInstance()
+	val req = getInstanceV1()
 	if (req.error || req.response == null) {
 		if (snackbarHostState != null) req.handleError(snackbarHostState)
 	} else {
