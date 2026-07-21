@@ -4,6 +4,8 @@ import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -13,6 +15,10 @@ import site.remlit.snowdrop.exception.ApiException
 val httpClient = HttpClient {
 	install(ContentNegotiation) {
 		json(json)
+	}
+
+	install(WebSockets) {
+		pingIntervalMillis = 20_000
 	}
 }
 

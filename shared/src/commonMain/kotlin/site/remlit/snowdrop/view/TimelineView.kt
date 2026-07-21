@@ -97,6 +97,9 @@ fun TimelineView() = ViewSurface {
 			.collectAsStateWithLifecycle(0)
 		var timelinePickerOpen by remember { mutableStateOf(false) }
 
+		var newPosts by remember { mutableStateOf(false) }
+		var scrollToTopKey by remember { mutableStateOf(0) }
+
 		suspend fun getTimeline(
 			maxId: String? = null,
 			minId: String? = null,
@@ -238,7 +241,19 @@ fun TimelineView() = ViewSurface {
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
 			timelineComponent = { Status(it) },
 			refreshKey = timelineType,
-			countTowardsScrollingUpward = true
+			countTowardsScrollingUpward = true,
+			streamingEndpoint = when (timelineType) {
+				0 -> "/api/v1/streaming/user"
+				1 -> "/api/v1/streaming/local"
+				2 -> "/api/v1/streaming/bubble"
+				3 -> "/api/v1/streaming/remote"
+
+				else -> null
+			},
+			onStreamEvent = { event ->
+				if (event.event == "update") newPosts = true
+			},
+			scrollToTopKey = scrollToTopKey
 		)
 	}
 }
