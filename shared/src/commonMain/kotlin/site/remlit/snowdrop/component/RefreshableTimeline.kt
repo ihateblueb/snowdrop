@@ -28,6 +28,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
@@ -58,6 +59,7 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * */
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
+	modifier: Modifier = Modifier,
 	fetchMethod: suspend (
 			maxId: String?,
 			minId: String?,
@@ -67,7 +69,6 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	timelineComponent: @Composable (item: T) -> Unit,
 	leadingItem: @Composable () -> Unit = {},
 	trailingItem: @Composable () -> Unit = {},
-	modifier: Modifier = Modifier,
 	itemModifier: Modifier = Modifier,
 	refreshKey: Any = 0,
 	scrollToTopPostRefresh: Boolean = true,
@@ -99,6 +100,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	}
 
 	suspend fun addOrUpdateTimeline() {
+		Logger.d { "RefreshableTimeline,addOrUpdateTimeline called" }
 		isRefreshing = true
 		val res = fetchMethod(null, null, null)
 		if (res.error) {

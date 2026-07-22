@@ -95,7 +95,6 @@ fun switchAccount(accountId: String, navController: NavController) {
  * @return User flow
  * @since 0.0.2-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class)
 fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
 	if (!getAccounts().contains(id))
 		emit(null)
@@ -114,7 +113,7 @@ fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
  * @return User
  * @since 0.0.1-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class, ExperimentalUuidApi::class)
+@OptIn(ExperimentalSettingsApi::class)
 fun getCurrentAccountObjectFlow(): Flow<Account> = flow {
 	if (!settings.getBoolean("logged_in", false))
 		return@flow
@@ -159,6 +158,12 @@ suspend fun updateCurrentAccountObject() {
  * */
 @OptIn(ExperimentalSettingsApi::class)
 fun getDefaultVisibility() = settings.getStringFlow("default_visibility_${getCurrentAccountId()}", "public")
+
+/**
+ * Get default visibility setting for current user.
+ * @since 0.0.5-alpha
+ * */
+fun getDefaultVisibilityBlocking() = blockingSettings.getString("default_visibility_${getCurrentAccountId()}", "public")
 
 /**
  * Put default visibility setting for current user.

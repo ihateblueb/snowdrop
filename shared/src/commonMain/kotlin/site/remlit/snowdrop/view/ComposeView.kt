@@ -22,6 +22,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -48,7 +49,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,13 +63,13 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.bgIO
-import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.getDefaultVisibility
+import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError
-import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
@@ -105,10 +105,10 @@ fun ComposeView(
 	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
 	val focusManager = LocalFocusManager.current
-	val focusRequester = remember { FocusRequester() }
 	val keyboardController = LocalSoftwareKeyboardController.current
+	val focusRequester = remember { FocusRequester() }
 
-	val currentAccount by getCurrentAccountObjectFlow()
+	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
 
 	var canSubmit by remember { mutableStateOf(false) }
@@ -121,10 +121,7 @@ fun ComposeView(
 	if (!initialCw.isBlank()) showCwField = true
 
 	var cw by remember { mutableStateOf(initialCw) }
-	var visibility by remember {
-		mutableStateOf(visibility
-			?: blockingSettings.getString("default_visibility", "public"))
-	}
+	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
 
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
@@ -217,91 +214,51 @@ fun ComposeView(
 								expanded = visibilityDropdownOpen,
 								onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
 							) {
+								@Composable
+								fun VisibilityDropdownItem(vis: String) {
+									DropdownMenuItem(
+										leadingIcon = { Visibility(vis) },
+										text = {
+											Column(modifier = Modifier.padding(vertical = 5.dp)) {
+												Text(
+													when (vis) {
+														"public" -> stringResource(Res.string.visibility_public)
+														"unlisted" -> stringResource(Res.string.visibility_unlisted)
+														"private" -> stringResource(Res.string.visibility_followers)
+														else -> stringResource(Res.string.visibility_direct)
+													},
+													fontWeight = FontWeight.Medium
+												)
+												Text(
+													when (vis) {
+														"public" -> stringResource(Res.string.visibility_public_description)
+														"unlisted" -> stringResource(Res.string.visibility_unlisted_description)
+														"private" -> stringResource(Res.string.visibility_followers_description)
+														else -> stringResource(Res.string.visibility_direct_description)
+													},
+													fontSize = 13.sp
+												)
+											}
+										},
+										onClick = {
+											visibility = vis
+											visibilityDropdownOpen = !visibilityDropdownOpen
+										},
+										modifier = if (visibility == vis)
+											Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+										else Modifier,
+										colors = if (visibility == vis) MenuDefaults.itemColors(
+											leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+											textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+										) else MenuDefaults.itemColors()
+									)
+								}
+
 								// todo: do minimum visibility based on the view's visibility parameter
-								DropdownMenuItem(
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_globe_20px) ,null)
-									},
-									text = {
-										Column(modifier = Modifier.padding(vertical = 5.dp)) {
-											Text(
-												stringResource(Res.string.visibility_public),
-												fontWeight = FontWeight.Medium
-											)
-											Text(
-												stringResource(Res.string.visibility_public_description),
-												fontSize = 13.sp
-											)
-										}
-									},
-									onClick = {
-										visibility = "public"
-										visibilityDropdownOpen = !visibilityDropdownOpen
-									}
-								)
-								DropdownMenuItem(
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_home_20px) ,null)
-									},
-									text = {
-										Column(modifier = Modifier.padding(vertical = 5.dp)) {
-											Text(
-												stringResource(Res.string.visibility_unlisted),
-												fontWeight = FontWeight.Medium
-											)
-											Text(
-												stringResource(Res.string.visibility_unlisted_description),
-												fontSize = 13.sp
-											)
-										}
-									},
-									onClick = {
-										visibility = "unlisted"
-										visibilityDropdownOpen = !visibilityDropdownOpen
-									}
-								)
-								DropdownMenuItem(
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_lock_20px) ,null)
-									},
-									text = {
-										Column(modifier = Modifier.padding(vertical = 5.dp)) {
-											Text(
-												stringResource(Res.string.visibility_followers),
-												fontWeight = FontWeight.Medium
-											)
-											Text(
-												stringResource(Res.string.visibility_followers_description),
-												fontSize = 13.sp
-											)
-										}
-									},
-									onClick = {
-										visibility = "private"
-										visibilityDropdownOpen = !visibilityDropdownOpen
-									}
-								)
-								DropdownMenuItem(
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_mail_20px) ,null)
-									},
-									text = {
-										Column(modifier = Modifier.padding(vertical = 5.dp)) {
-											Text(
-												stringResource(Res.string.visibility_direct),
-												fontWeight = FontWeight.Medium
-											)
-											Text(
-												stringResource(Res.string.visibility_direct_description),
-												fontSize = 13.sp
-											)
-										}
-									},
-									onClick = {
-										visibility = "direct"
-										visibilityDropdownOpen = !visibilityDropdownOpen
-									}
-								)
+								VisibilityDropdownItem("public")
+								VisibilityDropdownItem("unlisted")
+								VisibilityDropdownItem("private")
+								VisibilityDropdownItem("direct")
 							}
 						}
 					}

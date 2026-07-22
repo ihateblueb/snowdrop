@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -93,7 +94,7 @@ fun TimelineView() = ViewSurface {
 		val haptics = LocalHapticFeedback.current
 
 		// 0 - home, 1 - local, 2 - bubble, 3 - global
-		val timelineType by settings.getIntFlow("timeline", 0)
+		val timelineType by retain { settings.getIntFlow("timeline", 0) }
 			.collectAsStateWithLifecycle(0)
 		var timelinePickerOpen by remember { mutableStateOf(false) }
 
