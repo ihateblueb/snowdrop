@@ -1,5 +1,9 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -65,9 +71,9 @@ fun Poll(status: Status) {
 		Column(
 			verticalArrangement = Arrangement.spacedBy(10.dp)
 		) {
-			var showResults by remember { mutableStateOf(false) }
 			var votersCount = 0L
 			poll!!.options.forEach { votersCount += it.votesCount }
+			var showResults by remember { mutableStateOf(false) }
 
 			val selection = remember { mutableStateListOf<Int>() }
 
@@ -79,17 +85,19 @@ fun Poll(status: Status) {
 				poll!!.options.forEachIndexed { index, option ->
 					val interactionSource = remember { MutableInteractionSource() }
 
+					fun toggleOption() {
+						if (selection.contains(index)) selection.remove(index)
+						else if (poll!!.multiple) selection.add(index)
+						else { selection.clear(); selection.add(index) }
+					}
+
 					Row(
 						modifier = Modifier.clip(RoundedCornerShape(100))
 							.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 							.clickable(
 								enabled = canVote,
 								interactionSource = interactionSource,
-								onClick = {
-									if (selection.contains(index)) selection.remove(index)
-									else if (poll!!.multiple) selection.add(index)
-									else { selection.clear(); selection.add(index) }
-								}
+								onClick = { toggleOption() }
 							)
 							.fillMaxWidth(),
 						verticalAlignment = Alignment.CenterVertically
@@ -102,13 +110,32 @@ fun Poll(status: Status) {
 								horizontalArrangement = Arrangement.spacedBy(5.dp),
 								verticalAlignment = Alignment.CenterVertically
 							) {
-								RadioButton(
-									selected = selection.contains(index) || poll!!.ownVotes.contains(index),
-									interactionSource = interactionSource, // inherits everything from the .clickable above
-									onClick = {}, 						   // ^^
-								)
+								if (poll!!.multiple) {
+									IconButton(
+										enabled = canVote,
+										interactionSource = interactionSource,
+										onClick = { toggleOption() },
+									) {
+										Checkbox(
+											checked = selection.contains(index) || poll!!.ownVotes.contains(index),
+											onCheckedChange = { toggleOption() },
+											interactionSource = interactionSource,
+											enabled = canVote,
+										)
+									}
+								} else {
+									RadioButton(
+										selected = selection.contains(index) || poll!!.ownVotes.contains(index),
+										enabled = canVote,
+										interactionSource = interactionSource,
+										onClick = { toggleOption() },
+									)
+								}
 
-								Text(option.title)
+								Text(
+									option.title,
+									fontSize = 14.sp
+								)
 							}
 
 							if ((showResults || poll!!.voted || poll!!.expired) && option.votesCount > 0) {
@@ -120,6 +147,7 @@ fun Poll(status: Status) {
 											.weight(option.votesCount.toFloat())
 											.background(MaterialTheme.colorScheme.primaryContainer)
 									)
+
 									val remaining = votersCount - option.votesCount
 									if (remaining > 0)
 										Box(
