@@ -66,14 +66,11 @@ import snowdrop.shared.generated.resources.about_snowdrop
 import snowdrop.shared.generated.resources.account
 import snowdrop.shared.generated.resources.always_show_compose_button
 import snowdrop.shared.generated.resources.appearance
-import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
 import snowdrop.shared.generated.resources.hide_follow_counters
 import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.icon_arrow_back_24
-import snowdrop.shared.generated.resources.icon_bug_report_24px
-import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_drag_indicator_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
