@@ -45,7 +45,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.a_poll_you_have_voted_in_has_ended
 import snowdrop.shared.generated.resources.accept
 import snowdrop.shared.generated.resources.bite_back
-import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
@@ -240,8 +239,8 @@ fun Notification(notification: Notification) {
 							FilledTonalButton(
 								onClick = {
 									bgIO {
-										biteBack(notification.bite!!.id)
 										vibrate(true, haptics)
+										biteBack(notification.bite!!.id)
 									}
 								}
 							) {
@@ -252,8 +251,8 @@ fun Notification(notification: Notification) {
 							OutlinedButton(
 								onClick = {
 									bgIO {
-										biteBack(notification.bite!!.id)
 										vibrate(true, haptics)
+										biteBack(notification.bite!!.id)
 										bittenBack = true
 									}
 								}
