@@ -175,7 +175,7 @@ fun ComposeView(
 	var showAddAttachmentMenu by remember { mutableStateOf(false) }
 	val textFieldState = rememberTextFieldState(initialContent)
 
-	if (!initialCw.isBlank()) showCwField = true
+	if (initialCw.isNotBlank()) showCwField = true
 
 	var cw by remember { mutableStateOf(initialCw) }
 	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
@@ -183,7 +183,7 @@ fun ComposeView(
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 
-	val maxChars = (instance?.maxTootChars ?: 500)
+	val maxChars = (instance?.maxTootChars ?: instance?.configuration?.statuses?.maxCharacters ?: 500)
 	val remainingChars = maxChars - (textFieldState.text.length + cw.length)
 
 

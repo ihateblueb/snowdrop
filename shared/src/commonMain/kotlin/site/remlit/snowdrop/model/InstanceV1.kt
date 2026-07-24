@@ -8,7 +8,7 @@ data class InstanceV1(
 	val stats: Stats,
 	val version: String,
 	@SerialName("max_toot_chars")
-	val maxTootChars: Int,
+	val maxTootChars: Int? = null,
 	val uri: String? = null,
 	val title: String,
 	val email: String? = null,
@@ -73,7 +73,7 @@ data class InstanceV1(
 			@SerialName("supported_mine_types")
 			val supportedMimeTypes: List<String> = emptyList(),
 			@SerialName("max_characters")
-			val maxCharacters: Int = 0,
+			val maxCharacters: Int? = null,
 			@SerialName("max_media_attachments")
 			val maxMediaAttachments: Int = 0,
 			@SerialName("characters_reserved_per_url")
