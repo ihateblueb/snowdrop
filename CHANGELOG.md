@@ -26,6 +26,7 @@
 - Hide account switcher after selecting an account
 - Only show reactions notification filter when that feature is available
 - Remember explore page state
+- Make debug page easier to get to, it now toggles a persistent button after the five clicks
 
 ## [0.0.4-alpha] - 2026/07/19
 
