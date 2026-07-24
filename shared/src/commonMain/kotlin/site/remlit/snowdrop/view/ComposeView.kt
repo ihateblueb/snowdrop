@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,24 +16,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -123,7 +133,7 @@ import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ComposeView(
 	inReplyToId: String? = null,
@@ -158,6 +168,7 @@ fun ComposeView(
 
 	var canSubmit by remember { mutableStateOf(false) }
 
+	var keyboardIsFocused by remember { mutableStateOf(false) }
 	var visibilityDropdownOpen by remember { mutableStateOf(false) }
 	var showCwField by remember { mutableStateOf(false) }
 	var showEmojiPicker by remember { mutableStateOf(false) }
@@ -282,265 +293,47 @@ fun ComposeView(
 		focusRequester.requestFocus()
 	}
 
-	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_close_24px), null)
-			}
-		},
-		title = {
-			if (inReplyToId != null) Text(stringResource(Res.string.reply))
-			else Text(stringResource(Res.string.compose))
-		},
-		actions = {
-			FilledTonalIconButton(
-				onClick = { coroutineScope.launch { sendPost() } },
-				enabled = canSubmit
-			) {
-				if (isSending) {
-					if (sendingTaskCount > 0 && sendingTask > 0)
-						CircularProgressIndicator(
-							progress = { (sendingTask / sendingTaskCount).toFloat() },
-							modifier = Modifier.padding(4.dp),
-							strokeWidth = 4.dp
-						)
-					else CircularProgressIndicator(
-						modifier = Modifier.padding(4.dp),
-						strokeWidth = 4.dp
-					)
-				} else Icon(painterResource(Res.drawable.icon_send_24px), null)
-			}
-		}
-	)
-
-	Box(
-		modifier = Modifier.fillMaxSize()
-	) {
-		Column(
-			modifier = Modifier.fillMaxSize()
-		) {
-			if (currentAccount != null) {
-				Row(
-					modifier = Modifier.padding(10.dp)
-						.fillMaxWidth(),
-					horizontalArrangement = Arrangement.spacedBy(10.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Avatar(currentAccount!!)
-
-					Column(
-						modifier = Modifier.weight(1f)
-					) {
-						Text(
-							currentAccount!!.displayName(),
-							fontWeight = FontWeight.Medium,
-							overflow = TextOverflow.Ellipsis,
-							maxLines = 1
-						)
-						Text(
-							"@${currentAccount!!.acct}",
-							overflow = TextOverflow.Ellipsis,
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-							fontSize = 13.sp,
-							maxLines = 1
-						)
+	Scaffold(
+		topBar = {
+			TopAppBar(
+				navigationIcon = {
+					IconButton(onClick = { navHandler.popBackStack() }) {
+						Icon(painterResource(Res.drawable.icon_close_24px), null)
 					}
-
-					Row(
-						horizontalArrangement = Arrangement.End
+				},
+				title = {
+					if (inReplyToId != null) Text(stringResource(Res.string.reply))
+					else Text(stringResource(Res.string.compose))
+				},
+				actions = {
+					FilledTonalIconButton(
+						onClick = { coroutineScope.launch { sendPost() } },
+						enabled = canSubmit
 					) {
-						Row {
-							TextButton(onClick = { visibilityDropdownOpen = !visibilityDropdownOpen }) {
-								Visibility(visibility, true)
-							}
-
-							// Visibility picker
-							DropdownMenu(
-								expanded = visibilityDropdownOpen,
-								onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
-							) {
-								@Composable
-								fun VisibilityDropdownItem(vis: String) {
-									DropdownMenuItem(
-										leadingIcon = { Visibility(vis) },
-										text = {
-											Column(modifier = Modifier.padding(vertical = 5.dp)) {
-												Text(
-													when (vis) {
-														"public" -> stringResource(Res.string.visibility_public)
-														"unlisted" -> stringResource(Res.string.visibility_unlisted)
-														"private" -> stringResource(Res.string.visibility_followers)
-														else -> stringResource(Res.string.visibility_direct)
-													},
-													fontWeight = FontWeight.Medium
-												)
-												Text(
-													when (vis) {
-														"public" -> stringResource(Res.string.visibility_public_description)
-														"unlisted" -> stringResource(Res.string.visibility_unlisted_description)
-														"private" -> stringResource(Res.string.visibility_followers_description)
-														else -> stringResource(Res.string.visibility_direct_description)
-													},
-													fontSize = 13.sp
-												)
-											}
-										},
-										onClick = {
-											visibility = vis
-											visibilityDropdownOpen = !visibilityDropdownOpen
-										},
-										modifier = if (visibility == vis)
-											Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-										else Modifier,
-										colors = if (visibility == vis) MenuDefaults.itemColors(
-											leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-											textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-										) else MenuDefaults.itemColors()
-									)
-								}
-
-								// todo: do minimum visibility based on the view's visibility parameter
-								VisibilityDropdownItem("public")
-								VisibilityDropdownItem("unlisted")
-								VisibilityDropdownItem("private")
-								VisibilityDropdownItem("direct")
-							}
-						}
-					}
-				}
-
-				if (replyTarget != null)
-					Column(
-						modifier = Modifier.padding(horizontal = 10.dp)
-					) {
-						MiniStatus(replyTarget!!, showContentEvenIfCw = true)
-					}
-
-
-				Column(
-					modifier = Modifier.fillMaxHeight().weight(1f),
-					verticalArrangement = Arrangement.spacedBy(5.dp)
-				) {
-					AnimatedVisibility(
-						visible = showCwField,
-						enter = expandVertically(),
-						exit = shrinkVertically()
-					) {
-						TextField(
-							value = cw,
-							onValueChange = { cw = it },
-							placeholder = { Text(stringResource(Res.string.content_warning)) },
-							modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, top = 5.dp)
-								.clip(RoundedCornerShape(10.dp)),
-							maxLines = 1,
-							colors = TextFieldDefaults.colors(
-								unfocusedContainerColor = WarningColor25,
-								unfocusedIndicatorColor = Color(0x00000000),
-								focusedContainerColor = WarningColor25,
-								focusedIndicatorColor = Color(0x00000000)
+						if (isSending) {
+							if (sendingTaskCount > 0 && sendingTask > 0)
+								CircularProgressIndicator(
+									progress = { (sendingTask / sendingTaskCount).toFloat() },
+									modifier = Modifier.padding(4.dp),
+									strokeWidth = 4.dp
+								)
+							else CircularProgressIndicator(
+								modifier = Modifier.padding(4.dp),
+								strokeWidth = 4.dp
 							)
-						)
-					}
-
-					TextField(
-						state = textFieldState,
-						placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
-						// wtf was this used for?
-						//onValueChange = { textFieldState.edit { i } = it },
-						modifier = Modifier
-							.focusRequester(focusRequester)
-							.onFocusChanged {
-								if (it.hasFocus) keyboardController?.show()
-							}
-							.fillMaxWidth()
-							.fillMaxHeight(),
-						colors = TextFieldDefaults.colors(
-							unfocusedContainerColor = Color(0x00000000),
-							unfocusedIndicatorColor = Color(0x00000000),
-							focusedContainerColor = Color(0x00000000),
-							focusedIndicatorColor = Color(0x00000000),
-						)
-					)
-				}
-
-				val altBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-				var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
-				if (altBottomSheetSelection != null) {
-					ModalBottomSheet(
-						sheetState = altBottomSheetState,
-						onDismissRequest = { altBottomSheetSelection = null }
-					) {
-						Box(
-							modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-						) {
-							AttachmentPreview(true, mediaAttachments[altBottomSheetSelection!!])
-						}
-
-						OutlinedTextField(
-							value = mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) ?: "",
-							onValueChange = {
-								// for some reason [0] for setting doesn't work when list is empty
-								if (mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) == null)
-									mediaAttachmentsAlt.add(altBottomSheetSelection!!, it)
-								else mediaAttachmentsAlt[altBottomSheetSelection!!] = it
-							},
-							label = { Text(stringResource(Res.string.alt_text)) },
-							placeholder = { Text(stringResource(Res.string.describe_important_elements_of_your_media)) },
-							minLines = 4,
-							modifier = Modifier.padding(10.dp).fillMaxWidth()
-						)
+						} else Icon(painterResource(Res.drawable.icon_send_24px), null)
 					}
 				}
-
-				/*
-				 * Media attachments and stuff
-				 * */
-				AnimatedVisibility(
-					visible = mediaAttachments.isNotEmpty()
-				) {
-					LazyRow(
-						contentPadding = PaddingValues(15.dp),
-						horizontalArrangement = Arrangement.spacedBy(10.dp)
-					) {
-						itemsIndexed(mediaAttachments) { index, item ->
-							Box(
-								modifier = Modifier.clip(RoundedCornerShape(10.dp)),
-								contentAlignment = Alignment.TopEnd
-							) {
-								Box(
-									modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-										.size(250.dp)
-								) {
-									AttachmentPreview(false, item)
-								}
-
-								Row(
-									horizontalArrangement = Arrangement.spacedBy(5.dp)
-								) {
-									IconButton(onClick = { altBottomSheetSelection = index }) {
-										Icon(painterResource(Res.drawable.icon_notes_24px), null)
-									}
-
-									IconButton(onClick = {
-										mediaAttachments.removeAt(index)
-										if (mediaAttachmentsAlt.getOrNull(index) != null) mediaAttachmentsAlt.removeAt(index)
-									}) {
-										Icon(painterResource(Res.drawable.icon_close_24px), null)
-									}
-								}
-							}
-						}
-					}
-				}
-
-				/*
-				* Footer
-				* */
+			)
+		},
+		bottomBar = {
+			HorizontalFloatingToolbar(
+				expanded = false,
+				modifier = Modifier.fillMaxWidth()
+					.padding(horizontal = 10.dp)
+					.imePadding(),
+			) {
 				Row(
-					modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-						.padding(all = 5.dp)
-						.fillMaxWidth()
-						.imePadding(),
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					// todo: translate contentDescription
@@ -611,11 +404,249 @@ fun ComposeView(
 				}
 			}
 		}
+	) { paddingValues ->
+		Box(
+			modifier = Modifier.fillMaxSize()
+				.padding(paddingValues)
+		) {
+			Column(
+				modifier = Modifier.fillMaxSize()
+			) {
+				if (currentAccount != null) {
+					Row(
+						modifier = Modifier.padding(10.dp)
+							.fillMaxWidth(),
+						horizontalArrangement = Arrangement.spacedBy(10.dp),
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Avatar(currentAccount!!)
 
-		EmojiPicker(
-			visible = showEmojiPicker,
-			onDismiss = { showEmojiPicker = !showEmojiPicker },
-			onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:")} }
-		)
+						Column(
+							modifier = Modifier.weight(1f)
+						) {
+							Text(
+								currentAccount!!.displayName(),
+								fontWeight = FontWeight.Medium,
+								overflow = TextOverflow.Ellipsis,
+								maxLines = 1
+							)
+							Text(
+								"@${currentAccount!!.acct}",
+								overflow = TextOverflow.Ellipsis,
+								color = MaterialTheme.colorScheme.onSurfaceVariant,
+								fontSize = 13.sp,
+								maxLines = 1
+							)
+						}
+
+						Row(
+							horizontalArrangement = Arrangement.End
+						) {
+							Row {
+								TextButton(onClick = { visibilityDropdownOpen = !visibilityDropdownOpen }) {
+									Visibility(visibility, true)
+								}
+
+								// Visibility picker
+								DropdownMenu(
+									expanded = visibilityDropdownOpen,
+									onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
+								) {
+									@Composable
+									fun VisibilityDropdownItem(vis: String) {
+										DropdownMenuItem(
+											leadingIcon = { Visibility(vis) },
+											text = {
+												Column(modifier = Modifier.padding(vertical = 5.dp)) {
+													Text(
+														when (vis) {
+															"public" -> stringResource(Res.string.visibility_public)
+															"unlisted" -> stringResource(Res.string.visibility_unlisted)
+															"private" -> stringResource(Res.string.visibility_followers)
+															else -> stringResource(Res.string.visibility_direct)
+														},
+														fontWeight = FontWeight.Medium
+													)
+													Text(
+														when (vis) {
+															"public" -> stringResource(Res.string.visibility_public_description)
+															"unlisted" -> stringResource(Res.string.visibility_unlisted_description)
+															"private" -> stringResource(Res.string.visibility_followers_description)
+															else -> stringResource(Res.string.visibility_direct_description)
+														},
+														fontSize = 13.sp
+													)
+												}
+											},
+											onClick = {
+												visibility = vis
+												visibilityDropdownOpen = !visibilityDropdownOpen
+											},
+											modifier = if (visibility == vis)
+												Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+											else Modifier,
+											colors = if (visibility == vis) MenuDefaults.itemColors(
+												leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+												textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+											) else MenuDefaults.itemColors()
+										)
+									}
+
+									// todo: do minimum visibility based on the view's visibility parameter
+									VisibilityDropdownItem("public")
+									VisibilityDropdownItem("unlisted")
+									VisibilityDropdownItem("private")
+									VisibilityDropdownItem("direct")
+								}
+							}
+						}
+					}
+
+
+					//<editor-fold name="Content">
+					val contentScrollState = rememberScrollState()
+					Column(
+						modifier = Modifier.fillMaxHeight().weight(1f)
+							.verticalScroll(contentScrollState),
+						verticalArrangement = Arrangement.spacedBy(5.dp)
+					) {
+						if (replyTarget != null)
+							Column(
+								modifier = Modifier.padding(horizontal = 10.dp)
+							) {
+								MiniStatus(replyTarget!!, showContentEvenIfCw = true)
+							}
+
+						AnimatedVisibility(
+							visible = showCwField,
+							enter = expandVertically(),
+							exit = shrinkVertically()
+						) {
+							TextField(
+								value = cw,
+								onValueChange = { cw = it },
+								placeholder = { Text(stringResource(Res.string.content_warning)) },
+								modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, top = 5.dp)
+									.clip(RoundedCornerShape(10.dp)),
+								maxLines = 1,
+								colors = TextFieldDefaults.colors(
+									unfocusedContainerColor = WarningColor25,
+									unfocusedIndicatorColor = Color(0x00000000),
+									focusedContainerColor = WarningColor25,
+									focusedIndicatorColor = Color(0x00000000)
+								)
+							)
+						}
+
+						TextField(
+							state = textFieldState,
+							placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
+							modifier = Modifier
+								.focusRequester(focusRequester)
+								.onFocusChanged {
+									if (it.hasFocus) keyboardController?.show()
+									keyboardIsFocused = it.hasFocus
+								}
+								.fillMaxWidth()
+								.fillMaxHeight()
+								.heightIn(min = 100.dp),
+							colors = TextFieldDefaults.colors(
+								unfocusedContainerColor = Color(0x00000000),
+								unfocusedIndicatorColor = Color(0x00000000),
+								focusedContainerColor = Color(0x00000000),
+								focusedIndicatorColor = Color(0x00000000),
+							)
+						)
+
+						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
+						val altBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+						var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
+						if (altBottomSheetSelection != null) {
+							ModalBottomSheet(
+								sheetState = altBottomSheetState,
+								onDismissRequest = { altBottomSheetSelection = null }
+							) {
+								Box(
+									modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+								) {
+									AttachmentPreview(true, mediaAttachments[altBottomSheetSelection!!])
+								}
+
+								OutlinedTextField(
+									value = mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) ?: "",
+									onValueChange = {
+										// for some reason [0] for setting doesn't work when list is empty
+										if (mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) == null)
+											mediaAttachmentsAlt.add(altBottomSheetSelection!!, it)
+										else mediaAttachmentsAlt[altBottomSheetSelection!!] = it
+									},
+									label = { Text(stringResource(Res.string.alt_text)) },
+									placeholder = { Text(stringResource(Res.string.describe_important_elements_of_your_media)) },
+									minLines = 4,
+									modifier = Modifier.padding(10.dp).fillMaxWidth()
+								)
+							}
+						}
+
+						AnimatedVisibility(
+							visible = mediaAttachments.isNotEmpty()
+						) {
+							LazyRow(
+								contentPadding = PaddingValues(15.dp),
+								horizontalArrangement = Arrangement.spacedBy(10.dp)
+							) {
+								itemsIndexed(mediaAttachments) { index, item ->
+									Box(
+										modifier = Modifier.clip(RoundedCornerShape(10.dp)),
+										contentAlignment = Alignment.TopEnd
+									) {
+										Box(
+											modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+												.size(250.dp)
+										) {
+											AttachmentPreview(false, item)
+										}
+
+										val iconButtonBg = if (isSystemInDarkTheme()) Color(0x40000000)
+											else Color(0x40FFFFFF)
+
+										Row(
+											horizontalArrangement = Arrangement.spacedBy(5.dp)
+										) {
+											IconButton(
+												onClick = { altBottomSheetSelection = index },
+												colors = IconButtonDefaults.filledIconButtonColors(containerColor = iconButtonBg)
+											) {
+												Icon(painterResource(Res.drawable.icon_notes_24px), null)
+											}
+
+											IconButton(
+												onClick = {
+													mediaAttachments.removeAt(index)
+													if (mediaAttachmentsAlt.getOrNull(index) != null) mediaAttachmentsAlt.removeAt(
+														index
+													)
+												},
+												colors = IconButtonDefaults.filledIconButtonColors(containerColor = iconButtonBg)
+											) {
+												Icon(painterResource(Res.drawable.icon_close_24px), null)
+											}
+										}
+									}
+								}
+							}
+						}
+						//</editor-fold>
+					}
+					//</editor-fold>
+				}
+			}
+
+			EmojiPicker(
+				visible = showEmojiPicker,
+				onDismiss = { showEmojiPicker = !showEmojiPicker },
+				onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:") } }
+			)
+		}
 	}
 }

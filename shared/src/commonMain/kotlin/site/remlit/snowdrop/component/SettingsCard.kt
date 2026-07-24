@@ -51,7 +51,9 @@ fun SettingsCard(
 				.fillMaxWidth()
 				.clickable { onClick() },
 			shape = ListItemShape(position, size),
-			colors = CardDefaults.cardColors()
+			colors = CardDefaults.cardColors(
+				containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+			)
 		) {
 			Row(
 				horizontalArrangement = Arrangement.spacedBy(15.dp),
