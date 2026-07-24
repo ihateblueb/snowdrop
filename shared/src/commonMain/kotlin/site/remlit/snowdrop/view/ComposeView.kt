@@ -11,14 +11,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -254,8 +260,7 @@ fun ComposeView(
 		}
 
 		Box(
-			modifier = Modifier.clip(RoundedCornerShape(10.dp))
-				.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+			modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 		)
 		if (bitmap != null) {
 			when (val type = file.mimeType()?.primaryType) {
@@ -264,9 +269,9 @@ fun ComposeView(
 						bitmap = bitmap!!,
 						contentDescription = null,
 						modifier = Modifier.fillMaxWidth().let {
-							if (detailedView) it.heightIn(min = 100.dp, max = 350.dp)
+							if (detailedView) it.heightIn(min = 100.dp, max = 200.dp)
 							else it.fillMaxHeight()
-						}.clip(RoundedCornerShape(10.dp))
+						}
 					)
 				}
 
@@ -330,8 +335,8 @@ fun ComposeView(
 			HorizontalFloatingToolbar(
 				expanded = false,
 				modifier = Modifier.fillMaxWidth()
-					.padding(horizontal = 10.dp)
-					.imePadding(),
+					.windowInsetsPadding(WindowInsets.ime.exclude(WindowInsets.navigationBars))
+					.padding(start = 10.dp, end = 10.dp, bottom = if (keyboardIsFocused) 10.dp else 0.dp)
 			) {
 				Row(
 					verticalAlignment = Alignment.CenterVertically

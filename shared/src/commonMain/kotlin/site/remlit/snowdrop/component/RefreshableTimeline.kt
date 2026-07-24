@@ -101,6 +101,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 	suspend fun addOrUpdateTimeline() {
 		Logger.d { "RefreshableTimeline,addOrUpdateTimeline called" }
+		scrollingUpward = true
 		isRefreshing = true
 		val res = fetchMethod(null, null, null)
 		if (res.error) {
