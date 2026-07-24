@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import site.remlit.snowdrop.api.oauth.authScopes
 import site.remlit.snowdrop.api.oauth.createApp
 import site.remlit.snowdrop.api.oauth.createToken
 import site.remlit.snowdrop.api.oauth.redirectUri
+import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -53,9 +55,12 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.determineFeatures
+import site.remlit.snowdrop.util.getAccountObject
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.listItemClip
+import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._continue
@@ -141,6 +146,32 @@ fun LoginView() = ViewSurface {
 			res.handleError(snackbarHandler)
 			return@runBlocking
 		}
+
+		//<editor-fold name="existing account check">
+		val existingAccounts = getAccounts().map { Pair(it, getAccountObject(it)) }
+			.filter { it.second != null }
+
+		val verifyCredentialsRes = verifyCredentials(
+			host = settings.getString("account_${currentAccountId}_host", host),
+			token = res.response.accessToken
+		)
+		if (verifyCredentialsRes.error || verifyCredentialsRes.response == null) {
+			res.handleError(snackbarHandler)
+			return@runBlocking
+		}
+
+		// if the account exists, update to a new token and use the existing entry
+		val existingAccount = existingAccounts.find {
+			it.second?.id == verifyCredentialsRes.response.id
+		}
+		if (existingAccount != null) {
+			logoutAccount(currentAccountId!!)
+			blockingSettings.putString("account_${existingAccount.first}_token", res.response.accessToken)
+			switchAccount(existingAccount.first, navController)
+			blockingSettings.putBoolean("logged_in", true)
+			return@runBlocking
+		}
+		//</editor-fold>
 
 		blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
 		blockingSettings.putBoolean("logged_in", true)
