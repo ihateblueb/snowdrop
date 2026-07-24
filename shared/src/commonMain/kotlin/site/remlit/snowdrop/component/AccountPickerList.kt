@@ -77,18 +77,18 @@ fun AccountPickerList(
 					horizontalArrangement = Arrangement.spacedBy(10.dp),
 					verticalAlignment = Alignment.CenterVertically
 				) {
-					Avatar(account!!)
+					Avatar(account)
 
 					Column(
 						modifier = Modifier.weight(1f)
 					) {
 						Text(
-							account!!.displayName(),
+							account.displayName(),
 							fontWeight = FontWeight.Medium,
 							color = MaterialTheme.colorScheme.onSurface
 						)
 						Text(
-							"@${account!!.username}@${getAccountHost(id)}",
+							"@${account.username}@${getAccountHost(id)}",
 							fontSize = 13.sp
 						)
 					}

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
+import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
@@ -51,6 +52,7 @@ import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun AppearanceSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
