@@ -576,11 +576,13 @@ fun ComposeView(
 							text = { Text("Add photo or video") },
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
 						)
+						/* todo: add file
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
 							text = { Text("Add file") },
 							onClick = { /* fileLauncher.launch() */; showAddAttachmentMenu = false }
 						)
+						* */
 					}
 
 					IconButton(
