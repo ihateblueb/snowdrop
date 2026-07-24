@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 private val max = 20.dp
 private val min = 5.dp
 
+val listItemSpacing = 2.dp
+
 fun ListItemShape(index: Int, size: Int): Shape {
 	return when (index) {
 		0 -> if (size > 1) RoundedCornerShape(max, max, min, min)
