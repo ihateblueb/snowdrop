@@ -19,16 +19,18 @@ request closed, and we will ignore you if you break this rule.
 Always up-to-date Iceshrimp.NET with all non-essential values nullable. Most Iceshrimp.NET instances will have an API
 reference at `/swagger`. If you don't know any, you can use https://next.iceshrimp.dev/.
 
-## Shared solutions before platform-specific solutions
-Too many platform-specific solutions can cause problems with either platform's implementation
-to go unnoticed if a change is only tested on one platform. Always prefer a shared solution over one that
-requires platform-specific implementations (`expect`/`actual` functions).
-
 ## Adding icons
 We use Material Icons, which you can find here: https://fonts.google.com/icons. Icons can be two sizes: 20px or 24px.
 To add an icon, click on it, swap the tab to "Android" in the opened sidebar, and download the XML.
 Prefix that file with `icon_`, then drop it in `shared/commonMain/composeResources/drawable`.
 Change the color from `@android/*` to `#000000`, otherwise the app will instantly crash.
+
+# Code style and methods
+
+## Shared solutions before platform-specific solutions
+Too many platform-specific solutions can cause problems with either platform's implementation
+to go unnoticed if a change is only tested on one platform. Always prefer a shared solution over one that
+requires platform-specific implementations (`expect`/`actual` functions).
 
 ## Using Flow<*> and collecting emissions as a state
 
@@ -44,6 +46,12 @@ in the app that aren't the same as their ID on their instance. These IDs are pre
 are for Snowdrop use only. Sometimes confusing because we use similar language everywhere to reference app accounts and 
 server accounts, but if it involves logout and other app account state things, assume internal account IDs are being used
 and not remote ones.
+
+# Pull Requests & Merging
+
+## Merging Pull Requests
+We prefer rebase and merge for merging pull requests. If your PR contains a bunch of small commits that can be combined into
+one, then we prefer you squash and merge.
 
 ## Merging Weblate Changes
 Only to be done before a release.
