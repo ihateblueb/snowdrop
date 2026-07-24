@@ -11,7 +11,8 @@ private val min = 5.dp
 
 fun ListItemShape(index: Int, size: Int): Shape {
 	return when (index) {
-		0 -> RoundedCornerShape(max, max, min, min)
+		0 -> if (size > 1) RoundedCornerShape(max, max, min, min)
+			else RoundedCornerShape(max)
 		(size - 1) -> RoundedCornerShape(min, min, max, max)
 		else -> RoundedCornerShape(min)
 	}

@@ -1,5 +1,12 @@
 package site.remlit.snowdrop.view.settings
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +16,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,16 +38,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.navigationBarInteractionSource
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_snowdrop
+import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_bug_report_24px
 import snowdrop.shared.generated.resources.icon_code_24px
@@ -48,14 +60,17 @@ import snowdrop.shared.generated.resources.report_bug
 import snowdrop.shared.generated.resources.support_development
 import snowdrop.shared.generated.resources.view_source
 
+@OptIn(ExperimentalSettingsApi::class)
 @Composable
 fun AboutSnowdropView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
+	val showDebugOption by remember { settings.getBooleanFlow("show_debug_option", false) }
+		.collectAsStateWithLifecycle(false)
 	var versionClicks by remember { mutableStateOf(0) }
 	LaunchedEffect(versionClicks) {
 		if (versionClicks == 5) {
-			navHandler.navigate(DebugRoute)
+			settings.putBoolean("show_debug_option", !showDebugOption)
 			versionClicks = 0
 		}
 	}
@@ -128,6 +143,18 @@ fun AboutSnowdropView() = ViewSurface {
 				Icon(painterResource(Res.drawable.icon_favorite_24px), null)
 				Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 				Text(translation(Res.string.support_development))
+			}
+		}
+
+		AnimatedVisibility(
+			visible = showDebugOption,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			Button(onClick = { navHandler.navigate(DebugRoute) }) {
+				Icon(painterResource(Res.drawable.icon_bug_report_24px), null)
+				Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+				Text(translation(Res.string.debug))
 			}
 		}
 	}
