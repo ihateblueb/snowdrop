@@ -17,6 +17,9 @@
 - Attachment, poll, and quote post indicator on mini status
 - Poll viewing and voting on statuses
 - Translations for relative time
+- Account picker list component for use across the app
+- Account picker on login page, so if you add an account and change your mind or log out you can open your other accounts easily
+- Existing account check & handling to login
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController
@@ -24,6 +27,7 @@
 - Hide account switcher after selecting an account
 - Only show reactions notification filter when that feature is available
 - Remember explore page state
+- Make debug page easier to get to, it now toggles a persistent button after the five clicks
 
 ## [0.0.4-alpha] - 2026/07/19
 

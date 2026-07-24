@@ -42,7 +42,7 @@ fun setupAppSettings() {
 
 //<editor-fold name="Account State">
 /** Get a list of account IDs that are currently logged in */
-fun getAccounts() = blockingSettings.getString("accounts", "").split(" ").filter { !it.isBlank() }
+fun getAccounts() = blockingSettings.getString("accounts", "").split(" ").filter { it.isNotBlank() }
 /** Get ID of current user */
 fun getCurrentAccountId() = blockingSettings.getString("current_account", "")
 /** Get host/instance of the current user */
@@ -104,6 +104,24 @@ fun getAccountObjectFlow(id: String): Flow<Account?> = flow {
 
 	val account = getCacheEntry(id, "account_$id")?.getContent<Account>()
 	if (account != null) emit(account)
+}
+
+/**
+ * Gets an account's user object from the verify credentials endpoint.
+ *
+ * @param id ID of account
+ *
+ * @return User
+ * @since 0.0.5-alpha
+ * */
+fun getAccountObject(id: String): Account? {
+	if (!getAccounts().contains(id)) return null
+	if (getCacheEntry(id, "account_$id") == null) return null
+
+	val account = getCacheEntry(id, "account_$id")?.getContent<Account>()
+		?: return null
+
+	return account
 }
 
 

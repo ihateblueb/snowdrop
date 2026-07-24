@@ -239,8 +239,8 @@ fun Notification(notification: Notification) {
 							FilledTonalButton(
 								onClick = {
 									bgIO {
-										biteBack(notification.bite!!.id)
 										vibrate(true, haptics)
+										biteBack(notification.bite!!.id)
 									}
 								}
 							) {
@@ -251,8 +251,8 @@ fun Notification(notification: Notification) {
 							OutlinedButton(
 								onClick = {
 									bgIO {
-										biteBack(notification.bite!!.id)
 										vibrate(true, haptics)
+										biteBack(notification.bite!!.id)
 										bittenBack = true
 									}
 								}
