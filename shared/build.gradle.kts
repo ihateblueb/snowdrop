@@ -84,6 +84,8 @@ kotlin {
 			implementation(libs.kamel.decoder.image.bitmap)
 
 			implementation(libs.zoomimage.compose)
+			implementation(libs.filekit.core)
+			implementation(libs.filekit.dialogs.compose)
 		}
 		commonTest.dependencies {
 			implementation(libs.kotlin.test)

@@ -1,9 +1,5 @@
 package site.remlit.snowdrop.component
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -59,6 +55,13 @@ import snowdrop.shared.generated.resources.x_vote_s_
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
+/**
+ * Status poll component
+ *
+ * @param status Status to get poll from
+ *
+ * @since 0.0.5-alpha
+ * */
 @Composable
 fun Poll(status: Status) {
 	val coroutineScope = rememberCoroutineScope()

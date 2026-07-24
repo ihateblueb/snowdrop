@@ -46,7 +46,7 @@ fun Instant.toRelativeString(
 	val days = duration.inWholeDays
 	val weeks = (duration.inWholeDays.toDouble() / 7).roundToInt()
 
-	return if (duration < 0.seconds) { translation(Res.string.soon) }
+	return if (duration < (-5).seconds) { translation(Res.string.soon) }
 	else if (duration <= 5.seconds) { if (nowAlternate != null) translation(nowAlternate) else translation(Res.string.now) }
 	else if (duration < 1.minutes) {
 		if (short) translation(Res.string.x_second_simple, mapOf("time" to simpleAnnotatedString("$seconds")))
