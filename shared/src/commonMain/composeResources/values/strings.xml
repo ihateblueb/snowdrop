@@ -214,4 +214,8 @@
 	<string name="show_results">Show results</string>
 	<string name="hide_results">Hide results</string>
 	<string name="vote">Vote</string>
+
+	<string name="alt_text">Alt text</string>
+	<string name="missing_alt_text">Missing alt text</string>
+	<string name="describe_important_elements_of_your_media">Describe important elements of your media...</string>
 </resources>

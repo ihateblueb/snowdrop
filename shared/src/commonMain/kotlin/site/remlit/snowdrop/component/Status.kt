@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -411,7 +410,7 @@ fun Status(status: Status) {
 							) {
 								Icon(painterResource(Res.drawable.icon_warning_24px), null)
 
-								Column {
+								Column(modifier = Modifier.weight(1f)) {
 									Text(
 										realStatus.spoilerText!!,
 										fontWeight = FontWeight.Medium
@@ -422,8 +421,6 @@ fun Status(status: Status) {
 										fontSize = 12.sp
 									)
 								}
-
-								Spacer(Modifier.weight(1f))
 
 								if (realStatus.mediaAttachments.isNotEmpty()) {
 									Icon(painterResource(Res.drawable.icon_image_24), null)

@@ -25,9 +25,9 @@ fun AccountRow(
 	navigateToProfileOnClick: Boolean = true,
 	includeHorizontalDivider: Boolean = true,
 	onClick: (() -> Unit)? = null,
+	modifier: Modifier = Modifier,
 	leadingContent: @Composable () -> Unit = {},
 	trailingContent: @Composable () -> Unit = {},
-	modifier: Modifier = Modifier
 ) {
 	val navHandler = LocalNavController.current
 
