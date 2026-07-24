@@ -6,39 +6,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.ListItemShape
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.getAccountHost
 import site.remlit.snowdrop.util.getAccountObject
-import site.remlit.snowdrop.util.getAccountObjectFlow
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.listItemClip
+import site.remlit.snowdrop.util.listItemSpacing
 import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.vibrateSoft
 
@@ -52,7 +40,7 @@ fun AccountPickerList(
 
 	Column(
 		modifier = modifier,
-		verticalArrangement = Arrangement.spacedBy(5.dp)
+		verticalArrangement = Arrangement.spacedBy(listItemSpacing)
 	) {
 		val accounts = remember {
 			getAccounts().map { Pair(it, getAccountObject(it)) }

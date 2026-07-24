@@ -7,26 +7,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,14 +29,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -61,7 +47,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.AppTheme
-import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.ExternalUriHandler
@@ -79,22 +64,20 @@ import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
 import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
-import site.remlit.snowdrop.util.getAccountHost
-import site.remlit.snowdrop.util.getAccountObjectFlow
-import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
-import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.transitionedComposable
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugView
 import site.remlit.snowdrop.view.debug.DebugStorageView
 import site.remlit.snowdrop.view.settings.*
+import site.remlit.snowdrop.view.settings.about.AboutInstanceView
+import site.remlit.snowdrop.view.settings.about.AboutSettingsView
+import site.remlit.snowdrop.view.settings.about.AboutSnowdropView
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.add_account
 import snowdrop.shared.generated.resources.icon_add_24px
@@ -147,9 +130,17 @@ data class ComposeRoute(
 @Serializable
 object SettingsRoute
 @Serializable
+object AboutSettingsRoute
+@Serializable
 object AboutInstanceRoute
 @Serializable
 object AboutSnowdropRoute
+@Serializable
+object GeneralSettingsRoute
+@Serializable
+object AppearanceSettingsRoute
+@Serializable
+object WellbeingSettingsRoute
 
 @Serializable
 object DebugRoute
@@ -202,8 +193,10 @@ fun App() = safe {
 
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
+		atRoute<AboutSettingsRoute>(currentDest) ||
 		atRoute<AboutInstanceRoute>(currentDest) ||
 		atRoute<AboutSnowdropRoute>(currentDest) ||
+		atRoute<GeneralSettingsRoute>(currentDest) ||
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
 		atRoute<StatusMediaAttachmentRoute>(currentDest)
@@ -379,8 +372,12 @@ fun App() = safe {
 
 						// Settings
 						transitionedComposable<SettingsRoute> { SettingsView() }
+						transitionedComposable<AboutSettingsRoute> { AboutSettingsView() }
 						transitionedComposable<AboutInstanceRoute> { AboutInstanceView() }
 						transitionedComposable<AboutSnowdropRoute> { AboutSnowdropView() }
+						transitionedComposable<GeneralSettingsRoute> { GeneralSettingsView() }
+						transitionedComposable<AppearanceSettingsRoute> { AppearanceSettingsView() }
+						transitionedComposable<WellbeingSettingsRoute> { WellbeingSettingsView() }
 
 						// Debug
 						transitionedComposable<DebugRoute> { DebugView() }
