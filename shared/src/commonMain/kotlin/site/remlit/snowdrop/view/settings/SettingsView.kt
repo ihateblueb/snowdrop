@@ -5,15 +5,22 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,6 +40,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,11 +58,13 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
+import site.remlit.snowdrop.util.ListItemShape
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getDefaultVisibility
+import site.remlit.snowdrop.util.listItemClip
 import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.putNavigationBarOrder
@@ -118,47 +129,121 @@ fun SettingsView() = ViewSurface {
 		}
 	)
 
+	@Composable
+	fun SettingsCard(
+		position: Int,
+		size: Int,
+
+		icon: @Composable (Color, Modifier) -> Unit,
+		headlineContent: @Composable () -> Unit = {},
+		supportingContent: (@Composable () -> Unit)? = null,
+		trailingContent: (@Composable () -> Unit)? = null,
+		onClick: () -> Unit = {}
+	) {
+		Card(
+			modifier = Modifier.listItemClip(position, size)
+				.fillMaxWidth()
+				.clickable { onClick() }
+				.background(MaterialTheme.colorScheme.surface)
+				.let {
+					if (position + 1 != size) it.padding(bottom = 5.dp)
+					else it.padding(20.dp)
+				}
+		) {
+			Row(
+				horizontalArrangement = Arrangement.spacedBy(15.dp),
+				verticalAlignment = Alignment.CenterVertically,
+				modifier = Modifier.padding(10.dp)
+			) {
+				Box(
+					modifier = Modifier.clip(RoundedCornerShape(100))
+						.background(MaterialTheme.colorScheme.primaryContainer)
+						.padding(5.dp)
+				) {
+					icon(
+						MaterialTheme.colorScheme.onPrimaryContainer,
+						Modifier.padding(5.dp)
+					)
+				}
+
+				Column(
+					modifier = Modifier.weight(1f),
+				) {
+					headlineContent()
+					if (supportingContent != null) supportingContent()
+				}
+
+				if (trailingContent != null) trailingContent()
+			}
+		}
+	}
+
 	LazyColumn(
 		modifier = Modifier.padding(horizontal = 10.dp)
 	) {
-		// about instance
+		// about
 		item {
-			Card {
-				ListItem(
-					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_info_24px), null)
-					},
-					headlineContent = { Text(stringResource(Res.string.about_instance)) },
-					modifier = Modifier.clickable {
-						navHandler.navigate(AboutInstanceRoute)
-					}
-				)
-			}
-		}
-		// about snowdrop
-		item {
-			Card {
-				ListItem(
-					leadingContent = {
-						Icon(painterResource(Res.drawable.icon_info_24px), null)
-					},
-					headlineContent = { Text(stringResource(Res.string.about_snowdrop)) },
-					modifier = Modifier.clickable {
-						navHandler.navigate(AboutSnowdropRoute)
-					}
-				)
-			}
+			SettingsCard(
+				position = 0, size = 1,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_info_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = { Text(stringResource(Res.string.about_snowdrop)) },
+				onClick = { navHandler.navigate(AboutSnowdropRoute) }
+			)
 		}
 
 		//<editor-fold name="General">
 		//general
 		item {
-			Text(
-				stringResource(Res.string.general),
-				style = MaterialTheme.typography.labelLarge,
-				modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 10.dp)
+			SettingsCard(
+				position = 0, size = 3,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_info_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = { Text(stringResource(Res.string.general)) },
+				onClick = { /* TODO: general page */ }
 			)
 		}
+		item {
+			SettingsCard(
+				position = 1, size = 3,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_info_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = { Text(stringResource(Res.string.appearance)) },
+				onClick = { /* TODO: appearance page */ }
+			)
+		}
+		item {
+			SettingsCard(
+				position = 2, size = 3,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_info_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = { Text(stringResource(Res.string.wellbeing)) },
+				onClick = { /* TODO: appearance page */ }
+			)
+		}
+
+
+		item {
+			SettingsCard(
+				position = 0, size = 1,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_info_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = { Text(stringResource(Res.string.wellbeing)) },
+				onClick = { /* TODO: appearance page */ }
+			)
+		}
+		/*
+		*
 		//default post vis
 		item {
 			val defaultVisibility by remember { getDefaultVisibility() }
@@ -271,7 +356,7 @@ fun SettingsView() = ViewSurface {
 					}
 				}
 			}
-		}
+		}*/
 		//</editor-fold>
 
 		//<editor-fold name="Appearance">
