@@ -17,6 +17,8 @@
 - Attachment, poll, and quote post indicator on mini status
 - Poll viewing and voting on statuses
 - Translations for relative time
+- Account picker list component for use across the app
+- Account picker on login page, so if you add an account and change your mind or log out you can open your other accounts easily
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController

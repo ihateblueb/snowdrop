@@ -1,8 +1,11 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -11,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -32,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
 import site.remlit.snowdrop.TimelineRoute
@@ -39,6 +45,7 @@ import site.remlit.snowdrop.api.oauth.authScopes
 import site.remlit.snowdrop.api.oauth.createApp
 import site.remlit.snowdrop.api.oauth.createToken
 import site.remlit.snowdrop.api.oauth.redirectUri
+import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -46,11 +53,15 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.determineFeatures
+import site.remlit.snowdrop.util.getAccounts
+import site.remlit.snowdrop.util.listItemClip
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._continue
 import snowdrop.shared.generated.resources.debug
+import snowdrop.shared.generated.resources.icon_snowdrop_24
+import snowdrop.shared.generated.resources.icon_snowdrop_36
 import snowdrop.shared.generated.resources.instance_host
 import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.reset
@@ -152,56 +163,74 @@ fun LoginView() = ViewSurface {
 				.safeContentPadding()
 				.fillMaxSize(),
 			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
+			verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
 		) {
-			Text(
-				"Snowdrop",
-				fontSize = 25.sp,
-				fontWeight = FontWeight.Bold,
-				modifier = Modifier
-					.padding(bottom = 25.dp)
-			)
+			Column(
+				verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier = Modifier.padding(bottom = 15.dp)
+			) {
+				Icon(painterResource(Res.drawable.icon_snowdrop_36), null)
 
-			TextField(
-				host,
-				singleLine = true,
-				onValueChange = { host = it },
-				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-				keyboardActions = KeyboardActions(onGo = { continueButtonPressed() }),
-				label = { Text(stringResource(Res.string.instance_host)) },
-				placeholder = { Text("mastodon.social") }
-			)
-
-			if (showHostError) {
-				AlertDialog(
-					text = { Text(stringResource(Res.string.you_must_provide_a_valid_host)) },
-					onDismissRequest = { showHostError = false },
-					confirmButton = {
-						TextButton(
-							onClick = { showHostError = false }
-						) {
-							Text(stringResource(Res.string.ok))
-						}
-					},
-					properties = DialogProperties(
-						dismissOnBackPress = true,
-						dismissOnClickOutside = true
-					)
+				Text(
+					"Snowdrop",
+					fontSize = 32.sp,
+					fontWeight = FontWeight.Bold
 				)
 			}
 
-			Button(
-				modifier = Modifier
-					.padding(top = 10.dp),
-				onClick = { continueButtonPressed() }
+			Column(
+				verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				if (waitingForNext) Text("...")
-				else Text(stringResource(Res.string._continue))
+				TextField(
+					host,
+					singleLine = true,
+					onValueChange = { host = it },
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+					keyboardActions = KeyboardActions(onGo = { continueButtonPressed() }),
+					label = { Text(stringResource(Res.string.instance_host)) },
+					placeholder = { Text("mastodon.social") }
+				)
+
+				if (showHostError) {
+					AlertDialog(
+						text = { Text(stringResource(Res.string.you_must_provide_a_valid_host)) },
+						onDismissRequest = { showHostError = false },
+						confirmButton = {
+							TextButton(
+								onClick = { showHostError = false }
+							) {
+								Text(stringResource(Res.string.ok))
+							}
+						},
+						properties = DialogProperties(
+							dismissOnBackPress = true,
+							dismissOnClickOutside = true
+						)
+					)
+				}
+
+				Button(
+					onClick = { continueButtonPressed() }
+				) {
+					if (waitingForNext) Text("...")
+					else Text(stringResource(Res.string._continue))
+				}
+
+				if (getAccounts().isNotEmpty()) {
+					Column(
+						verticalArrangement = Arrangement.spacedBy(5.dp),
+						modifier = Modifier.padding(top = 15.dp)
+					) {
+						AccountPickerList(
+							onSelect = { blockingSettings.putBoolean("logged_in", true) }
+						)
+					}
+				}
 			}
 
 			TextButton(
-				modifier = Modifier
-					.padding(top = 20.dp),
 				onClick = { navController.navigate(DebugRoute) },
 			) {
 				Text(stringResource(Res.string.debug))

@@ -59,6 +59,7 @@ import io.ktor.http.Url
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
@@ -297,52 +298,14 @@ fun App() = safe {
 						ModalBottomSheet(
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
-							// todo: redesign this. cards look bad!
-							getAccounts().forEach { it ->
-								val account by getAccountObjectFlow(it)
-									.collectAsStateWithLifecycle(null)
-
-								if (account != null) {
-									Card(
-										modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
-											.clip(RoundedCornerShape(10.dp))
-											.fillMaxWidth()
-											.clickable {
-												if (it != getCurrentAccountId()) {
-													switchAccount(it, navController)
-													showAccountSwitcher = false
-												}
-											},
-										colors = CardDefaults.cardColors(
-											containerColor = if (getCurrentAccountId() == it)
-												MaterialTheme.colorScheme.primaryContainer
-											else MaterialTheme.colorScheme.surfaceContainerLow,
-											contentColor = if (getCurrentAccountId() == it)
-												MaterialTheme.colorScheme.onPrimaryContainer
-											else MaterialTheme.colorScheme.onSurface,
-										)
-									) {
-										Row(
-											modifier = Modifier.padding(10.dp),
-											horizontalArrangement = Arrangement.spacedBy(10.dp),
-											verticalAlignment = Alignment.CenterVertically
-										) {
-											Avatar(account!!)
-
-											Column {
-												Text(
-													account!!.displayName(),
-													fontWeight = FontWeight.Medium
-												)
-												Text("@${account!!.username}@${getAccountHost(it)}")
-											}
-										}
-									}
-								}
-							}
+							AccountPickerList(
+								modifier = Modifier.padding(horizontal = 15.dp),
+								onSelect = { showAccountSwitcher = false }
+							)
 
 							TextButton(
-								modifier = Modifier.padding(all = 10.dp).fillMaxWidth(),
+								modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp)
+									.fillMaxWidth(),
 								onClick = {
 									showAccountSwitcher = false
 									addNewAccount(navController)
