@@ -20,6 +20,9 @@
 - Account picker list component for use across the app
 - Account picker on login page, so if you add an account and change your mind or log out you can open your other accounts easily
 - Existing account check & handling to login
+- Redesigned settings with subpages
+- Uploading images and videos to statuses
+- Post button now shows a progress indicator while post is sending
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController

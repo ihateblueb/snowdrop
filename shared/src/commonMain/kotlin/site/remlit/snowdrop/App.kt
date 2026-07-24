@@ -199,6 +199,8 @@ fun App() = safe {
 		atRoute<AboutInstanceRoute>(currentDest) ||
 		atRoute<AboutSnowdropRoute>(currentDest) ||
 		atRoute<GeneralSettingsRoute>(currentDest) ||
+		atRoute<AppearanceSettingsRoute>(currentDest) ||
+		atRoute<WellbeingSettingsRoute>(currentDest) ||
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
 		atRoute<StatusMediaAttachmentRoute>(currentDest)
