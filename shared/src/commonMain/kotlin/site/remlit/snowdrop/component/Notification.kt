@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.StringResource
@@ -36,10 +35,8 @@ import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
-import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
-import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation

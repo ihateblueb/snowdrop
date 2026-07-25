@@ -33,7 +33,6 @@ import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.accepted_follow_request
 import snowdrop.shared.generated.resources.bite
 import snowdrop.shared.generated.resources.boost
 import snowdrop.shared.generated.resources.follow
