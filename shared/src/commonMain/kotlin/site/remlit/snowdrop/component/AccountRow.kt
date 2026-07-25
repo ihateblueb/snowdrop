@@ -19,23 +19,37 @@ import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.LocalNavController
 
+/**
+ * Account row showing avatar, display name, and username.
+ *
+ * @param modifier Modifier for row container
+ * @param account Account to show information for
+ * @param navigateToProfileOnClick If clicking should navigate to the account's profile
+ * @param includeHorizontalDivider Show divider at the bottom of the component
+ * @param onClick Action to run when clicking component
+ * @param leadingContent Content to show before the row
+ * @param trailingContent Content to show after the row
+ *
+ * @since 0.0.5-alpha
+ * */
 @Composable
 fun AccountRow(
+	modifier: Modifier = Modifier,
 	account: Account,
 	navigateToProfileOnClick: Boolean = true,
 	includeHorizontalDivider: Boolean = true,
-	onClick: (() -> Unit)? = null,
-	modifier: Modifier = Modifier,
+
 	leadingContent: @Composable () -> Unit = {},
 	trailingContent: @Composable () -> Unit = {},
+	onClick: () -> Unit = {},
 ) {
 	val navHandler = LocalNavController.current
 
 	Row(
 		modifier = modifier.let {
-			if (onClick != null || navigateToProfileOnClick) it.clickable {
+			if (navigateToProfileOnClick) it.clickable {
 				if (navigateToProfileOnClick) navHandler.navigate(ProfileRoute(account.id))
-				if (onClick != null) onClick()
+				onClick()
 			} else it
 		}.padding(10.dp)
 			.fillMaxWidth(),

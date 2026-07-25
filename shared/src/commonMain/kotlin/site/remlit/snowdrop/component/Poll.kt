@@ -64,8 +64,8 @@ import kotlin.time.Instant
  * */
 @Composable
 fun Poll(status: Status) {
-	val coroutineScope = rememberCoroutineScope()
 	val snackbarController = LocalSnackbarController.current
+	val coroutineScope = rememberCoroutineScope()
 
 	var poll by remember { mutableStateOf(status.poll) }
 	LaunchedEffect(status.poll) { poll = status.poll }

@@ -43,6 +43,7 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
 /**
  * Refreshable and infinitely scrollable timeline.
  *
+ * @param modifier Modifier for PullToRefreshBox
  * @param fetchMethod Method following basic pagination requirements
  * @param onRefresh Called upon refresh of the timeline
  * @param timelineComponent Component to use for items in the timeline, must accept T as first parameter

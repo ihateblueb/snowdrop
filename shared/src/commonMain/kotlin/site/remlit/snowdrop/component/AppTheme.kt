@@ -29,8 +29,8 @@ expect fun getDarkColorScheme(): ColorScheme
  *
  * @since 0.0.1-alpha
  * */
-@OptIn(ExperimentalSettingsApi::class)
 @Composable
+@OptIn(ExperimentalSettingsApi::class)
 fun AppTheme(
 	darkTheme: Boolean = isSystemInDarkTheme(),
 	content: @Composable () -> Unit

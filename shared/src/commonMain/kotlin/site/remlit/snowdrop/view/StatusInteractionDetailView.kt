@@ -79,7 +79,7 @@ fun StatusInteractionDetailView(
 			// todo: scrolling
 			LazyColumn {
 				accounts.forEach { account ->
-					item { AccountRow(account) }
+					item { AccountRow(account = account) }
 				}
 			}
 		}
@@ -113,7 +113,7 @@ fun StatusInteractionDetailView(
 				}
 				LazyColumn {
 					reactions.filter { reactions.indexOf(it) == currentTab }.forEach { reaction ->
-						item { AccountRow(reaction.account) }
+						item { AccountRow(account = reaction.account) }
 					}
 				}
 			}

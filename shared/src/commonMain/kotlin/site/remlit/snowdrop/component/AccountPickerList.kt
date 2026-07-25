@@ -30,6 +30,14 @@ import site.remlit.snowdrop.util.listItemSpacing
 import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.vibrateSoft
 
+/**
+ * Account picker component.
+ *
+ * @param modifier Modifier for column container
+ * @param onSelect Action to run when selecting an account
+ *
+ * @since 0.0.5-alpha
+ * */
 @Composable
 fun AccountPickerList(
 	modifier: Modifier = Modifier,

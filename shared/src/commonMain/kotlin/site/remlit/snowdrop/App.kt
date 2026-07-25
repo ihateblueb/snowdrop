@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,8 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -286,10 +285,11 @@ fun App() = safe {
 				},
 				floatingActionButtonPosition = FabPosition.End,
 				snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-			) { bottomPadding ->
+			) { paddingValues ->
 				Box(
-					modifier = Modifier.padding(bottom = bottomPadding.calculateBottomPadding())
-						.fillMaxSize()
+					modifier = Modifier.fillMaxSize()
+						.padding(paddingValues)
+						.consumeWindowInsets(paddingValues)
 				) {
 					if (showAccountSwitcher) {
 						ModalBottomSheet(

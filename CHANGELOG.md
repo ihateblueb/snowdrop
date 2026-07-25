@@ -32,6 +32,7 @@
 - Remember explore page state
 - Make debug page easier to get to, it now toggles a persistent button after the five clicks
 - Layout of compose view, items will no longer be crushed when the keyboard is up and media is added, and the bottom bar now floats
+- Large gap at the top of screens on Android versions before edge to edge enforcement
 
 ## [0.0.4-alpha] - 2026/07/19
 

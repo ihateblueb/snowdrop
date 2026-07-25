@@ -154,7 +154,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					},
 					onRefresh = { offset = 0 },
 					refreshKey = refreshKey,
-					timelineComponent = { AccountRow(it) },
+					timelineComponent = { AccountRow(account = it) },
 					distinctCheck = true
 				)
 			}

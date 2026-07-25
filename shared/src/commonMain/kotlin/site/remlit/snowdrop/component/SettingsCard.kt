@@ -24,6 +24,21 @@ import site.remlit.snowdrop.util.ListItemShape
 import site.remlit.snowdrop.util.listItemClip
 import site.remlit.snowdrop.util.listItemSpacing
 
+/**
+ * Settings list item card. Stylized with listItemClip and ListItemShape.
+ *
+ * @param position Position in list, starting at 0
+ * @param size Size of list
+ * @param icon Icon at the start of the card
+ * @param iconBackground Background color for the icon surface
+ * @param iconColor Color of the icon
+ * @param headlineContent Main text of the list item
+ * @param supportingContent Text under the headlineContent
+ * @param trailingContent Content at the end of the card
+ * @param onClick Action when clicking on card
+ *
+ * @since 0.0.5-alpha
+ * */
 @Composable
 fun SettingsCard(
 	position: Int,
