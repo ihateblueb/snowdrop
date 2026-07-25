@@ -12,7 +12,7 @@ the same as Javadoc. `@since` is optional because it isn't critical, but `@param
 if any parameters are required.
 
 ## AI contributions
-In no way are AI generated pull requests, issues, or code welcome in this code base. You will have your issue or pull
+In no way are AI generated pull requests, issues, or code welcome in this codebase. You will have your issue or pull
 request closed, and we will ignore you if you break this rule.
 
 ## What API should I use as a reference?
