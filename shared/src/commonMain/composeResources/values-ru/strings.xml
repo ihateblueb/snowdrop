@@ -117,4 +117,5 @@
     <string name="support_development">Поддержать разработку</string>
     <string name="recently_used">Недавно использованные</string>
     <string name="unknown_media_type_x">Неизвестный тип медиа {type}</string>
+    <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Использование на не-AMOLED экране может привести к проблемам с контрастом</string>
 </resources>
