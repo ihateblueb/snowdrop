@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -222,7 +223,7 @@ fun LoginView() = ViewSurface {
 					host,
 					singleLine = true,
 					onValueChange = { host = it },
-					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go, keyboardType = KeyboardType.Uri),
 					keyboardActions = KeyboardActions(onGo = { continueButtonPressed() }),
 					label = { Text(stringResource(Res.string.instance_host)) },
 					placeholder = { Text("mastodon.social") }
