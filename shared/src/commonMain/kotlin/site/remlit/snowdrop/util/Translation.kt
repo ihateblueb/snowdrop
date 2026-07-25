@@ -43,7 +43,5 @@ fun translation(
 		}
 
 		if (lastIndex < source.length) append(source.substring(lastIndex))
-
-		toAnnotatedString()
 	}
 }

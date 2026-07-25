@@ -456,14 +456,18 @@ fun ProfileView(id: String) = ViewSurface {
 											Row(
 												horizontalArrangement = Arrangement.spacedBy(5.dp)
 											) {
-												Text(
-													name,
+												HtmlContent(
+													string = name,
+													emojis = account!!.emojis,
 													modifier = Modifier.weight(0.35f),
-													color = MaterialTheme.colorScheme.primary
+													color = MaterialTheme.colorScheme.primary,
+													simple = true
 												)
 												HtmlContent(
-													value,
-													modifier = Modifier.weight(0.65f)
+													string = value,
+													emojis = account!!.emojis,
+													modifier = Modifier.weight(0.65f),
+													simple = true
 												)
 											}
 										}

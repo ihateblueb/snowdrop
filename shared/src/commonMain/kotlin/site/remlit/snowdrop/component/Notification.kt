@@ -35,8 +35,11 @@ import site.remlit.snowdrop.api.followRequest.authorizeFollowRequest
 import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
+import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
+import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
@@ -90,13 +93,12 @@ fun Notification(notification: Notification) {
 	var translationKey by remember { mutableStateOf<StringResource?>(null) }
 	val replacementMap = remember { mutableStateMapOf<String, AnnotatedString>() }
 
+	val (displayNameAnnotatedString, displayNameEmojiMapping) = htmlToAnnotatedString(notification.account.displayName(), emojis = notification.account.emojis)
 	when (notification.type) {
 		"favourite", "pleroma:emoji_reaction", "reaction", "reblog", "update", "status", "bite",
 		"follow_request", "follow" ->
-			replacementMap["clickable_display_name"] = buildAnnotatedString {
-				withAccountLink(notification.account)
-				toAnnotatedString()
-			}
+			replacementMap["clickable_display_name"] = displayNameAnnotatedString
+				.withAccountLink(notification.account)
 	}
 
 	when (notification.type) {
@@ -193,7 +195,8 @@ fun Notification(notification: Notification) {
 						Text(
 							text = translation(translationKey!!, replacementMap),
 							modifier = Modifier.weight(1f),
-							lineHeight = with(LocalDensity.current) { smallerAvatarSize.dp.toSp() }
+							lineHeight = with(LocalDensity.current) { smallerAvatarSize.dp.toSp() },
+							inlineContent = displayNameEmojiMapping
 						)
 
 						val timestamp = "${notification.getCreatedAtTimestamp()?.toRelativeString(short = true)}"
