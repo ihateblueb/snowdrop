@@ -46,8 +46,9 @@ fun Emoji(
 		)
 	}
 
+	// todo: reduced motion should make this use emoji.staticUrl
 	KamelImage(
-		resource = { asyncPainterResource(emoji.staticUrl ?: emoji.url) },
+		resource = { asyncPainterResource(emoji.url) },
 		contentDescription = emoji.shortcode,
 		contentScale = ContentScale.Fit,
 		onLoading = { fallback() },
