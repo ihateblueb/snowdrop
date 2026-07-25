@@ -33,6 +33,7 @@ import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.accepted_follow_request
 import snowdrop.shared.generated.resources.bite
 import snowdrop.shared.generated.resources.boost
 import snowdrop.shared.generated.resources.follow
@@ -91,7 +92,13 @@ fun NotificationsView() = ViewSurface {
 		if (!posts) excludedTypes.add("status") else excludedTypes.remove("status")
 		if (!bites) excludedTypes.add("bite") else excludedTypes.remove("bite")
 		if (!follows) excludedTypes.add("follow") else excludedTypes.remove("follow")
-		if (!followRequests) excludedTypes.add("follow_request") else excludedTypes.remove("follow_request")
+		if (!followRequests) {
+			excludedTypes.add("follow_request")
+			excludedTypes.add("follow_request_accepted")
+		} else {
+			excludedTypes.remove("follow_request")
+			excludedTypes.remove("follow_request_accepted")
+		}
 
 		return excludedTypes
 	}

@@ -97,6 +97,7 @@
 	<string name="x_bit_your_post">{clickable_display_name} bit your post</string>
 	<string name="x_requested_to_follow_you">{clickable_display_name} requested to follow you</string>
 	<string name="x_followed_you">{clickable_display_name} followed you</string>
+	<string name="x_accepted_your_follow_request">{clickable_display_name} accepted your follow request</string>
 
 	<string name="save">Save</string>
 	<string name="accept">Accept</string>
@@ -167,6 +168,7 @@
 	<string name="poll">Poll</string>
 	<string name="bite">Bite</string>
 	<string name="follow_request">Follow request</string>
+	<string name="accepted_follow_request">Accepted follow request</string>
 
 	<string name="search_results">Search results</string>
 	<string name="accounts">Accounts</string>

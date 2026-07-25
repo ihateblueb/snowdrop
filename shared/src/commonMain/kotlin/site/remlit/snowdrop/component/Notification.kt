@@ -59,6 +59,7 @@ import snowdrop.shared.generated.resources.icon_poll_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.reject
+import snowdrop.shared.generated.resources.x_accepted_your_follow_request
 import snowdrop.shared.generated.resources.x_bit_you
 import snowdrop.shared.generated.resources.x_bit_you_back
 import snowdrop.shared.generated.resources.x_bit_your_post
@@ -96,7 +97,7 @@ fun Notification(notification: Notification) {
 	val (displayNameAnnotatedString, displayNameEmojiMapping) = htmlToAnnotatedString(notification.account.displayName(), emojis = notification.account.emojis)
 	when (notification.type) {
 		"favourite", "pleroma:emoji_reaction", "reaction", "reblog", "update", "status", "bite",
-		"follow_request", "follow" ->
+		"follow_request", "follow", "follow_request_accepted" ->
 			replacementMap["clickable_display_name"] = displayNameAnnotatedString
 				.withAccountLink(notification.account)
 	}
@@ -123,6 +124,7 @@ fun Notification(notification: Notification) {
 			else Res.string.x_bit_you
 		"follow_request" -> translationKey = Res.string.x_requested_to_follow_you
 		"follow" -> translationKey = Res.string.x_followed_you
+		"follow_request_accepted" -> translationKey = Res.string.x_accepted_your_follow_request
 	}
 
 	// show toggle on point
@@ -173,6 +175,10 @@ fun Notification(notification: Notification) {
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"follow" -> Icon(
+							painterResource(Res.drawable.icon_person_add_24px), null,
+							tint = MaterialTheme.colorScheme.primary
+						)
+						"follow_request_accepted" -> Icon(
 							painterResource(Res.drawable.icon_person_add_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
