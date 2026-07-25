@@ -23,6 +23,7 @@
 - Redesigned settings with subpages
 - Uploading images and videos to statuses
 - Post button now shows a progress indicator while post is sending
+- Emojis in post bodies, display names, and profile bios
 
 ### Fixed
 - Awkward naming of SnackbarController, renamed it LocalSnackbarController

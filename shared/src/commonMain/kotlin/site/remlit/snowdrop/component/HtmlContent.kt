@@ -1,6 +1,8 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -8,16 +10,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
+import be.digitalia.compose.htmlconverter.htmlToString
 import co.touchlab.kermit.Logger
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.annotatedString.replaceAnnotated
+import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
+import site.remlit.snowdrop.util.extension.toPixels
 
 /**
  * HTML content element. Will render HTML, handle mention links, emojis,
@@ -37,8 +52,14 @@ fun HtmlContent(
 	modifier: Modifier = Modifier,
 	mentions: List<Status.Mention> = emptyList(),
 	emojis: List<Emoji> = emptyList(),
-	maxLines: Int = Int.MAX_VALUE
+	emojiSize: TextUnit = 1.2.em,
+	fontWeight: FontWeight = FontWeight.Normal,
+	fontSize:  TextUnit = TextUnit.Unspecified,
+	maxLines: Int = Int.MAX_VALUE,
+	simple: Boolean = false
 ) {
+	// todo: rewrite some of this to be prettier
+
 	val uriHandler = LocalUriHandler.current
 	val navHandler = LocalNavController.current
 
@@ -46,12 +67,12 @@ fun HtmlContent(
 	emojis.forEach { emoji ->
 		mappedEmojis[":${emoji.shortcode}:"] = InlineTextContent(
 			placeholder = Placeholder(
-				width = 20.sp,
-				height = 20.sp,
-				placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+				width = emojiSize,
+				height = emojiSize,
+				placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
 			)
 		) {
-			Emoji(emoji)
+			Emoji(emoji, fill = true)
 		}
 	}
 
@@ -64,18 +85,27 @@ fun HtmlContent(
 		}
 	}
 
-	Logger.d { "mappedEmojis $mappedEmojis" }
+	val emojiRegex = remember { mappedEmojis.keys.joinToString("|") }
+	val text = remember(string, emojis) {
+		htmlToAnnotatedString(
+			if (simple) htmlToString(string) else string,
+			linkInteractionListener = linkListener
+		).let {
+			if (emojiRegex.isNotBlank()) it
+				.replaceAnnotated(emojiRegex.toRegex()) { match ->
+					appendInlineContent(match.value, match.value)
+				}
+			else it
+		}
+	}
 
 	Text(
-		maxLines = maxLines,
-		overflow = TextOverflow.Ellipsis,
+		text = text,
 		modifier = modifier,
-		text = remember(string) {
-			htmlToAnnotatedString(
-				string,
-				linkInteractionListener = linkListener
-			) // todo: add emoji thing
-		},
+		fontWeight = fontWeight,
+		fontSize = fontSize,
+		overflow = TextOverflow.Ellipsis,
+		maxLines = maxLines,
 		inlineContent = mappedEmojis
 	)
 }

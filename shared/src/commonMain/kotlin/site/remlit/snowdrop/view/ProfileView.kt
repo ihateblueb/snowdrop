@@ -3,6 +3,7 @@ package site.remlit.snowdrop.view
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -176,10 +177,11 @@ fun ProfileView(id: String) = ViewSurface {
 						fontSize = 14.sp
 					)
 				} else Column {
-					Text(
+					HtmlContent(
 						account!!.displayName(),
+						emojis = account!!.emojis,
 						maxLines = 1,
-						overflow = TextOverflow.Ellipsis
+						simple = true
 					)
 					Text(
 						translation(
@@ -390,10 +392,13 @@ fun ProfileView(id: String) = ViewSurface {
 										horizontalArrangement = Arrangement.spacedBy(5.dp),
 										verticalArrangement = Arrangement.Center
 									) {
-										Text(
+										HtmlContent(
 											account!!.displayName(),
+											emojis = account!!.emojis,
 											fontWeight = FontWeight.Bold,
-											fontSize = 24.sp
+											fontSize = 24.sp,
+											maxLines = 1,
+											simple = true
 										)
 
 										if (relationship != null)
@@ -428,7 +433,12 @@ fun ProfileView(id: String) = ViewSurface {
 
 							// Bio
 							if (account!!.note != null)
-								Column(modifier = Modifier.padding(top = 10.dp)) { HtmlContent(account!!.note!!) }
+								Column(modifier = Modifier.padding(top = 10.dp)) {
+									HtmlContent(
+										account!!.note!!,
+										emojis = account!!.emojis
+									)
+								}
 
 							// Fields
 							if (!account!!.fields.isEmpty())

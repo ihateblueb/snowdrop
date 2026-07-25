@@ -92,7 +92,13 @@ fun MiniStatus(
 					modifier = Modifier.padding(top = 5.dp),
 					verticalArrangement = Arrangement.spacedBy(5.dp)
 				) {
-					HtmlContent(status.content ?: "", mentions = status.mentions, maxLines = 3)
+					HtmlContent(
+						string = status.content ?: "",
+						emojis = status.emojis,
+						mentions = status.mentions,
+						maxLines = 3,
+						simple = true
+					)
 
 
 					val attachmentStrings = mutableListOf<AnnotatedString>()

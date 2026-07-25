@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
@@ -299,10 +300,10 @@ fun Status(status: Status) {
 						modifier = Modifier.weight(1f)
 							.padding(end = 10.dp)
 					) {
-						Text(
+						HtmlContent(
 							realStatus.account!!.displayName(),
+							emojis = realStatus.account!!.emojis,
 							fontWeight = FontWeight.Medium,
-							overflow = TextOverflow.Ellipsis,
 							maxLines = 1,
 							modifier = Modifier.clickable(onClick = {
 								navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
@@ -351,7 +352,12 @@ fun Status(status: Status) {
 						verticalArrangement = Arrangement.spacedBy(10.dp)
 					) {
 						if (!realStatus.content.isNullOrBlank()) {
-							HtmlContent(realStatus.content!!, mentions = realStatus.mentions, emojis = realStatus.emojis)
+							HtmlContent(
+								string = realStatus.content!!,
+								mentions = realStatus.mentions,
+								emojis = realStatus.emojis,
+								emojiSize = 1.5.em
+							)
 						}
 
 						if (!realStatus.mediaAttachments.isEmpty()) {
