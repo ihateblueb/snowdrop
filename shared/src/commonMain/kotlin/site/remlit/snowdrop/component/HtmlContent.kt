@@ -1,6 +1,5 @@
 package site.remlit.snowdrop.component
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Text
@@ -10,29 +9,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import be.digitalia.compose.htmlconverter.htmlToString
-import co.touchlab.kermit.Logger
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.annotatedString.replaceAnnotated
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
-import site.remlit.snowdrop.util.extension.toPixels
 
 /**
  * HTML content element. Will render HTML, handle mention links, emojis,

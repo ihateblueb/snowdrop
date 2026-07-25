@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -509,7 +510,9 @@ fun Status(status: Status) {
 											verticalAlignment = Alignment.CenterVertically
 										) {
 											val emoji = it.toEmoji()
-											if (emoji != null) Emoji(emoji) else when (getPlatform()) {
+											if (emoji != null)
+												Box(modifier = Modifier.size(20.dp)) { Emoji(emoji, fill = true) }
+											else when (getPlatform()) {
 												Platform.ANDROID -> Text(it.name)
 												Platform.IOS -> Text(
 													it.name,
