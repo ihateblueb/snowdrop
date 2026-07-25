@@ -65,6 +65,7 @@ Only to be done before a release.
 7. Run "Reset all changes in the Weblate repository" on Weblate
 
 ## Release Checklist
+- [ ] Merge in Weblate changes
 - [ ] Bump version code in [/build.gradle.kts](/build.gradle.kts) and [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts) and commit
 - [ ] Checkout the latest commit as detached HEAD
 - [ ] Build -> Generate Signed App Bundle or APK...
