@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -289,7 +290,7 @@ fun App() = safe {
 				Box(
 					modifier = Modifier.fillMaxSize()
 						.padding(paddingValues)
-						.consumeWindowInsets(paddingValues)
+						.consumeWindowInsets(WindowInsets(top = paddingValues.calculateTopPadding()))
 				) {
 					if (showAccountSwitcher) {
 						ModalBottomSheet(
