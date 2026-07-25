@@ -1,6 +1,8 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.5-alpha)]
+## [Unreleased]
+
+## [0.0.5-alpha]
 
 ### Added
 - Search for posts and accounts
