@@ -397,7 +397,6 @@ fun ProfileView(id: String) = ViewSurface {
 											emojis = account!!.emojis,
 											fontWeight = FontWeight.Bold,
 											fontSize = 24.sp,
-											maxLines = 1,
 											simple = true
 										)
 

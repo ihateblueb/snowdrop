@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -188,18 +190,20 @@ fun LoginView() = ViewSurface {
 		finishButtonPressed()
 
 	if (!continued) {
+		val scrollState = rememberScrollState()
 		Column(
 			modifier = Modifier
 				.background(MaterialTheme.colorScheme.background)
+				.verticalScroll(scrollState)
 				.safeContentPadding()
 				.fillMaxSize(),
 			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
+			verticalArrangement = Arrangement.spacedBy(20.dp)
 		) {
 			Column(
 				verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
 				horizontalAlignment = Alignment.CenterHorizontally,
-				modifier = Modifier.padding(bottom = 15.dp)
+				modifier = Modifier.padding(bottom = 15.dp, top = 100.dp)
 			) {
 				Icon(painterResource(Res.drawable.icon_snowdrop_36), null)
 
