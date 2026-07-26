@@ -24,7 +24,7 @@ data class Status(
 	val inReplyToAccountId: String? = null,
 
 	var reblog: Status? = null,
-	val quote: Status? = null,
+	val quote: Quote? = null,
 	@SerialName("quote_id")
 	val quoteId: String? = null,
 	@SerialName("quote_approval")
@@ -67,7 +67,7 @@ data class Status(
 
 	val state: String? = null,
 	@SerialName("quoted_status")
-	val quotedStatus: Status? = null,
+	val quotedStatus: Quote? = null,
 
 	@SerialName("created_at")
 	val createdAt: String? = null,

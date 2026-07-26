@@ -483,8 +483,9 @@ fun Status(
 
 				}
 
-				if (realStatus.quotedStatus != null) {
-					MiniStatus(realStatus.quotedStatus!!)
+				val quote = realStatus.quote ?: realStatus.quotedStatus
+				if (quote != null && quote.quotedStatus != null) {
+					MiniStatus(quote.quotedStatus)
 				}
 
 				/*

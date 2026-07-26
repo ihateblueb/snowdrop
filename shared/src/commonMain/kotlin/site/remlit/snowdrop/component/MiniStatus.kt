@@ -66,11 +66,12 @@ fun MiniStatus(
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Avatar(status.account!!, smaller = true)
-				Text(
+				HtmlContent(
 					status.account.displayName(),
+					emojis = status.account.emojis,
 					fontWeight = FontWeight.Bold,
+					simple = true,
 					maxLines = 1,
-					overflow = TextOverflow.Ellipsis,
 					modifier = Modifier.weight(1f)
 				)
 

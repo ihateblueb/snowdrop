@@ -154,12 +154,11 @@ fun EditProfileView() = ViewSurface {
 			}
 
 			item {
-				// todo: make it source and not html
 				OutlinedTextField(
 					value = note,
 					onValueChange = { note = it; noteChanged = true },
 					label = { Text("Description") },
-					placeholder = { Text(currentAccount!!.note ?: "") },
+					placeholder = { Text(currentAccount!!.source?.note ?: "") },
 					modifier = Modifier.fillMaxWidth().height(200.dp)
 				)
 			}

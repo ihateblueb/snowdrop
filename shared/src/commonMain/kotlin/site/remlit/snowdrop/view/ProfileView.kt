@@ -259,6 +259,7 @@ fun ProfileView(id: String) = ViewSurface {
 									contentDescription = account!!.headerDescription,
 									contentScale = ContentScale.Crop,
 									onLoading = { fallbackHeader() },
+									onFailure = { fallbackHeader() },
 									modifier = Modifier.height(headerHeight.dp)
 										.fillMaxWidth(),
 								)
@@ -517,8 +518,6 @@ fun ProfileView(id: String) = ViewSurface {
 						Column(
 							modifier = Modifier.offset(y = verticalOffset)
 						) {
-							HorizontalDivider()
-
 							PrimaryTabRow(selectedTabIndex = selectedTab) {
 								Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
 								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.posts_and_replies)) })
