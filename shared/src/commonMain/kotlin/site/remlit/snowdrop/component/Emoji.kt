@@ -3,9 +3,10 @@ package site.remlit.snowdrop.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,14 +36,16 @@ fun Emoji(
 ) {
 	val size = if (big) bigEmojiSize.dp else emojiSize.dp
 
+	fun Modifier.emojiSize() = this.let {
+		if (fill) it.fillMaxSize()
+		else it.size(size)
+	}
+
 	@Composable
 	fun fallback() {
 		Box(
 			modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-				.let {
-					if (fill) it.fillMaxSize()
-					else it.size(size)
-				}
+				.emojiSize()
 		)
 	}
 
@@ -52,9 +55,6 @@ fun Emoji(
 		contentDescription = emoji.shortcode,
 		contentScale = ContentScale.Fit,
 		onLoading = { fallback() },
-		modifier = Modifier.let {
-			if (fill) it.fillMaxSize()
-			else it.size(size)
-		},
+		modifier = Modifier.emojiSize(),
 	)
 }

@@ -17,8 +17,7 @@ fun atRoute(
 	klass: KClass<*>,
 	c: NavDestination?
 ): Boolean {
-	if (c == null) return false
-	return c.hasRoute(klass)
+	return c != null && c.hasRoute(klass)
 }
 
 

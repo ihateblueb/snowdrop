@@ -94,11 +94,14 @@ fun AccountPickerList(
 					Column(
 						modifier = Modifier.weight(1f)
 					) {
-						Text(
+						HtmlContent(
 							account.displayName(),
+							emojis = account.emojis,
 							fontWeight = FontWeight.Medium,
 							color = if (getCurrentAccountId() == id) MaterialTheme.colorScheme.onPrimaryContainer
-								else MaterialTheme.colorScheme.onSurface
+								else MaterialTheme.colorScheme.onSurface,
+							simple = true,
+							maxLines = 1,
 						)
 						Text(
 							"@${account.username}@${getAccountHost(id)}",

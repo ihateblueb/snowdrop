@@ -89,7 +89,9 @@ import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
+import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
+import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
@@ -256,6 +258,7 @@ fun Status(status: Status) {
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
+							val mappedEmojis = mapEmojisToInlineTextContent(rebloggingAccount!!.emojis)
 							Text(
 								translation(
 									Res.string.x_boosted,
@@ -264,13 +267,12 @@ fun Status(status: Status) {
 											color = MaterialTheme.colorScheme.secondary,
 											fontSize = 14.sp,
 										)) { withAccountLink(rebloggingAccount!!) }
-
-										toAnnotatedString()
-									})
+									}.withEmojis(mappedEmojis))
 								),
 								color = MaterialTheme.colorScheme.secondary,
 								fontSize = 14.sp,
-								fontWeight = FontWeight.Medium
+								fontWeight = FontWeight.Medium,
+								inlineContent = mappedEmojis
 							)
 						}
 					}

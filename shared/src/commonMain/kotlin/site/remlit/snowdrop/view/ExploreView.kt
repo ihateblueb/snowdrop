@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +51,6 @@ import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.search_for_posts_or_users
 import snowdrop.shared.generated.resources.search_results
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	val focusRequester = remember { FocusRequester() }
