@@ -35,6 +35,7 @@ fun vibrate(direction: Boolean, haptics: HapticFeedback) = when (direction) {
  * @since 0.0.5-alpha
  * */
 fun vibrateConfirm(haptics: HapticFeedback) {
+	if (!blockingSettings.getBoolean("haptics", true)) return
 	haptics.performHapticFeedback(HapticFeedbackType.Confirm)
 }
 
@@ -46,6 +47,7 @@ fun vibrateConfirm(haptics: HapticFeedback) {
  * @since 0.0.2-alpha
  * */
 fun vibratePositive(haptics: HapticFeedback) {
+	if (!blockingSettings.getBoolean("haptics", true)) return
 	when (getPlatform()) {
 		Platform.ANDROID -> haptics.performHapticFeedback(HapticFeedbackType.Confirm)
 		Platform.IOS -> haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
@@ -60,6 +62,7 @@ fun vibratePositive(haptics: HapticFeedback) {
  * @since 0.0.2-alpha
  * */
 fun vibrateNegative(haptics: HapticFeedback) {
+	if (!blockingSettings.getBoolean("haptics", true)) return
 	when (getPlatform()) {
 		Platform.ANDROID -> haptics.performHapticFeedback(HapticFeedbackType.Reject)
 		Platform.IOS -> haptics.performHapticFeedback(HapticFeedbackType.ToggleOff)
@@ -75,6 +78,7 @@ fun vibrateNegative(haptics: HapticFeedback) {
  * @since 0.0.4-alpha
  * */
 fun vibrateError(haptics: HapticFeedback) {
+	if (!blockingSettings.getBoolean("haptics", true)) return
 	haptics.performHapticFeedback(HapticFeedbackType.Reject)
 }
 
@@ -86,5 +90,6 @@ fun vibrateError(haptics: HapticFeedback) {
  * @since 0.0.4-alpha
  * */
 fun vibrateSoft(haptics: HapticFeedback) {
+	if (!blockingSettings.getBoolean("haptics", true)) return
 	haptics.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
 }

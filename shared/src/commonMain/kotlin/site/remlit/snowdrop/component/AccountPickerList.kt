@@ -10,6 +10,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -68,6 +70,8 @@ fun AccountPickerList(
 			}
 
 			// todo: long press to log out
+
+			// important: be careful with contrast here, always test
 			Card(
 				modifier = Modifier.fillMaxWidth()
 					.listItemClip(index, accounts.size)
@@ -93,7 +97,8 @@ fun AccountPickerList(
 						Text(
 							account.displayName(),
 							fontWeight = FontWeight.Medium,
-							color = MaterialTheme.colorScheme.onSurface
+							color = if (getCurrentAccountId() == id) MaterialTheme.colorScheme.onPrimaryContainer
+								else MaterialTheme.colorScheme.onSurface
 						)
 						Text(
 							"@${account.username}@${getAccountHost(id)}",
@@ -103,7 +108,11 @@ fun AccountPickerList(
 
 					RadioButton(
 						selected = getCurrentAccountId() == id,
-						onClick = { switchToThisAccount() }
+						onClick = { switchToThisAccount() },
+						colors = RadioButtonDefaults.colors(
+							if (getCurrentAccountId() == id) MaterialTheme.colorScheme.onPrimaryContainer
+								else MaterialTheme.colorScheme.onSurface
+						)
 					)
 				}
 			}

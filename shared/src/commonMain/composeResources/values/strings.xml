@@ -63,6 +63,7 @@
 	<string name="settings">Settings</string>
 	<string name="general">General</string>
 	<string name="default_post_visibility">Default post visibility</string>
+	<string name="haptics">Haptics</string>
 
 	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>

@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -27,16 +28,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getDefaultVisibility
 import site.remlit.snowdrop.util.putDefaultVisibility
+import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
+import snowdrop.shared.generated.resources.haptics
+import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
@@ -45,6 +51,7 @@ import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 
+@OptIn(ExperimentalSettingsApi::class)
 @Composable
 fun GeneralSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
@@ -173,6 +180,22 @@ fun GeneralSettingsView() = ViewSurface {
 						)
 					}
 				}
+			}
+		}
+		item {
+			val haptics by settings.getBooleanFlow("haptics", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.haptics)) },
+					trailingContent = {
+						Switch(
+							haptics,
+							onCheckedChange = { blockingSettings.putBoolean("haptics", it) }
+						)
+					}
+				)
 			}
 		}
 	}

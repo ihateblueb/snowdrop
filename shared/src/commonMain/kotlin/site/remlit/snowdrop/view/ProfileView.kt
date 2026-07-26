@@ -206,6 +206,13 @@ fun ProfileView(id: String) = ViewSurface {
 					) {
 						Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 					}
+
+					// open dropdown,
+					// dropdown:
+					// - view on remote
+					// - copy handle
+					// - copy link
+					//
 				}
 			}
 		)

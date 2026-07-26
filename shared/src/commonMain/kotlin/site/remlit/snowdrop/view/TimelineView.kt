@@ -28,6 +28,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -93,10 +94,11 @@ fun TimelineView() = ViewSurface {
 		val navHandler = LocalNavController.current
 		val haptics = LocalHapticFeedback.current
 
-		// 0 - home, 1 - local, 2 - bubble, 3 - global
+		// 0 - home, 1 - local, 2 - bubble, 3 - global, 4 - bookmarks, 5 - list
 		val timelineType by retain { settings.getIntFlow("timeline", 0) }
 			.collectAsStateWithLifecycle(0)
 		var timelinePickerOpen by remember { mutableStateOf(false) }
+		var list by remember { mutableStateOf<String?>(null) }
 
 		suspend fun getTimeline(
 			maxId: String? = null,
@@ -130,6 +132,7 @@ fun TimelineView() = ViewSurface {
 		fun RenderTimelineSelectionDropdown() {
 			DropdownMenu(
 				expanded = timelinePickerOpen,
+				offset = DpOffset(x = 0.dp, y = 15.dp),
 				onDismissRequest = { timelinePickerOpen = false },
 			) {
 				DropdownMenuItem(
