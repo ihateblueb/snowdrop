@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -240,7 +241,7 @@ fun TimelineView() = ViewSurface {
 
 		RefreshableTimeline(
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-			timelineComponent = { Status(it) },
+			timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 			refreshKey = timelineType,
 			countTowardsScrollingUpward = true
 		)

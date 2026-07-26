@@ -141,7 +141,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					},
 					onRefresh = { offset = 0 },
 					refreshKey = refreshKey,
-					timelineComponent = { Status(it) },
+					timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 					distinctCheck = true
 				)
 				1 -> RefreshableTimeline(
@@ -152,7 +152,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					},
 					onRefresh = { offset = 0 },
 					refreshKey = refreshKey,
-					timelineComponent = { AccountRow(account = it) },
+					timelineComponent = { item, _ -> AccountRow(account = item) },
 					distinctCheck = true
 				)
 			}

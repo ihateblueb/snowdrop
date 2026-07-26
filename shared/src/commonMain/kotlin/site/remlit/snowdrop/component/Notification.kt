@@ -128,7 +128,7 @@ fun Notification(notification: Notification) {
 	if (translationKey != null) show = true
 
 	if (notification.type == "mention" && notification.status != null) {
-		Status(notification.status)
+		Status(notification.status, {})
 	} else if (show) {
 		Column {
 			Column(

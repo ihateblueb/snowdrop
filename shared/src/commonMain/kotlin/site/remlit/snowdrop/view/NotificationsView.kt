@@ -201,6 +201,6 @@ fun NotificationsView() = ViewSurface {
 	RefreshableTimeline(
 		fetchMethod = { maxId, minId, sinceId -> getNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes()) },
 		refreshKey = refreshKey,
-		timelineComponent = { Notification(it) },
+		timelineComponent = { item, _ -> Notification(item) }, // todo: onUpdate
 	)
 }

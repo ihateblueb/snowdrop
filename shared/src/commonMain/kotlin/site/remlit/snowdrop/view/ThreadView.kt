@@ -64,8 +64,10 @@ fun ThreadView(id: String) = ViewSurface {
 		descendants.clear()
 
 		val res = getStatusContext(id)
-		if (res.error) return@LaunchedEffect
-		if (res.response == null) return@LaunchedEffect
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@LaunchedEffect
+		}
 		ancestors.addAll(res.response.ancestors)
 		descendants.addAll(res.response.descendants)
 
@@ -97,6 +99,7 @@ fun ThreadView(id: String) = ViewSurface {
 		}
 	)
 
+	// todo: implement onUpdate
 	if (!ready || status == null) {
 		Column(
 			modifier = Modifier.fillMaxHeight().fillMaxWidth(),
@@ -112,19 +115,19 @@ fun ThreadView(id: String) = ViewSurface {
 			items(
 				items = ancestors,
 				key = { it.id }
-			) { status ->
-				StatusComponent(status)
+			) { item ->
+				StatusComponent(item, {  })
 			}
 
 			item(key = status!!.id) {
-				StatusComponent(status!!)
+				StatusComponent(status!!, {  })
 			}
 
 			items(
 				items = descendants,
 				key = { it.id }
-			) { status ->
-				StatusComponent(status)
+			) { item ->
+				StatusComponent(item, {  })
 			}
 		}
 	}

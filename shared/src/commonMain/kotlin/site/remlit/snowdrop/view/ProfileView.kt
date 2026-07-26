@@ -528,7 +528,7 @@ fun ProfileView(id: String) = ViewSurface {
 					}
 				},
 				fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-				timelineComponent = { Status(it) },
+				timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 				refreshKey = selectedTab,
 				countTowardsScrollingUpward = true,
 				scrollToTopPostRefresh = false,

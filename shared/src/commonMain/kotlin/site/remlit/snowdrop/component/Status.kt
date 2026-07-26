@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,6 +74,7 @@ import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
 import site.remlit.snowdrop.api.statuses.deleteStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
+import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.unbookmarkStatus
@@ -93,7 +95,6 @@ import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
-import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -143,6 +144,7 @@ import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
 import snowdrop.shared.generated.resources.x_boosted
+import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 
@@ -155,7 +157,10 @@ import kotlin.time.Duration.Companion.seconds
  * */
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
-fun Status(status: Status) {
+fun Status(
+	status: Status,
+	onUpdate: (Status?) -> Unit,
+) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
 	val snackbarController = LocalSnackbarController.current
@@ -165,6 +170,10 @@ fun Status(status: Status) {
 	val haptics = LocalHapticFeedback.current
 	val focusManager = LocalFocusManager.current
 	val coroutineScope = rememberCoroutineScope()
+
+	// this exists so we can make sure other LaunchedEffects don't run until their key changes
+	var firstCompositionDone by remember { mutableStateOf(false) }
+	LaunchedEffect(Unit) { firstCompositionDone = true }
 
 	var isVisible by remember { mutableStateOf(true) }
 
@@ -176,20 +185,46 @@ fun Status(status: Status) {
 	val currentAccount by remember { getCurrentAccountObjectFlow() }.collectAsStateWithLifecycle(null)
 	var showEmojiPicker by remember { mutableStateOf(false) }
 
+	var status by remember { mutableStateOf(status) }
 	var realStatus by remember { mutableStateOf(status) }
 	var isReblog by remember { mutableStateOf(false) }
 	var rebloggingAccount by remember { mutableStateOf<Account?>(null) }
 	var isMine by remember { mutableStateOf(false) }
 	//todo: or is admin? figure out how to do that
 
-	if (status.reblog != null) {
-		realStatus = status.reblog!!
-		isReblog = true
-		rebloggingAccount = status.account
+	fun prepStatus() {
+		Logger.d { "(Status) prepStatus ${status.id}" }
+
+		if (status.reblog != null) {
+			realStatus = status.reblog!!
+			isReblog = true
+			rebloggingAccount = status.account
+		} else {
+			realStatus = status
+		}
 	}
+
+	prepStatus()
+	LaunchedEffect(status) { if (firstCompositionDone) prepStatus() }
 
 	if (realStatus.account?.id == currentAccount?.id)
 		isMine = true
+
+	suspend fun updateStatus(delete: Boolean = false) {
+		if (delete) {
+			isVisible = false
+			return onUpdate(null)
+		}
+
+		val res = getStatus(status.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarController)
+			return
+		}
+
+		status = res.response
+		onUpdate(res.response)
+	}
 
 	var cwOpen by remember { mutableStateOf(false) }
 	var showDropdown by remember { mutableStateOf(false) }
@@ -474,26 +509,25 @@ fun Status(status: Status) {
 									},
 									state = rememberTooltipState()
 								) {
+									val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
 									OutlinedButton(
 										onClick = {
 											vibrate(!it.me, haptics)
 
-											val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
-											if (it.me) {
-												coroutineScope.launch {
-													val res = unreactFromStatus(realStatus.id, tempName)
-													realStatus = res.response!!
-													if (isReblog) status.reblog = res.response
-												}
-											} else if (!it.name.contains("@")) {
-												coroutineScope.launch {
-													val res = reactToStatus(realStatus.id, tempName)
-													realStatus = res.response!!
-													if (isReblog) status.reblog = res.response
-												}
-											} else {
-												coroutineScope.launch {
-													snackbarController.showSnackbar("You cannot react with a remote emoji")
+											coroutineScope.launch {
+												val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
+
+												if (it.me || !it.name.contains("@")) {
+													val res = if (it.me) unreactFromStatus(realStatus.id, tempName)
+														else reactToStatus(realStatus.id, tempName)
+													if (res.error || res.response == null) {
+														res.handleError(snackbarController)
+														return@launch
+													}
+
+													updateStatus()
+												} else {
+													snackbarController.showSnackbar(cannotUseRemoteEmojiMessage)
 												}
 											}
 										},
@@ -577,17 +611,17 @@ fun Status(status: Status) {
 
 							vibrate(!realStatus.reblogged, haptics)
 
-							bgIO {
+							coroutineScope.launch {
 								val res: ApiResponse<Status> = if (realStatus.reblogged) unreblogStatus(realStatus.id)
-								else reblogStatus(realStatus.id)
+									else reblogStatus(realStatus.id)
 								if (res.error || res.response == null) {
 									res.handleError(snackbarController)
-									return@bgIO
+									vibrateError(haptics)
+									return@launch
 								}
 
-								// returns the status created for reblog, ooorr not sometimes.
-								realStatus = res.response.reblog ?: res.response
-								if (isReblog) status.reblog = res.response.reblog ?: res.response
+								if (rebloggingAccount?.id == currentAccount?.id) updateStatus(delete = true)
+								else updateStatus()
 							}
 						},
 						colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -618,15 +652,16 @@ fun Status(status: Status) {
 						onClick = {
 							vibrate(!realStatus.favourited, haptics)
 
-							bgIO {
+							coroutineScope.launch {
 								val res: ApiResponse<Status> = if (realStatus.favourited) unfavouriteStatus(realStatus.id)
-								else favouriteStatus(realStatus.id)
+									else favouriteStatus(realStatus.id)
 								if (res.error || res.response == null) {
 									res.handleError(snackbarController)
-									return@bgIO
+									vibrateError(haptics)
+									return@launch
 								}
-								realStatus = res.response
-								if (isReblog) status.reblog = res.response
+
+								updateStatus()
 							}
 						},
 						colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
@@ -855,7 +890,8 @@ fun Status(status: Status) {
 												vibrateError(haptics)
 												return@launch
 											}
-											isVisible = false
+
+											updateStatus(delete = true)
 										}
 									}
 								)
@@ -878,10 +914,13 @@ fun Status(status: Status) {
 						showEmojiPicker = !showEmojiPicker
 
 						val res = reactToStatus(realStatus.id, ":${it.shortcode}:")
-						if (isReblog)
-							status.reblog = res.response
-						else
-							realStatus = res.response!!
+						if (res.error || res.response == null) {
+							res.handleError(snackbarController)
+							vibrateError(haptics)
+							return@launch
+						}
+
+						updateStatus()
 					}
 				}
 			)

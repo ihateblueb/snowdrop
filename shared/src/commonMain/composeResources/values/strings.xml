@@ -221,4 +221,6 @@
 	<string name="alt_text">Alt text</string>
 	<string name="missing_alt_text">Missing alt text</string>
 	<string name="describe_important_elements_of_your_media">Describe important elements of your media...</string>
+
+	<string name="you_cannot_react_with_a_remote_emoji">You cannot react with a remote emoji</string>
 </resources>

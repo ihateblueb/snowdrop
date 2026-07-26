@@ -61,20 +61,26 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
+
 	fetchMethod: suspend (
 			maxId: String?,
 			minId: String?,
 			sinceId: String?
 		) -> ApiResponse<List<T>>,
 	onRefresh: () -> Unit = {},
-	timelineComponent: @Composable (item: T) -> Unit,
+
+	timelineComponent: @Composable (
+		item: T,
+		onUpdate: ((T?) -> Unit)
+	) -> Unit,
+
 	leadingItem: @Composable () -> Unit = {},
 	trailingItem: @Composable () -> Unit = {},
 	itemModifier: Modifier = Modifier,
 	refreshKey: Any = 0,
 	scrollToTopPostRefresh: Boolean = true,
 	countTowardsScrollingUpward: Boolean = false,
-	distinctCheck: Boolean = false
+	distinctCheck: Boolean = false,
 ) {
 	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
@@ -170,7 +176,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				key = { it.id }
 			) {
 				Box(modifier = itemModifier) {
-					timelineComponent(it)
+					timelineComponent(it) { new ->
+						if (new == null) timeline.remove(it)
+						else timeline[timeline.indexOf(it)] = new
+					}
 				}
 			}
 
