@@ -121,6 +121,6 @@ data class InstanceV1(
 	data class Rule(
 		val id: String,
 		val text: String,
-		val hint: String
+		val hint: String? = null
 	)
 }
