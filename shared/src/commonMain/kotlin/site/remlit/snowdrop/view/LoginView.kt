@@ -111,6 +111,7 @@ fun LoginView() = ViewSurface {
 		waitingForNext = true
 
 		bg {
+			val host = host.replace("http://","").replace("https://","")
 			val existingAccounts = settings.getString("accounts", "")
 			val accountId = "_S-${Uuid.random()}"
 			settings.putString("accounts", "$existingAccounts $accountId")
