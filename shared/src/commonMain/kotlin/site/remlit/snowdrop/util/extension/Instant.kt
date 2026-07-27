@@ -70,3 +70,17 @@ fun Instant.toRelativeString(
 		else translation(Res.string.x_weeks, mapOf("time" to simpleAnnotatedString("$weeks")))
 	} else simpleAnnotatedString("?")
 }
+
+/**
+ * Format to provide to native date formatters for parsing Kotlin Instants
+ * @since 0.0.6-alpha
+ * */
+const val instantFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+
+/**
+ * Get a localized string from an instant.
+ *
+ * @return Localized string (e.g. 27 July 2026 at 12:35pm)
+ * @since 0.0.6-alpha
+ * */
+expect fun Instant.toLocalizedString(): String

@@ -83,6 +83,7 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
+import site.remlit.snowdrop.util.extension.toLocalizedString
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
@@ -121,6 +122,7 @@ import snowdrop.shared.generated.resources.x_followers
 import snowdrop.shared.generated.resources.x_following
 import snowdrop.shared.generated.resources.x_posts
 import snowdrop.shared.generated.resources.yes
+import kotlin.time.Instant
 
 const val headerHeight = 200
 
@@ -536,7 +538,12 @@ fun ProfileView(id: String) = ViewSurface {
 							Row(modifier = Modifier.padding(top = 10.dp)) {
 								// todo: format this, it's just an ugly timestamp right now
 								Text(
-									translation(Res.string.joined_at_x, mapOf("date_time" to simpleAnnotatedString(account!!.createdAt))),
+									translation(
+										Res.string.joined_at_x,
+										mapOf("date_time" to AnnotatedString(
+											Instant.parse(account!!.createdAt).toLocalizedString()
+										))
+									),
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
 							}

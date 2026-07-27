@@ -433,6 +433,11 @@ fun Status(
 						}
 
 						if (realStatus.poll != null) Poll(realStatus)
+
+						val quote = realStatus.quote ?: realStatus.quotedStatus
+						if (quote != null && quote.quotedStatus != null) {
+							MiniStatus(quote.quotedStatus)
+						}
 					}
 				}
 
@@ -481,11 +486,6 @@ fun Status(
 						}
 					} else renderContent()
 
-				}
-
-				val quote = realStatus.quote ?: realStatus.quotedStatus
-				if (quote != null && quote.quotedStatus != null) {
-					MiniStatus(quote.quotedStatus)
 				}
 
 				/*

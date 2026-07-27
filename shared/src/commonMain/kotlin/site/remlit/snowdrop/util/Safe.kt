@@ -48,6 +48,6 @@ inline fun <T> safeReturnable(block: () -> T): T? =
 		throw e
 	} catch (e: Throwable) {
 		Logger.e { "(safeReturnable) Safely caught exception: ${e.message}" }
-		e.printStackTrace()
+		Logger.e { e.stackTraceToString() }
 		return null
 	}
