@@ -107,7 +107,7 @@ fun AboutInstanceView() = ViewSurface {
 							verticalArrangement = Arrangement.spacedBy(5.dp)
 						) {
 							Text("${it.id}. ${it.text}")
-							Text(it.hint, color = MaterialTheme.colorScheme.onSurfaceVariant)
+							if (it.hint != null) Text(it.hint, color = MaterialTheme.colorScheme.onSurfaceVariant)
 						}
 					}
 				}
