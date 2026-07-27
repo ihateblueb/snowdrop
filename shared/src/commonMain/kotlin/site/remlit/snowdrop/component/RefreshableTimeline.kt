@@ -28,12 +28,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.ScrollEndCallback
@@ -107,7 +107,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	}
 
 	suspend fun addOrUpdateTimeline() {
-		Logger.d { "RefreshableTimeline,addOrUpdateTimeline called" }
+		debug { "(RefreshableTimeline) addOrUpdateTimeline called" }
 		scrollingUpward = true
 		isRefreshing = true
 		val res = fetchMethod(null, null, null)

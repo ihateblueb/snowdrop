@@ -1,6 +1,5 @@
 package site.remlit.snowdrop.util.config
 
-import androidx.compose.animation.core.tween
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -13,7 +12,7 @@ val kamelConfig = KamelConfig {
 	animatedImageDecoder()
 
 	httpUrlFetcher {
-		// 100 MiB
-		httpCache(100 * 1024 * 1024)
+		// 250 MiB
+		httpCache(250 * 1024 * 1024)
 	}
 }

@@ -40,7 +40,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
@@ -68,12 +67,14 @@ import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.transitionedComposable
 import site.remlit.snowdrop.view.*
+import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView
 import site.remlit.snowdrop.view.debug.DebugStorageView
 import site.remlit.snowdrop.view.settings.*
@@ -148,6 +149,8 @@ object WellbeingSettingsRoute
 object DebugRoute
 @Serializable
 data class DebugStorageRoute(val storage: Int)
+@Serializable
+object DebugLogRoute
 
 
 val bottomNavEnterAnimation = fadeIn() + slideInVertically(initialOffsetY = { it })
@@ -181,7 +184,7 @@ fun App() = safe {
 	DisposableEffect(Unit) {
 		ExternalUriHandler.listener = { uri ->
 			val parsed = safeReturnable { Url(uri) }
-			Logger.d { "URI received & parsed: $parsed" }
+			debug { "(App) ExternalUriHandler received & parsed: $parsed" }
 
 			if (parsed?.host == "oauth-callback" && parsed.parameters.contains("code"))
 				blockingSettings.putString("oauth_callback", parsed.parameters["code"]!!)
@@ -203,6 +206,7 @@ fun App() = safe {
 		atRoute<WellbeingSettingsRoute>(currentDest) ||
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
+		atRoute<DebugLogRoute>(currentDest) ||
 		atRoute<StatusMediaAttachmentRoute>(currentDest)
 
 	val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
@@ -390,6 +394,7 @@ fun App() = safe {
 							val args = it.toRoute<DebugStorageRoute>()
 							DebugStorageView(args.storage)
 						}
+						transitionedComposable<DebugLogRoute> { DebugLogView() }
 					}
 				}
 			}

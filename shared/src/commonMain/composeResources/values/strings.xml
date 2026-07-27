@@ -82,6 +82,7 @@
 
 	<string name="storage">Storage</string>
 	<string name="cache">Cache</string>
+	<string name="logs">Logs</string>
 	<string name="toggle_logged_in_state">Toggle logged in state</string>
 	<string name="reset_feature_determinations">Reset feature determinations</string>
 	<string name="clear_cache">Clear cache</string>

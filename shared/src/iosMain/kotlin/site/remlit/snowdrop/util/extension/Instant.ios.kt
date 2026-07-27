@@ -1,6 +1,5 @@
 package site.remlit.snowdrop.util.extension
 
-import co.touchlab.kermit.Logger
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSTimeZone
 import platform.Foundation.systemTimeZone
@@ -18,10 +17,12 @@ actual fun Instant.toLocalizedString(): String {
 		parser.dateFromString(this.toString())
 	} ?: return this.toString()
 
-	return NSDateFormatter().apply {
-		this.timeZone = NSTimeZone.systemTimeZone()
-		// https://developer.apple.com/documentation/foundation/dateformatter/style, enum 0-4
-		this.dateStyle = 2.toULong() // medium
-		this.timeStyle = 1.toULong() // short
-	}.stringFromDate(date)
+	return safeReturnable {
+		NSDateFormatter().apply {
+			this.timeZone = NSTimeZone.systemTimeZone()
+			// https://developer.apple.com/documentation/foundation/dateformatter/style, enum 0-4
+			this.dateStyle = 2.toULong() // medium
+			this.timeStyle = 1.toULong() // short
+		}.stringFromDate(date)
+	} ?: this.toString()
 }

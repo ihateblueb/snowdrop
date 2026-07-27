@@ -1,6 +1,5 @@
 package site.remlit.snowdrop.util.config
 
-import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -11,15 +10,20 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.exception.ApiException
+import site.remlit.snowdrop.util.log.debug
 
 val httpClient = HttpClient {
+	val userAgent = "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}-${GradleVariables.gitBranch}"
+
 	defaultRequest {
-		header("User-Agent", "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}-${GradleVariables.gitBranch}")
+		header("User-Agent", userAgent)
 	}
 
 	install(ContentNegotiation) {
 		json(json)
 	}
+
+	debug { "(HttpClient) created ktor client with ua $userAgent" }
 }
 
 suspend inline fun <reified T> endOfRequest(req: HttpResponse): T {
@@ -30,7 +34,7 @@ suspend inline fun <reified T> endOfRequest(req: HttpResponse): T {
 		)
 
 	val body = req.body<T>()
-	Logger.d {
+	debug {
 		"${req.status.value} - ${req.request.url}" +
 			"\nBody: $body"
 	}

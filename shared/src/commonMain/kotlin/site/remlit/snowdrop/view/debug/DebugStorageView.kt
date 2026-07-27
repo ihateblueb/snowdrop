@@ -27,7 +27,6 @@ import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.getCacheManifest
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.account
 import snowdrop.shared.generated.resources.cache
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.storage

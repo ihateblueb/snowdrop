@@ -3,11 +3,11 @@ package site.remlit.snowdrop.util
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import co.touchlab.kermit.Logger
 import site.remlit.snowdrop.api.instance.getInstanceV1
 import site.remlit.snowdrop.api.instance.getInstanceV2
 import site.remlit.snowdrop.model.InstanceV1
 import site.remlit.snowdrop.model.InstanceV2
+import site.remlit.snowdrop.util.log.debug
 
 enum class Software {
 	Mastodon,
@@ -79,7 +79,7 @@ suspend fun determineFeatures() {
 		software = Software.IceshrimpNET
 
 
-	Logger.d { "Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
+	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
 		software == Software.Chuckya ||

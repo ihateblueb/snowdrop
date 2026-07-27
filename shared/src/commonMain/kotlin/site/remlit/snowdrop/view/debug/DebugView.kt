@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.DebugLogRoute
 import site.remlit.snowdrop.DebugStorageRoute
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -25,7 +27,6 @@ import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.resetFeatures
 import site.remlit.snowdrop.util.toggleLoggedInState
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.account
 import snowdrop.shared.generated.resources.cache
 import snowdrop.shared.generated.resources.clear_cache
 import snowdrop.shared.generated.resources.clear_settings
@@ -33,6 +34,7 @@ import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_refresh_24px
+import snowdrop.shared.generated.resources.logs
 import snowdrop.shared.generated.resources.reset_feature_determinations
 import snowdrop.shared.generated.resources.storage
 import snowdrop.shared.generated.resources.toggle_logged_in_state
@@ -78,6 +80,19 @@ fun DebugView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						navHandler.navigate(DebugStorageRoute(1))
+					}
+				)
+			}
+		}
+		item {
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.logs)) },
+					trailingContent = {
+						Icon(painterResource(Res.drawable.icon_chevron_right_24px), null)
+					},
+					modifier = Modifier.clickable {
+						navHandler.navigate(DebugLogRoute)
 					}
 				)
 			}

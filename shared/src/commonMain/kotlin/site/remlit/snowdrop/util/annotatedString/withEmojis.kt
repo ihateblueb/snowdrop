@@ -6,10 +6,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.unit.TextUnit
-import co.touchlab.kermit.Logger
 import site.remlit.snowdrop.component.Emoji
 import site.remlit.snowdrop.component.defaultEmojiSize
 import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.util.log.debug
 
 /**
  * Map a list of emojis to InlineTextContent for use with [AnnotatedString.withEmojis].
@@ -34,7 +34,7 @@ fun mapEmojisToInlineTextContent(
 			)
 		) { Emoji(emoji, fill = true) }
 	}
-	Logger.d { "(mapEmojisToInlineTextContent) mappedEmojis $mappedEmojis" }
+	debug { "(mapEmojisToInlineTextContent) mappedEmojis $mappedEmojis" }
 	return mappedEmojis
 }
 
@@ -50,11 +50,11 @@ fun AnnotatedString.withEmojis(
 	mappedEmojis: Map<String, InlineTextContent>
 ): AnnotatedString {
 	val emojiRegex = mappedEmojis.keys.joinToString("|")
-	Logger.d { "(withEmojis) emojiRegex $emojiRegex" }
+	debug { "(withEmojis) emojiRegex $emojiRegex" }
 
 	return this.let {
 		if (emojiRegex.isNotBlank()) {
-			Logger.d { "(withEmojis) let applying" }
+			debug { "(withEmojis) let applying" }
 			it.replaceAnnotated(emojiRegex.toRegex()) { match ->
 				appendInlineContent(match.value, match.value)
 			}

@@ -1,11 +1,8 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -25,11 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
@@ -60,7 +54,7 @@ import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.determineFeatures
 import site.remlit.snowdrop.util.getAccountObject
 import site.remlit.snowdrop.util.getAccounts
-import site.remlit.snowdrop.util.listItemClip
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.switchAccount
@@ -68,7 +62,6 @@ import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._continue
 import snowdrop.shared.generated.resources.debug
-import snowdrop.shared.generated.resources.icon_snowdrop_24
 import snowdrop.shared.generated.resources.icon_snowdrop_36
 import snowdrop.shared.generated.resources.instance_host
 import snowdrop.shared.generated.resources.ok
@@ -136,6 +129,7 @@ fun LoginView() = ViewSurface {
 				"&redirect_uri=$redirectUri"+
 				"&scope=$authScopes"+
 				"&client_id=${res.response.clientId}"
+			debug { "(LoginView) created auth link: $authLink" }
 
 			uriHandler.openUri(authLink)
 		}
@@ -143,7 +137,6 @@ fun LoginView() = ViewSurface {
 
 	fun finishButtonPressed() = runBlocking {
 		val res = createToken(oauthCallbackCode!!)
-		Logger.d { res.toString() }
 		blockingSettings.remove("oauth_callback")
 
 		if (res.error || res.response == null) {
@@ -169,6 +162,7 @@ fun LoginView() = ViewSurface {
 			it.second?.id == verifyCredentialsRes.response.id
 		}
 		if (existingAccount != null) {
+			debug { "(LoginView) found existing account ${existingAccount.first}, refreshing token" }
 			logoutAccount(currentAccountId!!)
 			blockingSettings.putString("account_${existingAccount.first}_token", res.response.accessToken)
 			switchAccount(existingAccount.first, navController)

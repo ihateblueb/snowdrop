@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -36,6 +35,7 @@ import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.putNavigationBarOrder
 import site.remlit.snowdrop.util.settings
@@ -123,7 +123,7 @@ fun AppearanceSettingsView() = ViewSurface {
 			var tabOrder by remember { mutableStateOf(getNavigationBarOrderBlocking().mapToNavigationOptions()) }
 
 			LaunchedEffect(tabOrder) {
-				Logger.d { "(launched effect) taborder $tabOrder" }
+				debug { "(AppearanceSettingsView) launched effect taborder $tabOrder" }
 				putNavigationBarOrder(tabOrder.joinToString(separator = " "))
 			}
 

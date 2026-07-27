@@ -1,8 +1,9 @@
 package site.remlit.snowdrop.util
 
-import co.touchlab.kermit.Logger
 import io.ktor.utils.io.CancellationException
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.util.log.err
+import site.remlit.snowdrop.util.log.exception
 
 /**
  * Runs block of code with exception handling. Supports any Throwable.
@@ -14,8 +15,8 @@ inline fun safe(block: () -> Unit) =
 	try { block() } catch(e: CancellationException) {
 		throw e
 	} catch (e: Throwable) {
-		Logger.e { "(safe) Safely caught exception: ${e.message}" }
-		e.printStackTrace()
+		err { "(safe) Safely caught exception: ${e.message}" }
+		exception { e }
 	}
 
 /**
@@ -31,8 +32,8 @@ inline fun <T> safeApiRequest(block: () -> T): ApiResponse<T> =
 	} catch(e: CancellationException) {
 		throw e
 	} catch (e: Throwable) {
-		Logger.e { "(safeApiRequest) Safely caught exception: ${e.message}" }
-		e.printStackTrace()
+		err { "(safeApiRequest) Safely caught exception: ${e.message}" }
+		exception { e }
 		return ApiResponse(error = true, message = e.message)
 	}
 
@@ -47,7 +48,7 @@ inline fun <T> safeReturnable(block: () -> T): T? =
 	try { return block() } catch(e: CancellationException) {
 		throw e
 	} catch (e: Throwable) {
-		Logger.e { "(safeReturnable) Safely caught exception: ${e.message}" }
-		Logger.e { e.stackTraceToString() }
+		err { "(safeReturnable) Safely caught exception: ${e.message}" }
+		exception { e }
 		return null
 	}

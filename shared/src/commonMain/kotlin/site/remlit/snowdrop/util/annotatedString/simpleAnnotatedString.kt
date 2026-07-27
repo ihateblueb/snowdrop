@@ -10,6 +10,10 @@ import androidx.compose.ui.text.buildAnnotatedString
  *
  * @since 0.0.3-alpha
  * */
+@Deprecated(
+	message = "Deprecated since 0.0.6-alpha. Better pre-existing solution was available.",
+	replaceWith = ReplaceWith("AnnotatedString(string)")
+)
 fun simpleAnnotatedString(string: String): AnnotatedString =
 	buildAnnotatedString {
 		append(string)

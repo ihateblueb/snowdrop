@@ -78,14 +78,13 @@ fun EmojiPicker(
 
 		val recentlyUsed = mutableListOf<Emoji>()
 		recentlyUsedShortcodes.split(" ").forEach { r ->
-			// todo: test
 			emojis.firstOrNull { it.shortcode == r }?.let { recentlyUsed.add(it) }
 		}
 		categorized[stringResource(Res.string.recently_used)] = recentlyUsed
 
 		emojis.forEach {
 			val category = it.category ?: stringResource(Res.string.uncategorized)
-			categorized[category] = categorized.getOrElse(category) { mutableListOf() }.plus(it)
+			categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
 		}
 
 

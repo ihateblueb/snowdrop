@@ -59,7 +59,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
-import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,6 +102,7 @@ import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.getPlatform
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.util.vibrateError
@@ -190,10 +190,10 @@ fun Status(
 	var isReblog by remember { mutableStateOf(false) }
 	var rebloggingAccount by remember { mutableStateOf<Account?>(null) }
 	var isMine by remember { mutableStateOf(false) }
-	//todo: or is admin? figure out how to do that
+	// todo: or is admin? figure out how to do that
 
 	fun prepStatus() {
-		Logger.d { "(Status) prepStatus ${status.id}" }
+		debug { "(Status) prepStatus ${status.id}" }
 
 		if (status.reblog != null) {
 			realStatus = status.reblog!!
