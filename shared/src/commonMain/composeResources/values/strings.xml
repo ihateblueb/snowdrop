@@ -110,6 +110,7 @@
 	<string name="show_content">Show content</string>
 	<string name="hide_content">Hide content</string>
 
+	<string name="copy_handle">Copy handle</string>
 	<string name="copy_link">Copy link</string>
 	<string name="open_in_browser">Open in browser</string>
 	<string name="bookmark">Bookmark</string>

@@ -18,8 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +40,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -79,28 +83,35 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
+import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.util.vibrateError
+import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
+import snowdrop.shared.generated.resources.copy_handle
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follows_you
+import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
+import snowdrop.shared.generated.resources.icon_more_vert_24px
+import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_at_x
 import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.mutuals
+import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
@@ -120,6 +131,9 @@ fun ProfileView(id: String) = ViewSurface {
 	val snackbarHandler = LocalSnackbarController.current
 	val currentDest = navHandler.currentDestination
 	val haptics = LocalHapticFeedback.current
+	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
+	val clipboardManager = LocalClipboardManager.current
+	val uriHandler = LocalUriHandler.current
 	val coroutineScope = rememberCoroutineScope()
 
 	/* Preferences */
@@ -206,13 +220,48 @@ fun ProfileView(id: String) = ViewSurface {
 					) {
 						Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 					}
+				}
 
-					// open dropdown,
-					// dropdown:
-					// - view on remote
-					// - copy handle
-					// - copy link
-					//
+				var dropdownVisible by remember { mutableStateOf(false) }
+				IconButton(
+					onClick = {
+						dropdownVisible = !dropdownVisible
+					}
+				) {
+					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
+				}
+
+				DropdownMenu(
+					expanded = dropdownVisible,
+					onDismissRequest = { dropdownVisible = false }
+				) {
+					DropdownMenuItem(
+						text = { Text(stringResource(Res.string.copy_handle)) },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
+						},
+						onClick = {
+							coroutineScope.launch {
+								val local = !account!!.acct.contains("@")
+								clipboardManager.setText(AnnotatedString(
+									"@${account!!.acct}" + if (local) "@${getCurrentAccountHost()}" else ""
+								))
+								vibrateSoft(haptics)
+								dropdownVisible = false
+							}
+						}
+					)
+
+					DropdownMenuItem(
+						text = { Text(stringResource(Res.string.open_in_browser)) },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
+						},
+						onClick = {
+							uriHandler.openUri(account!!.url)
+							dropdownVisible = false
+						}
+					)
 				}
 			}
 		)
