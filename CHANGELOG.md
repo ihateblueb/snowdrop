@@ -1,6 +1,13 @@
 # Snowdrop Changelog
 
-## [Unreleased]
+## [Unreleased (0.0.6-alpha)]
+
+### Added
+- New logging, including a log viewing page and copy button
+
+### Fixed
+- Timelines not updating properly
+- Emojis missing from places where they belong
 
 ## [0.0.5-alpha]
 
