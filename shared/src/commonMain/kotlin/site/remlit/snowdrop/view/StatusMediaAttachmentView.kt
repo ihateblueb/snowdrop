@@ -1,16 +1,22 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -35,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -65,42 +72,36 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 		modifier = Modifier.background(Color.Black)
 			.fillMaxSize()
 	) {
-		AnimatedVisibility(
-			showDecorations,
-			enter = fadeIn() + slideInVertically(),
-			exit = slideOutVertically() + fadeOut()
-		) {
-			// todo: image should not be clipped so it can overflow and be shown behind the top app bar
-			//  without it having to start there
-			TopAppBar(
-				navigationIcon = {
-					IconButton(onClick = { navHandler.popBackStack() }) {
-						Icon(painterResource(Res.drawable.icon_close_24px), null)
-					}
-				},
-				title = {},
-				colors = TopAppBarDefaults.topAppBarColors(
-					containerColor = Color(0x80000000),
-					navigationIconContentColor = Color.White
-				),
-				actions = {
-					/*
-
-					var dropdown by remember { mutableStateOf(false) }
-					IconButton(onClick = { dropdown = !dropdown }) {
-						Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
-					}
-
-					DropdownMenu(
-						expanded = dropdown,
-						onDismissRequest = { dropdown = false }
-					) {
-					}
-
-					* */
+		TopAppBar(
+			navigationIcon = {
+				IconButton(onClick = { navHandler.popBackStack() }) {
+					Icon(painterResource(Res.drawable.icon_close_24px), null)
 				}
-			)
-		}
+			},
+			title = {},
+			colors = TopAppBarDefaults.topAppBarColors(
+				containerColor = Color(0x80000000),
+				navigationIconContentColor = Color.White
+			),
+			modifier = Modifier.animateContentSize(tween(100))
+				.height(if (showDecorations) Dp.Unspecified else 0.dp),
+			actions = {
+				/*
+
+			var dropdown by remember { mutableStateOf(false) }
+			IconButton(onClick = { dropdown = !dropdown }) {
+				Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
+			}
+
+			DropdownMenu(
+				expanded = dropdown,
+				onDismissRequest = { dropdown = false }
+			) {
+			}
+
+				* */
+			}
+		)
 
 		if (status != null) {
 			Column(
@@ -156,7 +157,11 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 							media,
 							includeFallback = false,
 							supportZoomGestures = true,
-							modifier = Modifier.fillMaxSize()
+							modifier = Modifier.fillMaxSize(),
+							onTransform = { userTransform ->
+								showDecorations = !(userTransform.scale.scaleX != 1.0f &&
+									userTransform.scale.scaleY != 1.0f)
+							}
 						)
 					}
 				}

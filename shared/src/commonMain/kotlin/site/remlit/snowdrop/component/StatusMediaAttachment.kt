@@ -19,22 +19,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.Transform
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
@@ -63,7 +67,7 @@ fun StatusMediaAttachment(
 	supportZoomGestures: Boolean = false, // todo: implement
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit = {},
-	onZoom: () -> Unit = {},
+	onTransform: (Transform) -> Unit = {}
 ) {
 	val uriHandler = LocalUriHandler.current
 	val interactionSource = remember { MutableInteractionSource() }
@@ -95,6 +99,10 @@ fun StatusMediaAttachment(
 		when (val type = attachment.type.split("/").first()) {
 			"image" -> if (supportZoomGestures) {
 				val zoomState = rememberZoomState()
+
+				LaunchedEffect(zoomState.zoomable.userTransform) {
+					onTransform(zoomState.zoomable.userTransform)
+				}
 
 				when (val res = asyncPainterResource(attachment.url)) {
 					is Resource.Success -> {

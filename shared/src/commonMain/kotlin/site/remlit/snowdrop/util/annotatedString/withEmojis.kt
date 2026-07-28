@@ -50,11 +50,9 @@ fun AnnotatedString.withEmojis(
 	mappedEmojis: Map<String, InlineTextContent>
 ): AnnotatedString {
 	val emojiRegex = mappedEmojis.keys.joinToString("|")
-	debug { "(withEmojis) emojiRegex $emojiRegex" }
 
 	return this.let {
 		if (emojiRegex.isNotBlank()) {
-			debug { "(withEmojis) let applying" }
 			it.replaceAnnotated(emojiRegex.toRegex()) { match ->
 				appendInlineContent(match.value, match.value)
 			}

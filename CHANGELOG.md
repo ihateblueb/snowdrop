@@ -5,6 +5,7 @@
 ### Added
 - New logging, including a log viewing page and copy button
 - List timelines
+- Hide media viewer decorations when you zoom in
 
 ### Fixed
 - Timelines not updating properly
