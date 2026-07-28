@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.flowOn
 import site.remlit.snowdrop.api.accounts.getAccount
 import site.remlit.snowdrop.api.getEmojis
 import site.remlit.snowdrop.api.instance.getInstanceV1
+import site.remlit.snowdrop.api.lists.getLists
+import site.remlit.snowdrop.model.ApiList
 import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.Emoji
@@ -105,5 +107,24 @@ fun fetchInstance(snackbarHostState: SnackbarHostState? = null): Flow<InstanceV1
 	} else {
 		emit(req.response)
 		putCacheEntry("instance", req.response)
+	}
+}.flowOn(Dispatchers.IO)
+
+/**
+ * Gets the cached representation of a user's lists (if available) before
+ * the request to get a fresh version finishes.
+ * */
+fun fetchLists(snackbarHostState: SnackbarHostState? = null): Flow<List<ApiList>> = flow {
+	val cached = getCacheEntry("lists")
+	if (cached != null) safe {
+		emit(cached.getContent<List<ApiList>>())
+	}
+
+	val req = getLists()
+	if (req.error || req.response == null) {
+		if (snackbarHostState != null) req.handleError(snackbarHostState)
+	} else {
+		emit(req.response)
+		putCacheEntry("lists", req.response)
 	}
 }.flowOn(Dispatchers.IO)

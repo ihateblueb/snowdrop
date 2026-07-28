@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -43,6 +42,7 @@ import site.remlit.snowdrop.SettingsRoute
 import site.remlit.snowdrop.api.getBookmarks
 import site.remlit.snowdrop.api.timeline.getBubbleTimeline
 import site.remlit.snowdrop.api.timeline.getHomeTimeline
+import site.remlit.snowdrop.api.timeline.getListTimeline
 import site.remlit.snowdrop.api.timeline.getPublicTimeline
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
@@ -50,25 +50,34 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchLists
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmarks
 import snowdrop.shared.generated.resources.bubble
+import snowdrop.shared.generated.resources.create_list
 import snowdrop.shared.generated.resources.global
 import snowdrop.shared.generated.resources.home
+import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
 import snowdrop.shared.generated.resources.icon_bubble_chart_24px
+import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_globe_24px
 import snowdrop.shared.generated.resources.icon_home_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.icon_list_24px
 import snowdrop.shared.generated.resources.icon_map_24px
 import snowdrop.shared.generated.resources.icon_settings_24px
+import snowdrop.shared.generated.resources.list
+import snowdrop.shared.generated.resources.lists
 import snowdrop.shared.generated.resources.local
 
+//<editor-fold name="ScrollEndCallback">
 @Composable
 inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
 	val postsTillEndBeforeFetch = 10
@@ -83,6 +92,7 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
 			.collect()
 	}
 }
+//</editor-fold>
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
@@ -92,14 +102,26 @@ fun TimelineView() = ViewSurface {
 		verticalArrangement = Arrangement.Center
 	) {
 		val navHandler = LocalNavController.current
+		val snackbarController = LocalSnackbarController.current
 		val haptics = LocalHapticFeedback.current
 
-		// 0 - home, 1 - local, 2 - bubble, 3 - global, 4 - bookmarks, 5 - list
-		val timelineType by retain { settings.getIntFlow("timeline", 0) }
-			.collectAsStateWithLifecycle(0)
-		var timelinePickerOpen by remember { mutableStateOf(false) }
-		var list by remember { mutableStateOf<String?>(null) }
+		var refreshKey by remember { mutableStateOf(0) }
 
+		val lists by remember { fetchLists(snackbarController) }
+			.collectAsStateWithLifecycle(null)
+
+		// 0 - home, 1 - local, 2 - bubble, 3 - global, 4 - bookmarks, 5 - list
+		val timelineType by remember { settings.getIntFlow("timeline", 0) }
+			.collectAsStateWithLifecycle(0)
+		val listId by remember { settings.getStringFlow("timeline_list_id", "") }
+			.collectAsStateWithLifecycle("")
+
+		LaunchedEffect(timelineType, listId) { refreshKey++ }
+
+		var timelinePickerOpen by remember { mutableStateOf(false) }
+		var listPickerOpen by remember { mutableStateOf(false) }
+
+		//<editor-fold name="getTimeline method">
 		suspend fun getTimeline(
 			maxId: String? = null,
 			minId: String? = null,
@@ -109,13 +131,18 @@ fun TimelineView() = ViewSurface {
 				0 -> getHomeTimeline(maxId = maxId, minId = minId, sinceId = sinceId)
 				1 -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, local = true)
 				2 -> if (getFeature("bubble_timeline_akkoma")) getBubbleTimeline(maxId = maxId, minId = minId, sinceId = sinceId)
-					else getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, bubble = true)
+				else getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, bubble = true)
 				3 -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, remote = true)
 
-				else -> getBookmarks(maxId = maxId, minId = minId, sinceId = sinceId) // else 4
+				4 -> getBookmarks(maxId = maxId, minId = minId, sinceId = sinceId)
+				5 -> getListTimeline(list = listId, maxId = maxId, minId = minId, sinceId = sinceId)
+
+				else -> throw IllegalArgumentException("Invalid timeline type $timelineType")
 			}
 		}
+		//</editor-fold>
 
+		//<editor-fold name="Timeline icon">
 		@Composable
 		fun RenderTimelineTypeIcon(type: Int? = null) {
 			when (type ?: timelineType) {
@@ -125,9 +152,12 @@ fun TimelineView() = ViewSurface {
 				3 -> Icon(painterResource(Res.drawable.icon_globe_24px), null)
 
 				4 -> Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
+				5 -> Icon(painterResource(Res.drawable.icon_list_24px), null)
 			}
 		}
+		//</editor-fold>
 
+		//<editor-fold name="Timeline selection dropdown">
 		@Composable
 		fun RenderTimelineSelectionDropdown() {
 			DropdownMenu(
@@ -184,15 +214,63 @@ fun TimelineView() = ViewSurface {
 						timelinePickerOpen = false
 					}
 				)
+
+				//<editor-fold name="List">
+				Box {
+					DropdownMenuItem(
+						leadingIcon = { RenderTimelineTypeIcon(5) },
+						trailingIcon = { Icon(painterResource(Res.drawable.icon_chevron_right_24px), null) },
+						text = { Text(stringResource(Res.string.lists)) },
+						onClick = {
+							listPickerOpen = !listPickerOpen
+							vibrate(true, haptics)
+						}
+					)
+
+					DropdownMenu(
+						expanded = listPickerOpen,
+						onDismissRequest = { listPickerOpen = false }
+					) {
+						/*
+						todo: implement create list
+						* DropdownMenuItem(
+							leadingIcon = { Icon(painterResource(Res.drawable.icon_add_24px), null) },
+							text = { Text(stringResource(Res.string.create_list)) },
+							onClick = {
+								// todo: open create list page
+								vibrate(true, haptics)
+								listPickerOpen = false
+								timelinePickerOpen = false
+							},
+						)
+
+						if (!lists.isNullOrEmpty()) HorizontalDivider()
+						* */
+
+						lists?.forEach { list ->
+							DropdownMenuItem(
+								onClick = {
+									blockingSettings.putString("timeline_list_id", list.id)
+									blockingSettings.putInt("timeline", 5)
+									vibrate(true, haptics)
+									listPickerOpen = false
+									timelinePickerOpen = false
+								},
+								text = { Text(list.title) }
+							)
+						}
+					}
+				}
+				//</editor-fold>
 			}
 		}
+		//</editor-fold>
 
 
 		/*
-		 *
 		 * Actual Timeline View
-		 *
 		 */
+		//<editor-fold name="Top bar">
 		TopAppBar(
 			navigationIcon = {
 				Box(
@@ -223,6 +301,7 @@ fun TimelineView() = ViewSurface {
 						3 -> Text(stringResource(Res.string.global))
 
 						4 -> Text(stringResource(Res.string.bookmarks))
+						5 -> Text(lists?.first { it.id == listId }?.title ?: stringResource(Res.string.list))
 					}
 
 					if (timelinePickerOpen) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
@@ -237,11 +316,12 @@ fun TimelineView() = ViewSurface {
 				}
 			}
 		)
+		//</editor-fold>
 
 		RefreshableTimeline(
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
 			timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
-			refreshKey = timelineType,
+			refreshKey = refreshKey,
 			countTowardsScrollingUpward = true
 		)
 	}

@@ -133,7 +133,7 @@ data class InstanceV2(
 			val maxOptions: Int = 0,
 			val maxCharactersPerOption: Int = 0,
 			val minExpiration: Int = 0,
-			val maxExperation: Int = 0
+			val maxExpiration: Int = 0
 		)
 
 		@Serializable

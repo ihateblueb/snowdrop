@@ -4,6 +4,7 @@
 
 ### Added
 - New logging, including a log viewing page and copy button
+- List timelines
 
 ### Fixed
 - Timelines not updating properly

@@ -19,6 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,7 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.cache.fetchStatus
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_close_24px
+import snowdrop.shared.generated.resources.icon_more_vert_24px
 
 @Composable
 fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurface {
@@ -80,6 +83,22 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 					containerColor = Color(0x80000000),
 					navigationIconContentColor = Color.White
 				),
+				actions = {
+					/*
+
+					var dropdown by remember { mutableStateOf(false) }
+					IconButton(onClick = { dropdown = !dropdown }) {
+						Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
+					}
+
+					DropdownMenu(
+						expanded = dropdown,
+						onDismissRequest = { dropdown = false }
+					) {
+					}
+
+					* */
+				}
 			)
 		}
 
