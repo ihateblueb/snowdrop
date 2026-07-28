@@ -549,7 +549,7 @@ fun Status(
 											Reaction(it, showTooltip = false)
 
 											if (!blockingSettings.getBoolean("hide_interaction_counters", false))
-												Text("${reaction.count}")
+												Text("${it.count}")
 										}
 									}
 								}
