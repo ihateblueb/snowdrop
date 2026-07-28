@@ -6,10 +6,12 @@
 - New logging, including a log viewing page and copy button
 - List timelines
 - Hide media viewer decorations when you zoom in
+- Emoji tooltips with their names
 
 ### Fixed
 - Timelines not updating properly
 - Emojis missing from places where they belong
+- Weird padding when having content warning field in focus in compose page
 
 ## [0.0.5-alpha]
 

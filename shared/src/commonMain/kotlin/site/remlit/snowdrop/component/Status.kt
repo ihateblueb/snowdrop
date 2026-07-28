@@ -494,6 +494,7 @@ fun Status(
 				*
 				*/
 				if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
+					val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
 					LazyRow(
 						contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
 						horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -505,12 +506,11 @@ fun Status(
 										TooltipAnchorPosition.Above
 									),
 									tooltip = {
-										if (isUnicodeEmoji(it.name)) return@TooltipBox
-										PlainTooltip { Text(":${it.name}:") }
+										if (isUnicodeEmoji(it.name)) PlainTooltip { Text(it.name) }
+										else PlainTooltip { Text(":${it.name}:") }
 									},
 									state = rememberTooltipState()
 								) {
-									val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
 									OutlinedButton(
 										onClick = {
 											vibrate(!it.me, haptics)
@@ -520,7 +520,7 @@ fun Status(
 
 												if (it.me || !it.name.contains("@")) {
 													val res = if (it.me) unreactFromStatus(realStatus.id, tempName)
-														else reactToStatus(realStatus.id, tempName)
+													else reactToStatus(realStatus.id, tempName)
 													if (res.error || res.response == null) {
 														res.handleError(snackbarController)
 														return@launch
@@ -546,20 +546,10 @@ fun Status(
 											horizontalArrangement = Arrangement.spacedBy(5.dp),
 											verticalAlignment = Alignment.CenterVertically
 										) {
-											val emoji = it.toEmoji()
-											if (emoji != null)
-												Box(modifier = Modifier.size(20.dp)) { Emoji(emoji, fill = true) }
-											else when (getPlatform()) {
-												Platform.ANDROID -> Text(it.name)
-												Platform.IOS -> Text(
-													it.name,
-													fontSize = 18.sp,
-													// todo: make this use apple color emoji explicitly, sometimes it uses a non-emoji glyph when one is available. distracting & ugly & unintended
-												)
-											}
+											Reaction(it, showTooltip = false)
 
 											if (!blockingSettings.getBoolean("hide_interaction_counters", false))
-												Text("${it.count}")
+												Text("${reaction.count}")
 										}
 									}
 								}

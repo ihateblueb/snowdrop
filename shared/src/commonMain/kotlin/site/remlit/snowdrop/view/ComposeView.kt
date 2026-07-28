@@ -169,7 +169,6 @@ fun ComposeView(
 
 	var canSubmit by remember { mutableStateOf(false) }
 
-	var keyboardIsFocused by remember { mutableStateOf(false) }
 	var visibilityDropdownOpen by remember { mutableStateOf(false) }
 	var showCwField by remember { mutableStateOf(false) }
 	var showEmojiPicker by remember { mutableStateOf(false) }
@@ -331,7 +330,7 @@ fun ComposeView(
 				expanded = false,
 				modifier = Modifier.fillMaxWidth()
 					.windowInsetsPadding(WindowInsets.ime.exclude(WindowInsets.navigationBars))
-					.padding(start = 10.dp, end = 10.dp, bottom = if (keyboardIsFocused) 10.dp else 0.dp)
+					.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
 			) {
 				Row(
 					verticalAlignment = Alignment.CenterVertically
@@ -545,7 +544,6 @@ fun ComposeView(
 								.focusRequester(focusRequester)
 								.onFocusChanged {
 									if (it.hasFocus) keyboardController?.show()
-									keyboardIsFocused = it.hasFocus
 								}
 								.fillMaxWidth()
 								.fillMaxHeight()
