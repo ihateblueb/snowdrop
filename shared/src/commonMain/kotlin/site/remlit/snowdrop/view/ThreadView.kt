@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.util.LocalContentWarningController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
@@ -37,6 +38,8 @@ import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_visibility_24px
+import snowdrop.shared.generated.resources.icon_visibility_off_24px
 import snowdrop.shared.generated.resources.post
 import snowdrop.shared.generated.resources.post_by_x
 import site.remlit.snowdrop.component.Status as StatusComponent
@@ -45,6 +48,8 @@ import site.remlit.snowdrop.component.Status as StatusComponent
 fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
+	val contentWarningController = LocalContentWarningController.current
+	var forcedContentWarning by remember { mutableStateOf(false) }
 
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
@@ -86,7 +91,6 @@ fun ThreadView(id: String) = ViewSurface {
 			if (status == null) Column {
 				Text(stringResource(Res.string.post))
 			} else Column {
-
 				Text(
 					translation(
 						Res.string.post_by_x,
@@ -95,6 +99,16 @@ fun ThreadView(id: String) = ViewSurface {
 					maxLines = 1,
 					overflow = TextOverflow.Ellipsis
 				)
+			}
+		},
+		actions = {
+			IconButton(onClick = {
+				forcedContentWarning = !forcedContentWarning
+				contentWarningController.defaultValue = forcedContentWarning
+				contentWarningController.setAll(forcedContentWarning)
+			}) {
+				if (!forcedContentWarning) Icon(painterResource(Res.drawable.icon_visibility_24px), null)
+				else Icon(painterResource(Res.drawable.icon_visibility_off_24px), null)
 			}
 		}
 	)

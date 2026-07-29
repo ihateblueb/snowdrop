@@ -114,8 +114,14 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 		PrimaryTabRow(
 			selectedTabIndex = selectedTab
 		) {
-			Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
-			Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.accounts)) })
+			Tab(
+				selectedTab == 0,
+				onClick = { selectedTab = 0 },
+				text = { Text(stringResource(Res.string.posts)) })
+			Tab(
+				selectedTab == 1,
+				onClick = { selectedTab = 1 },
+				text = { Text(stringResource(Res.string.accounts)) })
 			// todo: implement hashtags in search results
 			// Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.hashtags)) })
 		}

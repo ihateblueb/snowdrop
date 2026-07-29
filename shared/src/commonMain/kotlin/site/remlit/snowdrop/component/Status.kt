@@ -87,6 +87,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
+import site.remlit.snowdrop.util.LocalContentWarningController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
@@ -171,6 +172,9 @@ fun Status(
 	val focusManager = LocalFocusManager.current
 	val coroutineScope = rememberCoroutineScope()
 
+	val contentWarningController = LocalContentWarningController.current
+	val cwState = contentWarningController.state
+
 	// this exists so we can make sure other LaunchedEffects don't run until their key changes
 	var firstCompositionDone by remember { mutableStateOf(false) }
 	LaunchedEffect(Unit) { firstCompositionDone = true }
@@ -210,6 +214,9 @@ fun Status(
 	if (realStatus.account?.id == currentAccount?.id)
 		isMine = true
 
+	if (!cwState.containsKey(realStatus.id))
+		cwState[realStatus.id] = contentWarningController.defaultValue
+
 	suspend fun updateStatus(delete: Boolean = false) {
 		if (delete) {
 			isVisible = false
@@ -226,7 +233,6 @@ fun Status(
 		onUpdate(res.response)
 	}
 
-	var cwOpen by remember { mutableStateOf(false) }
 	var showDropdown by remember { mutableStateOf(false) }
 
 	var inThreadView by remember { mutableStateOf(false) }
@@ -448,7 +454,7 @@ fun Status(
 								.clip(RoundedCornerShape(10.dp))
 								.background(WarningColor25)
 								.clickable(onClick = {
-									cwOpen = !cwOpen
+									cwState[realStatus.id] = !cwState.getOrElse(realStatus.id) { false }
 								})
 						) {
 							Row(
@@ -465,7 +471,7 @@ fun Status(
 										fontWeight = FontWeight.Medium
 									)
 									Text(
-										if (!cwOpen) stringResource(Res.string.show_content)
+										if (!cwState.getOrElse(realStatus.id) { false }) stringResource(Res.string.show_content)
 										else stringResource(Res.string.hide_content),
 										fontSize = 12.sp
 									)
@@ -477,7 +483,7 @@ fun Status(
 							}
 						}
 
-						AnimatedVisibility(cwOpen) {
+						AnimatedVisibility(cwState.getOrElse(realStatus.id) { false }) {
 							Column(
 								modifier = Modifier.padding(top = 10.dp)
 							) {
