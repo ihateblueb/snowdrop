@@ -8,12 +8,14 @@
 - Hide media viewer decorations when you zoom in
 - Emoji tooltips with their names
 - Thread view has a button to toggle all content warnings for all posts in a thread
+- Error handling and feedback for accepting and rejecting follow requests
 
 ### Fixed
 - Timelines not updating properly
 - Emojis missing from places where they belong
 - Weird padding when having content warning field in focus in compose page
 - Content warning state persists when posts go off-screen
+- Timestamps on notifications are properly aligned and update like post timestamps do
 
 ## [0.0.5-alpha]
 

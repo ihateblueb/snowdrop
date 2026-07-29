@@ -1,5 +1,10 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,10 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +34,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -34,6 +45,7 @@ import site.remlit.snowdrop.api.followRequest.authorizeFollowRequest
 import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
@@ -41,6 +53,7 @@ import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.a_poll_you_have_voted_in_has_ended
 import snowdrop.shared.generated.resources.accept
@@ -67,6 +80,7 @@ import snowdrop.shared.generated.resources.x_just_posted
 import snowdrop.shared.generated.resources.x_liked_your_post
 import snowdrop.shared.generated.resources.x_reacted_with_x
 import snowdrop.shared.generated.resources.x_requested_to_follow_you
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Notification component.
@@ -77,6 +91,8 @@ import snowdrop.shared.generated.resources.x_requested_to_follow_you
 fun Notification(notification: Notification) {
 	val navHandler = LocalNavController.current
 	val haptics = LocalHapticFeedback.current
+	val snackbarController = LocalSnackbarController.current
+	val coroutineScope = rememberCoroutineScope()
 
 	// only shown once it's certain this notification type is supported
 	var show by remember { mutableStateOf(false) }
@@ -91,6 +107,7 @@ fun Notification(notification: Notification) {
 	var translationKey by remember { mutableStateOf<StringResource?>(null) }
 	val replacementMap = remember { mutableStateMapOf<String, AnnotatedString>() }
 
+	//<editor-fold name="If display name should be shown">
 	val (displayNameAnnotatedString, displayNameEmojiMapping) = htmlToAnnotatedString(notification.account.displayName(), emojis = notification.account.emojis)
 	when (notification.type) {
 		"favourite", "pleroma:emoji_reaction", "reaction", "reblog", "update", "status", "bite",
@@ -98,7 +115,9 @@ fun Notification(notification: Notification) {
 			replacementMap["clickable_display_name"] = displayNameAnnotatedString
 				.withAccountLink(notification.account)
 	}
+	//</editor-fold>
 
+	//<editor-fold name="Notification message">
 	when (notification.type) {
 		"favourite" -> translationKey = Res.string.x_liked_your_post
 		"pleroma:emoji_reaction" -> {
@@ -117,12 +136,13 @@ fun Notification(notification: Notification) {
 		"poll" -> translationKey = Res.string.a_poll_you_have_voted_in_has_ended
 		"status" -> translationKey = Res.string.x_just_posted
 		"bite" -> translationKey = if (notification.bite?.biteBack == true) Res.string.x_bit_you_back
-			else if (notification.status != null) Res.string.x_bit_your_post
-			else Res.string.x_bit_you
+		else if (notification.status != null) Res.string.x_bit_your_post
+		else Res.string.x_bit_you
 		"follow_request" -> translationKey = Res.string.x_requested_to_follow_you
 		"follow" -> translationKey = Res.string.x_followed_you
 		"follow_request_accepted" -> translationKey = Res.string.x_accepted_your_follow_request
 	}
+	//</editor-fold>
 
 	// show toggle on point
 	if (translationKey != null) show = true
@@ -135,6 +155,7 @@ fun Notification(notification: Notification) {
 				modifier = Modifier.padding(15.dp)
 					.fillMaxWidth()
 			) {
+				//<editor-fold name="Notification header">
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(10.dp)
 				) {
@@ -190,28 +211,30 @@ fun Notification(notification: Notification) {
 						Avatar(notification.account, smaller = true)
 					}
 
-					Row(
-						horizontalArrangement = Arrangement.spacedBy(5.dp),
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						// todo: make only display name not wrap
-						Text(
-							text = translation(translationKey!!, replacementMap),
-							modifier = Modifier.weight(1f),
-							lineHeight = with(LocalDensity.current) { smallerAvatarSize.dp.toSp() },
-							inlineContent = displayNameEmojiMapping
-						)
+					Text(
+						text = translation(translationKey!!, replacementMap),
+						modifier = Modifier.weight(1f),
+						lineHeight = with(LocalDensity.current) { smallerAvatarSize.dp.toSp() },
+						inlineContent = displayNameEmojiMapping
+					)
 
+					var timestampKey by remember { mutableStateOf(0) }
+					key(timestampKey) {
 						val timestamp = "${notification.getCreatedAtTimestamp()?.toRelativeString(short = true)}"
-
 						Text(
 							text = timestamp,
 							fontSize = 13.sp,
 							maxLines = 1
 						)
 					}
+					LaunchedEffect(Unit) {
+						delay(10.seconds)
+						timestampKey++
+					}
 				}
+				//</editor-fold>
 
+				//<editor-fold name="Non-mention notifications with a status included">
 				if (notification.status != null) {
 					Column(
 						modifier = Modifier.padding(top = 10.dp)
@@ -219,23 +242,48 @@ fun Notification(notification: Notification) {
 						MiniStatus(notification.status)
 					}
 				}
+				//</editor-fold>
 
+				//<editor-fold name="Follow request actions">
 				if (notification.type == "follow_request") {
-					Row(
-						modifier = Modifier.padding(top = 10.dp),
-						horizontalArrangement = Arrangement.spacedBy(10.dp)
-					) {
-						FilledTonalButton(onClick = { bgIO { authorizeFollowRequest(notification.account.id) } }) {
-							Icon(painterResource(Res.drawable.icon_check_24px), null)
-							Text(stringResource(Res.string.accept))
+					var actionsVisible by rememberSaveable { mutableStateOf(true) }
+
+					fun respondToFollowRequest(accept: Boolean) = coroutineScope.launch {
+						val res = if (accept) authorizeFollowRequest(notification.account.id)
+						else rejectFollowRequest(notification.account.id)
+
+						if (res.error || res.response == null) {
+							res.handleError(snackbarController)
+							vibrateError(haptics)
+							return@launch
 						}
-						OutlinedButton(onClick = { bgIO { rejectFollowRequest(notification.account.id) } }) {
-							Icon(painterResource(Res.drawable.icon_close_24px), null)
-							Text(stringResource(Res.string.reject))
+
+						actionsVisible = false
+					}
+
+					AnimatedVisibility(
+						visible = actionsVisible,
+						enter = expandVertically(),
+						exit = shrinkVertically()
+					) {
+						Row(
+							modifier = Modifier.padding(top = 10.dp),
+							horizontalArrangement = Arrangement.spacedBy(10.dp)
+						) {
+							FilledTonalButton(onClick = { respondToFollowRequest(true) }) {
+								Icon(painterResource(Res.drawable.icon_check_24px), null)
+								Text(stringResource(Res.string.accept))
+							}
+							OutlinedButton(onClick = { respondToFollowRequest(false) }) {
+								Icon(painterResource(Res.drawable.icon_close_24px), null)
+								Text(stringResource(Res.string.reject))
+							}
 						}
 					}
 				}
+				//</editor-fold>
 
+				//<editor-fold name="Bite actions">
 				if (notification.type == "bite") {
 					Row(
 						modifier = Modifier.padding(top = 10.dp),
@@ -269,6 +317,7 @@ fun Notification(notification: Notification) {
 						}
 					}
 				}
+				//</editor-fold>
 			}
 
 			HorizontalDivider(
