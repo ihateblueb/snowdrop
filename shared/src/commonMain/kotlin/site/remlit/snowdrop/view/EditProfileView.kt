@@ -1,6 +1,8 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,11 +18,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -28,17 +33,25 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.accounts.updateCredentials
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
+import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.updateCurrentAccountObject
+import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.automated_account
+import snowdrop.shared.generated.resources.content
+import snowdrop.shared.generated.resources.description
 import snowdrop.shared.generated.resources.discoverable
 import snowdrop.shared.generated.resources.discoverable_description
+import snowdrop.shared.generated.resources.display_name
 import snowdrop.shared.generated.resources.editing_profile
+import snowdrop.shared.generated.resources.fields
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.label
 import snowdrop.shared.generated.resources.locked_account
 import snowdrop.shared.generated.resources.locked_account_description
 import snowdrop.shared.generated.resources.save
@@ -47,6 +60,7 @@ import snowdrop.shared.generated.resources.save
 fun EditProfileView() = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
+	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
 	val currentAccount by getCurrentAccountObjectFlow()
@@ -80,7 +94,7 @@ fun EditProfileView() = ViewSurface {
 		indexableChanged = false
 	}
 
-	val profileChanged = displayNameChanged || noteChanged || botChanged || lockedChanged || discoverableChanged
+	val profileChanged = displayNameChanged || noteChanged|| botChanged || lockedChanged || discoverableChanged
 		|| indexableChanged
 
 	// todo: language
@@ -110,7 +124,6 @@ fun EditProfileView() = ViewSurface {
 			FilledTonalButton(
 				onClick = {
 					coroutineScope.launch {
-						// todo: doesn't work on iceshrimp.js
 						val res = updateCredentials(
 							UpdateCredentialsRequest(
 								displayName = if (displayNameChanged) displayName else null,
@@ -123,6 +136,7 @@ fun EditProfileView() = ViewSurface {
 						)
 						if (res.error || res.response == null) {
 							res.handleError(snackbarHandler)
+							vibrateError(haptics)
 							return@launch
 						}
 
@@ -147,7 +161,7 @@ fun EditProfileView() = ViewSurface {
 					value = displayName,
 					onValueChange = { displayName = it; displayNameChanged = true },
 					maxLines = 1,
-					label = { Text("Display name") },
+					label = { Text(stringResource(Res.string.display_name)) },
 					placeholder = { Text(currentAccount!!.displayName()) },
 					modifier = Modifier.fillMaxWidth()
 				)
@@ -157,7 +171,7 @@ fun EditProfileView() = ViewSurface {
 				OutlinedTextField(
 					value = note,
 					onValueChange = { note = it; noteChanged = true },
-					label = { Text("Description") },
+					label = { Text(stringResource(Res.string.description)) },
 					placeholder = { Text(currentAccount!!.source?.note ?: "") },
 					modifier = Modifier.fillMaxWidth().height(200.dp)
 				)

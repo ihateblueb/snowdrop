@@ -22,13 +22,12 @@ data class ApiResponse<T>(
 	/**
 	 * Handle showing something went wrong to a user.
 	 *
-	 * @param snackbarController Snackbar controller to show snackbar alert
+	 * @param snackbarController Snackbar controller to show alerts
 	 * */
 	fun handleError(snackbarController: SnackbarHostState) {
 		bg {
-			// todo: pass route to this somehow
 			if (error) snackbarController.showSnackbar("Error: $message")
-			else if (response == null) snackbarController.showSnackbar("Error: Response was null")
+			else if (response == null) snackbarController.showSnackbar("Error: Response missing")
 		}
 	}
 }
