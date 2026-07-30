@@ -36,6 +36,7 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.scrollingUpward
+import site.remlit.snowdrop.util.update
 import site.remlit.snowdrop.util.vibrateSoft
 import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
@@ -177,14 +178,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				key = { it.id }
 			) {
 				Box(modifier = itemModifier) {
-					timelineComponent(it) { new ->
-						if (new == null) timeline.remove(it)
-						else {
-							val index = timeline.indexOf(it)
-							if (index >= 0) timeline[index] = new
-							else warn { "(RefreshableTimeline) item ${it.id} requested an update but couldn't be satisfied, index is $index" }
-						}
-					}
+					timelineComponent(it) { new -> timeline.update(it, new) }
 				}
 			}
 

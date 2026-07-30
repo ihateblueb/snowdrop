@@ -140,6 +140,7 @@ import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
+import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.show_content
@@ -164,7 +165,9 @@ import kotlin.time.Duration.Companion.seconds
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
-	lockable: Boolean = false
+	lockable: Boolean = false,
+	pinned: Boolean = false,
+	showDivider: Boolean = true
 ) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
@@ -289,40 +292,77 @@ fun Status(
 			Column(
 				modifier = Modifier.fillMaxWidth()
 					.padding(top = 10.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
-				// todo: not vertically centered correctly
 			) {
-				if (isReblog && rebloggingAccount != null) {
-					Row(
-						modifier = Modifier.padding(start = 35.dp),
-						verticalAlignment = Alignment.CenterVertically
+
+				Row(
+					modifier = Modifier.padding(start = 35.dp)
+				) {
+					Column(
+						verticalArrangement = Arrangement.spacedBy(5.dp)
 					) {
-						Icon(
-							painterResource(Res.drawable.icon_repeat_24px),
-							null,
-							modifier = Modifier.padding(end = 5.dp),
-							tint = MaterialTheme.colorScheme.secondary
-						)
-						Row(
-							modifier = Modifier.weight(1f, fill = false),
-							horizontalArrangement = Arrangement.spacedBy(5.dp),
-							verticalAlignment = Alignment.CenterVertically
-						) {
-							val mappedEmojis = mapEmojisToInlineTextContent(rebloggingAccount!!.emojis)
-							Text(
-								translation(
-									Res.string.x_boosted,
-									mapOf("clickable_display_name" to buildAnnotatedString {
-										withStyle(style = SpanStyle(
-											color = MaterialTheme.colorScheme.secondary,
-											fontSize = 14.sp,
-										)) { withAccountLink(rebloggingAccount!!) }
-									}.withEmojis(mappedEmojis))
-								),
-								color = MaterialTheme.colorScheme.secondary,
-								fontSize = 14.sp,
-								fontWeight = FontWeight.Medium,
-								inlineContent = mappedEmojis
-							)
+						if (pinned && currentAccount != null) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								Icon(
+									painterResource(Res.drawable.icon_keep_24px),
+									null,
+									modifier = Modifier.padding(end = 5.dp),
+									tint = MaterialTheme.colorScheme.secondary
+								)
+								Row(
+									modifier = Modifier.weight(1f, fill = false),
+									horizontalArrangement = Arrangement.spacedBy(5.dp),
+									verticalAlignment = Alignment.CenterVertically
+								) {
+									val mappedEmojis = mapEmojisToInlineTextContent(currentAccount!!.emojis)
+									Text(
+										translation(Res.string.pinned),
+										color = MaterialTheme.colorScheme.secondary,
+										fontSize = 14.sp,
+										fontWeight = FontWeight.Medium,
+										inlineContent = mappedEmojis
+									)
+								}
+							}
+						}
+
+						if (isReblog && rebloggingAccount != null) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								Icon(
+									painterResource(Res.drawable.icon_repeat_24px),
+									null,
+									modifier = Modifier.padding(end = 5.dp),
+									tint = MaterialTheme.colorScheme.secondary
+								)
+								Row(
+									modifier = Modifier.weight(1f, fill = false),
+									horizontalArrangement = Arrangement.spacedBy(5.dp),
+									verticalAlignment = Alignment.CenterVertically
+								) {
+									val mappedEmojis =
+										mapEmojisToInlineTextContent(rebloggingAccount!!.emojis)
+									Text(
+										translation(
+											Res.string.x_boosted,
+											mapOf("clickable_display_name" to buildAnnotatedString {
+												withStyle(
+													style = SpanStyle(
+														color = MaterialTheme.colorScheme.secondary,
+														fontSize = 14.sp,
+													)
+												) { withAccountLink(rebloggingAccount!!) }
+											}.withEmojis(mappedEmojis))
+										),
+										color = MaterialTheme.colorScheme.secondary,
+										fontSize = 14.sp,
+										fontWeight = FontWeight.Medium,
+										inlineContent = mappedEmojis
+									)
+								}
+							}
 						}
 					}
 				}
@@ -911,10 +951,11 @@ fun Status(
 				}
 			}
 
-			HorizontalDivider(
-				thickness = 1.dp,
-				color = MaterialTheme.colorScheme.surfaceContainer
-			)
+			if (showDivider)
+				HorizontalDivider(
+					thickness = 1.dp,
+					color = MaterialTheme.colorScheme.surfaceContainer
+				)
 
 			EmojiPicker(
 				visible = showEmojiPicker,

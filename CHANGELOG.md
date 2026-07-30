@@ -11,6 +11,7 @@
 - Error handling and feedback for accepting and rejecting follow requests
 - Timeline locking, posts on a timeline cannot be interacted with while the timeline is locked
 - Pinning and unpinning posts
+- Pinned posts on profile page
 
 ### Fixed
 - Timelines not updating properly

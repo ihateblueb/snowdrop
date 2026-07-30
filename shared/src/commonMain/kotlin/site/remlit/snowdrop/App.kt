@@ -108,6 +108,8 @@ object EditProfileRoute
 @Serializable
 data class ProfileRoute(val id: String)
 @Serializable
+data class PinnedPostsRoute(val id: String)
+@Serializable
 data class ThreadRoute(val id: String)
 /**
  * @param type [InteractionViewType] as a string
@@ -367,6 +369,10 @@ fun App() = safe {
 						transitionedComposable<ProfileRoute> {
 							val args = it.toRoute<ProfileRoute>()
 							ProfileView(args.id)
+						}
+						transitionedComposable<PinnedPostsRoute> {
+							val args = it.toRoute<PinnedPostsRoute>()
+							PinnedPostsView(args.id)
 						}
 
 						transitionedComposable<ComposeRoute> {

@@ -1,5 +1,6 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,12 +9,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +27,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +39,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,6 +67,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.EditProfileRoute
+import site.remlit.snowdrop.PinnedPostsRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.followAccount
@@ -87,8 +96,10 @@ import site.remlit.snowdrop.util.extension.toLocalizedString
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
+import site.remlit.snowdrop.util.update
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.util.vibrateError
 import site.remlit.snowdrop.util.vibrateSoft
@@ -106,6 +117,7 @@ import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
+import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
@@ -118,6 +130,7 @@ import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.unfollow
+import snowdrop.shared.generated.resources.view_all_pinned_posts
 import snowdrop.shared.generated.resources.x_followers
 import snowdrop.shared.generated.resources.x_following
 import snowdrop.shared.generated.resources.x_posts
@@ -162,6 +175,8 @@ fun ProfileView(id: String) = ViewSurface {
 		}
 		relationship = res.response.first()
 	}
+
+	val pinnedStatuses = remember { mutableStateListOf<Status>() }
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by remember { mutableStateOf(0) }
@@ -579,12 +594,54 @@ fun ProfileView(id: String) = ViewSurface {
 								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.posts_and_replies)) })
 								Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
 							}
+
+							//<editor-fold name="Pinned posts">
+							if (selectedTab == 0 && pinnedStatuses.isNotEmpty()) {
+								Status(
+									pinnedStatuses.first(),
+									onUpdate = { new -> pinnedStatuses.update(pinnedStatuses.first(), new) },
+									pinned = true,
+									showDivider = false
+								)
+
+								if (pinnedStatuses.size > 1) {
+									OutlinedButton(
+										modifier = Modifier.padding(5.dp).fillMaxWidth(),
+										onClick = { navHandler.navigate(PinnedPostsRoute(account!!.id)) }
+									) {
+										Icon(painterResource(Res.drawable.icon_keep_24px), null)
+										Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+										Text(stringResource(Res.string.view_all_pinned_posts))
+									}
+								}
+
+								HorizontalDivider(
+									thickness = 1.dp,
+									color = MaterialTheme.colorScheme.surfaceContainer
+								)
+							}
+							//</editor-fold>
 						}
 					}
 				},
 				fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
 				timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 				refreshKey = selectedTab,
+				onRefresh = {
+					// for pinned posts
+					coroutineScope.launch {
+						pinnedStatuses.clear()
+						// only 1 shown, but if there's more than 1 we need to show "view more" button
+						val res = getStatuses(userId = account!!.id, limit = 2, pinned = true)
+						if (res.error || res.response == null) {
+							res.handleError(snackbarHandler)
+							vibrateError(haptics)
+							return@launch
+						}
+
+						pinnedStatuses.addAll(res.response)
+					}
+				},
 				countTowardsScrollingUpward = true,
 				scrollToTopPostRefresh = false,
 				itemModifier = Modifier.offset(y = verticalOffset)
