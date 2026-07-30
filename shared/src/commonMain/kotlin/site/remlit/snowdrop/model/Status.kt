@@ -118,7 +118,7 @@ data class Status(
 		@SerialName("keyword_matches")
 		val keywordMatches: List<String> = listOf(),
 		@SerialName("status_matches")
-		val statusMatches: List<String> = listOf()
+		val statusMatches: List<String>? = listOf()
 	) {
 		@Serializable
 		data class Filter(

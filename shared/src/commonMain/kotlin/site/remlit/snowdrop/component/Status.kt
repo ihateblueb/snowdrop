@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -84,7 +83,6 @@ import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
-import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalContentWarningController
@@ -102,7 +100,6 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
-import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
@@ -404,7 +401,7 @@ fun Status(
 							)
 						}
 
-						if (!realStatus.mediaAttachments.isEmpty()) {
+						if (realStatus.mediaAttachments.isNotEmpty()) {
 							Grid({
 								// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
 								// grid should expand to full width
@@ -441,14 +438,14 @@ fun Status(
 						if (realStatus.poll != null) Poll(realStatus)
 
 						val quote = realStatus.quote ?: realStatus.quotedStatus
-						if (quote != null && quote.quotedStatus != null) {
+						if (quote?.quotedStatus != null) {
 							MiniStatus(quote.quotedStatus)
 						}
 					}
 				}
 
 				Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
-					if (realStatus.spoilerText != null && !realStatus.spoilerText!!.isBlank()) {
+					if (realStatus.spoilerText != null && realStatus.spoilerText!!.isNotBlank()) {
 						Column(
 							modifier = Modifier.fillMaxWidth()
 								.clip(RoundedCornerShape(10.dp))
@@ -499,7 +496,7 @@ fun Status(
 				* Reactions
 				*
 				*/
-				if (getFeature("reactions") && !realStatus.reactions.isEmpty()) {
+				if (getFeature("reactions") && realStatus.reactions.isNotEmpty()) {
 					val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
 					LazyRow(
 						contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
