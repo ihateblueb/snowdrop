@@ -45,6 +45,8 @@ import snowdrop.shared.generated.resources.haptics
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.lock_timeline
+import snowdrop.shared.generated.resources.lock_timeline_short_description
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
@@ -192,6 +194,23 @@ fun GeneralSettingsView() = ViewSurface {
 						Switch(
 							haptics,
 							onCheckedChange = { blockingSettings.putBoolean("haptics", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val timelineLocked by settings.getBooleanFlow("timeline_locked", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.lock_timeline)) },
+					supportingContent = { Text(stringResource(Res.string.lock_timeline_short_description)) },
+					trailingContent = {
+						Switch(
+							timelineLocked,
+							onCheckedChange = { blockingSettings.putBoolean("timeline_locked", it) }
 						)
 					}
 				)

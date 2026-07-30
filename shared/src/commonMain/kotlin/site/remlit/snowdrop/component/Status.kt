@@ -158,6 +158,7 @@ import kotlin.time.Duration.Companion.seconds
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
+	lockable: Boolean = false
 ) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
@@ -179,6 +180,9 @@ fun Status(
 	var isVisible by remember { mutableStateOf(true) }
 
 	/* Preferences */
+	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
+		.collectAsStateWithLifecycle(false)
+
 	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
 		.collectAsStateWithLifecycle(false)
 
@@ -256,7 +260,8 @@ fun Status(
 	) {
 		TextButton(
 			onClick = onClick,
-			colors = colors ?: ButtonDefaults.textButtonColors()
+			colors = colors ?: ButtonDefaults.textButtonColors(),
+			enabled = if (lockable) !timelineLocked else true
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,

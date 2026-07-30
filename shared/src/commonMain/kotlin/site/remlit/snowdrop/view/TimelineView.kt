@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -15,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.collect
@@ -71,11 +74,21 @@ import snowdrop.shared.generated.resources.icon_home_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.icon_list_24px
+import snowdrop.shared.generated.resources.icon_lock_24px
+import snowdrop.shared.generated.resources.icon_lock_open_right_24px
 import snowdrop.shared.generated.resources.icon_map_24px
+import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_settings_24px
 import snowdrop.shared.generated.resources.list
 import snowdrop.shared.generated.resources.lists
 import snowdrop.shared.generated.resources.local
+import snowdrop.shared.generated.resources.lock
+import snowdrop.shared.generated.resources.lock_timeline
+import snowdrop.shared.generated.resources.lock_timeline_description
+import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.this_popup_wont_appear_again
+import snowdrop.shared.generated.resources.unlock
+import snowdrop.shared.generated.resources.you_must_provide_a_valid_host
 
 //<editor-fold name="ScrollEndCallback">
 @Composable
@@ -106,6 +119,11 @@ fun TimelineView() = ViewSurface {
 		val haptics = LocalHapticFeedback.current
 
 		var refreshKey by remember { mutableStateOf(0) }
+
+		val timelineLocked by remember { settings.getBooleanFlow("timeline_locked", false) }
+			.collectAsStateWithLifecycle(false)
+		val timelineLockedPromptSeen by remember { settings.getBooleanFlow("timeline_locked_prompt_seen", false) }
+			.collectAsStateWithLifecycle(false)
 
 		val lists by remember { fetchLists(snackbarController) }
 			.collectAsStateWithLifecycle(null)
@@ -314,13 +332,64 @@ fun TimelineView() = ViewSurface {
 				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
+
+				var showDropdown by remember { mutableStateOf(false) }
+				IconButton(onClick = { showDropdown = !showDropdown }) {
+					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
+				}
+
+				DropdownMenu(
+					expanded = showDropdown,
+					onDismissRequest = { showDropdown = !showDropdown }
+				) {
+					DropdownMenuItem(
+						leadingIcon = {
+							if (timelineLocked) Icon(painterResource(Res.drawable.icon_lock_open_right_24px), null)
+							else Icon(painterResource(Res.drawable.icon_lock_24px), null)
+						},
+						text = {
+							if (timelineLocked) Text(stringResource(Res.string.unlock))
+							else Text(stringResource(Res.string.lock))
+						},
+						onClick = {
+							blockingSettings.putBoolean("timeline_locked", !timelineLocked)
+							showDropdown = false
+						}
+					)
+				}
 			}
 		)
 		//</editor-fold>
 
+		//<editor-fold name="Lock timeline info popup">
+		if (timelineLocked && !timelineLockedPromptSeen) {
+			AlertDialog(
+				title = { Text(stringResource(Res.string.lock_timeline)) },
+				text = {
+					Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+						Text(stringResource(Res.string.lock_timeline_description))
+						Text(stringResource(Res.string.this_popup_wont_appear_again))
+					}
+				},
+				onDismissRequest = { blockingSettings.putBoolean("timeline_locked_prompt_seen", true) },
+				confirmButton = {
+					TextButton(
+						onClick = { blockingSettings.putBoolean("timeline_locked_prompt_seen", true) }
+					) {
+						Text(stringResource(Res.string.ok))
+					}
+				},
+				properties = DialogProperties(
+					dismissOnBackPress = true,
+					dismissOnClickOutside = true
+				)
+			)
+		}
+		//</editor-fold>
+
 		RefreshableTimeline(
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-			timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
+			timelineComponent = { item, onUpdate -> Status(item, onUpdate, lockable = true) },
 			refreshKey = refreshKey,
 			countTowardsScrollingUpward = true
 		)

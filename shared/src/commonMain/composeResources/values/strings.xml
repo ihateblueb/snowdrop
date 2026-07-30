@@ -235,4 +235,11 @@
 	<string name="you_cannot_react_with_a_remote_emoji">You cannot react with a remote emoji</string>
 
 	<string name="translate">Translate</string>
+
+	<string name="lock">Lock</string>
+	<string name="unlock">Unlock</string>
+	<string name="lock_timeline">Lock timeline</string>
+	<string name="lock_timeline_short_description">Prevents interacting with statuses</string>
+	<string name="lock_timeline_description">Posts on your timeline won't be able to liked, boosted, or replied to until you unlock the timeline.</string>
+	<string name="this_popup_wont_appear_again">This popup won't appear again.</string>
 </resources>
