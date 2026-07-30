@@ -20,7 +20,7 @@
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
 
-	<string name="joined_at_x">Joined at {date_time}</string>
+	<string name="joined_at_x">Joined on {date_time}</string>
 
 	<string name="x_followers">{count} followers</string>
 	<string name="x_following">{count} following</string>
