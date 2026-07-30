@@ -242,4 +242,7 @@
 	<string name="lock_timeline_short_description">Prevents interacting with statuses</string>
 	<string name="lock_timeline_description">Posts on your timeline won't be able to liked, boosted, or replied to until you unlock the timeline.</string>
 	<string name="this_popup_wont_appear_again">This popup won't appear again.</string>
+
+	<string name="pin">Pin</string>
+	<string name="unpin">Unpin</string>
 </resources>

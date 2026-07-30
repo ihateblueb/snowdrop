@@ -73,10 +73,12 @@ import site.remlit.snowdrop.api.statuses.bookmarkStatus
 import site.remlit.snowdrop.api.statuses.deleteStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
 import site.remlit.snowdrop.api.statuses.getStatus
+import site.remlit.snowdrop.api.statuses.pinStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.unbookmarkStatus
 import site.remlit.snowdrop.api.statuses.unfavouriteStatus
+import site.remlit.snowdrop.api.statuses.unpinStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.api.statuses.unreblogStatus
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
@@ -120,6 +122,8 @@ import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_flag_24px
 import snowdrop.shared.generated.resources.icon_image_24
+import snowdrop.shared.generated.resources.icon_keep_24px
+import snowdrop.shared.generated.resources.icon_keep_off_24px
 import snowdrop.shared.generated.resources.icon_link_24px
 import snowdrop.shared.generated.resources.icon_lock_24px
 import snowdrop.shared.generated.resources.icon_mood_24px
@@ -135,12 +139,14 @@ import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
+import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
+import snowdrop.shared.generated.resources.unpin
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
 import kotlin.math.ceil
@@ -728,51 +734,30 @@ fun Status(
 								)
 							}
 
-							if (realStatus.bookmarked) {
-								DropdownMenuItem(
-									text = { Text(stringResource(Res.string.unbookmark)) },
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
-									},
-									onClick = {
-										coroutineScope.launch {
-											vibrate(true, haptics)
+							DropdownMenuItem(
+								text = {
+									if (!realStatus.bookmarked) Text(stringResource(Res.string.bookmark))
+									else Text(stringResource(Res.string.unbookmark))
+								},
+								leadingIcon = {
+									if (!realStatus.bookmarked) Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
+									else Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
+								},
+								onClick = {
+									coroutineScope.launch {
+										vibrate(true, haptics)
 
-											val res = unbookmarkStatus(realStatus.id)
-											if (res.error || res.response == null) {
-												res.handleError(snackbarController)
-												vibrateError(haptics)
-											}
-
-											realStatus = res.response!!
-											if (isReblog) status.reblog = res.response
-											showDropdown = false
+										val res = if (!realStatus.bookmarked) bookmarkStatus(realStatus.id) else unbookmarkStatus(realStatus.id)
+										if (res.error || res.response == null) {
+											res.handleError(snackbarController)
+											vibrateError(haptics)
 										}
-									}
-								)
-							} else {
-								DropdownMenuItem(
-									text = { Text(stringResource(Res.string.bookmark)) },
-									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
-									},
-									onClick = {
-										coroutineScope.launch {
-											vibrate(true, haptics)
 
-											val res = bookmarkStatus(realStatus.id)
-											if (res.error || res.response == null) {
-												res.handleError(snackbarController)
-												vibrateError(haptics)
-											}
-
-											realStatus = res.response!!
-											if (isReblog) status.reblog = res.response
-											showDropdown = false
-										}
+										updateStatus()
+										showDropdown = false
 									}
-								)
-							}
+								}
+							)
 
 							if (getFeature("biting") && !isMine) {
 								DropdownMenuItem(
@@ -865,6 +850,32 @@ fun Status(
 							// if mine
 							if (isMine) {
 								HorizontalDivider()
+
+								DropdownMenuItem(
+									text = {
+										if (!realStatus.pinned) Text(stringResource(Res.string.pin))
+										else Text(stringResource(Res.string.unpin))
+									},
+									leadingIcon = {
+										if (!realStatus.pinned) Icon(painterResource(Res.drawable.icon_keep_24px), null)
+										else Icon(painterResource(Res.drawable.icon_keep_off_24px), null)
+									},
+									onClick = {
+										coroutineScope.launch {
+											vibrate(true, haptics)
+
+											val res = if (!realStatus.pinned) pinStatus(realStatus.id)
+												else unpinStatus(realStatus.id)
+											if (res.error || res.response == null) {
+												res.handleError(snackbarController)
+												vibrateError(haptics)
+											}
+
+											updateStatus()
+											showDropdown = false
+										}
+									}
+								)
 
 								DropdownMenuItem(
 									text = { Text(stringResource(Res.string.edit)) },

@@ -9,6 +9,8 @@
 - Emoji tooltips with their names
 - Thread view has a button to toggle all content warnings for all posts in a thread
 - Error handling and feedback for accepting and rejecting follow requests
+- Timeline locking, posts on a timeline cannot be interacted with while the timeline is locked
+- Pinning and unpinning posts
 
 ### Fixed
 - Timelines not updating properly
