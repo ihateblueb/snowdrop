@@ -61,9 +61,12 @@ fun AccountRow(
 		Avatar(account)
 
 		Column {
-			Text(
+			HtmlContent(
 				account.displayName(),
-				fontWeight = FontWeight.Medium
+				fontWeight = FontWeight.Medium,
+				simple = true,
+				maxLines = 1,
+				emojis = account.emojis
 			)
 			Text(
 				"@${account.acct}",
