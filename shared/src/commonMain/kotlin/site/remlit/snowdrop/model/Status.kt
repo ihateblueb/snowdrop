@@ -61,8 +61,8 @@ data class Status(
 	val reactions: List<Reaction> = listOf(),
 	val tags: List<Tag> = listOf(),
 
-	val card: Unit? = null,
-	val application: Unit? = null,
+	// todo: application info. only supported by mastodon, so not high priority
+	//val application: Unit? = null,
 	val language: String? = null,
 
 	val state: String? = null,
