@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -93,6 +94,7 @@ import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.CreateStatusRequest
@@ -102,6 +104,7 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
+import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
 import site.remlit.snowdrop.util.translation
@@ -359,22 +362,22 @@ fun ComposeView(
 						Icon(painterResource(Res.drawable.icon_mood_24px), null)
 					}
 
-					DropdownMenu(
+					PreparedDropdownMenu(
 						expanded = showAddAttachmentMenu,
 						onDismissRequest = { showAddAttachmentMenu = false }
 					) {
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24), null) },
 							text = { Text("Add photo or video") },
+							shape = MenuDefaults.leadingItemShape,
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
 						)
-						/* todo: add file
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
 							text = { Text("Add file") },
-							onClick = { /* fileLauncher.launch() */; showAddAttachmentMenu = false }
+							shape = MenuDefaults.trailingItemShape,
+							onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
 						)
-						* */
 					}
 
 					IconButton(
@@ -447,14 +450,24 @@ fun ComposeView(
 								}
 
 								// Visibility picker
-								DropdownMenu(
+								PreparedDropdownMenu(
 									expanded = visibilityDropdownOpen,
 									onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
 								) {
+									val visibilities = listOf("public", "unlisted", "private", "direct")
+
 									@Composable
-									fun VisibilityDropdownItem(vis: String) {
+									fun VisibilityDropdownItem(vis: String, index: Int) {
 										DropdownMenuItem(
+											enabled = true,
+											selected = visibility == vis,
+											onClick = {
+												visibility = vis
+												visibilityDropdownOpen = !visibilityDropdownOpen
+											},
 											leadingIcon = { Visibility(vis) },
+											colors = MenuDefaults.selectableItemColors(),
+											shapes = MenuDefaults.itemShapes(),
 											text = {
 												Column(modifier = Modifier.padding(vertical = 5.dp)) {
 													Text(
@@ -476,26 +489,12 @@ fun ComposeView(
 														fontSize = 13.sp
 													)
 												}
-											},
-											onClick = {
-												visibility = vis
-												visibilityDropdownOpen = !visibilityDropdownOpen
-											},
-											modifier = if (visibility == vis)
-												Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-											else Modifier,
-											colors = if (visibility == vis) MenuDefaults.itemColors(
-												leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-												textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-											) else MenuDefaults.itemColors()
+											}
 										)
 									}
 
 									// todo: do minimum visibility based on the view's visibility parameter
-									VisibilityDropdownItem("public")
-									VisibilityDropdownItem("unlisted")
-									VisibilityDropdownItem("private")
-									VisibilityDropdownItem("direct")
+									visibilities.forEachIndexed { index, string -> VisibilityDropdownItem(string, index) }
 								}
 							}
 						}

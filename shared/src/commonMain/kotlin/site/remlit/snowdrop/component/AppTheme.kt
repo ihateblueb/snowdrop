@@ -41,7 +41,7 @@ fun AppTheme(
 	val amoledBlack by remember { settings.getBooleanFlow("amoled_black", false) }
 		.collectAsStateWithLifecycle(false)
 
-	MaterialTheme(
+	MaterialExpressiveTheme(
 		colorScheme = if (darkTheme && amoledBlack)
 			getDarkColorScheme().copy(
 				surface = Color(0,0,0,255), // top bar
