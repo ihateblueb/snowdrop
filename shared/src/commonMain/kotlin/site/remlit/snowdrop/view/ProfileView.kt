@@ -31,6 +31,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -81,6 +82,7 @@ import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
+import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
@@ -248,7 +250,7 @@ fun ProfileView(id: String) = ViewSurface {
 					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 				}
 
-				DropdownMenu(
+				PreparedDropdownMenu(
 					expanded = dropdownVisible,
 					onDismissRequest = { dropdownVisible = false }
 				) {
@@ -257,6 +259,7 @@ fun ProfileView(id: String) = ViewSurface {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
 						},
+						shape = MenuDefaults.leadingItemShape,
 						onClick = {
 							coroutineScope.launch {
 								val local = !account!!.acct.contains("@")
@@ -274,6 +277,7 @@ fun ProfileView(id: String) = ViewSurface {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 						},
+						shape = MenuDefaults.trailingItemShape,
 						onClick = {
 							uriHandler.openUri(account!!.url)
 							dropdownVisible = false

@@ -93,7 +93,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 				Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 			}
 
-			DropdownMenu(
+				PreparedDropdownMenu(
 				expanded = dropdown,
 				onDismissRequest = { dropdown = false }
 			) {

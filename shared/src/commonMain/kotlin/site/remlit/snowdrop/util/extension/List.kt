@@ -1,6 +1,8 @@
 package site.remlit.snowdrop.util.extension
 
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemShapes
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 
@@ -15,3 +17,10 @@ fun List<*>?.getPreparedDropdownMenuItemShape(index: Int): Shape {
 	else if (isLast) MenuDefaults.trailingItemShape
 	else MenuDefaults.middleItemShape
 }
+
+@Composable
+fun List<*>?.getPreparedDropdownMenuItemShapes(index: Int): MenuItemShapes {
+	val shape = this.getPreparedDropdownMenuItemShape(index)
+	return MenuItemShapes(shape, shape)
+}
+
