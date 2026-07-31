@@ -4,6 +4,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 
 /**
  * Danger dropdown item component. Will set text color and icons to be
@@ -19,12 +21,14 @@ import androidx.compose.runtime.Composable
 fun DangerDropdownItem(
 	text: @Composable () -> Unit,
 	leadingIcon: (@Composable () -> Unit)? = null,
+	shape: Shape = MenuDefaults.shape,
 	onClick: () -> Unit
 ) {
 	DropdownMenuItem(
 		text = text,
 		leadingIcon = leadingIcon,
 		onClick = onClick,
+		shape = shape,
 		colors = MenuDefaults.itemColors(
 			MaterialTheme.colorScheme.error,
 			MaterialTheme.colorScheme.error,

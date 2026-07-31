@@ -6,15 +6,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuGroupShapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -32,6 +40,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.collect
@@ -50,12 +59,15 @@ import site.remlit.snowdrop.api.timeline.getPublicTimeline
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.component.dropdown.MenuDivider
+import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchLists
+import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.vibrate
@@ -107,7 +119,7 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
 }
 //</editor-fold>
 
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimelineView() = ViewSurface {
 	Column(
@@ -176,96 +188,80 @@ fun TimelineView() = ViewSurface {
 		//</editor-fold>
 
 		//<editor-fold name="Timeline selection dropdown">
+		fun changeTimeline(timeline: Int) {
+			blockingSettings.putInt("timeline", timeline)
+			vibrate(true, haptics)
+			timelinePickerOpen = false
+		}
+
 		@Composable
 		fun RenderTimelineSelectionDropdown() {
-			DropdownMenu(
+			PreparedDropdownMenu(
 				expanded = timelinePickerOpen,
-				offset = DpOffset(x = 0.dp, y = 15.dp),
 				onDismissRequest = { timelinePickerOpen = false },
+				offset = DpOffset(0.dp, 15.dp)
 			) {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(0) },
 					text = { Text(stringResource(Res.string.home)) },
-					onClick = {
-						blockingSettings.putInt("timeline", 0)
-						vibrate(true, haptics)
-						timelinePickerOpen = false
-					}
+					shape = MenuDefaults.leadingItemShape,
+					onClick = { changeTimeline(0) }
 				)
+
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(1) },
 					text = { Text(stringResource(Res.string.local)) },
-					onClick = {
-						blockingSettings.putInt("timeline", 1)
-						vibrate(true, haptics)
-						timelinePickerOpen = false
-					}
+					shape = MenuDefaults.middleItemShape,
+					onClick = { changeTimeline(1) }
 				)
+
 				if (getFeature("bubble_timeline") || getFeature("bubble_timeline_akkoma"))
 					DropdownMenuItem(
 						leadingIcon = { RenderTimelineTypeIcon(2) },
 						text = { Text(stringResource(Res.string.bubble)) },
-						onClick = {
-							blockingSettings.putInt("timeline", 2)
-							vibrate(true, haptics)
-							timelinePickerOpen = false
-						}
+						shape = MenuDefaults.middleItemShape,
+						onClick = { changeTimeline(2) }
 					)
+
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(3) },
 					text = { Text(stringResource(Res.string.global)) },
-					onClick = {
-						blockingSettings.putInt("timeline", 3)
-						vibrate(true, haptics)
-						timelinePickerOpen = false
-					}
+					shape = MenuDefaults.middleItemShape,
+					onClick = { changeTimeline(3) }
 				)
 
-				HorizontalDivider()
+				MenuDivider()
 
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(4) },
 					text = { Text(stringResource(Res.string.bookmarks)) },
-					onClick = {
-						blockingSettings.putInt("timeline", 4)
-						vibrate(true, haptics)
-						timelinePickerOpen = false
-					}
+					shape = MenuDefaults.middleItemShape,
+					onClick = { changeTimeline(4) }
 				)
 
-				//<editor-fold name="List">
+				//<editor-fold name="List menu">
 				Box {
 					DropdownMenuItem(
 						leadingIcon = { RenderTimelineTypeIcon(5) },
-						trailingIcon = { Icon(painterResource(Res.drawable.icon_chevron_right_24px), null) },
+						trailingIcon = {
+							Icon(
+								painterResource(Res.drawable.icon_chevron_right_24px),
+								null
+							)
+						},
 						text = { Text(stringResource(Res.string.lists)) },
+						shape = MenuDefaults.trailingItemShape,
 						onClick = {
 							listPickerOpen = !listPickerOpen
 							vibrate(true, haptics)
 						}
 					)
 
-					DropdownMenu(
+					PreparedDropdownMenu(
 						expanded = listPickerOpen,
 						onDismissRequest = { listPickerOpen = false }
 					) {
-						/*
-						todo: implement create list
-						* DropdownMenuItem(
-							leadingIcon = { Icon(painterResource(Res.drawable.icon_add_24px), null) },
-							text = { Text(stringResource(Res.string.create_list)) },
-							onClick = {
-								// todo: open create list page
-								vibrate(true, haptics)
-								listPickerOpen = false
-								timelinePickerOpen = false
-							},
-						)
-
-						if (!lists.isNullOrEmpty()) HorizontalDivider()
-						* */
-
-						lists?.forEach { list ->
+						lists?.forEachIndexed { index, list ->
 							DropdownMenuItem(
 								onClick = {
 									blockingSettings.putString("timeline_list_id", list.id)
@@ -274,6 +270,7 @@ fun TimelineView() = ViewSurface {
 									listPickerOpen = false
 									timelinePickerOpen = false
 								},
+								shape = lists.getPreparedDropdownMenuItemShape(index),
 								text = { Text(list.title) }
 							)
 						}
@@ -338,7 +335,7 @@ fun TimelineView() = ViewSurface {
 					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 				}
 
-				DropdownMenu(
+				PreparedDropdownMenu(
 					expanded = showDropdown,
 					onDismissRequest = { showDropdown = !showDropdown }
 				) {
@@ -351,6 +348,7 @@ fun TimelineView() = ViewSurface {
 							if (timelineLocked) Text(stringResource(Res.string.unlock))
 							else Text(stringResource(Res.string.lock))
 						},
+						shape = MenuDefaults.standaloneItemShape,
 						onClick = {
 							blockingSettings.putBoolean("timeline_locked", !timelineLocked)
 							showDropdown = false

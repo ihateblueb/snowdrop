@@ -23,6 +23,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -82,6 +83,8 @@ import site.remlit.snowdrop.api.statuses.unpinStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.api.statuses.unreblogStatus
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
+import site.remlit.snowdrop.component.dropdown.MenuDivider
+import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
@@ -743,7 +746,7 @@ fun Status(
 							)
 						}
 
-						DropdownMenu(
+						PreparedDropdownMenu(
 							expanded = showDropdown,
 							onDismissRequest = { showDropdown = false }
 						) {
@@ -753,6 +756,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_link_24px), null)
 									},
+									shape = MenuDefaults.leadingItemShape,
 									onClick = {
 										coroutineScope.launch {
 											clipboardManager.setText(AnnotatedString(realStatus.url!!))
@@ -767,6 +771,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 									},
+									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										uriHandler.openUri(realStatus.url!!)
 										showDropdown = false
@@ -783,6 +788,7 @@ fun Status(
 									if (!realStatus.bookmarked) Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
 									else Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
 								},
+								shape = MenuDefaults.middleItemShape,
 								onClick = {
 									coroutineScope.launch {
 										vibrate(true, haptics)
@@ -805,6 +811,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 									},
+									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										coroutineScope.launch {
 											vibrate(true, haptics)
@@ -821,13 +828,14 @@ fun Status(
 								)
 							}
 
-							HorizontalDivider()
+							MenuDivider()
 
 							DropdownMenuItem(
 								text = { Text(stringResource(Res.string.show_boosts)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_repeat_24px), null)
 								},
+								shape = MenuDefaults.middleItemShape,
 								onClick = {
 									navHandler.navigate(
 										StatusInteractionDetailRoute(
@@ -843,6 +851,7 @@ fun Status(
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_star_24px), null)
 								},
+								shape = MenuDefaults.middleItemShape,
 								onClick = {
 									navHandler.navigate(
 										StatusInteractionDetailRoute(
@@ -859,6 +868,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_mood_24px), null)
 									},
+									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										navHandler.navigate(
 											StatusInteractionDetailRoute(
@@ -869,13 +879,14 @@ fun Status(
 									}
 								)
 
-							HorizontalDivider()
+							MenuDivider()
 
 							DropdownMenuItem(
 								text = { Text(stringResource(Res.string.mute)) },
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
 								},
+								shape = MenuDefaults.middleItemShape,
 								onClick = { }
 							)
 
@@ -884,12 +895,13 @@ fun Status(
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_flag_24px), null)
 								},
+								shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
 								onClick = { }
 							)
 
 							// if mine
 							if (isMine) {
-								HorizontalDivider()
+								MenuDivider()
 
 								DropdownMenuItem(
 									text = {
@@ -900,6 +912,7 @@ fun Status(
 										if (!realStatus.pinned) Icon(painterResource(Res.drawable.icon_keep_24px), null)
 										else Icon(painterResource(Res.drawable.icon_keep_off_24px), null)
 									},
+									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										coroutineScope.launch {
 											vibrate(true, haptics)
@@ -922,6 +935,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_edit_24px), null)
 									},
+									shape = MenuDefaults.middleItemShape,
 									onClick = { }
 								)
 
@@ -930,6 +944,7 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_delete_24px), null)
 									},
+									shape = MenuDefaults.trailingItemShape,
 									onClick = {
 										coroutineScope.launch {
 											vibrate(true, haptics)
