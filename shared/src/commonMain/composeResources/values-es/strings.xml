@@ -173,4 +173,26 @@
     <string name="alt_text">Texto alternativo</string>
     <string name="missing_alt_text">Falta el texto alternativo</string>
     <string name="describe_important_elements_of_your_media">Describe los elementos importantes de tus medios...</string>
+    <string name="haptics">Háptica</string>
+    <string name="x_accepted_your_follow_request">{clickable_display_name} aceptó tu solicitud de seguimiento</string>
+    <string name="copy_handle">Copiar identificador</string>
+    <string name="you_cannot_react_with_a_remote_emoji">No puedes reaccionar con un emoji remoto</string>
+    <string name="logs">Registros</string>
+    <string name="lists">Listas</string>
+    <string name="create_list">Crear lista</string>
+    <string name="list">Lista</string>
+    <string name="display_name">Seudónimo</string>
+    <string name="description">Descripción</string>
+    <string name="fields">Campos</string>
+    <string name="label">Etiqueta</string>
+    <string name="content">Contenido</string>
+    <string name="translate">Traducir</string>
+    <string name="lock">Bloquear</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="lock_timeline">Bloquear la línea de tiempo</string>
+    <string name="lock_timeline_short_description">Evita interactuar con los estados</string>
+    <string name="lock_timeline_description">Nadie podrá darle me gusta, compartir ni responder a las publicaciones de tu línea de tiempo hasta que la desbloquees.</string>
+    <string name="this_popup_wont_appear_again">Esta ventana emergente no volverá a aparecer.</string>
+    <string name="pin">Fijar</string>
+    <string name="unpin">Soltar</string>
 </resources>
