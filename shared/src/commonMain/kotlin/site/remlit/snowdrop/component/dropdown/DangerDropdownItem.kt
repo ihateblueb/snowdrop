@@ -20,13 +20,17 @@ import androidx.compose.ui.graphics.Shape
 @Composable
 fun DangerDropdownItem(
 	text: @Composable () -> Unit,
+	supportingText: (@Composable () -> Unit)? = null,
 	leadingIcon: (@Composable () -> Unit)? = null,
+	trailingIcon: (@Composable () -> Unit)? = null,
 	shape: Shape = MenuDefaults.shape,
 	onClick: () -> Unit
 ) {
 	DropdownMenuItem(
 		text = text,
+		supportingText = supportingText,
 		leadingIcon = leadingIcon,
+		trailingIcon = trailingIcon,
 		onClick = onClick,
 		shape = shape,
 		colors = MenuDefaults.itemColors(

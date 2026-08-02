@@ -19,6 +19,18 @@
 	<string name="cancel_request">Cancel request</string>
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
+	<string name="remove_follower">Remove follower</string>
+
+	<string name="are_you_sure_you_want_to_remove_x_from_your_followers">Are you sure you want to remove {handle} from your followers?</string>
+
+	<string name="block">Block</string>
+	<string name="unblock">Unblock</string>
+	<string name="mute_for_x">Mute for {duration}</string>
+	<string name="mute_indefinitely">Mute indefinitely</string>
+	<string name="unmute">Unmute</string>
+	<string name="expires_in_x">Expires in {duration}</string>
+
+	<string name="are_you_sure_you_want_to_block_x">Are you sure you want to block {handle}? You will no longer see their posts or interactions.</string>
 
 	<string name="joined_at_x">Joined at {date_time}</string>
 

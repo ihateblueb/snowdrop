@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -74,6 +75,7 @@ import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
+import site.remlit.snowdrop.api.accounts.removeAccountFromFollowers
 import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
@@ -82,6 +84,8 @@ import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
+import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
+import site.remlit.snowdrop.component.dropdown.MenuDivider
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
@@ -95,6 +99,7 @@ import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.extension.toLocalizedString
+import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
@@ -107,31 +112,42 @@ import site.remlit.snowdrop.util.vibrateError
 import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_remove_x_from_your_followers
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
+import snowdrop.shared.generated.resources.block
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.copy_handle
 import snowdrop.shared.generated.resources.edit_profile
+import snowdrop.shared.generated.resources.expires_in_x
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
+import snowdrop.shared.generated.resources.icon_block_24px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_person_remove_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
+import snowdrop.shared.generated.resources.icon_volume_off_24px
+import snowdrop.shared.generated.resources.icon_volume_up_24px
 import snowdrop.shared.generated.resources.joined_at_x
 import snowdrop.shared.generated.resources.media
+import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.remove_follower
 import snowdrop.shared.generated.resources.request_to_follow
+import snowdrop.shared.generated.resources.unblock
 import snowdrop.shared.generated.resources.unfollow
+import snowdrop.shared.generated.resources.unmute
 import snowdrop.shared.generated.resources.view_all_pinned_posts
 import snowdrop.shared.generated.resources.x_followers
 import snowdrop.shared.generated.resources.x_following
@@ -142,7 +158,7 @@ import kotlin.time.Instant
 const val headerHeight = 200
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
@@ -169,14 +185,20 @@ fun ProfileView(id: String) = ViewSurface {
 		isMe = true
 
 	var relationship by remember { mutableStateOf<Relationship?>(null) }
-	if (!isMe && account != null) bgIO {
-		val res = getRelationships(listOf(account!!.id))
-		if (res.error || res.response == null) {
-			res.handleError(snackbarHandler)
-			return@bgIO
+
+	fun refreshRelationship() {
+		if (!isMe && account != null) coroutineScope.launch {
+
+			val res = getRelationships(listOf(account!!.id))
+			if (res.error || res.response == null) {
+				res.handleError(snackbarHandler)
+				vibrateError(haptics)
+				return@launch
+			}
+			relationship = res.response.first()
 		}
-		relationship = res.response.first()
 	}
+	refreshRelationship()
 
 	val pinnedStatuses = remember { mutableStateListOf<Status>() }
 
@@ -277,12 +299,98 @@ fun ProfileView(id: String) = ViewSurface {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 						},
-						shape = MenuDefaults.trailingItemShape,
+						shape = if (relationship != null) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
 						onClick = {
 							uriHandler.openUri(account!!.url)
 							dropdownVisible = false
 						}
 					)
+
+					if (relationship != null && !isMe) {
+						MenuDivider()
+
+						//<editor-fold name="Remove follower">
+						if (relationship!!.followedBy) {
+							var showRemoveFollowerActionWarning by remember { mutableStateOf(false) }
+							if (showRemoveFollowerActionWarning)
+								AlertDialog(
+									text = {
+										Text(translation(
+											Res.string.are_you_sure_you_want_to_remove_x_from_your_followers,
+											mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+										))
+									},
+									dismissButton = {
+										TextButton(onClick = { showRemoveFollowerActionWarning = !showRemoveFollowerActionWarning }) {
+											Text(stringResource(Res.string.cancel))
+										}
+									},
+									confirmButton = {
+										TextButton(onClick = {
+											coroutineScope.launch {
+												val res = removeAccountFromFollowers(account!!.id)
+												if (res.error || res.response == null) {
+													res.handleError(snackbarHandler)
+													vibrateError(haptics)
+													return@launch
+												}
+
+												refreshRelationship()
+											}
+
+											showRemoveFollowerActionWarning = !showRemoveFollowerActionWarning
+										}) { Text(stringResource(Res.string.yes)) }
+									},
+									onDismissRequest = { showRemoveFollowerActionWarning = !showRemoveFollowerActionWarning }
+								)
+
+							DangerDropdownItem(
+								text = {
+									Text(stringResource(Res.string.remove_follower))
+								},
+								leadingIcon = {
+									Icon(
+										painterResource(Res.drawable.icon_person_remove_24px),
+										null
+									)
+								},
+								shape = MenuDefaults.middleItemShape,
+								onClick = { showRemoveFollowerActionWarning = true }
+							)
+						}
+						//</editor-fold>
+
+						DangerDropdownItem(
+							text = {
+								if (!relationship!!.muting) Text(stringResource(Res.string.mute))
+								else Text(stringResource(Res.string.unmute))
+							},
+							supportingText = {
+								if (relationship!!.muting && relationship!!.mutingExpiresAt != null) {
+									val duration = Instant.parse(relationship!!.mutingExpiresAt!!).toRelativeString(short = true)
+									Text(translation(Res.string.expires_in_x, mapOf("duration" to duration)))
+								}
+							},
+							leadingIcon = {
+								if (relationship!!.muting) Icon(painterResource(Res.drawable.icon_volume_up_24px), null)
+								else Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
+							},
+							shape = MenuDefaults.middleItemShape,
+							onClick = { /* todo: mute account */ }
+						)
+
+						DangerDropdownItem(
+							text = {
+								if (!relationship!!.blocking) Text(stringResource(Res.string.block))
+								else Text(stringResource(Res.string.unblock))
+							},
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_block_24px), null)
+							},
+							shape = MenuDefaults.trailingItemShape,
+							onClick = { /* todo: block account */ }
+						)
+					}
 				}
 			}
 		)
