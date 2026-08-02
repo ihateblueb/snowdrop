@@ -27,8 +27,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.selectAll
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -88,6 +92,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.media.uploadMedia
 import site.remlit.snowdrop.api.statuses.createStatus
+import site.remlit.snowdrop.api.statuses.editStatus
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.MiniStatus
@@ -115,6 +120,7 @@ import snowdrop.shared.generated.resources.alt_text
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
 import snowdrop.shared.generated.resources.describe_important_elements_of_your_media
+import snowdrop.shared.generated.resources.edit
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_attach_file_24px
 import snowdrop.shared.generated.resources.icon_close_24px
@@ -137,10 +143,11 @@ import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeView(
 	inReplyToId: String? = null,
+	editingId: String? = null,
 	initialCw: String = "",
 	initialContent: String = "",
 	visibility: String? = null
@@ -182,9 +189,24 @@ fun ComposeView(
 
 	var cw by remember { mutableStateOf(initialCw) }
 	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
+	var visibilityEnabled by remember { mutableStateOf(true) }
 
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
+	val editTarget by remember { fetchStatusOrNull(editingId, snackbarHandler) }
+		.collectAsStateWithLifecycle(null)
+
+	LaunchedEffect(editTarget) {
+		if (editTarget != null) {
+			visibility = editTarget!!.visibility ?: "direct"
+			visibilityEnabled = false
+
+			cw = editTarget!!.spoilerText ?: ""
+
+			textFieldState.clearText()
+			textFieldState.setTextAndPlaceCursorAtEnd(editTarget!!.text ?: "")
+		}
+	}
 
 	val maxChars = (instance?.maxTootChars ?: instance?.configuration?.statuses?.maxCharacters ?: 500)
 	val remainingChars = maxChars - (textFieldState.text.length + cw.length)
@@ -228,7 +250,10 @@ fun ComposeView(
 		}
 
 		sendingTask++
-		val res = createStatus(CreateStatusRequest(
+		val res = if (editingId != null) editStatus(editingId, CreateStatusRequest(
+			status = textFieldState.text as String?,
+			spoilerText = cw
+		)) else createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
 			spoilerText = cw,
@@ -305,6 +330,7 @@ fun ComposeView(
 				},
 				title = {
 					if (inReplyToId != null) Text(stringResource(Res.string.reply))
+					else if (editingId != null) Text(stringResource(Res.string.edit))
 					else Text(stringResource(Res.string.compose))
 				},
 				actions = {
@@ -445,7 +471,10 @@ fun ComposeView(
 							horizontalArrangement = Arrangement.End
 						) {
 							Row {
-								TextButton(onClick = { visibilityDropdownOpen = !visibilityDropdownOpen }) {
+								TextButton(
+									onClick = { visibilityDropdownOpen = !visibilityDropdownOpen },
+									enabled = visibilityEnabled
+								) {
 									Visibility(visibility, true)
 								}
 
@@ -514,6 +543,13 @@ fun ComposeView(
 								modifier = Modifier.padding(horizontal = 10.dp)
 							) {
 								MiniStatus(replyTarget!!, showContentEvenIfCw = true)
+							}
+
+						if (editTarget != null)
+							Column(
+								modifier = Modifier.padding(horizontal = 10.dp)
+							) {
+								MiniStatus(editTarget!!, showContentEvenIfCw = true)
 							}
 
 						AnimatedVisibility(

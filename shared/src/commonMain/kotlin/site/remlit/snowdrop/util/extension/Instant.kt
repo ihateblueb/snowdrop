@@ -3,7 +3,6 @@ package site.remlit.snowdrop.util.extension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import org.jetbrains.compose.resources.StringResource
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.now
@@ -48,27 +47,27 @@ fun Instant.toRelativeString(
 
 	return if (duration < (-5).seconds) { translation(Res.string.soon) }
 	else if (duration <= 5.seconds) { if (nowAlternate != null) translation(nowAlternate) else translation(Res.string.now) }
-	else if (duration < 1.minutes) {
-		if (short) translation(Res.string.x_second_simple, mapOf("time" to simpleAnnotatedString("$seconds")))
-		else if (seconds == 1L) translation(Res.string.x_second, mapOf("time" to simpleAnnotatedString("$seconds")))
-		else translation(Res.string.x_seconds, mapOf("time" to simpleAnnotatedString("$seconds")))
-	} else if (duration < 1.hours) {
-		if (short) translation(Res.string.x_minute_simple, mapOf("time" to simpleAnnotatedString("$minutes")))
-		else if (minutes == 1L) translation(Res.string.x_minute, mapOf("time" to simpleAnnotatedString("$minutes")))
-		else translation(Res.string.x_minutes, mapOf("time" to simpleAnnotatedString("$minutes")))
-	} else if (duration < 1.days) {
-		if (short) translation(Res.string.x_hour_simple, mapOf("time" to simpleAnnotatedString("$hours")))
-		else if (hours == 1L) translation(Res.string.x_hour, mapOf("time" to simpleAnnotatedString("$hours")))
-		else translation(Res.string.x_hours, mapOf("time" to simpleAnnotatedString("$hours")))
-	} else if (duration >= 1.days) {
-		if (short) translation(Res.string.x_day_simple, mapOf("time" to simpleAnnotatedString("$days")))
-		else if (days == 1L) translation(Res.string.x_day, mapOf("time" to simpleAnnotatedString("$days")))
-		else translation(Res.string.x_days, mapOf("time" to simpleAnnotatedString("$days")))
-	} else if (duration >= 7.days) {
-		if (short) translation(Res.string.x_week_simple, mapOf("time" to simpleAnnotatedString("$weeks")))
-		else if (weeks == 1) translation(Res.string.x_week, mapOf("time" to simpleAnnotatedString("$weeks")))
-		else translation(Res.string.x_weeks, mapOf("time" to simpleAnnotatedString("$weeks")))
-	} else simpleAnnotatedString("?")
+	else if (duration < 1.minutes) translation(
+		res = if (short) Res.plurals.x_second_simple else Res.plurals.x_second,
+		quantity = seconds.toInt(),
+		replacements = mapOf("time" to AnnotatedString("$seconds"))
+	) else if (duration < 1.hours) translation(
+		res = if (short) Res.plurals.x_minute_simple else Res.plurals.x_minute,
+		quantity = minutes.toInt(),
+		replacements = mapOf("time" to AnnotatedString("$minutes"))
+	) else if (duration < 1.days) translation(
+		res = if (short) Res.plurals.x_hour_simple else Res.plurals.x_hour,
+		quantity = hours.toInt(),
+		replacements = mapOf("time" to AnnotatedString("$hours"))
+	) else if (duration >= 1.days) translation(
+		res = if (short) Res.plurals.x_day_simple else Res.plurals.x_day,
+		quantity = days.toInt(),
+		replacements = mapOf("time" to AnnotatedString("$days"))
+	) else if (duration >= 7.days) translation(
+		res = if (short) Res.plurals.x_week_simple else Res.plurals.x_week,
+		quantity = weeks.toInt(),
+		replacements = mapOf("time" to AnnotatedString("$weeks"))
+	) else AnnotatedString("?")
 }
 
 /**

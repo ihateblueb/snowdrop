@@ -127,6 +127,7 @@ data class StatusMediaAttachmentRoute(
 @Serializable
 data class ComposeRoute(
 	val inReplyToId: String? = null,
+	val editingId: String? = null,
 	val cw: String = "",
 	val content: String = "",
 	val visibility: String? = null
@@ -379,6 +380,7 @@ fun App() = safe {
 							val args = it.toRoute<ComposeRoute>()
 							ComposeView(
 								args.inReplyToId,
+								args.editingId,
 								args.cw,
 								args.content,
 								args.visibility

@@ -18,7 +18,7 @@ data class CreateStatusRequest(
 	val sensitive: Boolean = false,
 	val preview: Boolean = false,
 
-	val visibility: String,
+	val visibility: String? = null,
 	val language: String? = null,
 	@SerialName("scheduled_at")
 	val scheduledAt: String? = null,

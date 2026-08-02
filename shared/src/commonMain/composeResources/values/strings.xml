@@ -196,33 +196,61 @@
 	<string name="soon">soon</string>
 	<string name="now">now</string>
 
-	<string name="x_second_simple">{time}s</string>
-	<string name="x_second">{time} second</string>
-	<string name="x_seconds">{time} seconds</string>
+	<plurals name="x_second_simple">
+		<item quantity="other">{time}s</item>
+	</plurals>
+	<plurals name="x_second">
+		<item quantity="one">{time} second</item>
+		<item quantity="other">{time} seconds</item>
+	</plurals>
 
-	<string name="x_minute_simple">{time}m</string>
-	<string name="x_minute">{time} minute</string>
-	<string name="x_minutes">{time} minutes</string>
+	<plurals name="x_minute_simple">
+		<item quantity="other">{time}m</item>
+	</plurals>
+	<plurals name="x_minute">
+		<item quantity="one">{time} minute</item>
+		<item quantity="other">{time} minutes</item>
+	</plurals>
 
-	<string name="x_hour_simple">{time}h</string>
-	<string name="x_hour">{time} hour</string>
-	<string name="x_hours">{time} hours</string>
+	<plurals name="x_hour_simple">
+		<item quantity="other">{time}h</item>
+	</plurals>
+	<plurals name="x_hour">
+		<item quantity="one">{time} hour</item>
+		<item quantity="other">{time} hours</item>
+	</plurals>
 
-	<string name="x_day_simple">{time}d</string>
-	<string name="x_day">{time} day</string>
-	<string name="x_days">{time} days</string>
+	<plurals name="x_day_simple">
+		<item quantity="other">{time}d</item>
+	</plurals>
+	<plurals name="x_day">
+		<item quantity="one">{time} day</item>
+		<item quantity="other">{time} days</item>
+	</plurals>
 
-	<string name="x_week_simple">{time}w</string>
-	<string name="x_week">{time} week</string>
-	<string name="x_weeks">{time} weeks</string>
+	<plurals name="x_week_simple">
+		<item quantity="other">{time}w</item>
+	</plurals>
+	<plurals name="x_week">
+		<item quantity="one">{time} week</item>
+		<item quantity="other">{time} weeks</item>
+	</plurals>
 
-	<string name="x_month_simple">{time}mo</string>
-	<string name="x_month">{time} month</string>
-	<string name="x_months">{time} months</string>
+	<plurals name="x_month_simple">
+		<item quantity="other">{time}mo</item>
+	</plurals>
+	<plurals name="x_month">
+		<item quantity="one">{time} month</item>
+		<item quantity="other">{time} months</item>
+	</plurals>
 
-	<string name="x_year_simple">{time}y</string>
-	<string name="x_year">{time} year</string>
-	<string name="x_years">{time} years</string>
+	<plurals name="x_year_simple">
+		<item quantity="other">{time}y</item>
+	</plurals>
+	<plurals name="x_year">
+		<item quantity="one">{time} year</item>
+		<item quantity="other">{time} years</item>
+	</plurals>
 
 	<string name="show_results">Show results</string>
 	<string name="hide_results">Hide results</string>

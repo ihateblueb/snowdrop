@@ -424,11 +424,22 @@ fun Status(
 						) {
 							Visibility(status.visibility!!)
 
-							key(timestampKey) {
-								Text(
-									"${realStatus.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
-									fontSize = 13.sp
-								)
+							Row(
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								key(timestampKey) {
+									Text(
+										"${realStatus.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
+										fontSize = 13.sp
+									)
+								}
+								if (realStatus.editedAt != null) {
+									Text(
+										"*",
+										color = MaterialTheme.colorScheme.onSurfaceVariant,
+										fontSize = 13.sp
+									)
+								}
 							}
 						}
 					}
@@ -936,7 +947,9 @@ fun Status(
 										Icon(painterResource(Res.drawable.icon_edit_24px), null)
 									},
 									shape = MenuDefaults.middleItemShape,
-									onClick = { }
+									onClick = {
+										navHandler.navigate(ComposeRoute(editingId = realStatus.id))
+									}
 								)
 
 								DangerDropdownItem(
