@@ -15,7 +15,7 @@
     <string name="cancel_request">Cancelar pedido</string>
     <string name="follow">Seguir</string>
     <string name="unfollow">Deixar de seguir</string>
-    <string name="joined_at_x">Entrou em {date_time}</string>
+    <string name="joined_on_x">Entrou em {date_time}</string>
     <string name="posts">Postagens</string>
     <string name="posts_and_replies">Postagens &amp; Repostas</string>
     <string name="media">Mídia</string>

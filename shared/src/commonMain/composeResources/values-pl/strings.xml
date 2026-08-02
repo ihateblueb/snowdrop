@@ -15,7 +15,7 @@
     <string name="unfollow">Przestań obserwować</string>
     <string name="cancel_request">Anuluj prośbę</string>
     <string name="request_to_follow">Wyślij prośbę o obserwację</string>
-    <string name="joined_at_x">Dołączył(a) %1$s</string>
+    <string name="joined_on_x">Dołączył(a) %1$s</string>
     <string name="posts">Posty</string>
     <string name="posts_and_replies">Posty i odpowiedzi</string>
     <string name="media">Media</string>

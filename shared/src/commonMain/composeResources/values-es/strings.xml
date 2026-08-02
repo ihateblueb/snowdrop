@@ -61,7 +61,7 @@
     <string name="emoji">Emoji</string>
     <string name="add_emoji">Añadir emoji</string>
     <string name="uncategorized">Sin categorizar</string>
-    <string name="joined_at_x">Se unió el {date_time}</string>
+    <string name="joined_on_x">Se unió el {date_time}</string>
     <string name="timeline">Cronología</string>
     <string name="boosted_by">Impulsado por</string>
     <string name="posts_and_replies">Publicaciones y respuestas</string>

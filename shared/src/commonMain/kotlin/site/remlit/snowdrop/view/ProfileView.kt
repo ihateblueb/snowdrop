@@ -1,9 +1,5 @@
 package site.remlit.snowdrop.view
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,14 +16,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -101,7 +93,6 @@ import site.remlit.snowdrop.util.extension.toLocalizedString
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
-import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.update
@@ -126,7 +117,7 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
-import snowdrop.shared.generated.resources.joined_at_x
+import snowdrop.shared.generated.resources.joined_on_x
 import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
@@ -561,7 +552,7 @@ fun ProfileView(id: String) = ViewSurface {
 								// todo: format this, it's just an ugly timestamp right now
 								Text(
 									translation(
-										Res.string.joined_at_x,
+										Res.string.joined_on_x,
 										mapOf("date_time" to AnnotatedString(
 											Instant.parse(account!!.createdAt).toLocalizedString()
 										))

@@ -85,7 +85,7 @@
     <string name="locked_account_description">Новых подписчиков нужно будет подтвердить прежде чем они подпишутся на вас</string>
     <string name="liked_by">Добавлено в лайки</string>
     <string name="reacted_by">Реакции от</string>
-    <string name="joined_at_x">Регистрация {date_time}</string>
+    <string name="joined_on_x">Регистрация {date_time}</string>
     <string name="explore">Обзор</string>
     <string name="compose">Написать</string>
     <string name="wellbeing">Благополучие</string>

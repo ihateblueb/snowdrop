@@ -40,7 +40,7 @@
     <string name="cancel_request">Lõpeta jälgimispäring</string>
     <string name="follow">Jälgi</string>
     <string name="unfollow">Lõpeta jälgimine</string>
-    <string name="joined_at_x">Liitunud {date_time}</string>
+    <string name="joined_on_x">Liitunud {date_time}</string>
     <string name="posts">Postitused</string>
     <string name="posts_and_replies">Postitused ja vastused</string>
     <string name="media">Meedium</string>
