@@ -3,12 +3,16 @@ package site.remlit.snowdrop.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -28,6 +32,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
@@ -92,19 +98,24 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val timeline = remember { mutableStateListOf<T>() }
 	val refreshState = rememberPullToRefreshState()
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
+	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
+
+	suspend fun addToTimeline() {
+		if (timeline.isEmpty()) return
+		isFetchingMore = true
+		val res = fetchMethod(timeline.last().id, null, null)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return
+		}
+		timeline.addAll(res.response)
+		isFetchingMore = false
+	}
 
 	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 	listState.also {
 		it.ScrollEndCallback {
-			coroutineScope.launch {
-				if (timeline.isEmpty()) return@launch
-				val res = fetchMethod(timeline.last().id, null, null)
-				if (res.error || res.response == null) {
-					res.handleError(snackbarHandler)
-					return@launch
-				}
-				timeline.addAll(res.response)
-			}
+			coroutineScope.launch { addToTimeline() }
 		}
 	}
 
@@ -166,12 +177,15 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 			if (timeline.isEmpty() && !isRefreshing) item {
 				Column(
-					modifier = Modifier.fillMaxHeight()
-						.fillMaxWidth(),
+					modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
 					horizontalAlignment = Alignment.CenterHorizontally,
 					verticalArrangement = Arrangement.Center
 				) {
-					Text(stringResource(Res.string.nothing_to_see_here))
+					Text(
+						stringResource(Res.string.nothing_to_see_here),
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+						fontSize = 13.sp
+					)
 				}
 			} else if (!isRefreshing) items(
 				items = if (distinctCheck) timeline.distinctBy { it.id } else timeline,
@@ -179,6 +193,16 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			) {
 				Box(modifier = itemModifier) {
 					timelineComponent(it) { new -> timeline.update(it, new) }
+				}
+			}
+
+			if (!isRefreshing && isFetchingMore) item {
+				Row(
+					modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					CircularProgressIndicator()
 				}
 			}
 

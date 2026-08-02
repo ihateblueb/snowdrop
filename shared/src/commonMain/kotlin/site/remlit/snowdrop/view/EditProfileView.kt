@@ -173,7 +173,7 @@ fun EditProfileView() = ViewSurface {
 					onValueChange = { note = it; noteChanged = true },
 					label = { Text(stringResource(Res.string.description)) },
 					placeholder = { Text(currentAccount!!.source?.note ?: "") },
-					modifier = Modifier.fillMaxWidth().height(200.dp)
+					modifier = Modifier.fillMaxWidth().height(250.dp)
 				)
 			}
 
