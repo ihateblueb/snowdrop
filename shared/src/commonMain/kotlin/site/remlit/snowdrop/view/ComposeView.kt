@@ -598,7 +598,12 @@ fun ComposeView(
 						if (altBottomSheetSelection != null) {
 							ModalBottomSheet(
 								sheetState = altBottomSheetState,
-								onDismissRequest = { altBottomSheetSelection = null }
+								onDismissRequest = {
+									coroutineScope.launch {
+										altBottomSheetState.hide()
+										altBottomSheetSelection = null
+									}
+								}
 							) {
 								Box(
 									modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)

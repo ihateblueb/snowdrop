@@ -210,8 +210,6 @@ fun Status(
 	// todo: or is admin? figure out how to do that
 
 	fun prepStatus() {
-		debug { "(Status) prepStatus ${status.id}" }
-
 		if (status.reblog != null) {
 			realStatus = status.reblog!!
 			isReblog = true

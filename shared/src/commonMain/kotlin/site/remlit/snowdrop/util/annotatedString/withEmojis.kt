@@ -34,7 +34,6 @@ fun mapEmojisToInlineTextContent(
 			)
 		) { Emoji(emoji, fill = true) }
 	}
-	debug { "(mapEmojisToInlineTextContent) mappedEmojis $mappedEmojis" }
 	return mappedEmojis
 }
 
