@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,7 +39,6 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
-import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.update
 import site.remlit.snowdrop.util.vibrateSoft

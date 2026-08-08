@@ -29,7 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.LocalContentWarningController
+import site.remlit.snowdrop.util.LocalStatusStateController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
@@ -48,7 +48,7 @@ import site.remlit.snowdrop.component.Status as StatusComponent
 fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
-	val contentWarningController = LocalContentWarningController.current
+	val statusStateController = LocalStatusStateController.current
 	var forcedContentWarning by remember { mutableStateOf(false) }
 
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
@@ -104,8 +104,8 @@ fun ThreadView(id: String) = ViewSurface {
 		actions = {
 			IconButton(onClick = {
 				forcedContentWarning = !forcedContentWarning
-				contentWarningController.defaultValue = forcedContentWarning
-				contentWarningController.setAll(forcedContentWarning)
+				statusStateController.defaultCwValue = forcedContentWarning
+				statusStateController.setAllCw(forcedContentWarning)
 			}) {
 				if (!forcedContentWarning) Icon(painterResource(Res.drawable.icon_visibility_24px), null)
 				else Icon(painterResource(Res.drawable.icon_visibility_off_24px), null)

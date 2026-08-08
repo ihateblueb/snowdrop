@@ -276,4 +276,6 @@
 	<string name="pinned_posts">Pinned posts</string>
 	<string name="pin">Pin</string>
 	<string name="unpin">Unpin</string>
+
+	<string name="filtered_by_x">Filtered by {filters}</string>
 </resources>

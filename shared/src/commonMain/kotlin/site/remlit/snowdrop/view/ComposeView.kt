@@ -5,7 +5,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -75,6 +74,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -112,6 +112,7 @@ import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
+import site.remlit.snowdrop.util.safe
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError
@@ -143,7 +144,7 @@ import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ComposeView(
 	inReplyToId: String? = null,
@@ -305,7 +306,7 @@ fun ComposeView(
 					) {
 						Text(translation(
 							Res.string.unknown_media_type_x,
-							mapOf("type" to simpleAnnotatedString(type ?: "unknown"))
+							mapOf("type" to AnnotatedString(type ?: "unknown"))
 						))
 					}
 				}
@@ -472,7 +473,9 @@ fun ComposeView(
 						) {
 							Row {
 								TextButton(
-									onClick = { visibilityDropdownOpen = !visibilityDropdownOpen },
+									onClick = {
+										visibilityDropdownOpen = !visibilityDropdownOpen
+									},
 									enabled = visibilityEnabled
 								) {
 									Visibility(visibility, true)
