@@ -35,6 +35,7 @@ import snowdrop.shared.generated.resources._1_quoted_post
 import snowdrop.shared.generated.resources.icon_attachment_20px
 import snowdrop.shared.generated.resources.icon_warning_20px
 import snowdrop.shared.generated.resources.x_attachment_s_
+import snowdrop.shared.generated.resources.x_attachments
 
 /**
  * Mini status component.
@@ -105,8 +106,9 @@ fun MiniStatus(
 
 					if (status.mediaAttachments.isNotEmpty())
 						attachmentStrings.add(translation(
-							Res.string.x_attachment_s_,
-							mapOf("count" to simpleAnnotatedString("${status.mediaAttachments.size}"))
+							Res.plurals.x_attachments,
+							quantity = status.mediaAttachments.size,
+							mapOf("count" to AnnotatedString("${status.mediaAttachments.size}"))
 						))
 
 					if (status.poll != null)

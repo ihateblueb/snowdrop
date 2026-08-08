@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -52,6 +53,7 @@ import snowdrop.shared.generated.resources.hide_results
 import snowdrop.shared.generated.resources.show_results
 import snowdrop.shared.generated.resources.vote
 import snowdrop.shared.generated.resources.x_vote_s_
+import snowdrop.shared.generated.resources.x_votes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -74,8 +76,8 @@ fun Poll(status: Status) {
 		Column(
 			verticalArrangement = Arrangement.spacedBy(10.dp)
 		) {
-			var votersCount = 0L
-			poll!!.options.forEach { votersCount += it.votesCount }
+			var votersCount = 0
+			poll!!.options.forEach { votersCount += it.votesCount.toInt() }
 			var showResults by remember { mutableStateOf(false) }
 
 			val selection = remember { mutableStateListOf<Int>() }
@@ -202,8 +204,9 @@ fun Poll(status: Status) {
 
 						Text(
 							translation(
-								Res.string.x_vote_s_,
-								mapOf("count" to simpleAnnotatedString("$votersCount"))
+								Res.plurals.x_votes,
+								quantity = votersCount,
+								mapOf("count" to AnnotatedString("$votersCount"))
 							),
 							color = MaterialTheme.colorScheme.onSurfaceVariant,
 							fontSize = 14.sp,

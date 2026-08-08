@@ -12,7 +12,10 @@
 	<string name="liked_by">Liked by</string>
 	<string name="reacted_by">Reacted by</string>
 
-	<string name="x_posts">{count} posts</string>
+	<plurals name="x_posts">
+		<item quantity="one">{count} post</item>
+		<item quantity="other">{count} posts</item>
+	</plurals>
 
 	<string name="edit_profile">Edit profile</string>
 	<string name="request_to_follow">Request to follow</string>
@@ -22,8 +25,13 @@
 
 	<string name="joined_on_x">Joined on {date_time}</string>
 
-	<string name="x_followers">{count} followers</string>
-	<string name="x_following">{count} following</string>
+	<plurals name="x_followers">
+		<item quantity="one">{count} follower</item>
+		<item quantity="other">{count} followers</item>
+	</plurals>
+	<plurals name="x_following">
+		<item quantity="other">{count} following</item>
+	</plurals>
 
 	<string name="posts">Posts</string>
 	<string name="posts_and_replies">Posts &amp; Replies</string>
@@ -185,13 +193,19 @@
 	<string name="hashtags">Hashtags</string>
 
 	<string name="1_poll">1 poll</string>
-	<string name="x_attachment_s_">{count} attachment(s)</string>
+	<plurals name="x_attachments">
+		<item quantity="one">{count} attachment</item>
+		<item quantity="other">{count} attachments</item>
+	</plurals>
 	<string name="1_quoted_post">1 quoted post</string>
 
 	<string name="ends_in_x">Ends in {time}</string>
 	<string name="ends_soon">Ends soon</string>
 	<string name="poll_ended">Poll ended</string>
-	<string name="x_vote_s_">{count} vote(s)</string>
+	<plurals name="x_votes">
+		<item quantity="one">{count} vote</item>
+		<item quantity="other">{count} votes</item>
+	</plurals>
 
 	<string name="soon">soon</string>
 	<string name="now">now</string>

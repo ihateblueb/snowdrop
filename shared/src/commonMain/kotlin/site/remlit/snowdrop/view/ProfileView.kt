@@ -195,8 +195,9 @@ fun ProfileView(id: String) = ViewSurface {
 					Text(translation(Res.string.profile))
 					Text(
 						translation(
-							Res.string.x_posts,
-							mapOf("count" to simpleAnnotatedString("0"))
+							Res.plurals.x_posts,
+							quantity = 0,
+							mapOf("count" to AnnotatedString("0"))
 						),
 						fontSize = 14.sp
 					)
@@ -209,8 +210,9 @@ fun ProfileView(id: String) = ViewSurface {
 					)
 					Text(
 						translation(
-							Res.string.x_posts,
-							mapOf("count" to simpleAnnotatedString(formatNumber(account!!.statusesCount)))
+							Res.plurals.x_posts,
+							quantity = account!!.statusesCount.toInt(),
+							mapOf("count" to AnnotatedString(formatNumber(account!!.statusesCount)))
 						),
 						fontSize = 14.sp
 					)
@@ -566,19 +568,31 @@ fun ProfileView(id: String) = ViewSurface {
 									modifier = Modifier.padding(top = 10.dp),
 									horizontalArrangement = Arrangement.spacedBy(10.dp)
 								) {
-									Text(translation(Res.string.x_followers, mapOf("count" to buildAnnotatedString {
-										withStyle(style = SpanStyle(
-											fontWeight = FontWeight.Bold
-										)) { append("${account!!.followersCount}") }
-										toAnnotatedString()
-									})))
+									Text(
+										translation(
+											Res.plurals.x_followers,
+											quantity = account!!.followersCount.toInt(),
+											mapOf("count" to buildAnnotatedString {
+												withStyle(style = SpanStyle(
+													fontWeight = FontWeight.Bold
+												)) { append("${account!!.followersCount}") }
+												toAnnotatedString()
+											})
+										)
+									)
 
-									Text(translation(Res.string.x_following, mapOf("count" to buildAnnotatedString {
-										withStyle(style = SpanStyle(
-											fontWeight = FontWeight.Bold
-										)) { append("${account!!.followingCount}") }
-										toAnnotatedString()
-									})))
+									Text(
+										translation(
+											Res.plurals.x_following,
+											quantity = account!!.followingCount.toInt(),
+											mapOf("count" to buildAnnotatedString {
+												withStyle(style = SpanStyle(
+													fontWeight = FontWeight.Bold
+												)) { append("${account!!.followingCount}") }
+												toAnnotatedString()
+											})
+										)
+									)
 								}
 							//</editor-fold>
 						}
