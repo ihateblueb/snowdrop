@@ -3,24 +3,42 @@ package site.remlit.snowdrop
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,7 +48,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -85,7 +106,11 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.add_account
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
+import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_edit_square_24px
+import snowdrop.shared.generated.resources.icon_list_arrow_24px
+import snowdrop.shared.generated.resources.reorder
+import snowdrop.shared.generated.resources.save
 
 
 /*
@@ -303,21 +328,45 @@ fun App() = safe {
 						ModalBottomSheet(
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
+							var reordering by remember { mutableStateOf(false) }
+
 							AccountPickerList(
 								modifier = Modifier.padding(horizontal = 15.dp),
-								onSelect = { showAccountSwitcher = false }
+								onSelect = { showAccountSwitcher = false },
+								reordering = reordering
 							)
 
-							TextButton(
+							Row(
 								modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp)
 									.fillMaxWidth(),
-								onClick = {
-									showAccountSwitcher = false
-									addNewAccount(navController)
-								}
+								horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
 							) {
-								Icon(painterResource(Res.drawable.icon_add_24px), null)
-								Text(stringResource(Res.string.add_account))
+								FilledTonalButton(
+									onClick = {
+										showAccountSwitcher = false
+										addNewAccount(navController)
+									},
+									enabled = !reordering
+								) {
+									Icon(painterResource(Res.drawable.icon_add_24px), null)
+									Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+									Text(stringResource(Res.string.add_account))
+								}
+
+								FilledTonalButton(
+									onClick = { reordering = !reordering },
+								) {
+									Icon(
+										if (reordering) painterResource(Res.drawable.icon_check_24px)
+										else painterResource(Res.drawable.icon_list_arrow_24px),
+										null
+									)
+									Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+									Text(
+										if (reordering) stringResource(Res.string.save)
+										else stringResource(Res.string.reorder)
+									)
+								}
 							}
 						}
 					}

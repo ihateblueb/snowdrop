@@ -95,6 +95,7 @@
 	<string name="reset_feature_determinations">Reset feature determinations</string>
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_settings">Clear settings</string>
+	<string name="clear_accounts">Clear accounts</string>
 
 	<string name="x_liked_your_post">{clickable_display_name} liked your post</string>
 	<string name="x_reacted_with_x">{clickable_display_name} reacted with {emoji}</string>
@@ -109,6 +110,7 @@
 	<string name="x_followed_you">{clickable_display_name} followed you</string>
 	<string name="x_accepted_your_follow_request">{clickable_display_name} accepted your follow request</string>
 
+	<string name="reorder">Reorder</string>
 	<string name="save">Save</string>
 	<string name="accept">Accept</string>
 	<string name="reject">Reject</string>

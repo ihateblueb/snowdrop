@@ -17,6 +17,7 @@
 - M3 Expressive menus, animations
 - Reply indicators showing who's being replied to
 - Post filtering
+- Reordering of logged in accounts
 
 ### Fixed
 - Timelines not updating properly

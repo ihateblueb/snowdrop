@@ -28,6 +28,7 @@ import site.remlit.snowdrop.util.resetFeatures
 import site.remlit.snowdrop.util.toggleLoggedInState
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.cache
+import snowdrop.shared.generated.resources.clear_accounts
 import snowdrop.shared.generated.resources.clear_cache
 import snowdrop.shared.generated.resources.clear_settings
 import snowdrop.shared.generated.resources.debug
@@ -111,6 +112,15 @@ fun DebugView() = ViewSurface {
 					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
 					headlineContent = { Text(stringResource(Res.string.reset_feature_determinations)) },
 					modifier = Modifier.clickable { resetFeatures(); bgIO { determineFeatures() } }
+				)
+			}
+		}
+		item {
+			Card {
+				ListItem(
+					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
+					headlineContent = { Text(stringResource(Res.string.clear_accounts)) },
+					modifier = Modifier.clickable { bg { blockingSettings.putString("accounts", "") } }
 				)
 			}
 		}
