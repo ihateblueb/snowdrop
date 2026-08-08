@@ -34,18 +34,28 @@ import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bite
+import snowdrop.shared.generated.resources.bites
 import snowdrop.shared.generated.resources.boost
+import snowdrop.shared.generated.resources.boosts
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follow_request
+import snowdrop.shared.generated.resources.follow_requests
+import snowdrop.shared.generated.resources.follows
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_filled_24px
 import snowdrop.shared.generated.resources.like
+import snowdrop.shared.generated.resources.likes
 import snowdrop.shared.generated.resources.mention
+import snowdrop.shared.generated.resources.mentions
 import snowdrop.shared.generated.resources.notifications
 import snowdrop.shared.generated.resources.poll
+import snowdrop.shared.generated.resources.polls
 import snowdrop.shared.generated.resources.post
 import snowdrop.shared.generated.resources.post_edit
+import snowdrop.shared.generated.resources.post_edits
+import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.reaction
+import snowdrop.shared.generated.resources.reactions
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
@@ -127,21 +137,21 @@ fun NotificationsView() = ViewSurface {
 				FilterChip(
 					selected = mentions,
 					onClick = { blockingSettings.putBoolean("notifications_filter_mentions", !mentions) },
-					label = { Text(translation(Res.string.mention)) }
+					label = { Text(translation(Res.string.mentions)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = likes,
 					onClick = { blockingSettings.putBoolean("notifications_filter_likes", !likes) },
-					label = { Text(translation(Res.string.like)) }
+					label = { Text(translation(Res.string.likes)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = boosts,
 					onClick = { blockingSettings.putBoolean("notifications_filter_boosts", !boosts) },
-					label = { Text(translation(Res.string.boost)) }
+					label = { Text(translation(Res.string.boosts)) }
 				)
 			}
 			if (getFeature("reactions"))
@@ -149,42 +159,42 @@ fun NotificationsView() = ViewSurface {
 					FilterChip(
 						selected = reactions,
 						onClick = { blockingSettings.putBoolean("notifications_filter_reactions", !reactions) },
-						label = { Text(translation(Res.string.reaction)) }
+						label = { Text(translation(Res.string.reactions)) }
 					)
 				}
 			item {
 				FilterChip(
 					selected = follows,
 					onClick = { blockingSettings.putBoolean("notifications_filter_follows", !follows) },
-					label = { Text(translation(Res.string.follow)) }
+					label = { Text(translation(Res.string.follows)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = followRequests,
 					onClick = { blockingSettings.putBoolean("notifications_filter_follow_requests", !followRequests) },
-					label = { Text(translation(Res.string.follow_request)) }
+					label = { Text(translation(Res.string.follow_requests)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = polls,
 					onClick = { blockingSettings.putBoolean("notifications_filter_polls", !polls) },
-					label = { Text(translation(Res.string.poll)) }
+					label = { Text(translation(Res.string.polls)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = posts,
 					onClick = { blockingSettings.putBoolean("notifications_filter_posts", !posts) },
-					label = { Text(translation(Res.string.post)) }
+					label = { Text(translation(Res.string.posts)) }
 				)
 			}
 			item {
 				FilterChip(
 					selected = edits,
 					onClick = { blockingSettings.putBoolean("notifications_filter_edits", !edits) },
-					label = { Text(translation(Res.string.post_edit)) }
+					label = { Text(translation(Res.string.post_edits)) }
 				)
 			}
 			if (getFeature("biting"))
@@ -192,7 +202,7 @@ fun NotificationsView() = ViewSurface {
 					FilterChip(
 						selected = bites,
 						onClick = { blockingSettings.putBoolean("notifications_filter_bites", !bites) },
-						label = { Text(translation(Res.string.bite)) }
+						label = { Text(translation(Res.string.bites)) }
 					)
 				}
 		}
