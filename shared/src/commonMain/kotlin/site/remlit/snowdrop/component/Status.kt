@@ -60,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -98,6 +99,8 @@ import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchAccount
+import site.remlit.snowdrop.util.cache.fetchAccountOrNull
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
@@ -133,6 +136,7 @@ import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
+import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_24px
@@ -144,6 +148,8 @@ import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.pinned
+import snowdrop.shared.generated.resources.replying_to_self
+import snowdrop.shared.generated.resources.replying_to_x
 import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.show_content
@@ -208,11 +214,21 @@ fun Status(
 	var isMine by remember { mutableStateOf(false) }
 	// todo: or is admin? figure out how to do that
 
+	val replyingToAccount by remember { fetchAccountOrNull(realStatus.inReplyToAccountId, snackbarController) }
+		.collectAsStateWithLifecycle(null)
+
 	val filtered = realStatus.filtered != null && realStatus.filtered!!.isNotEmpty()
-	var isVisible by remember { mutableStateOf(if (filtered) filteredState.getOrElse(realStatus.id) { true } else true) }
+	var isVisible by remember {
+		mutableStateOf(
+			if (filtered) filteredState.getOrElse(realStatus.id) { true }
+			else true
+		)
+	}
 
 	LaunchedEffect(filteredState[realStatus.id]) {
-		if (filtered) isVisible = filteredState.getOrElse(realStatus.id) { statusStateController.defaultFilteredValue }
+		if (filtered) isVisible = filteredState.getOrElse(realStatus.id) {
+			statusStateController.defaultFilteredValue
+		}
 	}
 
 	fun prepStatus() {
@@ -508,13 +524,45 @@ fun Status(
 						Column(
 							verticalArrangement = Arrangement.spacedBy(10.dp)
 						) {
-							if (!realStatus.content.isNullOrBlank()) {
-								HtmlContent(
-									string = realStatus.content!!,
-									mentions = realStatus.mentions,
-									emojis = realStatus.emojis,
-									emojiSize = 1.5.em
-								)
+							Column(
+								verticalArrangement = Arrangement.spacedBy(5.dp)
+							) {
+								if (realStatus.inReplyToId != null) {
+									Row(
+										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
+									) {
+										Icon(painterResource(Res.drawable.icon_reply_20px), null)
+
+										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
+											Text(
+												translation(Res.string.replying_to_self),
+												fontSize = 13.sp
+											)
+										} else {
+											Text(
+												translation(
+													Res.string.replying_to_x,
+													mapOf(
+														"handle" to if (replyingToAccount != null)
+															AnnotatedString("@${replyingToAccount!!.acct}")
+																.withAccountLink(replyingToAccount!!)
+														else AnnotatedString("...")
+													)
+												),
+												fontSize = 13.sp
+											)
+										}
+									}
+								}
+
+								if (!realStatus.content.isNullOrBlank()) {
+									HtmlContent(
+										string = realStatus.content!!,
+										mentions = realStatus.mentions,
+										emojis = realStatus.emojis,
+										emojiSize = 1.5.em
+									)
+								}
 							}
 
 							if (realStatus.mediaAttachments.isNotEmpty()) {

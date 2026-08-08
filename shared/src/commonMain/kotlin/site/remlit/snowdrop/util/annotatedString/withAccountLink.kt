@@ -22,13 +22,14 @@ import site.remlit.snowdrop.util.LocalNavController
  * and text decoration set to none.
  *
  * @param account Account to create link for
+ * @param handle Use handle instead of display name
  *
  * @since 0.0.3-alpha
  * */
 @Composable
-fun Builder.withAccountLink(account: Account) {
+fun Builder.withAccountLink(account: Account, handle: Boolean = false) {
 	append(
-		buildAnnotatedString { append(account.displayName()) }
+		buildAnnotatedString { append(if (handle) "@${account.acct}" else account.displayName()) }
 			.withAccountLink(account)
 	)
 }

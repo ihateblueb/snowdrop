@@ -292,4 +292,7 @@
 	<string name="unpin">Unpin</string>
 
 	<string name="filtered_by_x">Filtered by {filters}</string>
+
+	<string name="replying_to_x">Replying to {handle}</string>
+	<string name="replying_to_self">Replying to self</string>
 </resources>
