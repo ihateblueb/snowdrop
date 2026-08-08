@@ -12,6 +12,11 @@
 - Timeline locking, posts on a timeline cannot be interacted with while the timeline is locked
 - Pinning and unpinning posts
 - Pinned posts on profile page
+- Post editing
+- Edited post indicator (* next to timestamp)
+- M3 Expressive menus, animations
+- Reply indicators showing who's being replied to
+- Post filtering
 
 ### Fixed
 - Timelines not updating properly
@@ -19,6 +24,10 @@
 - Weird padding when having content warning field in focus in compose page
 - Content warning state persists when posts go off-screen
 - Timestamps on notifications are properly aligned and update like post timestamps do
+- Large media uploads no longer cause an out of memory crash
+- Plural translation strings now done properly
+- Relative time translation strings are now also done properly
+- Predictive back is enabled again
 
 ## [0.0.5-alpha]
 
