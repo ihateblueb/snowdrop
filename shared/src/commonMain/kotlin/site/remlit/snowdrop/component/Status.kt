@@ -208,9 +208,9 @@ fun Status(
 	var isMine by remember { mutableStateOf(false) }
 	// todo: or is admin? figure out how to do that
 
-	var isVisible by remember { mutableStateOf(filteredState.getOrElse(realStatus.id) { realStatus.filtered?.isEmpty() ?: true }) }
-
 	val filtered = realStatus.filtered != null && realStatus.filtered!!.isNotEmpty()
+	var isVisible by remember { mutableStateOf(if (filtered) filteredState.getOrElse(realStatus.id) { true } else true) }
+
 	LaunchedEffect(filteredState[realStatus.id]) {
 		if (filtered) isVisible = filteredState.getOrElse(realStatus.id) { statusStateController.defaultFilteredValue }
 	}
