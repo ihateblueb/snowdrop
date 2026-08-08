@@ -18,6 +18,7 @@
 - Reply indicators showing who's being replied to
 - Post filtering
 - Reordering of logged in accounts
+- Video attachment viewing with controls in the detailed view
 
 ### Fixed
 - Timelines not updating properly

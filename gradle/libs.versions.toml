@@ -5,6 +5,7 @@ android-minSdk = "24"
 android-targetSdk = "37"
 androidx-activity = "1.13.0"
 androidx-lifecycle = "2.11.0-beta01"
+composemediaplayer = "0.11.4"
 composeMultiplatform = "1.11.1"
 filekitCore = "0.14.2"
 htmlconverter = "1.1.1"
@@ -20,11 +21,13 @@ reorderable = "3.1.0"
 startupRuntime = "1.2.0"
 ktor = "3.5.2"
 buildKonfig = "0.22.0"
-zoomimageCompose = "1.6.0" # 1.6.0 requires android sdk 37 as target
+zoomimageCompose = "1.6.0"
 
 [libraries]
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+composemediaplayer = { module = "io.github.kdroidfilter:composemediaplayer", version.ref = "composemediaplayer" }
+composemediaplayer-audio = { module = "io.github.kdroidfilter:composemediaplayer-audio", version.ref = "composemediaplayer" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitCore" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }

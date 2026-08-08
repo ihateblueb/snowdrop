@@ -27,9 +27,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -55,8 +57,10 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.cache.fetchStatus
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_close_24px
+import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurface {
 	val navHandler = LocalNavController.current
@@ -67,6 +71,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	// todo: certain actions (single tap, zoom in) should trigger this to be false and certain
 	//  should make it true (single tap, zoom out)
 	var showDecorations by remember { mutableStateOf(true) }
+	var showAltSheet by remember { mutableStateOf(false) }
 
 	Column(
 		modifier = Modifier.background(Color.Black)
@@ -86,9 +91,12 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 			modifier = Modifier.animateContentSize(tween(100))
 				.height(if (showDecorations) Dp.Unspecified else 0.dp),
 			actions = {
-				/*
+				IconButton(onClick = { showAltSheet = !showAltSheet }) {
+					Icon(painterResource(Res.drawable.icon_info_24px), null)
+				}
 
-			var dropdown by remember { mutableStateOf(false) }
+			/*
+			* var dropdown by remember { mutableStateOf(false) }
 			IconButton(onClick = { dropdown = !dropdown }) {
 				Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 			}
@@ -97,9 +105,8 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 				expanded = dropdown,
 				onDismissRequest = { dropdown = false }
 			) {
-			}
+			}*/
 
-				* */
 			}
 		)
 
@@ -115,47 +122,23 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 					Box(modifier = Modifier.fillMaxSize()) {
 						val media = status!!.mediaAttachments[page]
 
-						Column(
-							verticalArrangement = Arrangement.Bottom,
-							modifier = Modifier.fillMaxSize()
-								.zIndex(10f)
+						val alt = media.description
+						if (showAltSheet) ModalBottomSheet(
+							onDismissRequest = { showAltSheet = false }
 						) {
-							// this is a card for multiple reasons, mainly to respect someone's
-							// light mode setting in case it's for text readability
-							val alt = media.description
-							if (!alt.isNullOrBlank()) {
-								val scrollState = rememberScrollState()
-								AnimatedVisibility(
-									showDecorations,
-									enter = bottomNavEnterAnimation,
-									exit = bottomNavExitAnimation
-								) {
-									Card(
-										colors = CardDefaults.cardColors(
-											containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
-										),
-										modifier = Modifier.padding(10.dp)
-											.heightIn(max = 100.dp)
-											.fillMaxWidth()
-									) {
-										Column(
-											modifier = Modifier.verticalScroll(scrollState)
-										) {
-											Text(
-												modifier = Modifier.padding(10.dp),
-												color = MaterialTheme.colorScheme.onSurface,
-												fontSize = 13.sp,
-												text = alt
-											)
-										}
-									}
-								}
-							}
+							if (!alt.isNullOrBlank()) Text(
+								alt,
+								modifier = Modifier.padding(10.dp)
+							)
 						}
 
 						StatusMediaAttachment(
 							media,
 							includeFallback = false,
+							showVideoProgress = true,
+							onVideoPlayerStateChange = { state ->
+								showDecorations = !state.isPlaying
+							},
 							supportZoomGestures = true,
 							modifier = Modifier.fillMaxSize(),
 							onTransform = { userTransform ->

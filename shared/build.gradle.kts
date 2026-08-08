@@ -83,6 +83,10 @@ kotlin {
 			implementation(libs.kamel.decoder.animated.image)
 			implementation(libs.kamel.decoder.image.bitmap)
 
+			// video and audio
+			implementation(libs.composemediaplayer)
+			implementation(libs.composemediaplayer.audio)
+
 			implementation(libs.zoomimage.compose)
 			implementation(libs.filekit.core)
 			implementation(libs.filekit.dialogs.compose)

@@ -14,24 +14,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.Transform
+import io.github.kdroidfilter.composemediaplayer.CacheConfig
+import io.github.kdroidfilter.composemediaplayer.InitialPlayerState
+import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
+import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
+import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -42,6 +52,8 @@ import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_pause_24px
+import snowdrop.shared.generated.resources.icon_play_arrow_24px
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.unknown_media_type_x
 
@@ -64,7 +76,12 @@ import snowdrop.shared.generated.resources.unknown_media_type_x
 fun StatusMediaAttachment(
 	attachment: Status.MediaAttachment,
 	includeFallback: Boolean,
-	supportZoomGestures: Boolean = false, // todo: implement
+
+	initialPlayerState: InitialPlayerState = InitialPlayerState.PAUSE,
+	showVideoProgress: Boolean = false,
+	onVideoPlayerStateChange: (VideoPlayerState) -> Unit = {},
+
+	supportZoomGestures: Boolean = false,
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit = {},
 	onTransform: (Transform) -> Unit = {}
@@ -125,6 +142,16 @@ fun StatusMediaAttachment(
 				)
 			}
 
+			"video" -> {
+				VideoPlayer(
+					url = attachment.url,
+					initialPlayerState = initialPlayerState,
+					showProgress = showVideoProgress,
+					clickToPause = showVideoProgress,
+					onPlayerStateChange = onVideoPlayerStateChange
+				)
+			}
+
 			else -> {
 				Column(
 					horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,7 +160,7 @@ fun StatusMediaAttachment(
 				) {
 					Text(translation(
 						Res.string.unknown_media_type_x,
-						mapOf("type" to simpleAnnotatedString(type))
+						mapOf("type" to AnnotatedString(type))
 					))
 					TextButton(onClick = { uriHandler.openUri(attachment.url) }) {
 						Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
