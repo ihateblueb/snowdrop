@@ -27,6 +27,22 @@ Uses Material 3 (supporting dynamic color schemes) for UI and icons.
 	<img src=".github/assets/profile_bottom.png" height="250px">
 </div>
 
+## Software Compatibility
+
+| Software           | Supported | Status   | Notes                                                                      |
+|--------------------|-----------|----------|----------------------------------------------------------------------------|
+| Iceshrimp.NET      | Yes       | Great    |                                                                            |
+| Chuckya (Mastodon) | Yes       | Great    |                                                                            |
+| Glitch (Mastodon)  | Yes       | Great    |                                                                            |
+| Mastodon           | Yes       | Great    |                                                                            |
+| Iceshrimp.JS       | Yes       | Usable   | Some missing options compared to .NET but generally good.                  |
+| GoToSocial         | Yes       | Usable   | Not as frequently tested/used by developers.                               |
+| Pleroma, Akkoma    | Yes       | Usable   | Not as frequently tested/used by developers.                               | 
+| Sharkey            | No        | Unusable | Poor Mastodon API implementation, technically logs in and allows browsing. |
+
+Feel free to open an issue if there's something missing here, or if you have suggestions for software
+to support.
+
 ## Contributing
 
 You can see instructions and helpful tips on contributing in `./CONTRIBUTING.md`.
