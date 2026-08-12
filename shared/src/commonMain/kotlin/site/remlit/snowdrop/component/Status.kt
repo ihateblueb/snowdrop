@@ -290,7 +290,7 @@ fun Status(
 	fun Divider() {
 		HorizontalDivider(
 			thickness = 1.dp,
-			color = MaterialTheme.colorScheme.surfaceContainer
+			color = MaterialTheme.colorScheme.surfaceBright
 		)
 	}
 
