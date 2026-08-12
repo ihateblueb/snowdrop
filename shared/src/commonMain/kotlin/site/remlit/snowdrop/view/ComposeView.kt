@@ -562,7 +562,6 @@ fun ComposeView(
 								placeholder = { Text(stringResource(Res.string.content_warning)) },
 								modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, top = 5.dp)
 									.clip(RoundedCornerShape(10.dp)),
-								maxLines = 1,
 								colors = TextFieldDefaults.colors(
 									unfocusedContainerColor = WarningColor25,
 									unfocusedIndicatorColor = Color(0x00000000),
