@@ -33,9 +33,6 @@ kotlin {
 		androidResources {
 			enable = true
 		}
-		withHostTest {
-			isIncludeAndroidResources = true
-		}
 	}
 
 	sourceSets {
@@ -89,9 +86,6 @@ kotlin {
 			implementation(libs.zoomimage.compose)
 			implementation(libs.filekit.core)
 			implementation(libs.filekit.dialogs.compose)
-		}
-		commonTest.dependencies {
-			implementation(libs.kotlin.test)
 		}
 	}
 }
