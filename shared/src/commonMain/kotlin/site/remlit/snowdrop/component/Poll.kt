@@ -42,7 +42,6 @@ import kotlinx.coroutines.launch
 import site.remlit.snowdrop.api.statuses.voteInPoll
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalSnackbarController
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
@@ -52,7 +51,6 @@ import snowdrop.shared.generated.resources.ends_soon
 import snowdrop.shared.generated.resources.hide_results
 import snowdrop.shared.generated.resources.show_results
 import snowdrop.shared.generated.resources.vote
-import snowdrop.shared.generated.resources.x_vote_s_
 import snowdrop.shared.generated.resources.x_votes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant

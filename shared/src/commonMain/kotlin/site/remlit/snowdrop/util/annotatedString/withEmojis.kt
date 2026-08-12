@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.TextUnit
 import site.remlit.snowdrop.component.Emoji
 import site.remlit.snowdrop.component.defaultEmojiSize
 import site.remlit.snowdrop.model.Emoji
-import site.remlit.snowdrop.util.log.debug
 
 /**
  * Map a list of emojis to InlineTextContent for use with [AnnotatedString.withEmojis].

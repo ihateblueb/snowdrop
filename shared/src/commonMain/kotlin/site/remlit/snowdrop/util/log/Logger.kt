@@ -66,7 +66,7 @@ fun err(message: () -> String) = log(Level.Error, message)
 /**
  * Log an exception at error level
  *
- * @param exception Exception to log
+ * @param throwable Exception to log
  *
  * @since 0.0.6-alpha
  * */

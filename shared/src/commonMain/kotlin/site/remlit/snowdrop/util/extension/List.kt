@@ -2,7 +2,6 @@ package site.remlit.snowdrop.util.extension
 
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemShapes
-import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 

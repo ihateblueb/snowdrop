@@ -6,23 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuGroupShapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -40,7 +32,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.collect
@@ -74,10 +65,8 @@ import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmarks
 import snowdrop.shared.generated.resources.bubble
-import snowdrop.shared.generated.resources.create_list
 import snowdrop.shared.generated.resources.global
 import snowdrop.shared.generated.resources.home
-import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_bookmark_24px
 import snowdrop.shared.generated.resources.icon_bubble_chart_24px
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
@@ -100,7 +89,6 @@ import snowdrop.shared.generated.resources.lock_timeline_description
 import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
 import snowdrop.shared.generated.resources.unlock
-import snowdrop.shared.generated.resources.you_must_provide_a_valid_host
 
 //<editor-fold name="ScrollEndCallback">
 @Composable

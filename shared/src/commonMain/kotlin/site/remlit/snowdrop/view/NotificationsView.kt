@@ -33,28 +33,18 @@ import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.bite
 import snowdrop.shared.generated.resources.bites
-import snowdrop.shared.generated.resources.boost
 import snowdrop.shared.generated.resources.boosts
-import snowdrop.shared.generated.resources.follow
-import snowdrop.shared.generated.resources.follow_request
 import snowdrop.shared.generated.resources.follow_requests
 import snowdrop.shared.generated.resources.follows
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_filled_24px
-import snowdrop.shared.generated.resources.like
 import snowdrop.shared.generated.resources.likes
-import snowdrop.shared.generated.resources.mention
 import snowdrop.shared.generated.resources.mentions
 import snowdrop.shared.generated.resources.notifications
-import snowdrop.shared.generated.resources.poll
 import snowdrop.shared.generated.resources.polls
-import snowdrop.shared.generated.resources.post
-import snowdrop.shared.generated.resources.post_edit
 import snowdrop.shared.generated.resources.post_edits
 import snowdrop.shared.generated.resources.posts
-import snowdrop.shared.generated.resources.reaction
 import snowdrop.shared.generated.resources.reactions
 
 @Composable

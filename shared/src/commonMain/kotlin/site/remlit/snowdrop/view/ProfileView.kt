@@ -515,7 +515,7 @@ fun ProfileView(id: String) = ViewSurface {
 							//</editor-fold>
 
 							//<editor-fold name="Fields">
-							if (!account!!.fields.isEmpty())
+							if (account!!.fields.isNotEmpty())
 								Column(
 									modifier = Modifier.padding(top = 10.dp)
 										.clip(RoundedCornerShape(10.dp))

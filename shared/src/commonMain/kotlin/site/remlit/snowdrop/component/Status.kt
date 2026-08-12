@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -60,7 +59,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -99,7 +97,6 @@ import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
-import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -220,8 +217,7 @@ fun Status(
 	val filtered = realStatus.filtered != null && realStatus.filtered!!.isNotEmpty()
 	var isVisible by remember {
 		mutableStateOf(
-			if (filtered) filteredState.getOrElse(realStatus.id) { true }
-			else true
+			!filtered || filteredState.getOrElse(realStatus.id) { true }
 		)
 	}
 
@@ -295,7 +291,7 @@ fun Status(
 		TextButton(
 			onClick = onClick,
 			colors = colors ?: ButtonDefaults.textButtonColors(),
-			enabled = if (lockable) !timelineLocked else true
+			enabled = !lockable || !timelineLocked
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,

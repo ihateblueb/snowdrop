@@ -5,8 +5,6 @@ import io.ktor.client.request.*
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.config.endOfRequest
-import site.remlit.snowdrop.util.getCurrentAccountHost
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings

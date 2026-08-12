@@ -15,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,11 +27,9 @@ import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
 import site.remlit.snowdrop.api.statuses.getStatusReactions
 import site.remlit.snowdrop.api.statuses.getStatusRebloggedBy
 import site.remlit.snowdrop.component.AccountRow
-import site.remlit.snowdrop.component.Emoji
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
-import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Reaction
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController

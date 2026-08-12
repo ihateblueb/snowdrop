@@ -90,7 +90,7 @@ fun AboutInstanceView() = ViewSurface {
 				}
 			}
 
-			if (!instance!!.rules.isEmpty()) {
+			if (instance!!.rules.isNotEmpty()) {
 				item {
 					Text(
 						"Rules",
