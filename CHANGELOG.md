@@ -1,6 +1,14 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.6-alpha)]
+## [Unreleased (0.0.7-alpha)]
+
+### Added
+-
+
+### Fixed
+- iOS race condition crash with alt text bottom sheet
+
+## [0.0.6-alpha]
 
 ### Added
 - New logging, including a log viewing page and copy button

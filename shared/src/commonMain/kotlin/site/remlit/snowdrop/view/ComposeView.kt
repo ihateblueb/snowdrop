@@ -164,6 +164,9 @@ fun ComposeView(
 	val mediaAttachments = remember { mutableStateListOf<PlatformFile>() }
 	val mediaAttachmentsAlt = remember { mutableStateListOf<String?>() }
 
+	val altBottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
+	var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
+
 	val filekitMode = remember { FileKitMode.Multiple(instance?.configuration?.statuses?.maxMediaAttachments ?: 4) }
 	val galleryLauncher = rememberFilePickerLauncher(
 		type = FileKitType.ImageAndVideo,
@@ -591,40 +594,6 @@ fun ComposeView(
 						)
 
 						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
-						val altBottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
-						var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
-						if (altBottomSheetSelection != null) {
-							ModalBottomSheet(
-								sheetState = altBottomSheetState,
-								onDismissRequest = {
-									coroutineScope.launch {
-										altBottomSheetState.hide()
-										altBottomSheetSelection = null
-									}
-								}
-							) {
-								Box(
-									modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-								) {
-									AttachmentPreview(true, mediaAttachments[altBottomSheetSelection!!])
-								}
-
-								OutlinedTextField(
-									value = mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) ?: "",
-									onValueChange = {
-										// for some reason [0] for setting doesn't work when list is empty
-										if (mediaAttachmentsAlt.getOrNull(altBottomSheetSelection!!) == null)
-											mediaAttachmentsAlt.add(altBottomSheetSelection!!, it)
-										else mediaAttachmentsAlt[altBottomSheetSelection!!] = it
-									},
-									label = { Text(stringResource(Res.string.alt_text)) },
-									placeholder = { Text(stringResource(Res.string.describe_important_elements_of_your_media)) },
-									minLines = 4,
-									modifier = Modifier.padding(10.dp).fillMaxWidth()
-								)
-							}
-						}
-
 						AnimatedVisibility(
 							visible = mediaAttachments.isNotEmpty()
 						) {
@@ -684,6 +653,49 @@ fun ComposeView(
 				onDismiss = { showEmojiPicker = !showEmojiPicker },
 				onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:") } }
 			)
+		}
+
+		if (altBottomSheetSelection != null) {
+			ModalBottomSheet(
+				sheetState = altBottomSheetState,
+				onDismissRequest = {
+					coroutineScope.launch {
+						altBottomSheetState.hide()
+						altBottomSheetSelection = null
+					}
+				}
+			) {
+				val selection = altBottomSheetSelection
+
+				if (selection != null) {
+					Box(
+						modifier = Modifier.padding(
+							start = 10.dp,
+							end = 10.dp,
+							bottom = 10.dp
+						)
+					) {
+						AttachmentPreview(
+							true,
+							mediaAttachments[selection]
+						)
+					}
+
+					OutlinedTextField(
+						value = mediaAttachmentsAlt.getOrNull(selection) ?: "",
+						onValueChange = {
+							// for some reason [0] for setting doesn't work when list is empty
+							if (mediaAttachmentsAlt.getOrNull(selection) == null)
+								mediaAttachmentsAlt.add(selection, it)
+							else mediaAttachmentsAlt[selection] = it
+						},
+						label = { Text(stringResource(Res.string.alt_text)) },
+						placeholder = { Text(stringResource(Res.string.describe_important_elements_of_your_media)) },
+						minLines = 4,
+						modifier = Modifier.padding(10.dp).fillMaxWidth()
+					)
+				}
+			}
 		}
 	}
 }

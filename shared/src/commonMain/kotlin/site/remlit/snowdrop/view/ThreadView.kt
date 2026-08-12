@@ -172,7 +172,7 @@ fun ThreadView(id: String) = ViewSurface {
 			}
 			Column(
 				modifier = Modifier.fillMaxWidth()
-					.padding(start = 10.dp, end = 10.dp, top = 10.dp)
+					.padding(all = 10.dp)
 			) {
 				val replyToString = translation(
 					Res.string.reply_to_x,
