@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,11 +39,13 @@ import site.remlit.snowdrop.util.cache.fetchStatus
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_info_24px
+import snowdrop.shared.generated.resources.icon_open_in_new_24px
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurface {
 	val navHandler = LocalNavController.current
+	val uriHandler = LocalUriHandler.current
 
 	val status by remember { fetchStatus(id) }.collectAsStateWithLifecycle(null)
 	val pager = rememberPagerState(startingPosition) { status?.mediaAttachments?.size ?: 0 }
@@ -72,6 +75,10 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 			actions = {
 				IconButton(onClick = { showAltSheet = !showAltSheet }) {
 					Icon(painterResource(Res.drawable.icon_info_24px), null)
+				}
+
+				IconButton(onClick = { uriHandler.openUri(status?.mediaAttachments[pager.currentPage]?.url ?: "") }) {
+					Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 				}
 
 			/*
