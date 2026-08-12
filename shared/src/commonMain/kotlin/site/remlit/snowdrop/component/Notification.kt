@@ -1,9 +1,7 @@
 package site.remlit.snowdrop.component
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -322,7 +319,7 @@ fun Notification(notification: Notification) {
 
 			HorizontalDivider(
 				thickness = 1.dp,
-				color = MaterialTheme.colorScheme.surfaceContainer
+				color = MaterialTheme.colorScheme.surfaceBright
 			)
 		}
 	}

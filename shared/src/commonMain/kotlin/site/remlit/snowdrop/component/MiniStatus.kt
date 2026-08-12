@@ -26,7 +26,6 @@ import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
@@ -34,7 +33,6 @@ import snowdrop.shared.generated.resources._1_poll
 import snowdrop.shared.generated.resources._1_quoted_post
 import snowdrop.shared.generated.resources.icon_attachment_20px
 import snowdrop.shared.generated.resources.icon_warning_20px
-import snowdrop.shared.generated.resources.x_attachment_s_
 import snowdrop.shared.generated.resources.x_attachments
 
 /**
@@ -55,7 +53,7 @@ fun MiniStatus(
 	Column(
 		modifier = Modifier.fillMaxWidth()
 			.clip(RoundedCornerShape(10.dp))
-			.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
+			.border(1.dp, MaterialTheme.colorScheme.surfaceBright, RoundedCornerShape(10.dp))
 			.clickable(onClick = {
 				navHandler.navigate(ThreadRoute(status.id))
 			})
