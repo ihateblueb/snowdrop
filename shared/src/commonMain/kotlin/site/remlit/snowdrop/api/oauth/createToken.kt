@@ -6,16 +6,12 @@ import io.ktor.http.parameters
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.response.OauthToken
 import site.remlit.snowdrop.util.config.endOfRequest
-import site.remlit.snowdrop.util.getCurrentAccountHost
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
-suspend fun createToken(code: String): ApiResponse<OauthToken> = safeApiRequest {
-	val accountId = getCurrentAccountId()
-	val host = getCurrentAccountHost()
+suspend fun createToken(code: String): ApiResponse<OauthToken> = safeApiRequest { accountId, host ->
 	val clientId = settings.getString("account_${accountId}_client_id", "")
 	val clientSecret = settings.getString("account_${accountId}_client_secret", "")
 

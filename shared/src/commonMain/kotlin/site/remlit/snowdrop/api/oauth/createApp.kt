@@ -6,7 +6,6 @@ import io.ktor.http.parameters
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.response.CreateAppResponse
 import site.remlit.snowdrop.util.config.endOfRequest
-import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 
@@ -14,8 +13,7 @@ const val authScopes = "read write push"
 const val redirectUri = "snowdrop://oauth-callback"
 
 @OptIn(ExperimentalSettingsApi::class)
-suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest {
-	val host = getCurrentAccountHost()
+suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest { accountId, host ->
 
 	val req = httpClient.submitForm("https://$host/api/v1/apps", parameters {
 		append("client_name", "Snowdrop")

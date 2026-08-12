@@ -9,15 +9,13 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
-import site.remlit.snowdrop.util.getCurrentAccountHost
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
-suspend fun updateCredentials(req: UpdateCredentialsRequest): ApiResponse<Account> = safeApiRequest {
-	val accountId = getCurrentAccountId()
-	val host = getCurrentAccountHost()
+suspend fun updateCredentials(
+	req: UpdateCredentialsRequest
+): ApiResponse<Account> = safeApiRequest { accountId, host ->
 	val token = settings.getString("account_${accountId}_token", "")
 
 	val req = httpClient.patch("https://$host/api/v1/accounts/update_credentials") {

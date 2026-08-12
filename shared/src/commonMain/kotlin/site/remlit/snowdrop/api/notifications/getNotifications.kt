@@ -22,9 +22,7 @@ suspend fun getNotifications(
 	types: List<String>? = null,
 	excludeTypes: List<String>? = null,
 	accountId: String? = null,
-): ApiResponse<List<Notification>> = safeApiRequest {
-	val currentAccountId = getCurrentAccountId()
-	val host = getCurrentAccountHost()
+): ApiResponse<List<Notification>> = safeApiRequest { currentAccountId, host ->
 	val token = settings.getString("account_${currentAccountId}_token", "")
 
 	val req = httpClient.get("https://$host/api/v1/notifications") {

@@ -7,8 +7,6 @@ import io.ktor.client.request.parameter
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.config.endOfRequest
-import site.remlit.snowdrop.util.getCurrentAccountHost
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
@@ -26,9 +24,7 @@ suspend fun getPublicTimeline(
 	remote: Boolean? = null,
 	onlyMedia: Boolean? = null,
 	bubble: Boolean? = null
-): ApiResponse<List<Status>> = safeApiRequest {
-	val accountId = getCurrentAccountId()
-	val host = getCurrentAccountHost()
+): ApiResponse<List<Status>> = safeApiRequest { accountId, host ->
 	val token = settings.getString("account_${accountId}_token", "")
 
 	val req = httpClient.get("https://$host/api/v1/timelines/public") {

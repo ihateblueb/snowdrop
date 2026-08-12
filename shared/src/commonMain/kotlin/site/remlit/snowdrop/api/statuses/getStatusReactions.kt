@@ -8,8 +8,6 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Reaction
 import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
-import site.remlit.snowdrop.util.getCurrentAccountHost
-import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
 
@@ -23,9 +21,7 @@ suspend fun getStatusReactions(
 	minId: String? = null,
 	sinceId: String? = null,
 	offset: Int? = null,
-): ApiResponse<List<Reaction>> = safeApiRequest {
-	val accountId = getCurrentAccountId()
-	val host = getCurrentAccountHost()
+): ApiResponse<List<Reaction>> = safeApiRequest { accountId, host ->
 	val token = settings.getString("account_${accountId}_token", "")
 
 	val req = httpClient.get("https://$host/api/v1/statuses/$id/reactions") {

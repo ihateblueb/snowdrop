@@ -25,10 +25,14 @@ inline fun safe(block: () -> Unit) =
  * @see site.remlit.snowdrop.util.safe
  * @since 0.0.1-alpha
  * */
-inline fun <T> safeApiRequest(block: () -> T): ApiResponse<T> =
+inline fun <T> safeApiRequest(
+	block: (accountId: String, host: String) -> T
+): ApiResponse<T> =
 	try {
-		// todo: send alerts from here
-		return ApiResponse(response = block())
+		val accountId = getCurrentAccountId()
+		val host = getCurrentAccountHost()
+
+		return ApiResponse(response = block(accountId, host))
 	} catch(e: CancellationException) {
 		throw e
 	} catch (e: Throwable) {
