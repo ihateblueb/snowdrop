@@ -7,8 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -240,6 +243,8 @@ fun Notification(notification: Notification) {
 				}
 				//</editor-fold>
 
+				val actionsStartPadding = 24.dp + 10.dp
+
 				//<editor-fold name="Follow request actions">
 				if (notification.type == "follow_request") {
 					var actionsVisible by rememberSaveable { mutableStateOf(true) }
@@ -263,7 +268,7 @@ fun Notification(notification: Notification) {
 						exit = shrinkVertically()
 					) {
 						Row(
-							modifier = Modifier.padding(top = 10.dp),
+							modifier = Modifier.padding(top = 10.dp, start = actionsStartPadding),
 							horizontalArrangement = Arrangement.spacedBy(10.dp)
 						) {
 							FilledTonalButton(onClick = { respondToFollowRequest(true) }) {
@@ -282,25 +287,26 @@ fun Notification(notification: Notification) {
 				//<editor-fold name="Bite actions">
 				if (notification.type == "bite") {
 					Row(
-						modifier = Modifier.padding(top = 10.dp),
+						modifier = Modifier.padding(top = 10.dp, start = actionsStartPadding),
 						horizontalArrangement = Arrangement.spacedBy(10.dp)
 					) {
 						if (bittenBack) {
 							FilledTonalButton(
 								onClick = {
-									bgIO {
+									coroutineScope.launch {
 										vibrate(true, haptics)
 										biteBack(notification.bite!!.id)
 									}
 								}
 							) {
 								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 								Text(stringResource(Res.string.bite_back))
 							}
 						} else {
 							OutlinedButton(
 								onClick = {
-									bgIO {
+									coroutineScope.launch {
 										vibrate(true, haptics)
 										biteBack(notification.bite!!.id)
 										bittenBack = true
@@ -308,6 +314,7 @@ fun Notification(notification: Notification) {
 								}
 							) {
 								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 								Text(stringResource(Res.string.bite_back))
 							}
 						}
