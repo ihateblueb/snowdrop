@@ -65,7 +65,7 @@ fun Instant.toRelativeString(
 		replacements = mapOf("time" to AnnotatedString("$days"))
 	) else if (duration >= 7.days) translation(
 		res = if (short) Res.plurals.x_week_simple else Res.plurals.x_week,
-		quantity = weeks.toInt(),
+		quantity = weeks,
 		replacements = mapOf("time" to AnnotatedString("$weeks"))
 	) else AnnotatedString("?")
 }

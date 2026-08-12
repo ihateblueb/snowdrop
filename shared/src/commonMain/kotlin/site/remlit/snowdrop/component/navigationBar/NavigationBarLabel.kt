@@ -9,6 +9,7 @@ import snowdrop.shared.generated.resources.notifications
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.timeline
 
+@Suppress("ComposableNaming")
 @Composable
 fun NavigationBarLabel(tab: NavigationBarOption): String =
 	when (tab) {

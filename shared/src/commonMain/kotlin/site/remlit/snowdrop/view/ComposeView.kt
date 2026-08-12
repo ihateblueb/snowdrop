@@ -45,12 +45,13 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -591,7 +592,10 @@ fun ComposeView(
 						)
 
 						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
-						val altBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+						val altBottomSheetState = rememberBottomSheetState(
+							SheetValue.Hidden,
+							setOf(SheetValue.PartiallyExpanded)
+						)
 						var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
 						if (altBottomSheetSelection != null) {
 							ModalBottomSheet(
