@@ -212,6 +212,7 @@ fun App() = safe {
 
 
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
+		atRoute<ThreadRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
 		atRoute<AboutSettingsRoute>(currentDest) ||
 		atRoute<AboutInstanceRoute>(currentDest) ||

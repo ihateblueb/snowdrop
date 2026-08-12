@@ -298,6 +298,7 @@
 
 	<string name="replying_to_x">Replying to {handle}</string>
 	<string name="replying_to_self">Replying to self</string>
+	<string name="reply_to_x">Reply to {handle}</string>
 
 	<string name="search">Search</string>
 </resources>

@@ -47,7 +47,9 @@ fun Avatar(
 	account: Account,
 	big: Boolean = false,
 	small: Boolean = false,
-	smaller: Boolean = false
+	smaller: Boolean = false,
+
+	modifier: Modifier = Modifier
 ) {
 	val size = if (big) bigAvatarSize.dp
 		else if (small) smallAvatarSize.dp
@@ -61,7 +63,7 @@ fun Avatar(
 	@Composable
 	fun fallback(fail: Boolean = false) {
 		Box(
-			modifier = Modifier.clip(RoundedCornerShape(radius))
+			modifier = Modifier.clip(RoundedCornerShape(radius)).then(modifier)
 				.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 				.height(size)
 				.width(size),
@@ -88,7 +90,7 @@ fun Avatar(
 			contentScale = ContentScale.Crop,
 			onLoading = { fallback() },
 			onFailure = { fallback(fail = true) },
-			modifier = Modifier.clip(RoundedCornerShape(radius))
+			modifier = Modifier.clip(RoundedCornerShape(radius)).then(modifier)
 				.height(size)
 				.width(size),
 		)
