@@ -592,10 +592,7 @@ fun ComposeView(
 						)
 
 						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
-						val altBottomSheetState = rememberBottomSheetState(
-							SheetValue.Hidden,
-							setOf(SheetValue.PartiallyExpanded)
-						)
+						val altBottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
 						var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
 						if (altBottomSheetSelection != null) {
 							ModalBottomSheet(
