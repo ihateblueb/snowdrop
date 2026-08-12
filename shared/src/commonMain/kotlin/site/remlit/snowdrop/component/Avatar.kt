@@ -19,6 +19,7 @@ import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Account
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_broken_image_20px
 import snowdrop.shared.generated.resources.icon_broken_image_24px
 
 const val bigAvatarSize = 84
@@ -68,11 +69,15 @@ fun Avatar(
 		) {
 			if (fail)
 				Icon(
-					painterResource(Res.drawable.icon_broken_image_24px),
+					painterResource(
+						if (small || smaller) Res.drawable.icon_broken_image_20px
+						else Res.drawable.icon_broken_image_24px
+					),
 					null,
 					tint = MaterialTheme.colorScheme.onSurface,
 					modifier = Modifier.alpha(0.5f)
 				)
+
 		}
 	}
 
