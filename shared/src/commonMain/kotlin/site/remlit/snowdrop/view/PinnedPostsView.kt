@@ -1,5 +1,6 @@
 package site.remlit.snowdrop.view
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.pinned_posts
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PinnedPostsView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current

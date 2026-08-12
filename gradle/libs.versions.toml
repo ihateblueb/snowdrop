@@ -1,33 +1,32 @@
 [versions]
 agp = "9.1.1"
 android-compileSdk = "37"
-android-minSdk = "23"
+android-minSdk = "21"
 android-targetSdk = "37"
-androidx-activity = "1.13.0"
-androidx-lifecycle = "2.11.0"
-composemediaplayer = "0.11.4"
-composeMultiplatform = "1.12.0-rc01"
-filekitCore = "0.14.2"
-htmlconverter = "1.1.1"
-kamelImage = "1.0.9"
-kermit = "2.1.0"
+androidx-activity = "1.12.0-alpha05"
+androidx-lifecycle = "2.10.0-alpha01"
+composemediaplayer = "0.8.5"
+composeMultiplatform = "1.9.3"
+filekitCore = "0.12.0"
+htmlconverter = "1.1.0"
+kamelImage = "1.0.8"
+kermit = "2.0.8"
 kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
-material3 = "1.12.0-alpha03"
-multiplatformSettings = "1.3.0"
-navigationCompose = "2.9.2"
-reorderable = "3.1.0"
-startupRuntime = "1.2.0"
+material3 = "1.9.0"
+multiplatformSettings = "1.3.0" # FINE
+navigationCompose = "2.9.2" # FINE
+reorderable = "3.1.0" # FINE
+startupRuntime = "1.2.0" # FINE
 ktor = "3.5.2"
 buildKonfig = "0.22.0"
-zoomimageCompose = "1.6.0"
+zoomimageCompose = "1.4.0"
 
 [libraries]
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 composemediaplayer = { module = "io.github.kdroidfilter:composemediaplayer", version.ref = "composemediaplayer" }
-composemediaplayer-audio = { module = "io.github.kdroidfilter:composemediaplayer-audio", version.ref = "composemediaplayer" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitCore" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }

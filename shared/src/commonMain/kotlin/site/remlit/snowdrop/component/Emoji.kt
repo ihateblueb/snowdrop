@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -31,6 +32,7 @@ const val bigEmojiSize = 40
  *
  * @since 0.0.2-alpha
  * */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Emoji(
 	emoji: Emoji,

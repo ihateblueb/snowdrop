@@ -8,5 +8,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun MenuDivider() {
-	HorizontalDivider(Modifier.padding(MenuDefaults.HorizontalDividerPadding))
+	HorizontalDivider()
 }

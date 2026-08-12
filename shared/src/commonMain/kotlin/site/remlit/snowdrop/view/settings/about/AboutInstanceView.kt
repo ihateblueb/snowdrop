@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutInstanceView() = ViewSurface {
 	val navHandler = LocalNavController.current

@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import io.github.kdroidfilter.composemediaplayer.CacheConfig
 import io.github.kdroidfilter.composemediaplayer.InitialPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
@@ -39,6 +38,7 @@ fun VideoPlayer(
 	clickToPause: Boolean = false,
 	onPlayerStateChange: (VideoPlayerState) -> Unit = {}
 ) {
+	/*
 	val playerState = rememberVideoPlayerState(cacheConfig = CacheConfig(enabled = true))
 	playerState.openUri(url, initializeplayerState = initialPlayerState)
 
@@ -106,4 +106,5 @@ fun VideoPlayer(
 			}
 		}
 	}
+	*/
 }

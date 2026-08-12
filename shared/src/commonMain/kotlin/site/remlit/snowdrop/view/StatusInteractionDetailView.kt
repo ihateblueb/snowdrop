@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.PrimaryScrollableTabRow
@@ -46,6 +47,7 @@ enum class InteractionViewType {
 	Boost, Like, Reaction
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusInteractionDetailView(
 	id: String,

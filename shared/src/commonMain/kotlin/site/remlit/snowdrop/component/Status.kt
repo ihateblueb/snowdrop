@@ -6,9 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalGridApi
-import androidx.compose.foundation.layout.Grid
-import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -167,7 +165,7 @@ import kotlin.time.Duration.Companion.seconds
  * @since 0.0.1-alpha
  * */
 @Composable
-@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
@@ -553,6 +551,7 @@ fun Status(
 								}
 							}
 
+							/*
 							if (realStatus.mediaAttachments.isNotEmpty()) {
 								Grid({
 									// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
@@ -585,7 +584,7 @@ fun Status(
 										)
 									}
 								}
-							}
+							}*/
 
 							if (realStatus.poll != null) Poll(realStatus)
 
@@ -854,7 +853,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_link_24px), null)
 										},
-										shape = MenuDefaults.leadingItemShape,
 										onClick = {
 											coroutineScope.launch {
 												clipboardManager.setText(AnnotatedString(realStatus.url!!))
@@ -869,7 +867,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 										},
-										shape = MenuDefaults.middleItemShape,
 										onClick = {
 											uriHandler.openUri(realStatus.url!!)
 											showDropdown = false
@@ -886,7 +883,6 @@ fun Status(
 										if (!realStatus.bookmarked) Icon(painterResource(Res.drawable.icon_bookmark_24px), null)
 										else Icon(painterResource(Res.drawable.icon_bookmark_filled_24px), null)
 									},
-									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										coroutineScope.launch {
 											vibrate(true, haptics)
@@ -909,7 +905,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 										},
-										shape = MenuDefaults.middleItemShape,
 										onClick = {
 											coroutineScope.launch {
 												vibrate(true, haptics)
@@ -933,7 +928,6 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_repeat_24px), null)
 									},
-									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										navHandler.navigate(
 											StatusInteractionDetailRoute(
@@ -949,7 +943,6 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_star_24px), null)
 									},
-									shape = MenuDefaults.middleItemShape,
 									onClick = {
 										navHandler.navigate(
 											StatusInteractionDetailRoute(
@@ -966,7 +959,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_mood_24px), null)
 										},
-										shape = MenuDefaults.middleItemShape,
 										onClick = {
 											navHandler.navigate(
 												StatusInteractionDetailRoute(
@@ -984,7 +976,6 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
 									},
-									shape = MenuDefaults.middleItemShape,
 									onClick = { }
 								)
 
@@ -993,7 +984,6 @@ fun Status(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_flag_24px), null)
 									},
-									shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
 									onClick = { }
 								)
 
@@ -1010,7 +1000,6 @@ fun Status(
 											if (!realStatus.pinned) Icon(painterResource(Res.drawable.icon_keep_24px), null)
 											else Icon(painterResource(Res.drawable.icon_keep_off_24px), null)
 										},
-										shape = MenuDefaults.middleItemShape,
 										onClick = {
 											coroutineScope.launch {
 												vibrate(true, haptics)
@@ -1033,7 +1022,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_edit_24px), null)
 										},
-										shape = MenuDefaults.middleItemShape,
 										onClick = {
 											navHandler.navigate(ComposeRoute(editingId = realStatus.id))
 										}
@@ -1044,7 +1032,6 @@ fun Status(
 										leadingIcon = {
 											Icon(painterResource(Res.drawable.icon_delete_24px), null)
 										},
-										shape = MenuDefaults.trailingItemShape,
 										onClick = {
 											coroutineScope.launch {
 												vibrate(true, haptics)

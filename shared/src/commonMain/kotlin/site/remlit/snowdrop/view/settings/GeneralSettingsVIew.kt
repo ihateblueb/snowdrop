@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -52,7 +53,7 @@ import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun GeneralSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current

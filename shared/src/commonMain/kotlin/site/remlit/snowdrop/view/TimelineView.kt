@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -107,7 +107,7 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
 }
 //</editor-fold>
 
-@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TimelineView() = ViewSurface {
 	Column(
@@ -192,14 +192,12 @@ fun TimelineView() = ViewSurface {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(0) },
 					text = { Text(stringResource(Res.string.home)) },
-					shape = MenuDefaults.leadingItemShape,
 					onClick = { changeTimeline(0) }
 				)
 
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(1) },
 					text = { Text(stringResource(Res.string.local)) },
-					shape = MenuDefaults.middleItemShape,
 					onClick = { changeTimeline(1) }
 				)
 
@@ -207,14 +205,12 @@ fun TimelineView() = ViewSurface {
 					DropdownMenuItem(
 						leadingIcon = { RenderTimelineTypeIcon(2) },
 						text = { Text(stringResource(Res.string.bubble)) },
-						shape = MenuDefaults.middleItemShape,
 						onClick = { changeTimeline(2) }
 					)
 
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(3) },
 					text = { Text(stringResource(Res.string.global)) },
-					shape = MenuDefaults.middleItemShape,
 					onClick = { changeTimeline(3) }
 				)
 
@@ -223,7 +219,6 @@ fun TimelineView() = ViewSurface {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(4) },
 					text = { Text(stringResource(Res.string.bookmarks)) },
-					shape = MenuDefaults.middleItemShape,
 					onClick = { changeTimeline(4) }
 				)
 
@@ -238,7 +233,6 @@ fun TimelineView() = ViewSurface {
 							)
 						},
 						text = { Text(stringResource(Res.string.lists)) },
-						shape = MenuDefaults.trailingItemShape,
 						onClick = {
 							listPickerOpen = !listPickerOpen
 							vibrate(true, haptics)
@@ -258,7 +252,6 @@ fun TimelineView() = ViewSurface {
 									listPickerOpen = false
 									timelinePickerOpen = false
 								},
-								shape = lists.getPreparedDropdownMenuItemShape(index),
 								text = { Text(list.title) }
 							)
 						}
@@ -277,8 +270,7 @@ fun TimelineView() = ViewSurface {
 		TopAppBar(
 			navigationIcon = {
 				Box(
-					modifier = Modifier.minimumInteractiveComponentSize()
-						.size(IconButtonDefaults.smallContainerSize()),
+					modifier = Modifier.minimumInteractiveComponentSize(),
 					contentAlignment = Alignment.Center,
 				) {
 					RenderTimelineTypeIcon()
@@ -332,7 +324,6 @@ fun TimelineView() = ViewSurface {
 							if (timelineLocked) Text(stringResource(Res.string.unlock))
 							else Text(stringResource(Res.string.lock))
 						},
-						shape = MenuDefaults.standaloneItemShape,
 						onClick = {
 							blockingSettings.putBoolean("timeline_locked", !timelineLocked)
 							showDropdown = false

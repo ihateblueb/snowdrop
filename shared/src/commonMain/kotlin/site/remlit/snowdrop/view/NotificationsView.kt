@@ -8,6 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +49,7 @@ import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.reactions
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun NotificationsView() = ViewSurface {
 	var refreshKey by remember { mutableStateOf(0) }
 	val showFilters by remember { settings.getBooleanFlow("show_filters", false) }

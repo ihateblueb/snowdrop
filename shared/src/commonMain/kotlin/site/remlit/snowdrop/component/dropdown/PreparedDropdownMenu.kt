@@ -2,9 +2,7 @@ package site.remlit.snowdrop.component.dropdown
 
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuPopup
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,23 +22,17 @@ import androidx.compose.ui.unit.dp
  * @since 0.0.6-alpha
  * */
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun PreparedDropdownMenu(
 	expanded: Boolean,
 	onDismissRequest: () -> Unit,
 	offset: DpOffset = DpOffset(0.dp, 0.dp),
 	content: @Composable () -> Unit
 ) {
-	DropdownMenuPopup(
+	DropdownMenu(
 		expanded = expanded,
 		onDismissRequest = onDismissRequest,
 		modifier = Modifier.offset(x = offset.x, y = offset.y)
 	) {
-		DropdownMenuGroup(
-			shapes = MenuDefaults.groupShape(0, 1),
-			modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)
-		) {
-			content()
-		}
+		content()
 	}
 }

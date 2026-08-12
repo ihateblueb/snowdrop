@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,6 +48,7 @@ import snowdrop.shared.generated.resources.locked_account
 import snowdrop.shared.generated.resources.locked_account_description
 import snowdrop.shared.generated.resources.save
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileView() = ViewSurface {
 	val navHandler = LocalNavController.current

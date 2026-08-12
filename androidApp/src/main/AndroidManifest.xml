@@ -3,6 +3,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+	<uses-sdk tools:overrideLibrary="androidx.compose.ui.tooling.preview, androidx.compose.ui.tooling.data, androidx.compose.foundation, androidx.compose.foundation.layout, androidx.compose.animation.core, androidx.compose.animation, androidx.compose.ui.util, androidx.compose.ui.unit, androidx.compose.ui.text, androidx.compose.ui.graphics, androidx.compose.ui.geometry, androidx.compose.ui.tooling, androidx.compose.runtime.annotation, androidx.compose.runtime, androidx.compose.runtime.saveable, androidx.savedstate.ktx, androidx.savedstate.compose, androidx.savedstate, androidx.lifecycle.livedata.core.ktx, androidx.lifecycle.livedata, androidx.lifecycle.process, androidx.lifecycle.ktx, androidx.lifecycle.*, androidx.compose.*"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"

@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -47,7 +48,7 @@ val dropdownEnterAnimation = expandVertically() + fadeIn()
 val dropdownExitAnimation = fadeOut() + shrinkVertically()
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun SettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 

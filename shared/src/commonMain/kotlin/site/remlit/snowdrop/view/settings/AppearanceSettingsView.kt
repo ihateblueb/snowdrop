@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -52,7 +53,7 @@ import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun AppearanceSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 

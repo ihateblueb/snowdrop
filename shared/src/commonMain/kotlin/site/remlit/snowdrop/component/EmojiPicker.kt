@@ -21,7 +21,7 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,7 +78,7 @@ fun EmojiPicker(
 	onSelectEmoji: (Emoji) -> Unit
 ) {
 	val coroutineScope = rememberCoroutineScope()
-	val sheetState = rememberBottomSheetState(SheetValue.Hidden)
+	val sheetState = rememberModalBottomSheetState(false)
 
 	LaunchedEffect(visible) {
 		if (visible) sheetState.show()

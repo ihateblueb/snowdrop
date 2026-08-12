@@ -2,7 +2,6 @@ package site.remlit.snowdrop.component
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
@@ -40,7 +39,7 @@ fun AppTheme(
 	val amoledBlack by remember { settings.getBooleanFlow("amoled_black", false) }
 		.collectAsStateWithLifecycle(false)
 
-	MaterialExpressiveTheme(
+	MaterialTheme(
 		colorScheme = if (darkTheme && amoledBlack)
 			getDarkColorScheme().copy(
 				surface = Color(0,0,0,255), // top bar

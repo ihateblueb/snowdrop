@@ -28,7 +28,6 @@ fun DangerDropdownItem(
 		text = text,
 		leadingIcon = leadingIcon,
 		onClick = onClick,
-		shape = shape,
 		colors = MenuDefaults.itemColors(
 			MaterialTheme.colorScheme.error,
 			MaterialTheme.colorScheme.error,

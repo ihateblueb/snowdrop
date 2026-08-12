@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +66,7 @@ import snowdrop.shared.generated.resources.reply_to_x
 import kotlin.collections.mapOf
 import site.remlit.snowdrop.component.Status as StatusComponent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThreadView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current

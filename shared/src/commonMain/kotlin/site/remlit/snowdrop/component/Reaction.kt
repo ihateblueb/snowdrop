@@ -2,6 +2,7 @@ package site.remlit.snowdrop.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -17,6 +18,7 @@ import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getPlatform
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Reaction(reaction: Status.Reaction, showTooltip: Boolean = true) {
 	@Composable

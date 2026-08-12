@@ -21,6 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -135,7 +136,7 @@ import kotlin.time.Instant
 const val headerHeight = 200
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun ProfileView(id: String) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
@@ -254,7 +255,6 @@ fun ProfileView(id: String) = ViewSurface {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
 						},
-						shape = MenuDefaults.leadingItemShape,
 						onClick = {
 							coroutineScope.launch {
 								val local = !account!!.acct.contains("@")
@@ -272,7 +272,6 @@ fun ProfileView(id: String) = ViewSurface {
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 						},
-						shape = MenuDefaults.trailingItemShape,
 						onClick = {
 							uriHandler.openUri(account!!.url)
 							dropdownVisible = false

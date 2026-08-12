@@ -34,9 +34,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -51,7 +49,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberBottomSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -106,7 +104,6 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
-import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
 import site.remlit.snowdrop.util.translation
@@ -140,7 +137,7 @@ import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeView(
 	inReplyToId: String? = null,
@@ -164,7 +161,7 @@ fun ComposeView(
 	val mediaAttachments = remember { mutableStateListOf<PlatformFile>() }
 	val mediaAttachmentsAlt = remember { mutableStateListOf<String?>() }
 
-	val altBottomSheetState = rememberBottomSheetState(SheetValue.Hidden)
+	val altBottomSheetState = rememberModalBottomSheetState(false)
 	var altBottomSheetSelection by remember { mutableStateOf<Int?>(null) }
 
 	val filekitMode = remember { FileKitMode.Multiple(instance?.configuration?.statuses?.maxMediaAttachments ?: 4) }
@@ -354,7 +351,8 @@ fun ComposeView(
 				}
 			)
 		},
-		bottomBar = {
+		//bottomBar = {
+			/*
 			HorizontalFloatingToolbar(
 				expanded = false,
 				modifier = Modifier.fillMaxWidth()
@@ -395,13 +393,11 @@ fun ComposeView(
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24), null) },
 							text = { Text("Add photo or video") },
-							shape = MenuDefaults.leadingItemShape,
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
 						)
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
 							text = { Text("Add file") },
-							shape = MenuDefaults.trailingItemShape,
 							onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
 						)
 					}
@@ -431,7 +427,7 @@ fun ComposeView(
 					}
 				}
 			}
-		}
+		}*/
 	) { paddingValues ->
 		Box(
 			modifier = Modifier.fillMaxSize()
@@ -491,14 +487,11 @@ fun ComposeView(
 									fun VisibilityDropdownItem(vis: String, index: Int) {
 										DropdownMenuItem(
 											enabled = true,
-											selected = visibility == vis,
 											onClick = {
 												visibility = vis
 												visibilityDropdownOpen = !visibilityDropdownOpen
 											},
 											leadingIcon = { Visibility(vis) },
-											colors = MenuDefaults.selectableItemColors(),
-											shapes = visibilities.getPreparedDropdownMenuItemShapes(index),
 											contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
 											text = {
 												Column(modifier = Modifier.padding(vertical = 5.dp)) {
