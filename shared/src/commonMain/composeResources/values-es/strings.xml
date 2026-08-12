@@ -6,7 +6,11 @@
     <string name="post">Publicación</string>
     <string name="notifications">Notificaciones</string>
     <string name="reacted_by">Reaccionado por</string>
-    <string name="x_posts">{count} publicaciones</string>
+    <plurals name="x_posts">
+        <item quantity="one">{count} publicación</item>
+        <item quantity="many">{count} publicaciones</item>
+        <item quantity="other">{count} publicaciones</item>
+    </plurals>
     <string name="edit_profile">Editar perfil</string>
     <string name="cancel_request">Cancelar solicitud</string>
     <string name="follow">Seguir</string>
@@ -97,8 +101,15 @@
     <string name="x_requested_to_follow_you">{clickable_display_name} solicitó seguirte</string>
     <string name="x_followed_you">{clickable_display_name} te siguió</string>
     <string name="post_by_x">Publicación de {display_name}</string>
-    <string name="x_followers">{count} seguidores</string>
-    <string name="x_following">{count} siguiendo</string>
+    <plurals name="x_followers">
+        <item quantity="one">{count} seguidor</item>
+        <item quantity="many">{count} seguidores</item>
+        <item quantity="other">{count} seguidores</item>
+    </plurals>
+    <plurals name="x_following">
+        <item quantity="many">{count} siguiendo</item>
+        <item quantity="other">{count} siguiendo</item>
+    </plurals>
     <string name="x_liked_your_post">{clickable_display_name} le dio Me gusta a tu publicación</string>
     <string name="x_reacted_with_x">{clickable_display_name} reaccionó con {emoji}</string>
     <string name="x_boosted_your_post">{clickable_display_name} compartió tu publicación</string>
@@ -121,51 +132,86 @@
     <string name="recently_used">Usados recientemente</string>
     <string name="unknown_media_type_x">Medio desconocido {type}</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">El uso en una pantalla que no sea AMOLED puede causar problemas de contraste</string>
-    <string name="mention">Mencionar</string>
-    <string name="like">Me gusta</string>
-    <string name="boost">Impulsar</string>
-    <string name="reaction">Reacción</string>
-    <string name="post_edit">Edición de publicación</string>
-    <string name="poll">Encuesta</string>
-    <string name="follow_request">Seguir solicitud</string>
     <string name="show_navigation_bar_labels">Mostrar etiquetas de la barra de navegación</string>
     <string name="always_show_compose_button">Mostrar siempre el botón de redacción</string>
     <string name="mutuals">Ambos</string>
     <string name="follows_you">Te sigue</string>
-    <string name="bite">Cebo</string>
     <string name="search_results">Resultados de la búsqueda</string>
     <string name="accounts">Cuentas</string>
     <string name="hashtags">Hashtags</string>
     <string name="1_poll">1 encuesta</string>
-    <string name="x_attachment_s_">{count} archivo(s) adjunto(s)</string>
     <string name="1_quoted_post">1 publicación citada</string>
     <string name="ends_in_x">Termina en {time}</string>
     <string name="ends_soon">Termina pronto</string>
     <string name="poll_ended">Encuesta finalizada</string>
-    <string name="x_vote_s_">{count} voto(s)</string>
     <string name="soon">pronto</string>
     <string name="now">ahora</string>
-    <string name="x_second_simple">{time}s</string>
-    <string name="x_second">{time} segundo</string>
-    <string name="x_seconds">{time} segundos</string>
-    <string name="x_minute_simple">{time}m</string>
-    <string name="x_minute">{time} minuto</string>
-    <string name="x_minutes">{time} minutos</string>
-    <string name="x_hour_simple">{time}h</string>
-    <string name="x_hour">{time} hora</string>
-    <string name="x_hours">{time} horas</string>
-    <string name="x_day_simple">{time}d</string>
-    <string name="x_day">{time} día</string>
-    <string name="x_days">{time} días</string>
-    <string name="x_week_simple">{time}s.</string>
-    <string name="x_week">{time} semana</string>
-    <string name="x_weeks">{time} semanas</string>
-    <string name="x_month_simple">{time}m.</string>
-    <string name="x_month">{time} mes</string>
-    <string name="x_months">{time} meses</string>
-    <string name="x_year_simple">{time}a.</string>
-    <string name="x_year">{time} año</string>
-    <string name="x_years">{time} años</string>
+    <plurals name="x_second_simple">
+        <item quantity="one">{time}</item>
+        <item quantity="many">{time}s</item>
+        <item quantity="other">{time}s</item>
+    </plurals>
+    <plurals name="x_second">
+        <item quantity="one">{time} segundo</item>
+        <item quantity="many">{time} segundos</item>
+        <item quantity="other">{time} segundos</item>
+    </plurals>
+    <plurals name="x_minute_simple">
+        <item quantity="one">{time}m</item>
+        <item quantity="many">time}m</item>
+        <item quantity="other">time}m</item>
+    </plurals>
+    <plurals name="x_minute">
+        <item quantity="one">{time} minuto</item>
+        <item quantity="many">{time} minutos</item>
+        <item quantity="other">{time} minutos</item>
+    </plurals>
+    <plurals name="x_hour_simple">
+        <item quantity="many">{time}h</item>
+        <item quantity="other">{time}h</item>
+    </plurals>
+    <plurals name="x_hour">
+        <item quantity="one">{time} hora</item>
+        <item quantity="many">{time} horas</item>
+        <item quantity="other">{time} horas</item>
+    </plurals>
+    <plurals name="x_day_simple">
+        <item quantity="many">{time}d</item>
+        <item quantity="other">{time}d</item>
+    </plurals>
+    <plurals name="x_day">
+        <item quantity="one">{time} día</item>
+        <item quantity="many">{time} días</item>
+        <item quantity="other">{time} días</item>
+    </plurals>
+    <plurals name="x_week_simple">
+        <item quantity="one">{time}s.</item>
+        <item quantity="many">{time}s</item>
+        <item quantity="other">{time}s</item>
+    </plurals>
+    <plurals name="x_week">
+        <item quantity="one">{time} semana</item>
+        <item quantity="many">{time} semanas</item>
+        <item quantity="other">{time} semanas</item>
+    </plurals>
+    <plurals name="x_month_simple">
+        <item quantity="many">{time}m</item>
+        <item quantity="other">{time}m</item>
+    </plurals>
+    <plurals name="x_month">
+        <item quantity="one">{time} mes</item>
+        <item quantity="many">{time} meses</item>
+        <item quantity="other">{time} meses</item>
+    </plurals>
+    <plurals name="x_year_simple">
+        <item quantity="many">{time}a</item>
+        <item quantity="other">{time}a</item>
+    </plurals>
+    <plurals name="x_year">
+        <item quantity="one">{time} año</item>
+        <item quantity="many">{time}años</item>
+        <item quantity="other">{time}años</item>
+    </plurals>
     <string name="show_results">Mostrar resultados</string>
     <string name="hide_results">Ocultar resultados</string>
     <string name="vote">Votar</string>
@@ -195,4 +241,31 @@
     <string name="this_popup_wont_appear_again">Esta ventana emergente no volverá a aparecer.</string>
     <string name="pin">Fijar</string>
     <string name="unpin">Soltar</string>
+    <string name="mentions">Menciones</string>
+    <string name="likes">Me gusta</string>
+    <string name="boosts">Mejoras</string>
+    <string name="reactions">Reacciones</string>
+    <string name="post_edits">Ediciones de la publicación</string>
+    <string name="polls">Encuestas</string>
+    <string name="bites">Contenidos pequeños y rápidos</string>
+    <string name="follows">Seguidores</string>
+    <string name="follow_requests">Solicitudes de seguimiento</string>
+    <plurals name="x_attachments">
+        <item quantity="one">{count} archivo adjunto</item>
+        <item quantity="many">{count} archivos adjuntos</item>
+        <item quantity="other">{count} archivos adjuntos</item>
+    </plurals>
+    <plurals name="x_votes">
+        <item quantity="one">{count} voto</item>
+        <item quantity="many">{count} votos</item>
+        <item quantity="other">{count} votos</item>
+    </plurals>
+    <string name="pinned">Fijado</string>
+    <string name="view_all_pinned_posts">Ver todas las publicaciones fijadas</string>
+    <string name="pinned_posts">Publicaciones fijadas</string>
+    <string name="filtered_by_x">Filtrado por {filters}</string>
+    <string name="replying_to_x">Respondiendo a {handle}</string>
+    <string name="replying_to_self">Crear un hilo</string>
+    <string name="clear_accounts">Eliminar cuentas</string>
+    <string name="reorder">Reordenar</string>
 </resources>

@@ -34,7 +34,9 @@
     <string name="boosted_by">Hoogu andmas</string>
     <string name="liked_by">Meeldivaks märkinud</string>
     <string name="reacted_by">Reageerinud</string>
-    <string name="x_posts">{count} postitust</string>
+    <plurals name="x_posts">
+        <item quantity="one">{count} postitust</item>
+    </plurals>
     <string name="edit_profile">Muuda profiili</string>
     <string name="request_to_follow">Küsi jälgimise võimalust</string>
     <string name="cancel_request">Lõpeta jälgimispäring</string>
@@ -91,8 +93,12 @@
     <string name="discoverable_description">Sa võid olla esile tõstetud kogumikes ja sinu postitused võivad olla leitavad populaarsust koguvate postituste seas</string>
     <string name="reset_feature_determinations">Lähtesta võimaluste tuvastamine</string>
     <string name="post_by_x">Postitus kasutajalt {display_name}</string>
-    <string name="x_followers">{count} jälgijat</string>
-    <string name="x_following">{count} jälgitavat</string>
+    <plurals name="x_followers">
+        <item quantity="one">{count} jälgijat</item>
+    </plurals>
+    <plurals name="x_following">
+        <item quantity="one">{count} jälgitavat</item>
+    </plurals>
     <string name="appearance">Välimus</string>
     <string name="use_amoled_dark_theme">Tume kujundus AMOLED-i jaoks</string>
     <string name="navigation_bar_tab_order">Vahekaartide järjestus menüüribal</string>
@@ -131,48 +137,74 @@
     <string name="label">Silt</string>
     <string name="content">Sisu</string>
     <string name="recently_used">Hiljuti kasutatud</string>
-    <string name="mention">Mainimine</string>
     <string name="unknown_media_type_x">„{type}“ on tundmatut tüüpi multimeedia</string>
-    <string name="reaction">Reaktsioon</string>
-    <string name="boost">Anna hoogu</string>
-    <string name="like">Märgi meeldivaks</string>
     <string name="about">Teave</string>
-    <string name="poll">Küsitlus</string>
-    <string name="post_edit">Postituse muutmine</string>
-    <string name="follow_request">Jälgimispäring</string>
     <string name="search_results">Otsingutulemused</string>
     <string name="accounts">Kasutajakontod</string>
     <string name="hashtags">Teemaviited</string>
     <string name="1_poll">1 küsitlus</string>
-    <string name="x_attachment_s_">{count} manus(t)</string>
     <string name="1_quoted_post">1 tsiteeritud postitus</string>
     <string name="ends_in_x">Lõppeb {time}</string>
     <string name="ends_soon">Lõppeb õige pea</string>
     <string name="poll_ended">Küsitlus on lõppenud</string>
-    <string name="x_vote_s_">{count} hääl(t)</string>
     <string name="soon">õige pea</string>
     <string name="now">praegu</string>
-    <string name="x_second_simple">{time} sek</string>
-    <string name="x_second">{time} sekund</string>
-    <string name="x_seconds">{time} sekundit</string>
-    <string name="x_minute_simple">{time} min</string>
-    <string name="x_minute">{time} minut</string>
-    <string name="x_minutes">{time} minutit</string>
-    <string name="x_hour_simple">{time} t</string>
-    <string name="x_hour">{time} tund</string>
-    <string name="x_hours">{time} tundi</string>
-    <string name="x_day_simple">{time} pv</string>
-    <string name="x_day">{time} päev</string>
-    <string name="x_days">{time} päeva</string>
-    <string name="x_week_simple">{time} nd</string>
-    <string name="x_week">{time} nädal</string>
-    <string name="x_weeks">{time} nädalat</string>
-    <string name="x_month_simple">{time} k</string>
-    <string name="x_month">{time} kuu</string>
-    <string name="x_months">{time} kuud</string>
-    <string name="x_year_simple">{time} a</string>
-    <string name="x_year">{time} aasta</string>
-    <string name="x_years">{time} aastat</string>
+    <plurals name="x_second_simple">
+        <item quantity="one">{time} sek</item>
+        <item quantity="other">{time} sek</item>
+    </plurals>
+    <plurals name="x_second">
+        <item quantity="one">{time} sekund</item>
+        <item quantity="other">{time} sekundit</item>
+    </plurals>
+    <plurals name="x_minute_simple">
+        <item quantity="one">{time} min</item>
+        <item quantity="other">{time} min</item>
+    </plurals>
+    <plurals name="x_minute">
+        <item quantity="one">{time} minut</item>
+        <item quantity="other">{time} minutit</item>
+    </plurals>
+    <plurals name="x_hour_simple">
+        <item quantity="one">{time} t</item>
+        <item quantity="other">{time} t</item>
+    </plurals>
+    <plurals name="x_hour">
+        <item quantity="one">{time} tund</item>
+        <item quantity="other">{time} tundi</item>
+    </plurals>
+    <plurals name="x_day_simple">
+        <item quantity="one">{time} pv</item>
+        <item quantity="other">{time} pv</item>
+    </plurals>
+    <plurals name="x_day">
+        <item quantity="one">{time} päev</item>
+        <item quantity="other">{time} päeva</item>
+    </plurals>
+    <plurals name="x_week_simple">
+        <item quantity="one">{time} nd</item>
+        <item quantity="other">{time} nd</item>
+    </plurals>
+    <plurals name="x_week">
+        <item quantity="one">{time} nädal</item>
+        <item quantity="other">{time} nädalat</item>
+    </plurals>
+    <plurals name="x_month_simple">
+        <item quantity="one">{time} k</item>
+        <item quantity="other">{time} k</item>
+    </plurals>
+    <plurals name="x_month">
+        <item quantity="one">{time} kuu</item>
+        <item quantity="other">{time} kuud</item>
+    </plurals>
+    <plurals name="x_year_simple">
+        <item quantity="one">{time} a</item>
+        <item quantity="other">{time} a</item>
+    </plurals>
+    <plurals name="x_year">
+        <item quantity="one">{time} aasta</item>
+        <item quantity="other">{time} aastat</item>
+    </plurals>
     <string name="show_results">Näita tulemusi</string>
     <string name="hide_results">Peida tulemused</string>
     <string name="vote">Hääleta</string>
@@ -189,4 +221,7 @@
     <string name="this_popup_wont_appear_again">Seda hüpikakent rohkem ei näidata.</string>
     <string name="pin">Tõsta esile</string>
     <string name="unpin">Lõpeta esiletõstmine</string>
+    <string name="pinned">Esiletõstetud</string>
+    <string name="view_all_pinned_posts">Vaata kõiki esiletõstetuid postitusi</string>
+    <string name="pinned_posts">Esiletõstetud postitused</string>
 </resources>

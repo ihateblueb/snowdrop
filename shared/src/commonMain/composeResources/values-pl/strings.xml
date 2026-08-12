@@ -9,7 +9,9 @@
     <string name="boosted_by">Boostowane przez</string>
     <string name="liked_by">Polubione przez</string>
     <string name="reacted_by">Zareagowane przez</string>
-    <string name="x_posts">{count} postów</string>
+    <plurals name="x_posts">
+        <item quantity="one">{count} postów</item>
+    </plurals>
     <string name="edit_profile">Edytuj profil</string>
     <string name="follow">Obserwuj</string>
     <string name="unfollow">Przestań obserwować</string>
@@ -94,8 +96,12 @@
     <string name="reset_feature_determinations">Resetuj determinacje funkcji</string>
     <string name="locked_account_description">Nowi obserwujący będą musieli być zatwierdzani przez Ciebie</string>
     <string name="post_by_x">Post użytkownika {display_name}</string>
-    <string name="x_followers">{count} obserwujących</string>
-    <string name="x_following">{count} obserwowanych</string>
+    <plurals name="x_followers">
+        <item quantity="one">{count} obserwujących</item>
+    </plurals>
+    <plurals name="x_following">
+        <item quantity="one">{count} obserwowanych</item>
+    </plurals>
     <string name="x_liked_your_post">{clickable_display_name} polubił(a) twój post</string>
     <string name="x_reacted_with_x">{clickable_display_name} zareagował(a) {emoji}</string>
     <string name="x_boosted_your_post">{clickable_display_name} zboostował(a) Twój post</string>
@@ -136,23 +142,13 @@
     <string name="support_development">Wspieraj rozwój</string>
     <string name="recently_used">Ostatnio używane</string>
     <string name="unknown_media_type_x">Nieznany typ mediów "{type}"</string>
-    <string name="mention">Wzmianki</string>
-    <string name="like">Polubienia</string>
-    <string name="boost">Boosty</string>
-    <string name="reaction">Reakcja</string>
-    <string name="poll">Ankiety</string>
-    <string name="post_edit">Edycje postów</string>
-    <string name="bite">Ugryzienia</string>
-    <string name="follow_request">Prośby o obserwowanie</string>
     <string name="search_results">Wyniki wyszukiwania</string>
     <string name="accounts">Konta</string>
     <string name="hashtags">Hashtagi</string>
     <string name="1_poll">1 ankieta</string>
-    <string name="x_attachment_s_">{count} załączników</string>
     <string name="1_quoted_post">1 zacytowany post</string>
     <string name="ends_in_x">Kończy się {time}</string>
     <string name="ends_soon">Kończy się za chwilę</string>
     <string name="poll_ended">Ankieta zakończona</string>
-    <string name="x_vote_s_">{count} głosów</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Na ekranach innych niż AMOLED może powodować problemy z kontrastem</string>
 </resources>

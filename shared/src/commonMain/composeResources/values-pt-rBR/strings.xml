@@ -9,7 +9,9 @@
     <string name="boosted_by">Impulsionada por</string>
     <string name="liked_by">Curtida por</string>
     <string name="reacted_by">Reagido por</string>
-    <string name="x_posts">{count} postagens</string>
+    <plurals name="x_posts">
+        <item quantity="one">{count} postagens</item>
+    </plurals>
     <string name="edit_profile">Editar perfil</string>
     <string name="request_to_follow">Pedir para seguir</string>
     <string name="cancel_request">Cancelar pedido</string>
@@ -95,8 +97,12 @@
     <string name="discoverable">Descobrível</string>
     <string name="discoverable_description">Você poderá ser adicionado a coleções, e suas postagens públicas poderão aparecer em "Tendências"</string>
     <string name="post_by_x">Postagem de {display_name}</string>
-    <string name="x_followers">{count} seguidores</string>
-    <string name="x_following">{count} seguindo</string>
+    <plurals name="x_followers">
+        <item quantity="one">{count} seguidores</item>
+    </plurals>
+    <plurals name="x_following">
+        <item quantity="one">{count} seguindo</item>
+    </plurals>
     <string name="appearance">Aparência</string>
     <string name="use_amoled_dark_theme">Usar tema escuro para telas AMOLED</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Usar numa tela não-AMOLED pode causar problemas com contraste</string>
@@ -125,47 +131,58 @@
     <string name="support_development">Apoiar desenvolvimento</string>
     <string name="recently_used">Recentemente Usados</string>
     <string name="unknown_media_type_x">Tipo de mídia {type} desconhecido</string>
-    <string name="mention">Menção</string>
-    <string name="like">Curtida</string>
-    <string name="boost">Impulsionamento</string>
-    <string name="reaction">Reação</string>
-    <string name="post_edit">Edição de postagem</string>
-    <string name="poll">Enquete</string>
-    <string name="bite">Morder</string>
-    <string name="follow_request">Solicitação para seguir</string>
     <string name="search_results">Resultados de pesquisa</string>
     <string name="accounts">Contas</string>
     <string name="hashtags">Hashtags</string>
     <string name="1_poll">1 enquete</string>
-    <string name="x_attachment_s_">{count} anexo(s)</string>
     <string name="1_quoted_post">1 postagem citada</string>
     <string name="ends_in_x">Acaba em {time}</string>
     <string name="ends_soon">Acaba em breve</string>
     <string name="poll_ended">Enquete finalizada</string>
-    <string name="x_vote_s_">{count} votação(es)</string>
     <string name="soon">em breve</string>
     <string name="now">agora</string>
-    <string name="x_second_simple">{time}seg</string>
-    <string name="x_second">{time} segundo</string>
-    <string name="x_seconds">{time} segundos</string>
-    <string name="x_minute_simple">{time}min</string>
-    <string name="x_minute">{time} minuto</string>
-    <string name="x_minutes">{time} minutos</string>
-    <string name="x_hour_simple">{time}h</string>
-    <string name="x_hour">{time} hora</string>
-    <string name="x_hours">{time} horas</string>
-    <string name="x_day_simple">{time}d</string>
-    <string name="x_day">{time} dia</string>
-    <string name="x_days">{time} dias</string>
-    <string name="x_week_simple">{time}sem</string>
-    <string name="x_week">{time} semana</string>
-    <string name="x_weeks">{time} semanas</string>
-    <string name="x_month_simple">(time}m</string>
-    <string name="x_month">{time} mês</string>
-    <string name="x_months">{time} meses</string>
-    <string name="x_year_simple">{time}a</string>
-    <string name="x_year">{time} ano</string>
-    <string name="x_years">{time} anos</string>
+    <plurals name="x_second_simple">
+        <item quantity="one">{time}seg</item>
+    </plurals>
+    <plurals name="x_second">
+        <item quantity="one">{time} segundo</item>
+    </plurals>
+    <plurals name="x_minute_simple">
+        <item quantity="one">{time}min</item>
+    </plurals>
+    <plurals name="x_minute">
+        <item quantity="one">{time} minuto</item>
+    </plurals>
+    <plurals name="x_hour_simple">
+        <item quantity="one">{time}h</item>
+    </plurals>
+    <plurals name="x_hour">
+        <item quantity="one">{time} hora</item>
+    </plurals>
+    <plurals name="x_day_simple">
+        <item quantity="one">{time}d</item>
+    </plurals>
+    <plurals name="x_day">
+        <item quantity="one">{time} dia</item>
+    </plurals>
+    <plurals name="x_week_simple">
+        <item quantity="one">{time}sem</item>
+    </plurals>
+    <plurals name="x_week">
+        <item quantity="one">{time} semana</item>
+    </plurals>
+    <plurals name="x_month_simple">
+        <item quantity="one">(time}m</item>
+    </plurals>
+    <plurals name="x_month">
+        <item quantity="one">{time} mês</item>
+    </plurals>
+    <plurals name="x_year_simple">
+        <item quantity="one">{time}a</item>
+    </plurals>
+    <plurals name="x_year">
+        <item quantity="one">{time} ano</item>
+    </plurals>
     <string name="show_results">Mostrar resultados</string>
     <string name="hide_results">Esconder resultados</string>
     <string name="vote">Votar</string>

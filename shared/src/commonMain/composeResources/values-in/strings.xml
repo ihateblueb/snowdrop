@@ -10,15 +10,20 @@
     <string name="boosted_by">Dibagikan ulang oleh</string>
     <string name="liked_by">Disukai oleh</string>
     <string name="reacted_by">Ditanggapi oleh</string>
-    <string name="x_posts">{count} postingan</string>
+    <plurals name="x_posts">
+        <item quantity="other">{count} postingan</item>
+    </plurals>
     <string name="edit_profile">Edit profil</string>
     <string name="request_to_follow">Permintaan mengikuti</string>
     <string name="cancel_request">Batalkan permintaan</string>
     <string name="follow">Ikuti</string>
     <string name="unfollow">Berhenti mengikuti</string>
-    <string name="joined_at_x">Bergabung pada {date_time}</string>
-    <string name="x_followers">{count} pengikut</string>
-    <string name="x_following">{count} yang diikuti</string>
+    <plurals name="x_followers">
+        <item quantity="other">{count} pengikut</item>
+    </plurals>
+    <plurals name="x_following">
+        <item quantity="other">{count} yang diikuti</item>
+    </plurals>
     <string name="posts">Postingan</string>
     <string name="posts_and_replies">Postingan &amp; Balasan</string>
     <string name="media">Media</string>
@@ -138,47 +143,58 @@
     <string name="support_development">Dukung pengembangan</string>
     <string name="recently_used">Terakhir digunakan</string>
     <string name="unknown_media_type_x">Tipe media {type} tidak diketahui</string>
-    <string name="mention">Sebutan</string>
-    <string name="like">Suka</string>
-    <string name="boost">Bagikan ulang</string>
-    <string name="reaction">Tanggapan</string>
-    <string name="post_edit">Edit postingan</string>
-    <string name="poll">Polling</string>
-    <string name="bite">Gigit</string>
-    <string name="follow_request">Permintaan mengikuti</string>
     <string name="search_results">Hasil pencarian</string>
     <string name="accounts">Akun</string>
     <string name="hashtags">Tag</string>
     <string name="1_poll">1 polling</string>
-    <string name="x_attachment_s_">{count} sematan</string>
     <string name="1_quoted_post">1 postingan terkutip</string>
     <string name="ends_in_x">Berakhir dalam {time}</string>
     <string name="ends_soon">Berakhir segera</string>
     <string name="poll_ended">Polling berakhir</string>
-    <string name="x_vote_s_">{count} suara</string>
     <string name="soon">segera</string>
     <string name="now">baru saja</string>
-    <string name="x_second_simple">{time}d</string>
-    <string name="x_second">{time} detik</string>
-    <string name="x_seconds">{time} detik</string>
-    <string name="x_minute_simple">{time}m</string>
-    <string name="x_minute">{time} menit</string>
-    <string name="x_minutes">{time} menit</string>
-    <string name="x_hour_simple">{time}j</string>
-    <string name="x_hour">{time} jam</string>
-    <string name="x_hours">{time} jam</string>
-    <string name="x_day_simple">{time}h</string>
-    <string name="x_day">{time} hari</string>
-    <string name="x_days">{time} hari</string>
-    <string name="x_week_simple">{time}mg</string>
-    <string name="x_week">{time} minggu</string>
-    <string name="x_weeks">{time} minggu</string>
-    <string name="x_month_simple">{time}bln</string>
-    <string name="x_month">{time} bulan</string>
-    <string name="x_months">{time} bulan</string>
-    <string name="x_year_simple">{time}thn</string>
-    <string name="x_year">{time} tahun</string>
-    <string name="x_years">{time} tahun</string>
+    <plurals name="x_second_simple">
+        <item quantity="other">{time}d</item>
+    </plurals>
+    <plurals name="x_second">
+        <item quantity="other">{time} detik</item>
+    </plurals>
+    <plurals name="x_minute_simple">
+        <item quantity="other">{time}m</item>
+    </plurals>
+    <plurals name="x_minute">
+        <item quantity="other">{time} menit</item>
+    </plurals>
+    <plurals name="x_hour_simple">
+        <item quantity="other">{time}j</item>
+    </plurals>
+    <plurals name="x_hour">
+        <item quantity="other">{time} jam</item>
+    </plurals>
+    <plurals name="x_day_simple">
+        <item quantity="other">{time}h</item>
+    </plurals>
+    <plurals name="x_day">
+        <item quantity="other">{time} hari</item>
+    </plurals>
+    <plurals name="x_week_simple">
+        <item quantity="other">{time}mg</item>
+    </plurals>
+    <plurals name="x_week">
+        <item quantity="other">{time} minggu</item>
+    </plurals>
+    <plurals name="x_month_simple">
+        <item quantity="other">{time}bln</item>
+    </plurals>
+    <plurals name="x_month">
+        <item quantity="other">{time} bulan</item>
+    </plurals>
+    <plurals name="x_year_simple">
+        <item quantity="other">{time}thn</item>
+    </plurals>
+    <plurals name="x_year">
+        <item quantity="other">{time} tahun</item>
+    </plurals>
     <string name="show_results">Lihat hasil</string>
     <string name="hide_results">Sembunyikan hasil</string>
     <string name="vote">Dukung</string>
