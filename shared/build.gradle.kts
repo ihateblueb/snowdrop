@@ -1,6 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.ByteArrayOutputStream
 
 plugins {
