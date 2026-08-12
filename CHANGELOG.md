@@ -21,6 +21,8 @@
 - Video attachment viewing, controls in the detailed view
 - Search in emoji picker
 - Support feature detection with net.iceshrimp.bites
+- Button to open media in browser, even when it's supported in-app
+- Reply bar at the bottom of the thread viewer
 
 ### Fixed
 - Timelines not updating properly
@@ -35,6 +37,10 @@
 - iOS crash in Compose view
 - Thread view title bar emoji rendering
 - Use smaller broken image icon for small and smaller avatars
+- AMOLED dark theme border and divider contrast
+- Spacing and padding in follow request and bite notifications
+- Content warning field in the compose view no longer limited to one line
+- Crash related to the alt text bottom sheet
 
 ## [0.0.5-alpha]
 
