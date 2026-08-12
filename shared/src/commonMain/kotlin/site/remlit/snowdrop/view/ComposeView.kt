@@ -27,10 +27,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.selectAll
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -105,14 +103,11 @@ import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
-import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
-import site.remlit.snowdrop.util.safe
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError

@@ -18,7 +18,9 @@
 - Reply indicators showing who's being replied to
 - Post filtering
 - Reordering of logged in accounts
-- Video attachment viewing with controls in the detailed view
+- Video attachment viewing, controls in the detailed view
+- Search in emoji picker
+- Support feature detection with net.iceshrimp.bites
 
 ### Fixed
 - Timelines not updating properly
@@ -30,6 +32,9 @@
 - Plural translation strings now done properly
 - Relative time translation strings are now also done properly
 - Predictive back is enabled again
+- iOS crash in Compose view
+- Thread view title bar emoji rendering
+- Use smaller broken image icon for small and smaller avatars
 
 ## [0.0.5-alpha]
 

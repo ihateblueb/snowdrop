@@ -12,17 +12,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,11 +51,14 @@ import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchEmojis
 import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.icon_search_24px
 import snowdrop.shared.generated.resources.recently_used
+import snowdrop.shared.generated.resources.search
 import snowdrop.shared.generated.resources.uncategorized
 import kotlin.collections.forEach
 
@@ -62,12 +80,19 @@ fun EmojiPicker(
 	onSelectEmoji: (Emoji) -> Unit
 ) {
 	val coroutineScope = rememberCoroutineScope()
+	val sheetState = rememberBottomSheetState(SheetValue.Hidden)
+
+	LaunchedEffect(visible) {
+		if (visible) sheetState.show()
+		else sheetState.hide()
+	}
 
 	AnimatedVisibility(
 		visible = visible,
 		enter = bottomNavEnterAnimation,
 		exit = bottomNavExitAnimation
 	) {
+		var query by remember { mutableStateOf("") }
 		val emojis by remember { fetchEmojis() }.collectAsStateWithLifecycle(emptyList())
 
 		// these contain shortcodes, find them in emojis list and then only if they are found should they be shown
@@ -82,10 +107,13 @@ fun EmojiPicker(
 		}
 		categorized[stringResource(Res.string.recently_used)] = recentlyUsed
 
-		emojis.forEach {
-			val category = it.category ?: stringResource(Res.string.uncategorized)
-			categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
-		}
+		// sorted alphabetically
+		emojis.sortedBy { it.category }
+			.filter { it.shortcode.contains(query) }
+			.forEach {
+				val category = it.category ?: stringResource(Res.string.uncategorized)
+				categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
+			}
 
 
 		// category state nonsense
@@ -103,19 +131,47 @@ fun EmojiPicker(
 		}
 
 		ModalBottomSheet(
-			onDismissRequest = onDismiss
+			sheetState = sheetState,
+			onDismissRequest = onDismiss,
 		) {
+			val focusManager = LocalFocusManager.current
+
+			if (sheetState.currentValue == SheetValue.PartiallyExpanded)
+				focusManager.clearFocus()
+
 			Column(
 				modifier = Modifier.fillMaxSize()
 			) {
 				LazyColumn(
 					modifier = Modifier.weight(1f)
 				) {
+					item {
+						TextField(
+							value = query,
+							onValueChange = { query = it },
+							maxLines = 1,
+
+							placeholder = { Text(stringResource(Res.string.search)) },
+							leadingIcon = { Icon(painterResource(Res.drawable.icon_search_24px), null) },
+
+							modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp).fillMaxWidth()
+								.onFocusChanged { if (it.hasFocus) coroutineScope.launch { sheetState.expand() } }
+								.clip(RoundedCornerShape(100)),
+
+							colors = TextFieldDefaults.colors(
+								unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+								unfocusedIndicatorColor = Color(0x00000000),
+								focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+								focusedIndicatorColor = Color(0x00000000),
+							)
+						)
+					}
+
 					categorized.forEach { (category, emojis) ->
 						item {
 							Row(
 								modifier = Modifier.clickable(onClick = { toggleCategory(category) })
-									.padding(10.dp)
+									.padding(vertical = 10.dp, horizontal = 15.dp)
 									.fillMaxWidth(),
 								verticalAlignment = Alignment.CenterVertically
 							) {
@@ -137,7 +193,7 @@ fun EmojiPicker(
 						}
 						item {
 							AnimatedVisibility(
-								visible = !(categoryVisibility[category] ?: true),
+								visible = !(categoryVisibility[category] ?: true) || query.isNotBlank(),
 								enter = expandVertically(),
 								exit = shrinkVertically()
 							) {
