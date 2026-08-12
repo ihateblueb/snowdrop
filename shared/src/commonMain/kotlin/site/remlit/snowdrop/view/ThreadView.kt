@@ -21,18 +21,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusContext
+import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalStatusStateController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
 import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
+import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.translation
@@ -91,13 +95,16 @@ fun ThreadView(id: String) = ViewSurface {
 			if (status == null) Column {
 				Text(stringResource(Res.string.post))
 			} else Column {
+				val mappedEmojis = mapEmojisToInlineTextContent(status!!.account!!.emojis)
 				Text(
 					translation(
 						Res.string.post_by_x,
-						mapOf("display_name" to simpleAnnotatedString(status!!.account!!.displayName()))
+						mapOf("display_name" to AnnotatedString(status!!.account!!.displayName())
+							.withEmojis(mappedEmojis))
 					),
 					maxLines = 1,
-					overflow = TextOverflow.Ellipsis
+					overflow = TextOverflow.Ellipsis,
+					inlineContent = mappedEmojis
 				)
 			}
 		},
