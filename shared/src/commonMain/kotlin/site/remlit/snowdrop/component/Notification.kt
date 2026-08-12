@@ -317,10 +317,7 @@ fun Notification(notification: Notification) {
 				//</editor-fold>
 			}
 
-			HorizontalDivider(
-				thickness = 1.dp,
-				color = MaterialTheme.colorScheme.surfaceBright
-			)
+			Divider()
 		}
 	}
 }

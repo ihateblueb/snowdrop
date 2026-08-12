@@ -287,14 +287,6 @@ fun Status(
 	}
 
 	@Composable
-	fun Divider() {
-		HorizontalDivider(
-			thickness = 1.dp,
-			color = MaterialTheme.colorScheme.surfaceBright
-		)
-	}
-
-	@Composable
 	fun FooterButton(
 		onClick: () -> Unit,
 		colors: ButtonColors? = null,

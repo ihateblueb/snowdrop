@@ -53,7 +53,7 @@ fun MiniStatus(
 	Column(
 		modifier = Modifier.fillMaxWidth()
 			.clip(RoundedCornerShape(10.dp))
-			.border(1.dp, MaterialTheme.colorScheme.surfaceBright, RoundedCornerShape(10.dp))
+			.border(1.dp, borderOnBackgroundColor(), RoundedCornerShape(10.dp))
 			.clickable(onClick = {
 				navHandler.navigate(ThreadRoute(status.id))
 			})
