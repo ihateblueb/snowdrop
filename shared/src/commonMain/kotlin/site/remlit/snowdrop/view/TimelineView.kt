@@ -326,10 +326,6 @@ fun TimelineView() = ViewSurface {
 				}
 			},
 			actions = {
-				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
-					Icon(painterResource(Res.drawable.icon_settings_24px), null)
-				}
-
 				var showDropdown by remember { mutableStateOf(false) }
 				IconButton(onClick = { showDropdown = !showDropdown }) {
 					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
@@ -354,6 +350,11 @@ fun TimelineView() = ViewSurface {
 							showDropdown = false
 						}
 					)
+				}
+
+				// settings
+				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
+					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
 			}
 		)

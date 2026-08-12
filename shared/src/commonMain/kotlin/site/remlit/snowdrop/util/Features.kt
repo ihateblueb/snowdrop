@@ -105,7 +105,8 @@ suspend fun determineFeatures() {
 	else putFeature("bubble_timeline_akkoma", false)
 
 	if (
-		software == Software.IceshrimpNET
+		software == Software.IceshrimpNET ||
+			(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites > 0)
 	) putFeature("biting", true)
 	else putFeature("biting", false)
 

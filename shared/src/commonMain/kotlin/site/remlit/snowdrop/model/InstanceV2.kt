@@ -165,6 +165,8 @@ data class InstanceV2(
 		val chuckya: Int? = null,
 		@SerialName("net.iceshrimp.scheduled_boosts")
 		val netIceshrimpScheduledBoosts: Int? = null,
+		@SerialName("net.iceshrimp.bites")
+		val netIceshrimpBites: Int? = null,
 		@SerialName("download.synth.keyword_lists")
 		val downloadSynthKeywordLists: Int? = null
 	)
