@@ -43,7 +43,7 @@ data class Account(
 	val bot: Boolean,
 	val discoverable: Boolean? = null,
 
-	val fields: List<Field>,
+	val fields: List<Field> = emptyList(),
 	val source: Source? = null,
 	val emojis: List<Emoji>,
 

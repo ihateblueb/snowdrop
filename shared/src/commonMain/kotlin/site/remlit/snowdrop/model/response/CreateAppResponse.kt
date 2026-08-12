@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class CreateAppResponse(
 	val id: String,
 	val name: String,
-	val website: String,
+	val website: String? = null,
 	val scopes: List<String> = listOf(),
 
 	@SerialName("redirect_uri")
