@@ -46,9 +46,7 @@ import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
-import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
@@ -121,11 +119,11 @@ fun Notification(notification: Notification) {
 		"favourite" -> translationKey = Res.string.x_liked_your_post
 		"pleroma:emoji_reaction" -> {
 			translationKey = Res.string.x_reacted_with_x
-			replacementMap["emoji"] = simpleAnnotatedString("${notification.emoji}")
+			replacementMap["emoji"] = AnnotatedString("${notification.emoji}")
 		}
 		"reaction" -> {
 			translationKey = Res.string.x_reacted_with_x
-			replacementMap["emoji"] = simpleAnnotatedString(
+			replacementMap["emoji"] = AnnotatedString(
 				if (notification.reaction == null) "${notification.emoji}"
 				else ":${notification.reaction.name}:"
 			)

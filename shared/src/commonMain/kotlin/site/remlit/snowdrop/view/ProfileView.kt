@@ -83,7 +83,6 @@ import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
-import site.remlit.snowdrop.util.annotatedString.simpleAnnotatedString
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
@@ -385,15 +384,15 @@ fun ProfileView(id: String) = ViewSurface {
 													if (relationship!!.following || relationship!!.requested) {
 														if (relationship!!.requested) Text(translation(
 															Res.string.are_you_sure_you_want_to_cancel_your_follow_request_to_x,
-															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
 														)) else Text(translation(
 															Res.string.are_you_sure_you_want_to_unfollow_x,
-															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
 														))
 													} else {
 														if (account!!.locked) Text(translation(
 															Res.string.are_you_sure_you_want_to_send_a_follow_request_to_x,
-															mapOf("handle" to simpleAnnotatedString("@${account!!.acct}"))
+															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
 														))
 													}
 												},
