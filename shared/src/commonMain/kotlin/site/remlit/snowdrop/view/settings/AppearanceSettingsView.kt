@@ -48,6 +48,7 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
+import snowdrop.shared.generated.resources.swap_post_button_and_char_limit
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
@@ -114,6 +115,22 @@ fun AppearanceSettingsView() = ViewSurface {
 						Switch(
 							showNavigationBarLabels,
 							onCheckedChange = { blockingSettings.putBoolean("show_navigation_bar_labels", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.swap_post_button_and_char_limit)) },
+					trailingContent = {
+						Switch(
+							swapPostButtonAndCharLimit,
+							onCheckedChange = { blockingSettings.putBoolean("swap_post_button_and_char_limit", it) }
 						)
 					}
 				)

@@ -79,6 +79,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.russhwolf.settings.ExperimentalSettingsApi
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -109,6 +110,7 @@ import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError
@@ -140,7 +142,7 @@ import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalSettingsApi::class)
 @Composable
 fun ComposeView(
 	inReplyToId: String? = null,
@@ -211,6 +213,8 @@ fun ComposeView(
 	val maxChars = (instance?.maxTootChars ?: instance?.configuration?.statuses?.maxCharacters ?: 500)
 	val remainingChars = maxChars - (textFieldState.text.length + cw.length)
 
+	val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
+		.collectAsStateWithLifecycle(false)
 
 	var sendingDone by remember { mutableStateOf(false) }
 	var isSending by remember { mutableStateOf(false) }
@@ -269,6 +273,32 @@ fun ComposeView(
 		isSending = false
 		sendingDone = true
 		vibrateConfirm(haptics)
+	}
+
+	@Composable
+	fun PostButton() {
+		FilledTonalIconButton(
+			onClick = { coroutineScope.launch { sendPost() } },
+			enabled = canSubmit
+		) {
+			if (isSending) {
+				if (sendingTaskCount > 0 && sendingTask > 0)
+					CircularProgressIndicator(
+						progress = { (sendingTask / sendingTaskCount).toFloat() },
+						modifier = Modifier.padding(4.dp),
+						strokeWidth = 4.dp
+					)
+				else CircularProgressIndicator(
+					modifier = Modifier.padding(4.dp),
+					strokeWidth = 4.dp
+				)
+			} else Icon(painterResource(Res.drawable.icon_send_24px), null)
+		}
+	}
+
+	@Composable
+	fun CharLimit() {
+
 	}
 
 	@Composable
@@ -334,22 +364,19 @@ fun ComposeView(
 					else Text(stringResource(Res.string.compose))
 				},
 				actions = {
-					FilledTonalIconButton(
-						onClick = { coroutineScope.launch { sendPost() } },
-						enabled = canSubmit
-					) {
-						if (isSending) {
-							if (sendingTaskCount > 0 && sendingTask > 0)
-								CircularProgressIndicator(
-									progress = { (sendingTask / sendingTaskCount).toFloat() },
-									modifier = Modifier.padding(4.dp),
-									strokeWidth = 4.dp
-								)
-							else CircularProgressIndicator(
-								modifier = Modifier.padding(4.dp),
-								strokeWidth = 4.dp
+					if (swapPostButtonAndCharLimit) {
+						Row(
+							modifier = Modifier.padding(end = 10.dp),
+							horizontalArrangement = Arrangement.spacedBy(5.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Text(
+								"$remainingChars",
+								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
-						} else Icon(painterResource(Res.drawable.icon_send_24px), null)
+						}
+					} else {
+						PostButton()
 					}
 				}
 			)
@@ -423,10 +450,14 @@ fun ComposeView(
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
-							Text(
-								"$remainingChars",
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
+							if (swapPostButtonAndCharLimit) {
+								PostButton()
+							} else {
+								Text(
+									"$remainingChars",
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
 						}
 					}
 				}

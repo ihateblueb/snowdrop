@@ -3,7 +3,7 @@
 ## [Unreleased (0.0.7-alpha)]
 
 ### Added
--
+- Ability to swap positions of "send post" button and character limit indicator (Moshidon-style)
 
 ### Fixed
 - iOS race condition crash with alt text bottom sheet
