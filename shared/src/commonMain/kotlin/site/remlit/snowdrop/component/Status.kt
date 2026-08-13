@@ -979,6 +979,7 @@ fun Status(
 													InteractionViewType.Reaction.toString()
 												)
 											)
+
 											showDropdown = false
 										}
 									)
