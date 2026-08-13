@@ -297,11 +297,6 @@ fun ComposeView(
 	}
 
 	@Composable
-	fun CharLimit() {
-
-	}
-
-	@Composable
 	fun AttachmentPreview(
 		detailedView: Boolean,
 		file: PlatformFile
