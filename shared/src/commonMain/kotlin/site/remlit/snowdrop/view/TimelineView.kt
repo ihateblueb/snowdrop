@@ -24,6 +24,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -60,6 +63,7 @@ import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchLists
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
@@ -90,23 +94,6 @@ import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
 import snowdrop.shared.generated.resources.unlock
 
-//<editor-fold name="ScrollEndCallback">
-@Composable
-inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
-	val postsTillEndBeforeFetch = 10
-
-	LaunchedEffect(key1 = this) {
-		snapshotFlow { layoutInfo }
-			.filter { it.totalItemsCount > 0 }
-			.map { it.totalItemsCount - (it.visibleItemsInfo.lastOrNull()?.index ?: -1) <= postsTillEndBeforeFetch }
-			.distinctUntilChanged()
-			.filter { it }
-			.onEach { callback() }
-			.collect()
-	}
-}
-//</editor-fold>
-
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimelineView() = ViewSurface {
@@ -118,7 +105,7 @@ fun TimelineView() = ViewSurface {
 		val snackbarController = LocalSnackbarController.current
 		val haptics = LocalHapticFeedback.current
 
-		var refreshKey by remember { mutableStateOf(0) }
+		var refreshKey by rememberSaveable { mutableStateOf(0) }
 
 		val timelineLocked by remember { settings.getBooleanFlow("timeline_locked", false) }
 			.collectAsStateWithLifecycle(false)
@@ -129,12 +116,12 @@ fun TimelineView() = ViewSurface {
 			.collectAsStateWithLifecycle(null)
 
 		// 0 - home, 1 - local, 2 - bubble, 3 - global, 4 - bookmarks, 5 - list
-		val timelineType by remember { settings.getIntFlow("timeline", 0) }
+		val timelineType by settings.getIntFlow("timeline", 0)
+			.distinctUntilChanged()
 			.collectAsStateWithLifecycle(0)
-		val listId by remember { settings.getStringFlow("timeline_list_id", "") }
+		val listId by settings.getStringFlow("timeline_list_id", "")
+			.distinctUntilChanged()
 			.collectAsStateWithLifecycle("")
-
-		LaunchedEffect(timelineType, listId) { refreshKey++ }
 
 		var timelinePickerOpen by remember { mutableStateOf(false) }
 		var listPickerOpen by remember { mutableStateOf(false) }
@@ -180,6 +167,7 @@ fun TimelineView() = ViewSurface {
 			blockingSettings.putInt("timeline", timeline)
 			vibrate(true, haptics)
 			timelinePickerOpen = false
+			refreshKey++
 		}
 
 		@Composable

@@ -19,11 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,18 +39,43 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
+import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.update
 import site.remlit.snowdrop.util.vibrateSoft
-import site.remlit.snowdrop.view.ScrollEndCallback
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+//<editor-fold name="ScrollEndCallback">
+@Composable
+inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
+	val postsTillEndBeforeFetch = 10
+
+	LaunchedEffect(key1 = this) {
+		snapshotFlow { layoutInfo }
+			.filter { it.totalItemsCount > 0 }
+			.map { it.totalItemsCount - (it.visibleItemsInfo.lastOrNull()?.index ?: -1) <= postsTillEndBeforeFetch }
+			.distinctUntilChanged()
+			.filter { it }
+			.onEach { callback() }
+			.collect()
+	}
+}
+//</editor-fold>
 
 /**
  * Refreshable and infinitely scrollable timeline.
@@ -64,6 +95,7 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
  * @sample site.remlit.snowdrop.view.NotificationsView
  * @since 0.0.2-alpha
  * */
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
@@ -88,13 +120,16 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	countTowardsScrollingUpward: Boolean = false,
 	distinctCheck: Boolean = false,
 ) {
+	val timelineId = rememberSaveable { Uuid.generateV4() }
+
 	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
 	// todo: make rememberSaveable
+
 	val timeline = remember { mutableStateListOf<T>() }
-	val refreshState = rememberPullToRefreshState()
+	val refreshState = rememberPullToRefreshState() // this is rememberSaveable
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
 	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
 
@@ -113,7 +148,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 	listState.also {
 		it.ScrollEndCallback {
-			coroutineScope.launch { addToTimeline() }
+			if (!isFetchingMore) coroutineScope.launch { addToTimeline() }
 		}
 	}
 
@@ -133,7 +168,16 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isRefreshing = false
 	}
 
-	LaunchedEffect(refreshKey) { addOrUpdateTimeline(); onRefresh() }
+	var initialized by rememberSaveable { mutableStateOf(false) }
+	LaunchedEffect(Unit) {
+		if (!initialized) addOrUpdateTimeline(); onRefresh(); initialized = true
+	}
+
+	var previousRefreshKey by rememberSaveable { mutableStateOf(refreshKey) }
+	LaunchedEffect(refreshKey) {
+		if (refreshKey != previousRefreshKey) addOrUpdateTimeline(); onRefresh()
+		previousRefreshKey = refreshKey
+	}
 
 	PullToRefreshBox(
 		isRefreshing = isRefreshing,
