@@ -107,7 +107,7 @@ fun EmojiPicker(
 
 		// sorted alphabetically
 		emojis.sortedBy { it.category }
-			.filter { it.shortcode.contains(query) }
+			.filter { it.shortcode.lowercase().contains(query) }
 			.forEach {
 				val category = it.category ?: stringResource(Res.string.uncategorized)
 				categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
@@ -146,7 +146,7 @@ fun EmojiPicker(
 					item {
 						TextField(
 							value = query,
-							onValueChange = { query = it },
+							onValueChange = { query = it.lowercase() },
 							maxLines = 1,
 
 							placeholder = { Text(stringResource(Res.string.search)) },
