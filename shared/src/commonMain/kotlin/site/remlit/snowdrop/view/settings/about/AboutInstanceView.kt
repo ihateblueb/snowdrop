@@ -34,6 +34,7 @@ import site.remlit.snowdrop.util.getCurrentAccountHost
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.rules
 
 @Composable
 fun AboutInstanceView() = ViewSurface {
@@ -93,20 +94,20 @@ fun AboutInstanceView() = ViewSurface {
 			if (instance!!.rules.isNotEmpty()) {
 				item {
 					Text(
-						"Rules",
+						stringResource(Res.string.rules),
 						fontWeight = FontWeight.Medium,
 						fontSize = 18.sp,
 						modifier = Modifier.padding(15.dp)
 					)
 				}
 
-				instance!!.rules.forEach {
+				instance!!.rules.forEachIndexed { i, it ->
 					item {
 						Column(
 							modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
 							verticalArrangement = Arrangement.spacedBy(5.dp)
 						) {
-							Text("${it.id}. ${it.text}")
+							Text("${i+1}. ${it.text}")
 							if (it.hint != null) Text(it.hint, color = MaterialTheme.colorScheme.onSurfaceVariant)
 						}
 					}

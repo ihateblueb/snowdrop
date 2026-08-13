@@ -10,6 +10,7 @@
 - Login with snac2
 - Startup crash on Android 7-11
 - Dropped minsdk version so it runs on Android 6
+- Rule numbering no longer uses IDs because they aren't ints starting at 1 for every software
 
 ## [0.0.6-alpha]
 
