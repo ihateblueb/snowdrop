@@ -130,7 +130,7 @@ fun StatusMediaAttachment(
 				)
 			}
 
-			"video" -> {
+			"video", "gifv" -> {
 				VideoPlayer(
 					url = attachment.url,
 					initialPlayerState = initialPlayerState,
