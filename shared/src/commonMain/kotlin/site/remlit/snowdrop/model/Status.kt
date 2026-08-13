@@ -209,7 +209,8 @@ data class Status(
 	@Serializable
 	data class Pleroma(
 		@SerialName("emoji_reactions")
-		val reactions: List<Reaction>)
+		val reactions: List<Reaction> = listOf()
+	)
 
 	@Serializable
 	data class Tag(
