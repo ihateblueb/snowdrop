@@ -39,6 +39,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -49,6 +50,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
+import site.remlit.snowdrop.model.viewModel.TimelineViewModel
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
@@ -100,6 +102,9 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
 
+	viewModelKey: String? = null,
+	timelineViewModel: TimelineViewModel<T> = viewModel(key = viewModelKey),
+
 	fetchMethod: suspend (
 			maxId: String?,
 			minId: String?,
@@ -120,15 +125,13 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	countTowardsScrollingUpward: Boolean = false,
 	distinctCheck: Boolean = false,
 ) {
-	val timelineId = rememberSaveable { Uuid.generateV4() }
-
 	val snackbarHandler = LocalSnackbarController.current
 	val haptics = LocalHapticFeedback.current
 	val coroutineScope = rememberCoroutineScope()
 
 	// todo: make rememberSaveable
 
-	val timeline = remember { mutableStateListOf<T>() }
+	val timeline = remember { timelineViewModel.timelineItems }
 	val refreshState = rememberPullToRefreshState() // this is rememberSaveable
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
 	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
