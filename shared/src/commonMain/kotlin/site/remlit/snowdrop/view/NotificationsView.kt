@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,7 +51,7 @@ import snowdrop.shared.generated.resources.reactions
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
 fun NotificationsView() = ViewSurface {
-	var refreshKey by remember { mutableStateOf(0) }
+	var refreshKey by rememberSaveable { mutableStateOf(0) }
 	val showFilters by remember { settings.getBooleanFlow("show_filters", false) }
 		.collectAsStateWithLifecycle(false)
 
@@ -75,7 +76,13 @@ fun NotificationsView() = ViewSurface {
 	val followRequests by remember { settings.getBooleanFlow("notifications_filter_follow_requests", true) }
 		.collectAsStateWithLifecycle(true)
 
+	var initialCompositionComplete by remember { mutableStateOf(false) }
 	LaunchedEffect(mentions, likes, boosts, reactions, edits, polls, posts, bites, follows, followRequests) {
+		if (!initialCompositionComplete) {
+			initialCompositionComplete = true
+			return@LaunchedEffect
+		}
+
 		refreshKey++
 	}
 

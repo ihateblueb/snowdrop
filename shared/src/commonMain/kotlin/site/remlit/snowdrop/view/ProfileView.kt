@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -174,7 +175,7 @@ fun ProfileView(id: String) = ViewSurface {
 	val pinnedStatuses = remember { mutableStateListOf<Status>() }
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
-	var selectedTab by remember { mutableStateOf(0) }
+	var selectedTab by rememberSaveable { mutableStateOf(0) }
 
 	Column {
 		TopAppBar(

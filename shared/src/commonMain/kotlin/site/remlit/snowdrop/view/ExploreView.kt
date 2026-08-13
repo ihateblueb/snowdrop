@@ -50,11 +50,17 @@ import snowdrop.shared.generated.resources.nothing_to_see_here
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.search_for_posts_or_users
 import snowdrop.shared.generated.resources.search_results
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	val focusRequester = remember { FocusRequester() }
 	val keyboardController = LocalSoftwareKeyboardController.current
+
+	val postsTimelineViewModelKey = rememberSaveable { Uuid.generateV4().toString() }
+	val accountsTimelineViewModelKey = rememberSaveable { Uuid.generateV4().toString() }
 
 	var query by rememberSaveable { mutableStateOf("") }
 	var showResults by rememberSaveable { mutableStateOf(false) }
@@ -140,6 +146,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 			var offset by remember { mutableStateOf(0) }
 			when (selectedTab) {
 				0 -> RefreshableTimeline(
+					viewModelKey = postsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
 						val res = search(query, resolve = true, offset = offset, limit = limit, type = "statuses")
 						offset += limit
@@ -151,6 +158,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					distinctCheck = true
 				)
 				1 -> RefreshableTimeline(
+					viewModelKey = accountsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
 						val res = search(query, resolve = true, offset = offset, limit = limit, type = "accounts")
 						offset += limit
