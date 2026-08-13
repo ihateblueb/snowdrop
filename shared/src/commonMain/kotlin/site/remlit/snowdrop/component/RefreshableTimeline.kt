@@ -44,6 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.model.viewModel.TimelineViewModel
+import site.remlit.snowdrop.model.viewModel.timelineViewModelFactory
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.scrollingUpward
@@ -94,7 +95,10 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
 
 	viewModelKey: String? = null,
-	timelineViewModel: TimelineViewModel<T> = viewModel(key = viewModelKey),
+	timelineViewModel: TimelineViewModel<T> = viewModel(
+			key = viewModelKey,
+			factory = timelineViewModelFactory<T>()
+		),
 
 	fetchMethod: suspend (
 			maxId: String?,
