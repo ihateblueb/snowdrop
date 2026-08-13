@@ -7,6 +7,9 @@
 
 ### Fixed
 - iOS race condition crash with alt text bottom sheet
+- Login with snac2
+- Startup crash on Android 7-11
+- Dropped minsdk version so it runs on Android 6
 
 ## [0.0.6-alpha]
 
