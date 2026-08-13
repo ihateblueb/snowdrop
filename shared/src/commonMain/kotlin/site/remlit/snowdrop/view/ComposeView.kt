@@ -31,7 +31,6 @@ import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -40,6 +39,7 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
@@ -218,8 +218,6 @@ fun ComposeView(
 
 	var sendingDone by remember { mutableStateOf(false) }
 	var isSending by remember { mutableStateOf(false) }
-	var sendingTaskCount by remember { mutableStateOf(0) }
-	var sendingTask by remember { mutableStateOf(0) }
 
 	LaunchedEffect(sendingDone) { if (sendingDone) navHandler.popBackStack() }
 
@@ -228,16 +226,11 @@ fun ComposeView(
 
 	suspend fun sendPost() {
 		isSending = true
-		sendingTask = 0
-		// the main createStatus, plus all media uploads
-		sendingTaskCount = 1 + mediaAttachments.size
 
 		fun <T> handleError(res: ApiResponse<T>) {
 			res.handleError(snackbarHandler)
 			vibrateError(haptics)
 			isSending = false
-			sendingTaskCount = 0
-			sendingTask = 0
 		}
 
 		val uploadedMedia = mutableListOf<Status.MediaAttachment>()
@@ -249,11 +242,8 @@ fun ComposeView(
 				return
 			}
 			uploadedMedia.add(uploadRes.response)
-
-			sendingTask++
 		}
 
-		sendingTask++
 		val res = if (editingId != null) editStatus(editingId, CreateStatusRequest(
 			status = textFieldState.text as String?,
 			spoilerText = cw
@@ -282,15 +272,8 @@ fun ComposeView(
 			enabled = canSubmit
 		) {
 			if (isSending) {
-				if (sendingTaskCount > 0 && sendingTask > 0)
-					CircularProgressIndicator(
-						progress = { (sendingTask / sendingTaskCount).toFloat() },
-						modifier = Modifier.padding(4.dp),
-						strokeWidth = 4.dp
-					)
-				else CircularProgressIndicator(
-					modifier = Modifier.padding(4.dp),
-					strokeWidth = 4.dp
+				LoadingIndicator(
+					modifier = Modifier.padding(2.dp)
 				)
 			} else Icon(painterResource(Res.drawable.icon_send_24px), null)
 		}
