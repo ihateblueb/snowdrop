@@ -17,7 +17,8 @@ enum class Software {
 	Akkoma,
 	Sharkey,
 	IceshrimpJS,
-	IceshrimpNET
+	IceshrimpNET,
+	Mitra
 }
 
 /**
@@ -78,17 +79,25 @@ suspend fun determineFeatures() {
 	if ("""\(compatible; Iceshrimp\.NET/.*\)""".toRegex().containsMatchIn(version))
 		software = Software.IceshrimpNET
 
+	if ("""\(compatible; Mitra .*\)""".toRegex().containsMatchIn(version))
+		software = Software.Mitra
 
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
 		software == Software.Chuckya ||
-		software == Software.Akkoma ||
 		software == Software.Sharkey ||
 		software == Software.IceshrimpJS ||
 		software == Software.IceshrimpNET
 	) putFeature("reactions", true)
 	else putFeature("reactions", false)
+
+	if (
+		software == Software.Akkoma ||
+		software == Software.Pleroma ||
+		software == Software.Mitra
+	) putFeature("reactions_pleroma", true)
+	else putFeature("reactions_pleroma", false)
 
 	// sharkey has a bubble tl but its unlikely it has good mastoapi support
 	if (
