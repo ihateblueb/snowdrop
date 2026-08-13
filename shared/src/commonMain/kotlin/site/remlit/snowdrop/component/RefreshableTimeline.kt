@@ -18,18 +18,12 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -46,12 +40,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.model.viewModel.TimelineViewModel
-import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.scrollingUpward
@@ -59,8 +51,6 @@ import site.remlit.snowdrop.util.update
 import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.nothing_to_see_here
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 //<editor-fold name="ScrollEndCallback">
 @Composable
@@ -83,6 +73,8 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
  * Refreshable and infinitely scrollable timeline.
  *
  * @param modifier Modifier for PullToRefreshBox
+ * @param viewModelKey Key for timelineViewModel
+ * @param timelineViewModel View model for storing persistent timeline data
  * @param fetchMethod Method following basic pagination requirements
  * @param onRefresh Called upon refresh of the timeline
  * @param timelineComponent Component to use for items in the timeline, must accept T as first parameter
@@ -97,7 +89,6 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
  * @sample site.remlit.snowdrop.view.NotificationsView
  * @since 0.0.2-alpha
  * */
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	modifier: Modifier = Modifier,
