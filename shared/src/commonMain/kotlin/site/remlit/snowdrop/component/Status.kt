@@ -942,6 +942,8 @@ fun Status(
 												InteractionViewType.Boost.toString()
 											)
 										)
+
+										showDropdown = false
 									}
 								)
 
@@ -958,6 +960,8 @@ fun Status(
 												InteractionViewType.Like.toString()
 											)
 										)
+
+										showDropdown = false
 									}
 								)
 
@@ -975,6 +979,7 @@ fun Status(
 													InteractionViewType.Reaction.toString()
 												)
 											)
+											showDropdown = false
 										}
 									)
 
