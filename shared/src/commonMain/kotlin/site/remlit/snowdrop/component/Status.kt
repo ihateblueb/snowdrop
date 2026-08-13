@@ -648,13 +648,18 @@ fun Status(
 					* Reactions
 					*
 					*/
-					if (getFeature("reactions") && realStatus.reactions.isNotEmpty()) {
+					if ((getFeature("reactions") && realStatus.reactions.isNotEmpty()) || (getFeature("reactions_pleroma") && realStatus.pleroma?.reactions?.isNotEmpty() == true)) {
 						val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
+						val reactions = if (getFeature("reactions_pleroma")) {
+							realStatus.pleroma!!.reactions
+						} else {
+							realStatus.reactions
+						}
 						LazyRow(
 							contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 						) {
-							realStatus.reactions.forEach {
+							reactions.forEach {
 								item {
 									TooltipBox(
 										positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
@@ -827,7 +832,7 @@ fun Status(
 								Text(realStatus.favouritesCount.toFormatShort())
 						}
 
-						if (getFeature("reactions")) {
+						if (getFeature("reactions") || getFeature("reactions_pleroma")) {
 							FooterButton(onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() }) {
 								Icon(
 									painterResource(Res.drawable.icon_add_24px),
@@ -960,7 +965,7 @@ fun Status(
 									}
 								)
 
-								if (getFeature("reactions"))
+								if (getFeature("reactions") || getFeature("reactions_pleroma"))
 									DropdownMenuItem(
 										text = { Text(stringResource(Res.string.show_reactions)) },
 										leadingIcon = {

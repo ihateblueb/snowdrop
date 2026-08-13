@@ -144,7 +144,7 @@ fun NotificationsView() = ViewSurface {
 					label = { Text(translation(Res.string.boosts)) }
 				)
 			}
-			if (getFeature("reactions"))
+			if (getFeature("reactions") || getFeature("reactions_pleroma"))
 				item {
 					FilterChip(
 						selected = reactions,

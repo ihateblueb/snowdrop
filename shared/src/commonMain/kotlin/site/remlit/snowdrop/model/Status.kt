@@ -73,6 +73,8 @@ data class Status(
 	val createdAt: String? = null,
 	@SerialName("edited_at")
 	val editedAt: String? = null,
+
+	val pleroma: Pleroma? = null,
 ) : IdentifiableObject<String> {
 	@Serializable
 	data class QuoteApproval(
@@ -203,6 +205,11 @@ data class Status(
 				visibleInPicker = true // doesnt matter here
 			)
 	}
+
+	@Serializable
+	data class Pleroma(
+		@SerialName("emoji_reactions")
+		val reactions: List<Reaction>)
 
 	@Serializable
 	data class Tag(
