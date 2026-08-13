@@ -24,7 +24,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +59,6 @@ import snowdrop.shared.generated.resources.icon_visibility_24px
 import snowdrop.shared.generated.resources.icon_visibility_off_24px
 import snowdrop.shared.generated.resources.post
 import snowdrop.shared.generated.resources.post_by_x
-import snowdrop.shared.generated.resources.reply
 import snowdrop.shared.generated.resources.reply_to_x
 import kotlin.collections.mapOf
 import site.remlit.snowdrop.component.Status as StatusComponent
