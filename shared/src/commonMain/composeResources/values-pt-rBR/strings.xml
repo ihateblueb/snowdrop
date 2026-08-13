@@ -10,7 +10,9 @@
     <string name="liked_by">Curtida por</string>
     <string name="reacted_by">Reagido por</string>
     <plurals name="x_posts">
-        <item quantity="one">{count} postagens</item>
+        <item quantity="one">{count} postagem</item>
+        <item quantity="many">{count} postagens</item>
+        <item quantity="other">{count} postagens</item>
     </plurals>
     <string name="edit_profile">Editar perfil</string>
     <string name="request_to_follow">Pedir para seguir</string>
@@ -98,10 +100,14 @@
     <string name="discoverable_description">Você poderá ser adicionado a coleções, e suas postagens públicas poderão aparecer em "Tendências"</string>
     <string name="post_by_x">Postagem de {display_name}</string>
     <plurals name="x_followers">
-        <item quantity="one">{count} seguidores</item>
+        <item quantity="one">{count} seguidor</item>
+        <item quantity="many">{count} seguidores</item>
+        <item quantity="other">{count} seguidores</item>
     </plurals>
     <plurals name="x_following">
         <item quantity="one">{count} seguindo</item>
+        <item quantity="many">{count} seguindo</item>
+        <item quantity="other">{count} seguindo</item>
     </plurals>
     <string name="appearance">Aparência</string>
     <string name="use_amoled_dark_theme">Usar tema escuro para telas AMOLED</string>
@@ -122,7 +128,7 @@
     <string name="x_boosted">{clickable_display_name} impulsionou</string>
     <string name="are_you_sure_you_want_to_cancel_your_follow_request_to_x">Tem certeza que quer cancelar seu pedido para seguir {handle}?</string>
     <string name="are_you_sure_you_want_to_unfollow_x">Tem certeza que quer deixar de seguir {handle}?</string>
-    <string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Tem certeza que quer pedir para seguir {handle}?</string>
+    <string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Tem certeza que quer solicitar seguir {handle}?</string>
     <string name="mutuals">Mútuos</string>
     <string name="follows_you">Te segue</string>
     <string name="about_snowdrop">Sobre o Snowdrop</string>
@@ -142,46 +148,74 @@
     <string name="soon">em breve</string>
     <string name="now">agora</string>
     <plurals name="x_second_simple">
-        <item quantity="one">{time}seg</item>
+        <item quantity="one">{time}s</item>
+        <item quantity="many">{time}s</item>
+        <item quantity="other">{time}s</item>
     </plurals>
     <plurals name="x_second">
         <item quantity="one">{time} segundo</item>
+        <item quantity="many">{time} segundos</item>
+        <item quantity="other">{time} segundos</item>
     </plurals>
     <plurals name="x_minute_simple">
         <item quantity="one">{time}min</item>
+        <item quantity="many">{time}min</item>
+        <item quantity="other">{time}min</item>
     </plurals>
     <plurals name="x_minute">
         <item quantity="one">{time} minuto</item>
+        <item quantity="many">{time} minutos</item>
+        <item quantity="other">{time} minutos</item>
     </plurals>
     <plurals name="x_hour_simple">
         <item quantity="one">{time}h</item>
+        <item quantity="many">{time}hrs</item>
+        <item quantity="other">{time}hrs</item>
     </plurals>
     <plurals name="x_hour">
         <item quantity="one">{time} hora</item>
+        <item quantity="many">{time} horas</item>
+        <item quantity="other">{time} horas</item>
     </plurals>
     <plurals name="x_day_simple">
         <item quantity="one">{time}d</item>
+        <item quantity="many">{time}d</item>
+        <item quantity="other">{time}d</item>
     </plurals>
     <plurals name="x_day">
         <item quantity="one">{time} dia</item>
+        <item quantity="many">{time} dias</item>
+        <item quantity="other">{time} dias</item>
     </plurals>
     <plurals name="x_week_simple">
         <item quantity="one">{time}sem</item>
+        <item quantity="many">{time}sem</item>
+        <item quantity="other">{time}sem</item>
     </plurals>
     <plurals name="x_week">
         <item quantity="one">{time} semana</item>
+        <item quantity="many">{time} semanas</item>
+        <item quantity="other">{time} semanas</item>
     </plurals>
     <plurals name="x_month_simple">
         <item quantity="one">(time}m</item>
+        <item quantity="many">(time}m</item>
+        <item quantity="other">(time}m</item>
     </plurals>
     <plurals name="x_month">
         <item quantity="one">{time} mês</item>
+        <item quantity="many">{time} meses</item>
+        <item quantity="other">{time} meses</item>
     </plurals>
     <plurals name="x_year_simple">
         <item quantity="one">{time}a</item>
+        <item quantity="many">{time}a</item>
+        <item quantity="other">{time}a</item>
     </plurals>
     <plurals name="x_year">
         <item quantity="one">{time} ano</item>
+        <item quantity="many">{time} anos</item>
+        <item quantity="other">{time} anos</item>
     </plurals>
     <string name="show_results">Mostrar resultados</string>
     <string name="hide_results">Esconder resultados</string>
@@ -212,4 +246,33 @@
     <string name="this_popup_wont_appear_again">Este popup não aparecerá novamente.</string>
     <string name="pin">Fixar</string>
     <string name="unpin">Desfixar</string>
+    <string name="clear_accounts">Limpar contas</string>
+    <string name="reorder">Reordenar</string>
+    <string name="mentions">Menções</string>
+    <string name="likes">Curtidas</string>
+    <string name="boosts">Impulsos</string>
+    <string name="reactions">Reações</string>
+    <string name="post_edits">Edições de postagem</string>
+    <string name="polls">Enquetes</string>
+    <string name="bites">Mordidas</string>
+    <string name="follows">Seguimentos</string>
+    <string name="follow_requests">Pedidos para seguir</string>
+    <plurals name="x_attachments">
+        <item quantity="one">{count} anexo</item>
+        <item quantity="many">{count} anexos</item>
+        <item quantity="other">{count} anexos</item>
+    </plurals>
+    <plurals name="x_votes">
+        <item quantity="one">{count} voto</item>
+        <item quantity="many">{count} votos</item>
+        <item quantity="other">{count} votos</item>
+    </plurals>
+    <string name="pinned">Fixado</string>
+    <string name="view_all_pinned_posts">Visualizar todas as postagens fixadas</string>
+    <string name="pinned_posts">Postagens fixadas</string>
+    <string name="filtered_by_x">Filtrada por {filters}</string>
+    <string name="replying_to_x">Respondendo a {handle}</string>
+    <string name="replying_to_self">Respondendo a si mesmo</string>
+    <string name="reply_to_x">Resposta a {handle}</string>
+    <string name="search">Pesquisa</string>
 </resources>
