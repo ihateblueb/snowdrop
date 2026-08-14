@@ -208,3 +208,5 @@ fun putNavigationBarOrder(value: String) = blockingSettings.putString("bottom_ba
 var scrollingUpward by mutableStateOf(true)
 
 var showAccountSwitcher by mutableStateOf(false)
+
+var showUnreadNotificationsBadge by mutableStateOf(false)

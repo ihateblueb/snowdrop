@@ -424,7 +424,8 @@ fun ComposeView(
 						horizontalArrangement = Arrangement.End
 					) {
 						Row(
-							modifier = Modifier.padding(end = 10.dp),
+							modifier = if (!swapPostButtonAndCharLimit) Modifier.padding(end = 10.dp)
+								else Modifier,
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {

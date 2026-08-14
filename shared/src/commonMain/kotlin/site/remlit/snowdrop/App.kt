@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -37,9 +39,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,13 +55,17 @@ import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.api.markers.getMarkers
+import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
+import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -80,7 +88,9 @@ import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
 import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
+import site.remlit.snowdrop.util.showUnreadNotificationsBadge
 import site.remlit.snowdrop.util.transitionedComposable
+import site.remlit.snowdrop.util.vibrateError
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView
@@ -183,6 +193,8 @@ fun App() = safe {
 	*/
 
 	val navController = rememberNavController()
+	val coroutineScope = rememberCoroutineScope()
+	val hapticFeedback = LocalHapticFeedback.current
 
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDest = navBackStackEntry?.destination
@@ -214,6 +226,7 @@ fun App() = safe {
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
 		atRoute<ThreadRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
+		atRoute<EditProfileRoute>(currentDest) ||
 		atRoute<AboutSettingsRoute>(currentDest) ||
 		atRoute<AboutInstanceRoute>(currentDest) ||
 		atRoute<AboutSnowdropRoute>(currentDest) ||
@@ -269,13 +282,44 @@ fun App() = safe {
 								.collectAsStateWithLifecycle(true)
 
 							key(navigationBarOrder) {
+								if (!showUnreadNotificationsBadge && navigationBarOrder.contains(NavigationBarOption.Notifications.toString()))
+									coroutineScope.launch {
+										// we're grabbing marker for notifications and just checking
+										// notifications since it
+										val res = getMarkers(timelines = listOf("notifications"))
+										if (res.error || res.response == null) {
+											res.handleError(snackbarHostState)
+											vibrateError(hapticFeedback)
+											return@launch
+										}
+
+										val notifRes = getNotifications(limit = 1, sinceId = res.response.notifications?.lastReadId)
+										if (notifRes.error || notifRes.response == null) {
+											notifRes.handleError(snackbarHostState)
+											vibrateError(hapticFeedback)
+											return@launch
+										}
+
+										if (notifRes.response.isEmpty()) return@launch
+										if (notifRes.response.isNotEmpty())
+											showUnreadNotificationsBadge = true
+
+										// todo: subscribe to ws and adjust as needed
+									}
+
 								navigationBarOrder.mapToNavigationOptions()
 									.forEach { item ->
 										NavigationBarItem(
 											selected = atRoute(item.toRouteClass(), currentDest),
 											onClick = { /* unimportant due to interaction source */ },
 											interactionSource = navigationBarInteractionSource(item),
-											icon = { NavigationBarIcon(item) },
+											icon = {
+												if (item == NavigationBarOption.Notifications && showUnreadNotificationsBadge)
+													BadgedBox(badge = { Badge() }) {
+														NavigationBarIcon(item)
+													}
+												else NavigationBarIcon(item)
+											},
 											label = {
 												if (showNavigationBarLabels)
 													Text(

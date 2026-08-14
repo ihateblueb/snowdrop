@@ -48,7 +48,7 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
-import snowdrop.shared.generated.resources.swap_post_button_and_char_limit
+import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
@@ -126,7 +126,7 @@ fun AppearanceSettingsView() = ViewSurface {
 
 			Card {
 				ListItem(
-					headlineContent = { Text(stringResource(Res.string.swap_post_button_and_char_limit)) },
+					headlineContent = { Text(stringResource(Res.string.show_send_post_at_bottom_of_composer)) },
 					trailingContent = {
 						Switch(
 							swapPostButtonAndCharLimit,
