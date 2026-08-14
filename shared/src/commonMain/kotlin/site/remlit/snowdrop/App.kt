@@ -280,9 +280,13 @@ fun App() = safe {
 								.collectAsStateWithLifecycle(defaultNavigationBarOrder)
 							val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
 								.collectAsStateWithLifecycle(true)
+							val hideUnreadNotificationsBadge by remember { settings.getBooleanFlow("hide_unread_notifications_badge", false) }
+								.collectAsStateWithLifecycle(false)
 
 							key(navigationBarOrder) {
-								if (!showUnreadNotificationsBadge && navigationBarOrder.contains(NavigationBarOption.Notifications.toString()))
+								if (!hideUnreadNotificationsBadge && !showUnreadNotificationsBadge &&
+									navigationBarOrder.contains(NavigationBarOption.Notifications.toString()))
+
 									coroutineScope.launch {
 										// we're grabbing marker for notifications and just checking
 										// notifications since it
@@ -314,7 +318,9 @@ fun App() = safe {
 											onClick = { /* unimportant due to interaction source */ },
 											interactionSource = navigationBarInteractionSource(item),
 											icon = {
-												if (item == NavigationBarOption.Notifications && showUnreadNotificationsBadge)
+												if (item == NavigationBarOption.Notifications &&
+													showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+
 													BadgedBox(badge = { Badge() }) {
 														NavigationBarIcon(item)
 													}
