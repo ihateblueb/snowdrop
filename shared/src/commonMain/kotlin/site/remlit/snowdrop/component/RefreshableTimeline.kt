@@ -134,11 +134,15 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	suspend fun addToTimeline() {
 		if (timeline.isEmpty()) return
 		isFetchingMore = true
+
+		onRefresh()
 		val res = fetchMethod(timeline.last().id, null, null)
-		if (res.error || res.response == null) {
+		if (res.error) {
 			res.handleError(snackbarHandler)
 			return
 		}
+		if (res.response == null) return
+
 		timeline.addAll(res.response)
 		isFetchingMore = false
 	}
@@ -154,12 +158,15 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		debug { "(RefreshableTimeline) addOrUpdateTimeline called" }
 		scrollingUpward = true
 		isRefreshing = true
+
+		onRefresh()
 		val res = fetchMethod(null, null, null)
 		if (res.error) {
 			res.handleError(snackbarHandler)
 			return
 		}
 		if (res.response == null) return
+
 		timeline.clear()
 		timeline.addAll(res.response)
 		if (scrollToTopPostRefresh) listState.scrollToItem(0)
@@ -168,12 +175,12 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 	var initialized by rememberSaveable { mutableStateOf(false) }
 	LaunchedEffect(Unit) {
-		if (!initialized) addOrUpdateTimeline(); onRefresh(); initialized = true
+		if (!initialized) addOrUpdateTimeline(); initialized = true
 	}
 
 	var previousRefreshKey by rememberSaveable { mutableStateOf(refreshKey) }
 	LaunchedEffect(refreshKey) {
-		if (refreshKey != previousRefreshKey) addOrUpdateTimeline(); onRefresh()
+		if (refreshKey != previousRefreshKey) addOrUpdateTimeline()
 		previousRefreshKey = refreshKey
 	}
 

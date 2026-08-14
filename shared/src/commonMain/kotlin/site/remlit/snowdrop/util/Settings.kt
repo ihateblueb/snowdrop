@@ -1,8 +1,10 @@
 package site.remlit.snowdrop.util
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.navigation.NavController
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
@@ -12,12 +14,16 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import site.remlit.snowdrop.StartRoute
+import site.remlit.snowdrop.api.markers.getMarkers
+import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.api.verifyCredentials
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.putCacheEntry
+import site.remlit.snowdrop.util.log.debug
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -210,3 +216,35 @@ var scrollingUpward by mutableStateOf(true)
 var showAccountSwitcher by mutableStateOf(false)
 
 var showUnreadNotificationsBadge by mutableStateOf(false)
+
+/**
+ * Check for unread notifications
+ *
+ * @since 0.0.7-alpha
+ * */
+fun checkForUnreadNotifications(
+	snackbarHostState: SnackbarHostState,
+	hapticFeedback: HapticFeedback
+) = bgIO {
+	if (!blockingSettings.getBoolean("hide_unread_notifications_badge", false)) {
+		// we're grabbing marker for notifications and just checking
+		// notifications since it
+		val res = getMarkers(timelines = listOf("notifications"))
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHostState)
+			vibrateError(hapticFeedback)
+			return@bgIO
+		}
+
+		val notifRes = getNotifications(limit = 1, sinceId = res.response["notifications"]?.lastReadId)
+		if (notifRes.error || notifRes.response == null) {
+			notifRes.handleError(snackbarHostState)
+			vibrateError(hapticFeedback)
+			return@bgIO
+		}
+
+		showUnreadNotificationsBadge = notifRes.response.isNotEmpty()
+
+		// todo: subscribe to ws and adjust as needed
+	}
+}

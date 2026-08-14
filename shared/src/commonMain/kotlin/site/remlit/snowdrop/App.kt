@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +80,7 @@ import site.remlit.snowdrop.util.scrollingUpward
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.setupAppSettings
 import site.remlit.snowdrop.util.cache.setupCache
+import site.remlit.snowdrop.util.checkForUnreadNotifications
 import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrder
@@ -193,13 +195,17 @@ fun App() = safe {
 	*/
 
 	val navController = rememberNavController()
-	val coroutineScope = rememberCoroutineScope()
 	val hapticFeedback = LocalHapticFeedback.current
 
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDest = navBackStackEntry?.destination
 
 	val snackbarHostState = remember { SnackbarHostState() }
+
+
+	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
+		checkForUnreadNotifications(snackbarHostState, hapticFeedback)
+	}
 
 
 	val loggedIn by settings.getBooleanOrNullFlow("logged_in")
@@ -284,33 +290,6 @@ fun App() = safe {
 								.collectAsStateWithLifecycle(false)
 
 							key(navigationBarOrder) {
-								if (!hideUnreadNotificationsBadge && !showUnreadNotificationsBadge &&
-									navigationBarOrder.contains(NavigationBarOption.Notifications.toString()))
-
-									coroutineScope.launch {
-										// we're grabbing marker for notifications and just checking
-										// notifications since it
-										val res = getMarkers(timelines = listOf("notifications"))
-										if (res.error || res.response == null) {
-											res.handleError(snackbarHostState)
-											vibrateError(hapticFeedback)
-											return@launch
-										}
-
-										val notifRes = getNotifications(limit = 1, sinceId = res.response.notifications?.lastReadId)
-										if (notifRes.error || notifRes.response == null) {
-											notifRes.handleError(snackbarHostState)
-											vibrateError(hapticFeedback)
-											return@launch
-										}
-
-										if (notifRes.response.isEmpty()) return@launch
-										if (notifRes.response.isNotEmpty())
-											showUnreadNotificationsBadge = true
-
-										// todo: subscribe to ws and adjust as needed
-									}
-
 								navigationBarOrder.mapToNavigationOptions()
 									.forEach { item ->
 										NavigationBarItem(

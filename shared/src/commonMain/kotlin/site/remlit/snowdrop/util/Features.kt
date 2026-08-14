@@ -96,8 +96,13 @@ suspend fun determineFeatures() {
 		software == Software.Akkoma ||
 		software == Software.Pleroma ||
 		software == Software.Mitra
-	) putFeature("reactions_pleroma", true)
-	else putFeature("reactions_pleroma", false)
+	) {
+		putFeature("reactions_pleroma", true)
+		putFeature("read_notifications_pleroma", true)
+	} else {
+		putFeature("reactions_pleroma", false)
+		putFeature("read_notifications_pleroma", false)
+	}
 
 	// sharkey has a bubble tl but its unlikely it has good mastoapi support
 	if (
