@@ -149,6 +149,8 @@ fun NotificationsView() = ViewSurface {
 							return@launch
 						}
 
+						vibrateConfirm(hapticFeedback)
+
 						// todo: test pleroma read notifications
 						val res = if (getFeature("read_notifications_pleroma")) readNotifications(id = firstNotificationId!!)
 							else postMarkers(mapOf("notifications" to Marker(lastReadId = firstNotificationId!!)))
@@ -159,7 +161,6 @@ fun NotificationsView() = ViewSurface {
 							return@launch
 						}
 
-						vibrateConfirm(hapticFeedback)
 						checkForUnreadNotifications(snackbarController, hapticFeedback)
 					}
 				}
