@@ -18,26 +18,41 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.api.compat.pleroma.notifications.readNotifications
+import site.remlit.snowdrop.api.markers.postMarkers
 import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.component.Notification
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.model.Marker
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.checkForUnreadNotifications
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.log.debug
+import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
+import site.remlit.snowdrop.util.vibrateConfirm
+import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bites
 import snowdrop.shared.generated.resources.boosts
 import snowdrop.shared.generated.resources.follow_requests
 import snowdrop.shared.generated.resources.follows
+import snowdrop.shared.generated.resources.icon_done_all_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_filled_24px
 import snowdrop.shared.generated.resources.likes
@@ -51,6 +66,12 @@ import snowdrop.shared.generated.resources.reactions
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
 fun NotificationsView() = ViewSurface {
+	val coroutineScope = rememberCoroutineScope()
+	val snackbarController = LocalSnackbarController.current
+	val hapticFeedback = LocalHapticFeedback.current
+
+	var firstNotificationId by rememberSaveable { mutableStateOf<String?>(null) }
+
 	var refreshKey by rememberSaveable { mutableStateOf(0) }
 	val showFilters by remember { settings.getBooleanFlow("show_filters", false) }
 		.collectAsStateWithLifecycle(false)
@@ -117,6 +138,33 @@ fun NotificationsView() = ViewSurface {
 			IconButton(onClick = { blockingSettings.putBoolean("show_filters", !showFilters) }) {
 				if (showFilters) Icon(painterResource(Res.drawable.icon_filter_alt_filled_24px), null)
 				else Icon(painterResource(Res.drawable.icon_filter_alt_24px), null)
+			}
+
+			IconButton(
+				onClick = {
+					coroutineScope.launch {
+						if (firstNotificationId == null) {
+							warn { "(NotificationsView) firstNotificationId null" }
+							vibrateError(hapticFeedback)
+							return@launch
+						}
+
+						// todo: test pleroma read notifications
+						val res = if (getFeature("read_notifications_pleroma")) readNotifications(id = firstNotificationId!!)
+							else postMarkers(mapOf("notifications" to Marker(lastReadId = firstNotificationId!!)))
+
+						if (res.error) {
+							res.handleError(snackbarController)
+							vibrateError(hapticFeedback)
+							return@launch
+						}
+
+						vibrateConfirm(hapticFeedback)
+						checkForUnreadNotifications(snackbarController, hapticFeedback)
+					}
+				}
+			) {
+				Icon(painterResource(Res.drawable.icon_done_all_24px), null)
 			}
 		}
 	)
@@ -206,8 +254,16 @@ fun NotificationsView() = ViewSurface {
 	}
 
 	RefreshableTimeline(
-		fetchMethod = { maxId, minId, sinceId -> getNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes()) },
+		fetchMethod = f@{ maxId, minId, sinceId ->
+			val res = getNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes())
+
+			if (firstNotificationId == null)
+				firstNotificationId = res.response?.firstOrNull()?.id
+
+			return@f res
+		},
 		refreshKey = refreshKey,
+		onRefresh = { firstNotificationId = null },
 		timelineComponent = { item, _ -> Notification(item) }, // todo: onUpdate
 	)
 }
