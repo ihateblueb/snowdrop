@@ -3,6 +3,9 @@
 ## [Unreleased (0.0.7-alpha)]
 
 ### Added
+- Unread notifications badge in navigation bar
+- Marking notifications as read on notifications page
+- Option to hide notifications badge under "Wellness"
 - Ability to swap positions of "send post" button and character limit indicator (Moshidon-style)
 
 ### Fixed
@@ -11,6 +14,7 @@
 - Startup crash on Android 7-11
 - Dropped minsdk version so it runs on Android 6
 - Rule numbering no longer uses IDs because they aren't ints starting at 1 for every software
+- Post dropdowns remaining on screen when navigating to "Show likes/boosts/reactions" pages
 
 ## [0.0.6-alpha]
 
