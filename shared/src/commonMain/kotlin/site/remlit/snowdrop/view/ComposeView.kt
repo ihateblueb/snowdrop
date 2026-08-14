@@ -260,7 +260,6 @@ fun ComposeView(
 			return
 		}
 
-		isSending = false
 		sendingDone = true
 		vibrateConfirm(haptics)
 	}
