@@ -24,6 +24,7 @@ import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.hide_follow_counters
 import snowdrop.shared.generated.resources.hide_interaction_counters
+import snowdrop.shared.generated.resources.hide_unread_notifications_badge
 import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.wellbeing
 
@@ -73,6 +74,22 @@ fun WellbeingSettingsView() = ViewSurface {
 						Switch(
 							hideFollowCounters,
 							onCheckedChange = { blockingSettings.putBoolean("hide_follow_counters", it) }
+						)
+					}
+				)
+			}
+		}
+		item {
+			val hideUnreadNotificationsBadge by settings.getBooleanFlow("hide_unread_notifications_badge", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.hide_unread_notifications_badge)) },
+					trailingContent = {
+						Switch(
+							hideUnreadNotificationsBadge,
+							onCheckedChange = { blockingSettings.putBoolean("hide_unread_notifications_badge", it) }
 						)
 					}
 				)

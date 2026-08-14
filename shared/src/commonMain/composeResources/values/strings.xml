@@ -76,6 +76,7 @@
 	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>
 	<string name="hide_follow_counters">Hide follow counters</string>
+	<string name="hide_unread_notifications_badge">Hide unread notifications badge</string>
 
 	<string name="appearance">Appearance</string>
 	<string name="use_amoled_dark_theme">Use AMOLED dark theme</string>
