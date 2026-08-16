@@ -58,6 +58,8 @@ data class Account(
 	val createdAt: String,
 	@SerialName("last_status_at")
 	val lastStatusAt: String? = null,
+
+	var pleroma: Pleroma? = null,
 ) : IdentifiableObject<String> {
 	fun displayName(): String = displayName?.ifBlank { null } ?: username
 
@@ -80,5 +82,11 @@ data class Account(
 		val attributionDomains: List<String> = emptyList(),
 		@SerialName("follow_requests_count")
 		val followRequestsCount: Int = 0
+	)
+
+	@Serializable
+	data class Pleroma(
+		@SerialName("hide_favorites")
+		val hideFavorites: Boolean? = null
 	)
 }
