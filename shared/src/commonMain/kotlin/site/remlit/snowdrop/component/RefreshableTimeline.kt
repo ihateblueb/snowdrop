@@ -132,6 +132,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
 
 	suspend fun addToTimeline() {
+		debug { "(RefreshableTimeline) addToTimeline called" }
 		if (timeline.isEmpty()) return
 		isFetchingMore = true
 
@@ -150,7 +151,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 	listState.also {
 		it.ScrollEndCallback {
-			if (!isFetchingMore) coroutineScope.launch { addToTimeline() }
+			if (!isFetchingMore && !isRefreshing) coroutineScope.launch { addToTimeline() }
 		}
 	}
 
