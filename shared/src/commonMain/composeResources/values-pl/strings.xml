@@ -10,7 +10,10 @@
     <string name="liked_by">Polubione przez</string>
     <string name="reacted_by">Zareagowane przez</string>
     <plurals name="x_posts">
-        <item quantity="one">{count} postów</item>
+        <item quantity="one">{count} post</item>
+        <item quantity="few">{count} posty</item>
+        <item quantity="many">{count} postów</item>
+        <item quantity="other">{count} postów</item>
     </plurals>
     <string name="edit_profile">Edytuj profil</string>
     <string name="follow">Obserwuj</string>
@@ -97,10 +100,16 @@
     <string name="locked_account_description">Nowi obserwujący będą musieli być zatwierdzani przez Ciebie</string>
     <string name="post_by_x">Post użytkownika {display_name}</string>
     <plurals name="x_followers">
-        <item quantity="one">{count} obserwujących</item>
+        <item quantity="one">{count} obserwujący</item>
+        <item quantity="few">{count} obserwujących</item>
+        <item quantity="many">{count} obserwujących</item>
+        <item quantity="other">{count} obserwujących</item>
     </plurals>
     <plurals name="x_following">
-        <item quantity="one">{count} obserwowanych</item>
+        <item quantity="one">{count} obserwowany</item>
+        <item quantity="few">{count} obserwowanych</item>
+        <item quantity="many">{count} obserwowanych</item>
+        <item quantity="other">{count} obserwowanych</item>
     </plurals>
     <string name="x_liked_your_post">{clickable_display_name} polubił(a) twój post</string>
     <string name="x_reacted_with_x">{clickable_display_name} zareagował(a) {emoji}</string>
@@ -151,4 +160,139 @@
     <string name="ends_soon">Kończy się za chwilę</string>
     <string name="poll_ended">Ankieta zakończona</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Na ekranach innych niż AMOLED może powodować problemy z kontrastem</string>
+    <string name="joined_on_x">Dołączył(a) {date_time}</string>
+    <string name="swap_post_button_and_char_limit">Zamień przycisk wysyłania postu z licznikiem znaków w widoku tworzenia postów</string>
+    <string name="clear_accounts">Usuń konta</string>
+    <string name="reorder">Zmień kolejność</string>
+    <string name="mentions">Wzmianki</string>
+    <string name="likes">Polubienia</string>
+    <string name="boosts">Boosty</string>
+    <string name="reactions">Reakcje</string>
+    <string name="post_edits">Edycje postów</string>
+    <string name="polls">Ankiety</string>
+    <string name="bites">Ugryzienia</string>
+    <string name="follows">Obserwowania</string>
+    <string name="follow_requests">Prośby o obserwację</string>
+    <plurals name="x_attachments">
+        <item quantity="one">{count} załącznik</item>
+        <item quantity="few">{count} załączniki</item>
+        <item quantity="many">{count} załączników</item>
+        <item quantity="other">{count} załączników</item>
+    </plurals>
+    <plurals name="x_votes">
+        <item quantity="one">{count} głos</item>
+        <item quantity="few">{count} głosy</item>
+        <item quantity="many">{count} głosów</item>
+        <item quantity="other">{count} głosów</item>
+    </plurals>
+    <string name="soon">za chwilę</string>
+    <string name="now">teraz</string>
+    <plurals name="x_second_simple">
+        <item quantity="one">{time} s</item>
+        <item quantity="few">{time} s</item>
+        <item quantity="many">{time} s</item>
+        <item quantity="other">{time} s</item>
+    </plurals>
+    <plurals name="x_second">
+        <item quantity="one">{time} sekunda</item>
+        <item quantity="few">{time} sekundy</item>
+        <item quantity="many">{time} sekund</item>
+        <item quantity="other">{time} sekund</item>
+    </plurals>
+    <plurals name="x_minute_simple">
+        <item quantity="one">{time} min</item>
+        <item quantity="few">{time} min</item>
+        <item quantity="many">{time} min</item>
+        <item quantity="other">{time} min</item>
+    </plurals>
+    <plurals name="x_minute">
+        <item quantity="one">{time} minuta</item>
+        <item quantity="few">{time} minuty</item>
+        <item quantity="many">{time} minut</item>
+        <item quantity="other">{time} minut</item>
+    </plurals>
+    <plurals name="x_hour_simple">
+        <item quantity="one">{time} h</item>
+        <item quantity="few">{time} h</item>
+        <item quantity="many">{time} h</item>
+        <item quantity="other">{time} h</item>
+    </plurals>
+    <plurals name="x_hour">
+        <item quantity="one">{time} godzina</item>
+        <item quantity="few">{time} godziny</item>
+        <item quantity="many">{time} godzin</item>
+        <item quantity="other">{time} godzin</item>
+    </plurals>
+    <plurals name="x_day_simple">
+        <item quantity="one">{time} d</item>
+        <item quantity="few">{time} d</item>
+        <item quantity="many">{time} d</item>
+        <item quantity="other">{time} d</item>
+    </plurals>
+    <plurals name="x_day">
+        <item quantity="one">{time} dzień</item>
+        <item quantity="few">{time} dni</item>
+        <item quantity="many">{time} dni</item>
+        <item quantity="other">{time} dni</item>
+    </plurals>
+    <plurals name="x_week_simple">
+        <item quantity="one">{time} tydz.</item>
+        <item quantity="few">{time} tyg.</item>
+        <item quantity="many">{time} tyg.</item>
+        <item quantity="other">{time} tyg.</item>
+    </plurals>
+    <plurals name="x_week">
+        <item quantity="one">{time} tydzień</item>
+        <item quantity="few">{time} tygodnie</item>
+        <item quantity="many">{time} tygodni</item>
+        <item quantity="other">{time} tygodni</item>
+    </plurals>
+    <plurals name="x_month_simple">
+        <item quantity="one">{time} mies.</item>
+        <item quantity="few">{time} mies.</item>
+        <item quantity="many">{time} mies.</item>
+        <item quantity="other">{time} mies.</item>
+    </plurals>
+    <plurals name="x_month">
+        <item quantity="one">{time} miesiąc</item>
+        <item quantity="few">{time} miesiące</item>
+        <item quantity="many">{time} miesięcy</item>
+        <item quantity="other">{time} miesięcy</item>
+    </plurals>
+    <plurals name="x_year_simple">
+        <item quantity="one">{time} r.</item>
+        <item quantity="few">{time} lata</item>
+        <item quantity="many">{time} lat</item>
+        <item quantity="other">{time} lat</item>
+    </plurals>
+    <plurals name="x_year">
+        <item quantity="one">{time} rok</item>
+        <item quantity="few">{time} lata</item>
+        <item quantity="many">{time} lat</item>
+        <item quantity="other">{time} lat</item>
+    </plurals>
+    <string name="show_results">Pokaż wyniki</string>
+    <string name="hide_results">Ukryj wyniki</string>
+    <string name="vote">Głosuj</string>
+    <string name="alt_text">Tekst alternatywny</string>
+    <string name="missing_alt_text">Brak tekstu alternatywnego</string>
+    <string name="describe_important_elements_of_your_media">Opisz ważne elementy Twoich mediów…</string>
+    <string name="you_cannot_react_with_a_remote_emoji">Nie możesz zareagować używając zewnętrznego emoji</string>
+    <string name="translate">Przetłumacz</string>
+    <string name="lock">Zablokuj</string>
+    <string name="unlock">Odblokuj</string>
+    <string name="lock_timeline">Zablokuj oś czasu</string>
+    <string name="lock_timeline_short_description">Uniemożliwia interakcję z postami</string>
+    <string name="lock_timeline_description">Nie będziesz mieć możliwości polubiania, boostowania ani odpowiadania na posty dopóki nie odblokujesz osi czasu.</string>
+    <string name="this_popup_wont_appear_again">Ten komunikat nie pokaże się ponownie.</string>
+    <string name="pinned">Przypięte</string>
+    <string name="view_all_pinned_posts">Pokaż wszystkie przypięte posty</string>
+    <string name="pinned_posts">Przypięte posty</string>
+    <string name="pin">Przypnij</string>
+    <string name="unpin">Usuń z przypiętych</string>
+    <string name="filtered_by_x">Pasuje do filtrów: {filters}</string>
+    <string name="replying_to_x">W odpowiedzi na post {handle}</string>
+    <string name="replying_to_self">W odpowiedzi na własny post</string>
+    <string name="reply_to_x">Odpowiedz {handle}</string>
+    <string name="search">Szukaj</string>
 </resources>

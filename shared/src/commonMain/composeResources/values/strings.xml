@@ -76,13 +76,12 @@
 	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>
 	<string name="hide_follow_counters">Hide follow counters</string>
-	<string name="hide_unread_notifications_badge">Hide unread notifications badge</string>
 
 	<string name="appearance">Appearance</string>
 	<string name="use_amoled_dark_theme">Use AMOLED dark theme</string>
 	<string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Using on a non-AMOLED screen may cause contrast issues</string>
 	<string name="show_navigation_bar_labels">Show navigation bar labels</string>
-	<string name="show_send_post_at_bottom_of_composer">Show send post button at bottom of composer</string>
+	<string name="swap_post_button_and_char_limit">Swap position of "send post" button and the character limit in composer</string>
 	<string name="always_show_compose_button">Always show compose button</string>
 	<string name="navigation_bar_tab_order">Navigation bar tab order</string>
 

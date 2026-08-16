@@ -35,7 +35,8 @@
     <string name="liked_by">Meeldivaks märkinud</string>
     <string name="reacted_by">Reageerinud</string>
     <plurals name="x_posts">
-        <item quantity="one">{count} postitust</item>
+        <item quantity="one">{count} postitus</item>
+        <item quantity="other">{count} postitust</item>
     </plurals>
     <string name="edit_profile">Muuda profiili</string>
     <string name="request_to_follow">Küsi jälgimise võimalust</string>
@@ -94,10 +95,12 @@
     <string name="reset_feature_determinations">Lähtesta võimaluste tuvastamine</string>
     <string name="post_by_x">Postitus kasutajalt {display_name}</string>
     <plurals name="x_followers">
-        <item quantity="one">{count} jälgijat</item>
+        <item quantity="one">{count} jälgija</item>
+        <item quantity="other">{count} jälgijat</item>
     </plurals>
     <plurals name="x_following">
-        <item quantity="one">{count} jälgitavat</item>
+        <item quantity="one">{count} jälgitav</item>
+        <item quantity="other">{count} jälgitavat</item>
     </plurals>
     <string name="appearance">Välimus</string>
     <string name="use_amoled_dark_theme">Tume kujundus AMOLED-i jaoks</string>
@@ -224,4 +227,6 @@
     <string name="pinned">Esiletõstetud</string>
     <string name="view_all_pinned_posts">Vaata kõiki esiletõstetuid postitusi</string>
     <string name="pinned_posts">Esiletõstetud postitused</string>
+    <string name="clear_accounts">Eemalda kasutajakontod</string>
+    <string name="reorder">Muuda järjestust</string>
 </resources>

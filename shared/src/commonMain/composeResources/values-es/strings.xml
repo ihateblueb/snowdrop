@@ -147,7 +147,7 @@
     <string name="soon">pronto</string>
     <string name="now">ahora</string>
     <plurals name="x_second_simple">
-        <item quantity="one">{time}</item>
+        <item quantity="one">{time}s</item>
         <item quantity="many">{time}s</item>
         <item quantity="other">{time}s</item>
     </plurals>
@@ -268,4 +268,7 @@
     <string name="replying_to_self">Crear un hilo</string>
     <string name="clear_accounts">Eliminar cuentas</string>
     <string name="reorder">Reordenar</string>
+    <string name="reply_to_x">Responder a {handle}</string>
+    <string name="search">Buscar</string>
+    <string name="swap_post_button_and_char_limit">Invertir la posición del botón de enviar publicación y del contador de caracteres en el editor</string>
 </resources>
