@@ -68,6 +68,7 @@ import site.remlit.snowdrop.PinnedPostsRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.followAccount
+import site.remlit.snowdrop.api.accounts.getLikes
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
 import site.remlit.snowdrop.api.accounts.unfollowAccount
@@ -118,6 +119,7 @@ import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_on_x
+import snowdrop.shared.generated.resources.likes
 import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
@@ -309,7 +311,8 @@ fun ProfileView(id: String) = ViewSurface {
 				return when (selectedTab) {
 					0 -> getStatuses(userId = account!!.id, maxId = maxId, minId = minId, sinceId = sinceId, excludeReplies = true)
 					1 -> getStatuses(userId = account!!.id, maxId = maxId, minId = minId, sinceId = sinceId)
-					else -> getStatuses(userId = account!!.id, maxId = maxId, minId = minId, sinceId = sinceId, onlyMedia = true) // else also 2
+					2 -> getStatuses(userId = account!!.id, maxId = maxId, minId = minId, sinceId = sinceId, onlyMedia = true)
+					else -> getLikes(userId = if (isMe) null else account!!.id, maxId = maxId, minId = minId, sinceId = sinceId)
 				}
 			}
 
@@ -605,6 +608,12 @@ fun ProfileView(id: String) = ViewSurface {
 								Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
 								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.posts_and_replies)) })
 								Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
+								if (isMe || account!!.pleroma?.hideFavorites == false) {
+									Tab(
+										selectedTab == 3,
+										onClick = { selectedTab = 3 },
+										text = { Text(stringResource(Res.string.likes)) })
+								}
 							}
 
 							//<editor-fold name="Pinned posts">
