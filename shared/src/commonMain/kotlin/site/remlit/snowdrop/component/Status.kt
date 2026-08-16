@@ -220,6 +220,7 @@ fun Status(
 			!filtered || filteredState.getOrElse(realStatus.id) { true }
 		)
 	}
+	val isHiddenFilter = filtered && realStatus.filtered!!.any { it.filter.filterAction == "hide" }
 
 	LaunchedEffect(filteredState[realStatus.id]) {
 		if (filtered) isVisible = filteredState.getOrElse(realStatus.id) {
@@ -303,7 +304,7 @@ fun Status(
 	// start content
 	Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
 		//<editor-fold name="Filtered toggle">
-		if (!isVisible && filtered) {
+		if (!isVisible && filtered && !isHiddenFilter) {
 			Column(
 				modifier = Modifier.fillMaxWidth()
 					.clickable { filteredState[realStatus.id] = true }
