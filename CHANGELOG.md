@@ -15,6 +15,9 @@
 - Dropped minsdk version so it runs on Android 6
 - Rule numbering no longer uses IDs because they aren't ints starting at 1 for every software
 - Post dropdowns remaining on screen when navigating to "Show likes/boosts/reactions" pages
+- Filters with "hide" action are now hidden
+- Use auth when fetching emojis
+- Don't make timeline requests with max_id of previous timeline
 
 ## [0.0.6-alpha]
 
