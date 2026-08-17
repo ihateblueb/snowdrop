@@ -124,8 +124,8 @@ import snowdrop.shared.generated.resources.media
 import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.posts
-import snowdrop.shared.generated.resources.posts_and_replies
 import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.replies
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.unfollow
 import snowdrop.shared.generated.resources.view_all_pinned_posts
@@ -606,7 +606,7 @@ fun ProfileView(id: String) = ViewSurface {
 						) {
 							PrimaryTabRow(selectedTabIndex = selectedTab) {
 								Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
-								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.posts_and_replies)) })
+								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.replies)) })
 								Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
 								if (isMe || account!!.pleroma?.hideFavorites == false) {
 									Tab(
