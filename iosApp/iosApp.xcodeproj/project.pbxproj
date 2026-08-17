@@ -12,7 +12,7 @@
 
 /* Begin PBXFileReference section */
 		2226DBAE30034566007592C4 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		A4245D690197D3E13A97CBC1 /* snowdrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowdrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4245D690197D3E13A97CBC1 /* Snowdrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snowdrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -55,7 +55,7 @@
 		0D1B0F4FE6FD09937FAA41CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4245D690197D3E13A97CBC1 /* snowdrop.app */,
+				A4245D690197D3E13A97CBC1 /* Snowdrop.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,7 +93,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = A4245D690197D3E13A97CBC1 /* snowdrop.app */;
+			productReference = A4245D690197D3E13A97CBC1 /* Snowdrop.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
