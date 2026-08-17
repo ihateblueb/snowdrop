@@ -34,7 +34,7 @@
 	</plurals>
 
 	<string name="posts">Posts</string>
-	<string name="posts_and_replies">Posts &amp; Replies</string>
+	<string name="replies">Replies</string>
 	<string name="media">Media</string>
 
 	<string name="nothing_to_see_here">Nothing to see here...</string>
