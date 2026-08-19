@@ -161,6 +161,7 @@ fun ComposeView(
 		.collectAsStateWithLifecycle(null)
 
 	val focusRequester = remember { FocusRequester() }
+	val cwFocusRequester = remember { FocusRequester() }
 	val coroutineScope = rememberCoroutineScope()
 
 	val mediaAttachments = remember { mutableStateListOf<PlatformFile>() }
@@ -325,6 +326,11 @@ fun ComposeView(
 		// kinda jank but there's no good way around this
 		delay(50.milliseconds)
 		focusRequester.requestFocus()
+	}
+
+	LaunchedEffect(showCwField) {
+		if (showCwField) cwFocusRequester.requestFocus()
+		else focusRequester.requestFocus()
 	}
 
 	Scaffold(
@@ -572,7 +578,13 @@ fun ComposeView(
 								value = cw,
 								onValueChange = { cw = it },
 								placeholder = { Text(stringResource(Res.string.content_warning)) },
-								modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, top = 5.dp)
+								modifier = Modifier
+									.focusRequester(cwFocusRequester)
+									.onFocusChanged {
+										if (it.hasFocus) keyboardController?.show()
+									}
+									.fillMaxWidth()
+									.padding(start = 10.dp, end = 10.dp, top = 5.dp)
 									.clip(RoundedCornerShape(10.dp)),
 								colors = TextFieldDefaults.colors(
 									unfocusedContainerColor = WarningColor25,
