@@ -287,12 +287,13 @@ fun Status(
 	fun FooterButton(
 		onClick: () -> Unit,
 		colors: ButtonColors? = null,
+		enabled: Boolean? = true,
 		content: @Composable () -> Unit
 	) {
 		TextButton(
 			onClick = onClick,
 			colors = colors ?: ButtonDefaults.textButtonColors(),
-			enabled = !lockable || !timelineLocked
+			enabled = (!lockable || !timelineLocked) && enabled == true
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
@@ -754,9 +755,6 @@ fun Status(
 
 						FooterButton(
 							onClick = c@{
-								if (!isMine && realStatus.visibility != "public" && realStatus.visibility != "unlisted")
-									return@c
-
 								vibrate(!realStatus.reblogged, haptics)
 
 								coroutineScope.launch {
@@ -774,7 +772,8 @@ fun Status(
 							},
 							colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
 								contentColor = BoostColor
-							) else null
+							) else null,
+							enabled = isMine || realStatus.visibility == "public" || realStatus.visibility == "unlisted"
 						) {
 							if (isMine || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
 								if (realStatus.reblogged) Icon(
