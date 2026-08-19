@@ -187,10 +187,10 @@ fun ComposeView(
 	var showEmojiPicker by remember { mutableStateOf(false) }
 	var showAddAttachmentMenu by remember { mutableStateOf(false) }
 	val textFieldState = rememberTextFieldState(initialContent)
+	val cwFieldState = rememberTextFieldState(initialCw)
 
 	if (initialCw.isNotBlank()) showCwField = true
 
-	var cw by remember { mutableStateOf(initialCw) }
 	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
 	var visibilityEnabled by remember { mutableStateOf(true) }
 
@@ -204,7 +204,8 @@ fun ComposeView(
 			visibility = editTarget!!.visibility ?: "direct"
 			visibilityEnabled = false
 
-			cw = editTarget!!.spoilerText ?: ""
+			cwFieldState.clearText()
+			cwFieldState.setTextAndPlaceCursorAtEnd(editTarget!!.spoilerText ?: "")
 
 			textFieldState.clearText()
 			textFieldState.setTextAndPlaceCursorAtEnd(editTarget!!.text ?: "")
@@ -212,7 +213,7 @@ fun ComposeView(
 	}
 
 	val maxChars = (instance?.maxTootChars ?: instance?.configuration?.statuses?.maxCharacters ?: 500)
-	val remainingChars = maxChars - (textFieldState.text.length + cw.length)
+	val remainingChars = maxChars - (textFieldState.text.length + cwFieldState.text.length)
 
 	val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
 		.collectAsStateWithLifecycle(false)
@@ -247,11 +248,11 @@ fun ComposeView(
 
 		val res = if (editingId != null) editStatus(editingId, CreateStatusRequest(
 			status = textFieldState.text as String?,
-			spoilerText = cw
+			spoilerText = cwFieldState.text as String?
 		)) else createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
-			spoilerText = cw,
+			spoilerText = cwFieldState.text as String?,
 			visibility = visibility,
 			mediaIds = uploadedMedia.map { it.id }
 		))
@@ -575,8 +576,7 @@ fun ComposeView(
 							exit = shrinkVertically()
 						) {
 							TextField(
-								value = cw,
-								onValueChange = { cw = it },
+								state = cwFieldState,
 								placeholder = { Text(stringResource(Res.string.content_warning)) },
 								modifier = Modifier
 									.focusRequester(cwFocusRequester)
