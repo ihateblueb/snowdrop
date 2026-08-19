@@ -14,7 +14,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.markers.getMarkers
 import site.remlit.snowdrop.api.notifications.getNotifications
@@ -23,7 +22,6 @@ import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.putCacheEntry
-import site.remlit.snowdrop.util.log.debug
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -201,7 +199,6 @@ fun getNavigationBarOrder() = settings.getStringFlow("bottom_bar_order", default
 
 fun getNavigationBarOrderBlocking() = blockingSettings.getString("bottom_bar_order", defaultNavigationBarOrder)
 
-@OptIn(ExperimentalSettingsApi::class)
 fun putNavigationBarOrder(value: String) = blockingSettings.putString("bottom_bar_order", value)
 //</editor-fold>
 

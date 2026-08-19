@@ -25,8 +25,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,7 +39,6 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.checkForUnreadNotifications
 import site.remlit.snowdrop.util.getFeature
-import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.log.warn
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation

@@ -40,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,12 +55,9 @@ import androidx.navigation.toRoute
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.kamel.image.config.LocalKamelConfig
 import io.ktor.http.Url
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import site.remlit.snowdrop.api.markers.getMarkers
-import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.component.AccountPickerList
 import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
@@ -92,7 +88,6 @@ import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.showUnreadNotificationsBadge
 import site.remlit.snowdrop.util.transitionedComposable
-import site.remlit.snowdrop.util.vibrateError
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView

@@ -1,7 +1,6 @@
 package site.remlit.snowdrop.component
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme

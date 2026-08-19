@@ -47,7 +47,6 @@ val dropdownEnterAnimation = expandVertically() + fadeIn()
 val dropdownExitAnimation = fadeOut() + shrinkVertically()
 
 @Composable
-@OptIn(ExperimentalSettingsApi::class)
 fun SettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
