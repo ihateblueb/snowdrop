@@ -73,7 +73,10 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 			modifier = Modifier.animateContentSize(tween(100))
 				.height(if (showDecorations) Dp.Unspecified else 0.dp),
 			actions = {
-				IconButton(onClick = { showAltSheet = !showAltSheet }) {
+				IconButton(
+					onClick = { showAltSheet = !showAltSheet },
+					enabled = !status?.mediaAttachments[pager.currentPage]?.description.isNullOrBlank()
+				) {
 					Icon(painterResource(Res.drawable.icon_info_24px), null)
 				}
 

@@ -612,7 +612,8 @@ fun ProfileView(id: String) = ViewSurface {
 									Tab(
 										selectedTab == 3,
 										onClick = { selectedTab = 3 },
-										text = { Text(stringResource(Res.string.likes)) })
+										text = { Text(stringResource(Res.string.likes)) }
+									)
 								}
 							}
 
