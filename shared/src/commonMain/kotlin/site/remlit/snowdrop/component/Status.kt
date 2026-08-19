@@ -479,7 +479,7 @@ fun Status(
 							Column(
 								horizontalAlignment = Alignment.CenterHorizontally
 							) {
-								Visibility(status.visibility!!)
+								Visibility(realStatus.visibility!!)
 
 								Row(
 									verticalAlignment = Alignment.CenterVertically
