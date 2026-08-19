@@ -160,7 +160,7 @@ fun ComposeView(
 	val instance by remember { fetchInstance(snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
 
-	val focusRequester = remember { FocusRequester() }
+	val textFocusRequester = remember { FocusRequester() }
 	val cwFocusRequester = remember { FocusRequester() }
 	val coroutineScope = rememberCoroutineScope()
 
@@ -326,12 +326,12 @@ fun ComposeView(
 	LaunchedEffect(Unit) {
 		// kinda jank but there's no good way around this
 		delay(50.milliseconds)
-		focusRequester.requestFocus()
+		textFocusRequester.requestFocus()
 	}
 
 	LaunchedEffect(showCwField) {
 		if (showCwField) cwFocusRequester.requestFocus()
-		else focusRequester.requestFocus()
+		else textFocusRequester.requestFocus()
 	}
 
 	Scaffold(
@@ -599,7 +599,7 @@ fun ComposeView(
 							state = textFieldState,
 							placeholder = { Text(stringResource(Res.string.write_your_post_here)) },
 							modifier = Modifier
-								.focusRequester(focusRequester)
+								.focusRequester(textFocusRequester)
 								.onFocusChanged {
 									if (it.hasFocus) keyboardController?.show()
 								}
