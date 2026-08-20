@@ -134,11 +134,11 @@ fun LoginView() = ViewSurface {
 			authLink = "https://${host}/oauth/authorize"+
 				"?response_type=code"+
 				"&redirect_uri=$redirectUri"+
-				"&scope=$authScopes"+
+				"&scope=${authScopes.replace(" ", "%20")}"+
 				"&client_id=${res.response.clientId}"
 			debug { "(LoginView) created auth link: $authLink" }
 
-			uriHandler.openUri(authLink.replace(" ", "%20"))
+			uriHandler.openUri(authLink)
 		}
 	}
 
@@ -293,7 +293,7 @@ fun LoginView() = ViewSurface {
 					modifier = Modifier
 						.padding(top = 20.dp),
 					onClick = {
-						clipboardManager.setText(AnnotatedString(authLink.replace(" ", "%20")))
+						clipboardManager.setText(AnnotatedString(authLink))
 					}
 				) {
 					Text(stringResource(Res.string.copy_oauth_link))
