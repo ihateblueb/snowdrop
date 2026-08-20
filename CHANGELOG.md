@@ -1,6 +1,13 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.7-alpha)]
+## [Unreleased (0.0.8-alpha)]
+
+### Added
+
+### Fixed
+
+
+## [0.0.7-alpha]
 
 ### Added
 - Unread notifications badge in navigation bar
