@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,10 +61,11 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	val focusRequester = remember { FocusRequester() }
 	val keyboardController = LocalSoftwareKeyboardController.current
 
+	val textFieldState = rememberTextFieldState("")
+
 	val postsTimelineViewModelKey = rememberSaveable { Uuid.generateV4().toString() }
 	val accountsTimelineViewModelKey = rememberSaveable { Uuid.generateV4().toString() }
 
-	var query by rememberSaveable { mutableStateOf("") }
 	var showResults by rememberSaveable { mutableStateOf(false) }
 	var refreshKey by rememberSaveable { mutableStateOf(0) }
 
@@ -75,7 +78,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	TopAppBar(
 		navigationIcon = {
 			if (showResults)
-				IconButton(onClick = { showResults = false; query = "" }) {
+				IconButton(onClick = { showResults = false; textFieldState.clearText() }) {
 					Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
 				}
 		},
@@ -86,15 +89,18 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	)
 
 	TextField(
-		value = query,
-		onValueChange = { query = it },
+		state = textFieldState,
 		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-		keyboardActions = KeyboardActions(onSearch = { showResults = true; keyboardController?.hide(); refreshKey++ }),
+		onKeyboardAction = {
+			showResults = true
+			keyboardController?.hide()
+			refreshKey++
+		},
 
 		placeholder = { Text(stringResource(Res.string.search_for_posts_or_users)) },
 		leadingIcon = { Icon(painterResource(Res.drawable.icon_search_24px), null) },
 
-		maxLines = 1,
+		lineLimits = TextFieldLineLimits.SingleLine,
 		modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
 			.clip(RoundedCornerShape(100))
 			.focusRequester(focusRequester)
@@ -148,7 +154,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 				0 -> RefreshableTimeline(
 					viewModelKey = postsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
-						val res = search(query, resolve = true, offset = offset, limit = limit, type = "statuses")
+						val res = search(textFieldState.text as String, resolve = true, offset = offset, limit = limit, type = "statuses")
 						offset += limit
 						ApiResponse(error = res.error, message = res.message, response = res.response?.statuses)
 					},
@@ -160,7 +166,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 				1 -> RefreshableTimeline(
 					viewModelKey = accountsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
-						val res = search(query, resolve = true, offset = offset, limit = limit, type = "accounts")
+						val res = search(textFieldState.text as String, resolve = true, offset = offset, limit = limit, type = "accounts")
 						offset += limit
 						ApiResponse(error = res.error, message = res.message, response = res.response?.accounts)
 					},
