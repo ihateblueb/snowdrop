@@ -51,6 +51,7 @@
 
 	<string name="debug">Debug</string>
 	<string name="reset">Reset</string>
+	<string name="copy_oauth_link">Copy oauth link</string>
 
 	<string name="search_for_posts_or_users">Search for posts or users...</string>
 	<string name="reply">Reply</string>

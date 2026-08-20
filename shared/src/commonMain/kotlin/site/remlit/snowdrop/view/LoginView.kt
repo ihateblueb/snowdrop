@@ -25,7 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -61,6 +63,7 @@ import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.updateCurrentAccountObject
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._continue
+import snowdrop.shared.generated.resources.copy_oauth_link
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.icon_snowdrop_36
 import snowdrop.shared.generated.resources.instance_host
@@ -75,6 +78,8 @@ fun LoginView() = ViewSurface {
 	val navController = LocalNavController.current
 	val uriHandler = LocalUriHandler.current
 	val snackbarHandler = LocalSnackbarController.current
+	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
+	val clipboardManager = LocalClipboardManager.current
 
 
 	// Text field states
@@ -93,6 +98,8 @@ fun LoginView() = ViewSurface {
 
 	val oauthCallbackCode by settings.getStringOrNullFlow("oauth_callback")
 		.collectAsStateWithLifecycle(null)
+
+	var authLink by remember { mutableStateOf("") }
 
 	fun continueButtonPressed() {
 		if (host.isBlank()) {
@@ -124,14 +131,14 @@ fun LoginView() = ViewSurface {
 
 			continued = true
 
-			val authLink = "https://${host}/oauth/authorize"+
+			authLink = "https://${host}/oauth/authorize"+
 				"?response_type=code"+
 				"&redirect_uri=$redirectUri"+
 				"&scope=$authScopes"+
 				"&client_id=${res.response.clientId}"
 			debug { "(LoginView) created auth link: $authLink" }
 
-			uriHandler.openUri(authLink)
+			uriHandler.openUri(authLink.replace(" ", "%20"))
 		}
 	}
 
@@ -278,13 +285,21 @@ fun LoginView() = ViewSurface {
 		) {
 			Column(
 				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(10.dp)
+				verticalArrangement = Arrangement.spacedBy(10.dp),
 			) {
 				CircularProgressIndicator()
 
 				TextButton(
 					modifier = Modifier
 						.padding(top = 20.dp),
+					onClick = {
+						clipboardManager.setText(AnnotatedString(authLink.replace(" ", "%20")))
+					}
+				) {
+					Text(stringResource(Res.string.copy_oauth_link))
+				}
+
+				TextButton(
 					onClick = {
 						continued = false
 						waitingForNext = false
