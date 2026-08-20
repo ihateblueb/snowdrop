@@ -28,10 +28,18 @@ import kotlin.time.Duration.Companion.milliseconds
  * */
 fun navigationBarNavigate(tab: NavigationBarOption, navController: NavController) {
 	when (tab) {
-		NavigationBarOption.Timeline -> navController.navigate(TimelineRoute)
-		NavigationBarOption.Notifications -> navController.navigate(NotificationsRoute)
-		NavigationBarOption.Explore -> navController.navigate(ExploreRoute(false))
-		NavigationBarOption.MyProfile -> navController.navigate(MyProfileRoute)
+		NavigationBarOption.Timeline -> navController.navigate(TimelineRoute) {
+			popUpTo(TimelineRoute) { inclusive = true }
+		}
+		NavigationBarOption.Notifications -> navController.navigate(NotificationsRoute) {
+			popUpTo(NotificationsRoute) { inclusive = true }
+		}
+		NavigationBarOption.Explore -> navController.navigate(ExploreRoute(false)) {
+			popUpTo(ExploreRoute) { inclusive = true }
+		}
+		NavigationBarOption.MyProfile -> navController.navigate(MyProfileRoute) {
+			popUpTo(MyProfileRoute) { inclusive = true }
+		}
 	}
 }
 
