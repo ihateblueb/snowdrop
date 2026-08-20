@@ -17,7 +17,6 @@
         <item quantity="other">{count} 正在关注</item>
     </plurals>
     <string name="posts">帖子</string>
-    <string name="posts_and_replies">帖子与回复</string>
     <string name="media">媒体</string>
     <string name="nothing_to_see_here">这里什么也没有...</string>
     <string name="_continue">继续</string>
@@ -44,7 +43,6 @@
     <string name="use_amoled_dark_theme">使用 AMOLED 深色主题</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">在非 AMOLED 屏幕上使用可能会导致对比度问题</string>
     <string name="show_navigation_bar_labels">显示导航栏的标签</string>
-    <string name="swap_post_button_and_char_limit">交换编辑器中发送按钮和字符限制的位置</string>
     <string name="always_show_compose_button">总是显示撰写按钮</string>
     <string name="navigation_bar_tab_order">导航栏标签页顺序</string>
     <string name="account">帐户</string>

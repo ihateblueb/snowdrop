@@ -21,7 +21,6 @@
     <string name="unfollow">Deixar de seguir</string>
     <string name="joined_on_x">Entrou em {date_time}</string>
     <string name="posts">Postagens</string>
-    <string name="posts_and_replies">Postagens &amp; Repostas</string>
     <string name="media">Mídia</string>
     <string name="nothing_to_see_here">Não há nada aqui...</string>
     <string name="instance_host">Host da Instância</string>
@@ -275,4 +274,8 @@
     <string name="replying_to_self">Respondendo a si mesmo</string>
     <string name="reply_to_x">Resposta a {handle}</string>
     <string name="search">Pesquisa</string>
+    <string name="hide_unread_notifications_badge">Esconder ícone de notificações não-lidas</string>
+    <string name="show_send_post_at_bottom_of_composer">Mostrar botão de enviar postagem abaixo do compositor</string>
+    <string name="replies">Respostas</string>
+    <string name="copy_oauth_link">Copiar link de autenticação</string>
 </resources>

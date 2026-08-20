@@ -45,7 +45,6 @@
     <string name="unfollow">Lõpeta jälgimine</string>
     <string name="joined_on_x">Liitunud {date_time}</string>
     <string name="posts">Postitused</string>
-    <string name="posts_and_replies">Postitused ja vastused</string>
     <string name="media">Meedium</string>
     <string name="nothing_to_see_here">Siin pole mitte midagi huvitavat…</string>
     <string name="instance_host">Serveri aadress</string>
@@ -229,4 +228,27 @@
     <string name="pinned_posts">Esiletõstetud postitused</string>
     <string name="clear_accounts">Eemalda kasutajakontod</string>
     <string name="reorder">Muuda järjestust</string>
+    <string name="mentions">Mainimisi</string>
+    <string name="likes">Meeldimisi</string>
+    <string name="boosts">Hooandmisi</string>
+    <string name="reactions">Regeerimisi</string>
+    <string name="hide_unread_notifications_badge">Peida lugemata teavituste silt</string>
+    <string name="post_edits">Postituse muutmisi</string>
+    <string name="polls">Küsitlusi</string>
+    <string name="follows">Jälgimisi</string>
+    <string name="follow_requests">Jälgimispäringuid</string>
+    <plurals name="x_attachments">
+        <item quantity="one">{count} manus</item>
+        <item quantity="other">{count} manust</item>
+    </plurals>
+    <plurals name="x_votes">
+        <item quantity="one">{count} hääl</item>
+        <item quantity="other">{count} häält</item>
+    </plurals>
+    <string name="filtered_by_x">Filtreerimisel on kasutusel: {filters}</string>
+    <string name="replying_to_x">Vastuseks kasutajale {handle}</string>
+    <string name="replying_to_self">Vastuseks iseendale</string>
+    <string name="reply_to_x">Vasta kasutajale {handle}</string>
+    <string name="search">Otsi</string>
+    <string name="show_send_post_at_bottom_of_composer">Näita postitamise nuppu koostamisvaate all ääres</string>
 </resources>

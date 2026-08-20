@@ -68,7 +68,6 @@
     <string name="joined_on_x">Se unió el {date_time}</string>
     <string name="timeline">Cronología</string>
     <string name="boosted_by">Impulsado por</string>
-    <string name="posts_and_replies">Publicaciones y respuestas</string>
     <string name="media">Multimedia</string>
     <string name="instance_host">Servidor</string>
     <string name="you_must_provide_a_valid_host">¡Debes proporcionar un host válido!</string>
@@ -270,5 +269,8 @@
     <string name="reorder">Reordenar</string>
     <string name="reply_to_x">Responder a {handle}</string>
     <string name="search">Buscar</string>
-    <string name="swap_post_button_and_char_limit">Invertir la posición del botón de enviar publicación y del contador de caracteres en el editor</string>
+    <string name="hide_unread_notifications_badge">Ocultar globo de notificaciones no leídas</string>
+    <string name="show_send_post_at_bottom_of_composer">Mostrar botón de enviar abajo en el editor</string>
+    <string name="replies">Comentar</string>
+    <string name="copy_oauth_link">Copiar enlace OAuth</string>
 </resources>

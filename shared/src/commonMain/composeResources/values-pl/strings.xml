@@ -21,7 +21,6 @@
     <string name="cancel_request">Anuluj prośbę</string>
     <string name="request_to_follow">Wyślij prośbę o obserwację</string>
     <string name="posts">Posty</string>
-    <string name="posts_and_replies">Posty i odpowiedzi</string>
     <string name="media">Media</string>
     <string name="nothing_to_see_here">Nic tu nie ma…</string>
     <string name="instance_host">Serwer</string>
@@ -161,7 +160,6 @@
     <string name="poll_ended">Ankieta zakończona</string>
     <string name="using_on_a_nonamoled_screen_may_cause_contrast_issues">Na ekranach innych niż AMOLED może powodować problemy z kontrastem</string>
     <string name="joined_on_x">Dołączył(a) {date_time}</string>
-    <string name="swap_post_button_and_char_limit">Zamień przycisk wysyłania postu z licznikiem znaków w widoku tworzenia postów</string>
     <string name="clear_accounts">Usuń konta</string>
     <string name="reorder">Zmień kolejność</string>
     <string name="mentions">Wzmianki</string>
@@ -295,4 +293,8 @@
     <string name="replying_to_self">W odpowiedzi na własny post</string>
     <string name="reply_to_x">Odpowiedz {handle}</string>
     <string name="search">Szukaj</string>
+    <string name="hide_unread_notifications_badge">Ukryj wzkaźnik nieprzeczytanych powiadomień</string>
+    <string name="show_send_post_at_bottom_of_composer">Pokaż przycisk „Wyślij” na dole widoku tworzenia</string>
+    <string name="replies">Odpowiedzi</string>
+    <string name="copy_oauth_link">Skopiuj link do autoryzacji OAuth</string>
 </resources>

@@ -25,7 +25,6 @@
         <item quantity="other">{count} yang diikuti</item>
     </plurals>
     <string name="posts">Postingan</string>
-    <string name="posts_and_replies">Postingan &amp; Balasan</string>
     <string name="media">Media</string>
     <string name="nothing_to_see_here">Tak ada apapun di sini...</string>
     <string name="instance_host">Host Instansi</string>
