@@ -19,6 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.AboutSettingsRoute
 import site.remlit.snowdrop.AppearanceSettingsRoute
 import site.remlit.snowdrop.GeneralSettingsRoute
+import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.WellbeingSettingsRoute
 import site.remlit.snowdrop.component.SettingsCard
@@ -135,7 +136,9 @@ fun SettingsView() = ViewSurface {
 				headlineContent = stringResource(Res.string.logout),
 				onClick = {
 					logoutAccount(getCurrentAccountId())
-					navHandler.navigate(StartRoute)
+					navHandler.navigate(LoginRoute) {
+						popUpTo(navHandler.graph.id) { inclusive = true }
+					}
 				}
 			)
 		}
