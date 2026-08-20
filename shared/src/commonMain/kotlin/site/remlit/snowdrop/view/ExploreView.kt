@@ -70,7 +70,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	var refreshKey by rememberSaveable { mutableStateOf(0) }
 
 	LaunchedEffect(immediateFocus) {
-		if (!immediateFocus) return@LaunchedEffect
+		if (!immediateFocus || showResults) return@LaunchedEffect
 		focusRequester.requestFocus()
 		keyboardController?.show()
 	}
