@@ -393,8 +393,12 @@ fun App() = safe {
 					) {
 						composable<StartRoute> {
 							StartView(
-								navigateToLogin = { navController.navigate(LoginRoute) },
+								navigateToLogin = {
+									navController.popBackStack()
+									navController.navigate(LoginRoute)
+								},
 								navigateToFirstPage = {
+									navController.popBackStack()
 									navigationBarNavigate(
 										getNavigationBarOrderBlocking().mapToNavigationOptions().first(),
 										navController

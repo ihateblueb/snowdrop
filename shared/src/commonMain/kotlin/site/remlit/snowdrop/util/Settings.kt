@@ -14,6 +14,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.markers.getMarkers
 import site.remlit.snowdrop.api.notifications.getNotifications
@@ -79,12 +80,16 @@ fun toggleLoggedInState() {
 fun addNewAccount(navController: NavController) {
 	blockingSettings.putBoolean("logged_in", false)
 	blockingSettings.remove("current_account")
-	navController.navigate(StartRoute)
+	navController.navigate(LoginRoute) {
+		popUpTo(navController.graph.id) { inclusive = true }
+	}
 }
 
 fun switchAccount(accountId: String, navController: NavController) {
 	blockingSettings.putString("current_account", accountId)
-	navController.navigate(StartRoute)
+	navController.navigate(StartRoute) {
+		popUpTo(navController.graph.id) { inclusive = true }
+	}
 }
 
 /**

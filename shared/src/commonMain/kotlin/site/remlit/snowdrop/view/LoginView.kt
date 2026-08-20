@@ -186,6 +186,7 @@ fun LoginView() = ViewSurface {
 			determineFeatures()
 		}
 
+		navController.popBackStack()
 		navController.navigate(TimelineRoute)
 	}
 
