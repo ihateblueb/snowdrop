@@ -7,6 +7,8 @@
 - Marking notifications as read on notifications page
 - Option to hide notifications badge under "Wellness"
 - Ability to swap positions of "send post" button and character limit indicator (Moshidon-style)
+- Ability to set a specific language for Snowdrop on Android (in system settings)
+- "Likes" tab to current user profile, and, if supported (on Pleroma), others' profiles when permitted
 
 ### Fixed
 - iOS race condition crash with alt text bottom sheet
@@ -18,6 +20,13 @@
 - Filters with "hide" action are now hidden
 - Use auth when fetching emojis
 - Don't make timeline requests with max_id of previous timeline
+- Alt text button is now disabled if there is no alt
+- iOS target reduced to 15.6 (may require workaround to get working though)
+- Boost button is now disabled if you can't boost
+- CW field is now focused when the field is shown in the composer
+- Visibility is now properly shown on boosted posts
+- Search box now uses field state and horizontally scrolls
+- Fixed keyboard opening if explore tab was long-pressed and you're returning from a post
 
 ## [0.0.6-alpha]
 
