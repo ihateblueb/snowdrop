@@ -664,8 +664,7 @@ fun Status(
 											TooltipAnchorPosition.Above
 										),
 										tooltip = {
-											if (isUnicodeEmoji(it.name)) PlainTooltip { Text(it.name) }
-											else PlainTooltip { Text(":${it.name}:") }
+											if (!isUnicodeEmoji(it.name)) PlainTooltip { Text(":${it.name}:") }
 										},
 										state = rememberTooltipState()
 									) {
@@ -674,11 +673,9 @@ fun Status(
 												vibrate(!it.me, haptics)
 
 												coroutineScope.launch {
-													val tempName = if (isUnicodeEmoji(it.name)) it.name else ":${it.name}:"
-
 													if (it.me || !it.name.contains("@")) {
-														val res = if (it.me) unreactFromStatus(realStatus.id, tempName)
-														else reactToStatus(realStatus.id, tempName)
+														val res = if (it.me) unreactFromStatus(realStatus.id, it.name)
+														else reactToStatus(realStatus.id, it.name)
 														if (res.error || res.response == null) {
 															res.handleError(snackbarController)
 															return@launch
@@ -1082,7 +1079,7 @@ fun Status(
 						coroutineScope.launch {
 							showEmojiPicker = !showEmojiPicker
 
-							val res = reactToStatus(realStatus.id, ":${it.shortcode}:")
+							val res = reactToStatus(realStatus.id, it.shortcode)
 							if (res.error || res.response == null) {
 								res.handleError(snackbarController)
 								vibrateError(haptics)

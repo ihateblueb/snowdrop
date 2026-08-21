@@ -20,7 +20,7 @@ suspend fun unreactFromStatus(
 	val token = settings.getString("account_${accountId}_token", "")
 
 	val req = if (getFeature("reactions_pleroma")) {
-		httpClient.delete("https://$host/api/v1/pleroma/statuses/$id/reactions/$emoji") {
+		httpClient.delete("https://$host/api/v1/pleroma/statuses/$id/reactions/:$emoji:") {
 			header("Authorization", "Bearer $token")
 		}
 	} else {
