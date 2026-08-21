@@ -309,8 +309,7 @@ fun Notification(
 
 						if (bittenBack) {
 							FilledTonalButton(
-								onClick = {},
-								enabled = false
+								onClick = { coroutineScope.launch { biteBack() } }
 							) {
 								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
