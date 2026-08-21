@@ -35,7 +35,7 @@ fun navigationBarNavigate(tab: NavigationBarOption, navController: NavController
 			popUpTo(NotificationsRoute) { inclusive = true }
 		}
 		NavigationBarOption.Explore -> navController.navigate(ExploreRoute(false)) {
-			popUpTo(ExploreRoute) { inclusive = true }
+			popUpTo(ExploreRoute(false)) { inclusive = true }
 		}
 		NavigationBarOption.MyProfile -> navController.navigate(MyProfileRoute) {
 			popUpTo(MyProfileRoute) { inclusive = true }
