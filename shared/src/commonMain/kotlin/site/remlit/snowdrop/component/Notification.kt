@@ -98,7 +98,7 @@ fun Notification(
 	// only shown once it's certain this notification type is supported
 	var show by remember { mutableStateOf(false) }
 
-	var bittenBack by remember { mutableStateOf(false) }
+	var bittenBack by rememberSaveable { mutableStateOf(false) }
 
 	// sharkey doesn't include the actual reactions in the notifications for some reason
 	// chuckya includes the reaction prop, so we should use that. otherwise there's no point in showing the notif
