@@ -199,7 +199,8 @@ fun App() = safe {
 
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
-		checkForUnreadNotifications(snackbarHostState, hapticFeedback)
+		if (atRoute<NotificationsRoute>(currentDest))
+			checkForUnreadNotifications(snackbarHostState, hapticFeedback)
 	}
 
 
