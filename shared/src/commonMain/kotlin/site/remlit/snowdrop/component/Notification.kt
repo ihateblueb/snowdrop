@@ -83,9 +83,13 @@ import kotlin.time.Duration.Companion.seconds
  * Notification component.
  *
  * @param notification Notification to display
+ * @param onAction Action to run after a notification action has been made
  * */
 @Composable
-fun Notification(notification: Notification) {
+fun Notification(
+	notification: Notification,
+	onAction: () -> Unit = {}
+) {
 	val navHandler = LocalNavController.current
 	val haptics = LocalHapticFeedback.current
 	val snackbarController = LocalSnackbarController.current
@@ -257,6 +261,7 @@ fun Notification(notification: Notification) {
 							return@launch
 						}
 
+						onAction()
 						actionsVisible = false
 					}
 
@@ -288,14 +293,24 @@ fun Notification(notification: Notification) {
 						modifier = Modifier.padding(top = 10.dp, start = actionsStartPadding),
 						horizontalArrangement = Arrangement.spacedBy(10.dp)
 					) {
+						suspend fun biteBack() {
+							vibrate(true, haptics)
+
+							val res = biteBack(notification.bite!!.id)
+							if (res.error) {
+								res.handleError(snackbarController)
+								vibrateError(haptics)
+								return
+							}
+
+							onAction()
+							bittenBack = true
+						}
+
 						if (bittenBack) {
 							FilledTonalButton(
-								onClick = {
-									coroutineScope.launch {
-										vibrate(true, haptics)
-										biteBack(notification.bite!!.id)
-									}
-								}
+								onClick = {},
+								enabled = false
 							) {
 								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -303,13 +318,7 @@ fun Notification(notification: Notification) {
 							}
 						} else {
 							OutlinedButton(
-								onClick = {
-									coroutineScope.launch {
-										vibrate(true, haptics)
-										biteBack(notification.bite!!.id)
-										bittenBack = true
-									}
-								}
+								onClick = { coroutineScope.launch { biteBack() } }
 							) {
 								Icon(painterResource(Res.drawable.icon_tooth_24px), null)
 								Spacer(Modifier.size(ButtonDefaults.IconSpacing))

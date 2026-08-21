@@ -127,6 +127,28 @@ fun NotificationsView() = ViewSurface {
 		return excludedTypes
 	}
 
+	suspend fun readNotifications() {
+		if (firstNotificationId == null) {
+			warn { "(NotificationsView) firstNotificationId null" }
+			vibrateError(hapticFeedback)
+			return
+		}
+
+		vibrateConfirm(hapticFeedback)
+
+		// todo: test pleroma read notifications
+		val res = if (getFeature("read_notifications_pleroma")) readNotifications(id = firstNotificationId!!)
+		else postMarkers(mapOf("notifications" to Marker(lastReadId = firstNotificationId!!)))
+
+		if (res.error) {
+			res.handleError(snackbarController)
+			vibrateError(hapticFeedback)
+			return
+		}
+
+		checkForUnreadNotifications(snackbarController, hapticFeedback)
+	}
+
 	TopAppBar(
 		title = {
 			Text(stringResource(Res.string.notifications))
@@ -138,29 +160,7 @@ fun NotificationsView() = ViewSurface {
 			}
 
 			IconButton(
-				onClick = {
-					coroutineScope.launch {
-						if (firstNotificationId == null) {
-							warn { "(NotificationsView) firstNotificationId null" }
-							vibrateError(hapticFeedback)
-							return@launch
-						}
-
-						vibrateConfirm(hapticFeedback)
-
-						// todo: test pleroma read notifications
-						val res = if (getFeature("read_notifications_pleroma")) readNotifications(id = firstNotificationId!!)
-							else postMarkers(mapOf("notifications" to Marker(lastReadId = firstNotificationId!!)))
-
-						if (res.error) {
-							res.handleError(snackbarController)
-							vibrateError(hapticFeedback)
-							return@launch
-						}
-
-						checkForUnreadNotifications(snackbarController, hapticFeedback)
-					}
-				}
+				onClick = { coroutineScope.launch { readNotifications() } }
 			) {
 				Icon(painterResource(Res.drawable.icon_done_all_24px), null)
 			}
@@ -262,6 +262,11 @@ fun NotificationsView() = ViewSurface {
 		},
 		refreshKey = refreshKey,
 		onRefresh = { firstNotificationId = null },
-		timelineComponent = { item, _ -> Notification(item) }, // todo: onUpdate
+		timelineComponent = { item, _ ->
+			Notification(
+				item,
+				onAction = { coroutineScope.launch { readNotifications() } }
+			)
+		}, // todo: onUpdate
 	)
 }
