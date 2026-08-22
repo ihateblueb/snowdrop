@@ -771,9 +771,9 @@ fun Status(
 							colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
 								contentColor = BoostColor
 							) else null,
-							enabled = (isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted"
+							enabled = (isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted" || realStatus.visibility == "local"
 						) {
-							if ((isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
+							if ((isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted" || realStatus.visibility == "local") {
 								if (realStatus.reblogged) Icon(
 									painterResource(Res.drawable.icon_repeat_inner_fill_24px),
 									null,
