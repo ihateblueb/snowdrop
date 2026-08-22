@@ -2,6 +2,7 @@ package site.remlit.snowdrop.api.oauth
 
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.parameters
+import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.response.CreateAppResponse
 import site.remlit.snowdrop.util.config.endOfRequest
@@ -14,7 +15,7 @@ const val redirectUri = "snowdrop://oauth-callback"
 suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest { accountId, host ->
 
 	val req = httpClient.submitForm("https://$host/api/v1/apps", parameters {
-		append("client_name", "Snowdrop")
+		append("client_name", if (GradleVariables.buildVariant == "debug") "Snowdrop Debug" else "Snowdrop")
 		append("redirect_uris", redirectUri)
 		append("scopes", authScopes)
 		append("website", "https://github.com/ihateblueb/snowdrop")

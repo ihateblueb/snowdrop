@@ -138,5 +138,7 @@ buildkonfig {
 		buildConfigField(STRING, "version", rootProject.version.toString())
 		buildConfigField(STRING, "gitBranch", gitBranch.get())
 		buildConfigField(STRING, "gitCommit", gitCommit.get())
+		// i'm not exactly happy with doing it like this but it works i guess. and there's not really a better way
+		buildConfigField(STRING, "buildVariant", if (!project.gradle.startParameter.taskNames.any { it.contains("assemble") }) "debug" else "release")
 	}
 }

@@ -142,7 +142,7 @@ fun AboutSnowdropView() = ViewSurface {
 		}
 
 		AnimatedVisibility(
-			visible = showDebugOption,
+			visible = showDebugOption || GradleVariables.buildVariant == "debug",
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
