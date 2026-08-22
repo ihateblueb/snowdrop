@@ -3,11 +3,18 @@
 ## [Unreleased (0.0.8-alpha)]
 
 ### Added
+- Support for "local" visibility (Akkoma, Pleroma, and Iceshrimp.NET)
 
 ### Fixed
 - Notifications marked as read when you accept a follow request/bite back
 - Bite back status shown properly
 - Boost button now filled when boosted
+- Use proper backstack (i.e. fix being able to go back to login and other buggy-looking behavior)
+- Fixed error shown on snackbar when not logged in
+- Fixed emojis not being detected properly via regex
+- Fixed Brazillian Portuguese and Simplified Chinese not showing up in Android's app-specific language picker
+- Disabled boosting posts with direct visibility
+- Android debug builds now have a unique name, icon, and package id
 
 ## [0.0.7-alpha]
 
