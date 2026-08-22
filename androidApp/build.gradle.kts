@@ -42,6 +42,9 @@ android {
 			isMinifyEnabled = true
    			isShrinkResources = true
 		}
+		getByName("debug") {
+			applicationIdSuffix = ".debug"
+		}
 	}
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_11
