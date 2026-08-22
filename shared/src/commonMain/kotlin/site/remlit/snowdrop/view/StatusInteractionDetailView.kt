@@ -2,8 +2,11 @@ package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.PrimaryScrollableTabRow
@@ -19,6 +22,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -55,6 +60,8 @@ fun StatusInteractionDetailView(
 	val snackbarHandler = LocalSnackbarController.current
 	val coroutineScope = rememberCoroutineScope()
 
+	var loaded by remember { mutableStateOf(false) }
+
 	TopAppBar(
 		navigationIcon = {
 			IconButton(onClick = { navHandler.popBackStack() }) {
@@ -83,12 +90,23 @@ fun StatusInteractionDetailView(
 					return@bgIO
 				}
 				accounts.addAll(res.response)
+				loaded = true
 			}
 
 			// todo: scrolling
 			LazyColumn {
+				if (loaded)
 				accounts.forEach { account ->
 					item { AccountRow(account = account) }
+				}
+				else item {
+					Row(
+						modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.Center
+					) {
+						CircularProgressIndicator()
+					}
 				}
 			}
 		}
@@ -106,6 +124,7 @@ fun StatusInteractionDetailView(
 						return@launch
 					}
 					reactions.addAll(res.response)
+					loaded = true
 
 					if (reactions.isEmpty()) return@launch
 
@@ -159,6 +178,14 @@ fun StatusInteractionDetailView(
 							AccountRow(account = it.account)
 						}
 					}
+				}
+			} else if (!loaded) {
+				Row(
+					modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					CircularProgressIndicator()
 				}
 			}
 		}

@@ -4,6 +4,8 @@
 
 ### Added
 - Support for "local" visibility (Akkoma, Pleroma, and Iceshrimp.NET)
+- Ability to react with Unicode emojis (by typing them into the emoji picker's search box)
+- Loading indicator to "Liked by" / "Boosted by" / "Reacted by" pages
 
 ### Fixed
 - Notifications marked as read when you accept a follow request/bite back
