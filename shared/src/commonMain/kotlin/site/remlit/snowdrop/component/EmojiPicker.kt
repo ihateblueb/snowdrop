@@ -131,8 +131,7 @@ fun EmojiPicker(
 		}
 
 		LaunchedEffect(query) {
-			if (isUnicodeEmoji(query))
-				onEnterUnicodeEmoji(query)
+			if (query.isUnicodeEmoji()) onEnterUnicodeEmoji(query)
 		}
 
 		ModalBottomSheet(

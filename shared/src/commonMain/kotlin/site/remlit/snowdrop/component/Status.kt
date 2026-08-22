@@ -664,7 +664,7 @@ fun Status(
 											TooltipAnchorPosition.Above
 										),
 										tooltip = {
-											if (!isUnicodeEmoji(it.name)) PlainTooltip { Text(":${it.name}:") }
+											if (!it.name.isUnicodeEmoji()) PlainTooltip { Text(":${it.name}:") }
 										},
 										state = rememberTooltipState()
 									) {

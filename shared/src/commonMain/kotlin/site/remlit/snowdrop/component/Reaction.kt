@@ -43,7 +43,7 @@ fun Reaction(reaction: Status.Reaction, showTooltip: Boolean = true) {
 				TooltipAnchorPosition.Above
 			),
 			tooltip = {
-				if (isUnicodeEmoji(reaction.name)) PlainTooltip { Text(reaction.name) }
+				if (reaction.name.isUnicodeEmoji()) PlainTooltip { Text(reaction.name) }
 				else PlainTooltip { Text(":${reaction.name}:") }
 			},
 			state = rememberTooltipState()
