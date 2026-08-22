@@ -51,6 +51,8 @@ data class Status(
 	val pinned: Boolean = false,
 
 	val visibility: String? = null,
+	@SerialName("local_only")
+	val localOnly: Boolean? = null,
 
 	val poll: Poll? = null,
 	val filtered: List<Filtered>? = null,

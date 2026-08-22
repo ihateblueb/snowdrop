@@ -46,6 +46,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -152,7 +153,8 @@ fun ComposeView(
 	editingId: String? = null,
 	initialCw: String = "",
 	initialContent: String = "",
-	visibility: String? = null
+	visibility: String? = null,
+	localOnly: Boolean? = null
 ) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
@@ -196,6 +198,8 @@ fun ComposeView(
 
 	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
 	var visibilityEnabled by remember { mutableStateOf(true) }
+
+	var localOnly by remember { mutableStateOf(localOnly == true) }
 
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
@@ -257,7 +261,8 @@ fun ComposeView(
 			status = textFieldState.text as String?,
 			spoilerText = cwFieldState.text as String?,
 			visibility = visibility,
-			mediaIds = uploadedMedia.map { it.id }
+			mediaIds = uploadedMedia.map { it.id },
+			localOnly = localOnly
 		))
 
 		if (res.error || res.response == null) {
@@ -496,7 +501,7 @@ fun ComposeView(
 									},
 									enabled = visibilityEnabled
 								) {
-									Visibility(visibility, true)
+									Visibility(visibility, true, localOnly)
 								}
 
 								// Visibility picker
@@ -506,10 +511,36 @@ fun ComposeView(
 								) {
 									var visibilities = listOf("public", "unlisted", "private", "direct")
 
-									if (getFeature("local_visibility")) visibilities = visibilities.plus("local")
+									if (getFeature("local_visibility") || getFeature("local_only_toggle"))
+										visibilities = visibilities.plus("local")
 
 									@Composable
 									fun VisibilityDropdownItem(vis: String, index: Int) {
+										if (vis == "local" && getFeature("local_only_toggle")) {
+											DropdownMenuItem(
+												checked = false,
+												onCheckedChange = {
+													localOnly = !localOnly
+												},
+												leadingIcon = { Visibility(vis) },
+												colors = MenuDefaults.selectableItemColors(),
+												shapes = visibilities.getPreparedDropdownMenuItemShapes(index),
+												contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
+												text = {
+													Text(
+														stringResource(Res.string.visibility_local),
+														fontWeight = FontWeight.Medium
+													)
+												},
+												trailingIcon = {
+													Switch(checked = localOnly, onCheckedChange = {
+														localOnly = !localOnly
+													})
+												}
+											)
+											return
+										}
+
 										DropdownMenuItem(
 											enabled = true,
 											selected = visibility == vis,
@@ -550,6 +581,7 @@ fun ComposeView(
 
 									// todo: do minimum visibility based on the view's visibility parameter
 									visibilities.forEachIndexed { index, string -> VisibilityDropdownItem(string, index) }
+
 								}
 							}
 						}

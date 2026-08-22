@@ -18,6 +18,7 @@ import snowdrop.shared.generated.resources.icon_groups_20px
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_local
+import snowdrop.shared.generated.resources.visibility_local_label
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 
@@ -30,7 +31,7 @@ import snowdrop.shared.generated.resources.visibility_unlisted
  * @since 0.0.1-alpha
  * */
 @Composable
-fun Visibility(visibility: String, showLabel: Boolean = false) {
+fun Visibility(visibility: String, showLabel: Boolean = false, localOnly: Boolean = false) {
 	Row(
 		horizontalArrangement = Arrangement.spacedBy(5.dp),
 		verticalAlignment = Alignment.CenterVertically
@@ -50,6 +51,10 @@ fun Visibility(visibility: String, showLabel: Boolean = false) {
 				"private" -> Text(stringResource(Res.string.visibility_followers))
 				"direct" -> Text(stringResource(Res.string.visibility_direct))
 				"local" -> Text(stringResource(Res.string.visibility_local))
+			}
+
+			if (localOnly) {
+				Text("(" + stringResource(Res.string.visibility_local_label) + ")")
 			}
 	}
 }
