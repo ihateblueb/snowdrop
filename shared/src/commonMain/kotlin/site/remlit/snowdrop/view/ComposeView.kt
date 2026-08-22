@@ -672,7 +672,8 @@ fun ComposeView(
 			EmojiPicker(
 				visible = showEmojiPicker,
 				onDismiss = { showEmojiPicker = !showEmojiPicker },
-				onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:") } }
+				onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:") } },
+				onEnterUnicodeEmoji = {}
 			)
 		}
 

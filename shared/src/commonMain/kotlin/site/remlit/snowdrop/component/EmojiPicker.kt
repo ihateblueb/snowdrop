@@ -49,6 +49,7 @@ import site.remlit.snowdrop.bottomNavExitAnimation
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchEmojis
+import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
@@ -75,7 +76,8 @@ import kotlin.collections.forEach
 fun EmojiPicker(
 	visible: Boolean,
 	onDismiss: () -> Unit,
-	onSelectEmoji: (Emoji) -> Unit
+	onSelectEmoji: (Emoji) -> Unit,
+	onEnterUnicodeEmoji: (String) -> Unit
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	val sheetState = rememberBottomSheetState(SheetValue.Hidden)
@@ -126,6 +128,11 @@ fun EmojiPicker(
 
 			categoryVisibility[category] = !getCategoryVisibility(category)
 			blockingSettings.putBoolean(getHiddenKey(category), getCategoryVisibility(category))
+		}
+
+		LaunchedEffect(query) {
+			if (isUnicodeEmoji(query))
+				onEnterUnicodeEmoji(query)
 		}
 
 		ModalBottomSheet(

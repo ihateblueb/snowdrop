@@ -1088,6 +1088,20 @@ fun Status(
 
 							updateStatus()
 						}
+					},
+					onEnterUnicodeEmoji = {
+						coroutineScope.launch {
+							showEmojiPicker = !showEmojiPicker
+
+							val res = reactToStatus(realStatus.id, it)
+							if (res.error || res.response == null) {
+								res.handleError(snackbarController)
+								vibrateError(haptics)
+								return@launch
+							}
+
+							updateStatus()
+						}
 					}
 				)
 			}
