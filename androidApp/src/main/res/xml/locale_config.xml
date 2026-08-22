@@ -7,7 +7,7 @@
 	<locale android:name="in"/>
 	<locale android:name="nl"/>
 	<locale android:name="pl"/>
-	<locale android:name="pt-rBR"/>
+	<locale android:name="pt-BR"/>
 	<locale android:name="ru"/>
-	<locale android:name="zh-rCN"/>
+	<locale android:name="zh-CN"/>
 </locale-config>
