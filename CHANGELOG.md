@@ -7,6 +7,7 @@
 ### Fixed
 - Notifications marked as read when you accept a follow request/bite back
 - Bite back status shown properly
+- Boost button now filled when boosted
 
 ## [0.0.7-alpha]
 

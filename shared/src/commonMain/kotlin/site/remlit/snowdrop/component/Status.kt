@@ -133,6 +133,7 @@ import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
+import snowdrop.shared.generated.resources.icon_repeat_inner_fill_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
@@ -774,7 +775,7 @@ fun Status(
 						) {
 							if ((isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted") {
 								if (realStatus.reblogged) Icon(
-									painterResource(Res.drawable.icon_repeat_24px),
+									painterResource(Res.drawable.icon_repeat_inner_fill_24px),
 									null,
 									tint = BoostColor
 								) else Icon(
