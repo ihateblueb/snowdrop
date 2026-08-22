@@ -139,6 +139,13 @@ buildkonfig {
 		buildConfigField(STRING, "gitBranch", gitBranch.get())
 		buildConfigField(STRING, "gitCommit", gitCommit.get())
 		// i'm not exactly happy with doing it like this but it works i guess. and there's not really a better way
-		buildConfigField(STRING, "buildVariant", if (!project.gradle.startParameter.taskNames.any { it.contains("assemble") }) "debug" else "release")
+		// note: this is very touchy, and also just misleading. you need to put the exact task that gets run when building,
+		// so it's very limited to do things this way. for android, a release build task will include "release" and ios
+		// builds will be that weird long one. maybe there's a better way to check this that would also allow ios debug
+		// builds to be considered non-release, but i cannot think of any at the moment.
+		//
+		// all of this to say: be extremely careful if you modify anything here
+		buildConfigField(STRING, "buildVariant",
+			if (project.gradle.startParameter.taskNames.any { it.contains("embedAndSignAppleFrameworkForXcode") || it.contains("assemble") } ) "release" else "debug")
 	}
 }
