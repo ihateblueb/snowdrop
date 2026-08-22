@@ -14,8 +14,10 @@ import snowdrop.shared.generated.resources.icon_globe_20px
 import snowdrop.shared.generated.resources.icon_home_20px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_mail_20px
+import snowdrop.shared.generated.resources.icon_groups_20px
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
+import snowdrop.shared.generated.resources.visibility_local
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
 
@@ -38,6 +40,7 @@ fun Visibility(visibility: String, showLabel: Boolean = false) {
 			"unlisted" -> Icon(painterResource(Res.drawable.icon_home_20px) ,null)
 			"private" -> Icon(painterResource(Res.drawable.icon_lock_20px) ,null)
 			"direct" -> Icon(painterResource(Res.drawable.icon_mail_20px) ,null)
+			"local" -> Icon(painterResource(Res.drawable.icon_groups_20px), null)
 		}
 
 		if (showLabel)
@@ -46,6 +49,7 @@ fun Visibility(visibility: String, showLabel: Boolean = false) {
 				"unlisted" -> Text(stringResource(Res.string.visibility_unlisted))
 				"private" -> Text(stringResource(Res.string.visibility_followers))
 				"direct" -> Text(stringResource(Res.string.visibility_direct))
+				"local" -> Text(stringResource(Res.string.visibility_local))
 			}
 	}
 }

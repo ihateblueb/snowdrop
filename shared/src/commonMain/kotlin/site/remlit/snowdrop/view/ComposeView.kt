@@ -110,6 +110,7 @@ import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
+import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
@@ -135,6 +136,8 @@ import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_direct_description
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_followers_description
+import snowdrop.shared.generated.resources.visibility_local
+import snowdrop.shared.generated.resources.visibility_local_description
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
@@ -501,7 +504,9 @@ fun ComposeView(
 									expanded = visibilityDropdownOpen,
 									onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
 								) {
-									val visibilities = listOf("public", "unlisted", "private", "direct")
+									var visibilities = listOf("public", "unlisted", "private", "direct")
+
+									if (getFeature("local_visibility")) visibilities = visibilities.plus("local")
 
 									@Composable
 									fun VisibilityDropdownItem(vis: String, index: Int) {
@@ -523,6 +528,7 @@ fun ComposeView(
 															"public" -> stringResource(Res.string.visibility_public)
 															"unlisted" -> stringResource(Res.string.visibility_unlisted)
 															"private" -> stringResource(Res.string.visibility_followers)
+															"local" -> stringResource(Res.string.visibility_local)
 															else -> stringResource(Res.string.visibility_direct)
 														},
 														fontWeight = FontWeight.Medium
@@ -532,6 +538,7 @@ fun ComposeView(
 															"public" -> stringResource(Res.string.visibility_public_description)
 															"unlisted" -> stringResource(Res.string.visibility_unlisted_description)
 															"private" -> stringResource(Res.string.visibility_followers_description)
+															"local" -> stringResource(Res.string.visibility_local_description)
 															else -> stringResource(Res.string.visibility_direct_description)
 														},
 														fontSize = 13.sp

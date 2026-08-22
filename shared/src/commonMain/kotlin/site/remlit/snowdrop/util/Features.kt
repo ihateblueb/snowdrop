@@ -120,9 +120,16 @@ suspend fun determineFeatures() {
 
 	if (
 		software == Software.IceshrimpNET ||
-			(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites > 0)
+		(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites > 0)
 	) putFeature("biting", true)
 	else putFeature("biting", false)
+
+	if (
+		software == Software.Akkoma ||
+		software == Software.Pleroma ||
+		software == Software.IceshrimpNET
+	) putFeature("local_visibility", true)
+	else putFeature("local_visibility", false)
 
 	determiningFeatures = false
 }
