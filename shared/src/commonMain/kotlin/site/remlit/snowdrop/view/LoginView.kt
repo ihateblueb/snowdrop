@@ -54,6 +54,7 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.determineFeatures
+import site.remlit.snowdrop.util.generateSnowdropId
 import site.remlit.snowdrop.util.getAccountObject
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.log.debug
@@ -113,7 +114,7 @@ fun LoginView() = ViewSurface {
 		bg {
 			val host = host.replace("http://","").replace("https://","")
 			val existingAccounts = settings.getString("accounts", "")
-			val accountId = "_S-${Uuid.random()}"
+			val accountId = generateSnowdropId()
 			settings.putString("accounts", "$existingAccounts $accountId")
 			settings.putString("current_account", accountId)
 			settings.putString("account_${accountId}_host", host)

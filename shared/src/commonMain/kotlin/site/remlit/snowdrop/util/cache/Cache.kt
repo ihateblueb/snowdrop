@@ -12,9 +12,13 @@ import kotlinx.serialization.decodeFromHexString
 import kotlinx.serialization.encodeToHexString
 import site.remlit.snowdrop.model.cache.CacheEntry
 import site.remlit.snowdrop.model.cache.CacheManifest
+import site.remlit.snowdrop.model.cache.Draft
+import site.remlit.snowdrop.model.cache.DraftsManifest
 import site.remlit.snowdrop.util.config.cbor
 import site.remlit.snowdrop.util.config.json
 import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.safe
+import kotlin.time.Clock
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val cache: FlowSettings
@@ -98,3 +102,55 @@ fun removeCacheEntry(id: String) {
 }
 
 fun clearCacheEntries() = getCacheManifest().ids.forEach { removeCacheEntry(it) }
+
+// drafts
+
+@OptIn(ExperimentalSettingsApi::class, ExperimentalSerializationApi::class)
+fun getDraftManifest(): DraftsManifest {
+	val raw = blockingCache.getStringOrNull("${getCurrentAccountId()}_draft_manifest")
+		?: return DraftsManifest()
+	return cbor.decodeFromHexString(raw)
+}
+
+fun getDrafts(): List<Draft> {
+	val drafts = mutableListOf<Draft>()
+
+	getDraftManifest().ids.forEach {
+		val draft = getCacheEntry("_draft_${it.key}")
+			?: return@forEach
+		drafts.add(draft.getContent<Draft>())
+	}
+
+	return drafts
+}
+
+@OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
+fun addDraft(draft: Draft) {
+	cacheCoroutineScope.launch {
+		val manifest = getDraftManifest()
+		cache.putString(
+			"${getCurrentAccountId()}_draft_manifest",
+			cbor.encodeToHexString(
+				manifest.copy(ids = manifest.ids.plus(draft.id to Clock.System.now().toString()))
+			)
+		)
+
+		cache.remove("${getCurrentAccountId()}_draft_${draft.id}")
+	}
+}
+
+
+@OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
+fun removeDraft(id: String) {
+	cacheCoroutineScope.launch {
+		val manifest = getDraftManifest()
+		cache.putString(
+			"${getCurrentAccountId()}_draft_manifest",
+			cbor.encodeToHexString(
+				manifest.copy(ids = manifest.ids.minus(id))
+			)
+		)
+
+		cache.remove("${getCurrentAccountId()}_draft_$id")
+	}
+}

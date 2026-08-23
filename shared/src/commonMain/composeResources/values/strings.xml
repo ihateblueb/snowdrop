@@ -306,4 +306,7 @@
 	<string name="reply_to_x">Reply to {handle}</string>
 
 	<string name="search">Search</string>
+
+	<string name="drafts">Drafts</string>
+	<string name="use">Use</string>
 </resources>
