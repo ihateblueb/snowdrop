@@ -25,6 +25,7 @@ import site.remlit.snowdrop.util.LocalNavController
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling)
+ * @param showEmojiTooltips Whether to show emoji tooltips on long-press
  *
  * @since 0.0.5-alpha
  * */
@@ -34,7 +35,8 @@ fun htmlToAnnotatedString(
 	mentions: List<Status.Mention> = emptyList(),
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
-	simple: Boolean = false
+	simple: Boolean = false,
+	showEmojiTooltips: Boolean = true
 ): Pair<AnnotatedString, Map<String, InlineTextContent>> {
 	val uriHandler = LocalUriHandler.current
 	val navHandler = LocalNavController.current
@@ -49,7 +51,7 @@ fun htmlToAnnotatedString(
 		}
 	}
 
-	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize)
+	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize, showEmojiTooltips)
 	return remember(string, emojis) {
 		htmlToAnnotatedString(
 			if (simple) htmlToString(string) else string,

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -547,12 +548,24 @@ fun Status(
 								}
 
 								if (!realStatus.content.isNullOrBlank()) {
-									HtmlContent(
-										string = realStatus.content!!,
-										mentions = realStatus.mentions,
-										emojis = realStatus.emojis,
-										emojiSize = 1.5.em
-									)
+									if (threadViewMainStatus) {
+										SelectionContainer {
+											HtmlContent(
+												string = realStatus.content!!,
+												mentions = realStatus.mentions,
+												emojis = realStatus.emojis,
+												emojiSize = 1.5.em,
+												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
+											)
+										}
+									} else {
+										HtmlContent(
+											string = realStatus.content!!,
+											mentions = realStatus.mentions,
+											emojis = realStatus.emojis,
+											emojiSize = 1.5.em
+										)
+									}
 								}
 							}
 

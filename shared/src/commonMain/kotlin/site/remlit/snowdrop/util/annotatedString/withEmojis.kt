@@ -15,6 +15,7 @@ import site.remlit.snowdrop.model.Emoji
  *
  * @param emojis List of emojis to map
  * @param emojiSize Size of emojis
+ * @param showEmojiTooltips Whether to show emoji tooltips on long-press
  *
  * @return Mapped emojis
  * @since 0.0.5-alpha
@@ -22,6 +23,7 @@ import site.remlit.snowdrop.model.Emoji
 fun mapEmojisToInlineTextContent(
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
+	showEmojiTooltips: Boolean = true
 ): Map<String, InlineTextContent> {
 	val mappedEmojis = mutableMapOf<String, InlineTextContent>()
 	emojis.forEach { emoji ->
@@ -31,7 +33,7 @@ fun mapEmojisToInlineTextContent(
 				height = emojiSize,
 				placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
 			)
-		) { Emoji(emoji, fill = true) }
+		) { Emoji(emoji, fill = true, showTooltip = showEmojiTooltips) }
 	}
 	return mappedEmojis
 }

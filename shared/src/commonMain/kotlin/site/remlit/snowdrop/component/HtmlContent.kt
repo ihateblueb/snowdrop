@@ -29,6 +29,7 @@ val defaultEmojiSize = 1.2.em
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling)
+ * @param showEmojiTooltips Whether to show emoji tooltips on long-press
  *
  * @param fontWeight Font weight of text
  * @param fontSize Font size of text
@@ -46,6 +47,7 @@ fun HtmlContent(
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
+	showEmojiTooltips: Boolean = true,
 
 	fontWeight: FontWeight = FontWeight.Normal,
 	fontSize: TextUnit = TextUnit.Unspecified,
@@ -57,7 +59,8 @@ fun HtmlContent(
 		mentions,
 		emojis,
 		emojiSize,
-		simple
+		simple,
+		showEmojiTooltips
 	)
 
 	Text(

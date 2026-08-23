@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -115,10 +116,12 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 						if (showAltSheet) ModalBottomSheet(
 							onDismissRequest = { showAltSheet = false }
 						) {
-							if (!alt.isNullOrBlank()) Text(
-								alt,
-								modifier = Modifier.padding(10.dp)
-							)
+							SelectionContainer {
+								if (!alt.isNullOrBlank()) Text(
+									alt,
+									modifier = Modifier.padding(10.dp)
+								)
+							}
 						}
 
 						StatusMediaAttachment(
