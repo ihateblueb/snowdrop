@@ -95,6 +95,7 @@ import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.EmojiPicker
+import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.MiniStatus
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
@@ -108,6 +109,7 @@ import site.remlit.snowdrop.util.WarningColor25
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
+import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
 import site.remlit.snowdrop.util.getFeature
@@ -471,10 +473,10 @@ fun ComposeView(
 						Column(
 							modifier = Modifier.weight(1f)
 						) {
-							Text(
+							HtmlContent(
 								currentAccount!!.displayName(),
+								emojis = currentAccount!!.emojis,
 								fontWeight = FontWeight.Medium,
-								overflow = TextOverflow.Ellipsis,
 								maxLines = 1
 							)
 							Text(
