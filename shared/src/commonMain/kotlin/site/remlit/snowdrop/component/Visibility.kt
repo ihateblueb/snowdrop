@@ -53,8 +53,6 @@ fun Visibility(visibility: String, showLabel: Boolean = false, localOnly: Boolea
 				"local" -> Text(stringResource(Res.string.visibility_local))
 			}
 
-			if (localOnly) {
-				Text("(" + stringResource(Res.string.visibility_local_label) + ")")
-			}
+			if (localOnly) Text(stringResource(Res.string.visibility_local_label))
 	}
 }

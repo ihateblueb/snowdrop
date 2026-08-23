@@ -35,6 +35,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +43,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemShapes
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -512,36 +514,10 @@ fun ComposeView(
 								) {
 									var visibilities = listOf("public", "unlisted", "private", "direct")
 
-									if (getFeature("local_visibility") || getFeature("local_only_toggle"))
-										visibilities = visibilities.plus("local")
+									if (getFeature("local_visibility")) visibilities = visibilities.plus("local")
 
 									@Composable
 									fun VisibilityDropdownItem(vis: String, index: Int) {
-										if (vis == "local" && getFeature("local_only_toggle")) {
-											DropdownMenuItem(
-												checked = false,
-												onCheckedChange = {
-													localOnly = !localOnly
-												},
-												leadingIcon = { Visibility(vis) },
-												colors = MenuDefaults.selectableItemColors(),
-												shapes = visibilities.getPreparedDropdownMenuItemShapes(index),
-												contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-												text = {
-													Text(
-														stringResource(Res.string.visibility_local),
-														fontWeight = FontWeight.Medium
-													)
-												},
-												trailingIcon = {
-													Switch(checked = localOnly, onCheckedChange = {
-														localOnly = !localOnly
-													})
-												}
-											)
-											return
-										}
-
 										DropdownMenuItem(
 											enabled = true,
 											selected = visibility == vis,
@@ -583,6 +559,30 @@ fun ComposeView(
 									// todo: do minimum visibility based on the view's visibility parameter
 									visibilities.forEachIndexed { index, string -> VisibilityDropdownItem(string, index) }
 
+
+									if (getFeature("local_only_toggle")) {
+										HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+
+										DropdownMenuItem(
+											checked = false,
+											onCheckedChange = { localOnly = !localOnly },
+											leadingIcon = { Visibility("local") },
+											colors = MenuDefaults.selectableItemColors(),
+											shapes = MenuItemShapes(MenuDefaults.standaloneGroupShape, MenuDefaults.standaloneGroupShape),
+											contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
+											text = {
+												Text(
+													stringResource(Res.string.visibility_local),
+													fontWeight = FontWeight.Medium
+												)
+											},
+											trailingIcon = {
+												Switch(checked = localOnly, onCheckedChange = {
+													localOnly = !localOnly
+												})
+											}
+										)
+									}
 								}
 							}
 						}

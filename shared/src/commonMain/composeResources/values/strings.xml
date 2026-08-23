@@ -67,7 +67,7 @@
 	<string name="visibility_direct_description">Visible only to mentioned users</string>
 	<string name="visibility_local">Local</string>
 	<string name="visibility_local_description">Visible only to users on your instance</string>
-	<string name="visibility_local_label">local-only</string>
+	<string name="visibility_local_label">(local only)</string>
 
 	<string name="content_warning">Content warning</string>
 	<string name="write_your_post_here">Write your post here...</string>
