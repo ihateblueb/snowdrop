@@ -12,7 +12,7 @@
 - Connecting to LAN addresses on newer Android versions
   - Android 16 requires permission NEARBY_WIFI_DEVICES
   - Android 17 requires permission ACCESS_LOCAL_NETWORK
-  - Both have been added for the manifest but are not required to use the app
+  - Both have been added to the manifest but are not required to use the app
   - Whichever permission applies to you can be manually granted in settings (the app won't ask)
 - Notifications marked as read when you accept a follow request/bite back
 - Bite back status shown properly
