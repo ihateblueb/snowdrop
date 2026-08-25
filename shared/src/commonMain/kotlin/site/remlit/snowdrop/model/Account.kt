@@ -45,7 +45,7 @@ data class Account(
 
 	val fields: List<Field> = emptyList(),
 	val source: Source? = null,
-	val emojis: List<Emoji>,
+	val emojis: List<Emoji> = emptyList(),
 
 	@SerialName("attribution_domains")
 	val attributionDomains: List<String> = emptyList(),
