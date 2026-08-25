@@ -15,7 +15,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="?android:attr/colorBackground"
-            android:localeConfig="@xml/locale_config">
+            android:localeConfig="@xml/locale_config" tools:targetApi="33">
         <provider
                 android:name="androidx.startup.InitializationProvider"
                 android:authorities="${applicationId}.androidx-startup"
