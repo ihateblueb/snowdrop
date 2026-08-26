@@ -630,8 +630,9 @@ fun Status(
 									Icon(painterResource(Res.drawable.icon_warning_24px), null)
 
 									Column(modifier = Modifier.weight(1f)) {
-										Text(
+										HtmlContent(
 											realStatus.spoilerText!!,
+											emojis = realStatus.emojis,
 											fontWeight = FontWeight.Medium
 										)
 										Text(
