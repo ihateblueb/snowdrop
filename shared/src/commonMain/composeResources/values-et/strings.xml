@@ -251,4 +251,15 @@
     <string name="reply_to_x">Vasta kasutajale {handle}</string>
     <string name="search">Otsi</string>
     <string name="show_send_post_at_bottom_of_composer">Näita postitamise nuppu koostamisvaate all ääres</string>
+    <string name="replies">Vastused</string>
+    <string name="copy_oauth_link">Kopeeri OAUTH-i link</string>
+    <string name="visibility_local">Kohalik</string>
+    <string name="visibility_local_description">Nähtav vaid sinu koduserveri kasutajatele</string>
+    <string name="visibility_local_label">(vaid kohalik)</string>
+    <string name="x_bit_you">{clickable_display_name} naksas sind</string>
+    <string name="x_bit_you_back">{clickable_display_name} naksa sind tagasi</string>
+    <string name="x_bit_your_post">{clickable_display_name} naksas sinu postitust</string>
+    <string name="bite_back">Naksa tagasi</string>
+    <string name="bite_post">Naksa seda postitust</string>
+    <string name="bites">Naksamisi</string>
 </resources>

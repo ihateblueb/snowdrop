@@ -271,6 +271,9 @@
     <string name="search">Buscar</string>
     <string name="hide_unread_notifications_badge">Ocultar globo de notificaciones no leídas</string>
     <string name="show_send_post_at_bottom_of_composer">Mostrar botón de enviar abajo en el editor</string>
-    <string name="replies">Comentar</string>
+    <string name="replies">Réplicas</string>
     <string name="copy_oauth_link">Copiar enlace OAuth</string>
+    <string name="visibility_local">Local</string>
+    <string name="visibility_local_description">Solo para usuarios de la instancia</string>
+    <string name="visibility_local_label">(solo local)</string>
 </resources>

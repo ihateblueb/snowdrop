@@ -257,4 +257,6 @@
     <string name="search">Suchen</string>
     <string name="default_post_visibility">Standartpostsichtbarkeit</string>
     <string name="always_show_compose_button">Immer den Schreiben-Button anzeigen</string>
+    <string name="replies">Antworten</string>
+    <string name="copy_oauth_link">OAuth-Link kopieren</string>
 </resources>

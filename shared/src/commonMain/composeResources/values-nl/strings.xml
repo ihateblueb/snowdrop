@@ -6,4 +6,7 @@
     <string name="add_account">Account toevoegen</string>
     <string name="post">Post</string>
     <string name="boosted_by">Hergedeeld door</string>
+    <string name="replies">Reacties</string>
+    <string name="posts">Berichten</string>
+    <string name="settings">Instellingen</string>
 </resources>
