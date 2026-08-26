@@ -99,7 +99,6 @@ import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
-import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
@@ -678,7 +677,7 @@ fun Status(
 											TooltipAnchorPosition.Above
 										),
 										tooltip = {
-											if (!it.name.isUnicodeEmoji()) PlainTooltip { Text(":${it.name}:") }
+											if (it.url != null) PlainTooltip { Text(":${it.name}:") }
 										},
 										state = rememberTooltipState()
 									) {

@@ -47,7 +47,6 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
-import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
@@ -129,9 +128,9 @@ fun Notification(
 		"reaction" -> {
 			translationKey = Res.string.x_reacted_with_x
 			replacementMap["emoji"] = AnnotatedString(
-				if (notification.reaction == null) "${notification.emoji}"
-				else if (!notification.reaction.name!!.isUnicodeEmoji()) ":${notification.reaction.name}:"
-				else notification.reaction.name
+				(if (notification.reaction == null) "${notification.emoji}"
+				else if (notification.reaction.url != null) ":${notification.reaction.name}:"
+				else notification.reaction.name) ?: ""
 			)
 		}
 		"reblog" -> translationKey = Res.string.x_boosted_your_post
