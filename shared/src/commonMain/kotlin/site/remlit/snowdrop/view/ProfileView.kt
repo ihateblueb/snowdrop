@@ -537,7 +537,7 @@ fun ProfileView(id: String) = ViewSurface {
 													string = name,
 													emojis = account!!.emojis,
 													modifier = Modifier.weight(0.35f),
-													color = MaterialTheme.colorScheme.primary
+													color = MaterialTheme.colorScheme.secondary
 												)
 												HtmlContent(
 													string = value,
