@@ -1,13 +1,18 @@
 package site.remlit.snowdrop.util.annotatedString
 
 import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
+import be.digitalia.compose.htmlconverter.HtmlStyle
 import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import be.digitalia.compose.htmlconverter.htmlToString
 import site.remlit.snowdrop.ProfileRoute
@@ -40,6 +45,7 @@ fun htmlToAnnotatedString(
 ): Pair<AnnotatedString, Map<String, InlineTextContent>> {
 	val uriHandler = LocalUriHandler.current
 	val navHandler = LocalNavController.current
+	val theme = MaterialTheme.colorScheme
 
 	// todo: hashtags
 	val linkListener = LinkInteractionListener { link ->
@@ -55,6 +61,11 @@ fun htmlToAnnotatedString(
 	return remember(string, emojis) {
 		htmlToAnnotatedString(
 			if (simple) htmlToString(string) else string,
+			style = HtmlStyle.DEFAULT.copy(
+				textLinkStyles = TextLinkStyles(
+					style = SpanStyle(color = theme.primary, textDecoration = TextDecoration.Underline)
+				)
+			),
 			linkInteractionListener = linkListener
 		).withEmojis(mappedEmojis)
 	} to mappedEmojis
