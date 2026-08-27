@@ -154,18 +154,18 @@ fun ThreadView(id: String) = ViewSurface {
 					items = ancestors,
 					key = { it.id }
 				) { item ->
-					StatusComponent(item, {  })
+					StatusComponent(item, {  }, filterContext = "threads")
 				}
 
 				item(key = status!!.id) {
-					StatusComponent(status!!, {  })
+					StatusComponent(status!!, {  }, filterContext = "threads")
 				}
 
 				items(
 					items = descendants,
 					key = { it.id }
 				) { item ->
-					StatusComponent(item, {  })
+					StatusComponent(item, {  }, filterContext = "threads")
 				}
 			}
 			Column(

@@ -621,7 +621,8 @@ fun ProfileView(id: String) = ViewSurface {
 									pinnedStatuses.first(),
 									onUpdate = { new -> pinnedStatuses.update(pinnedStatuses.first(), new) },
 									pinned = true,
-									showDivider = false
+									showDivider = false,
+									filterContext = "accounts"
 								)
 
 								if (pinnedStatuses.size > 1) {
@@ -645,7 +646,7 @@ fun ProfileView(id: String) = ViewSurface {
 					}
 				},
 				fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-				timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
+				timelineComponent = { item, onUpdate -> Status(item, onUpdate, filterContext = "accounts") },
 				refreshKey = selectedTab,
 				onRefresh = {
 					// for pinned posts

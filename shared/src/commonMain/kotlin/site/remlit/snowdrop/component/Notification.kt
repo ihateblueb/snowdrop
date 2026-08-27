@@ -88,7 +88,8 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun Notification(
 	notification: Notification,
-	onAction: () -> Unit = {}
+	onAction: () -> Unit = {},
+	filterContext: String? = null
 ) {
 	val navHandler = LocalNavController.current
 	val haptics = LocalHapticFeedback.current
@@ -150,7 +151,7 @@ fun Notification(
 	if (translationKey != null) show = true
 
 	if (notification.type == "mention" && notification.status != null) {
-		Status(notification.status, {})
+		Status(notification.status, {}, filterContext = filterContext)
 	} else if (show) {
 		Column {
 			Column(
@@ -241,7 +242,13 @@ fun Notification(
 					Column(
 						modifier = Modifier.padding(top = 10.dp)
 					) {
-						MiniStatus(notification.status)
+						if (filterContext != null && notification.status.filtered?.any {
+							it.filter.context.contains(filterContext)
+						} == true) {
+							Status(notification.status, {}, filterContext = filterContext)
+						} else {
+							MiniStatus(notification.status)
+						}
 					}
 				}
 				//</editor-fold>

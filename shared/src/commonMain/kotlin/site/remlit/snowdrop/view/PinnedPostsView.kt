@@ -33,6 +33,6 @@ fun PinnedPostsView(id: String) = ViewSurface {
 
 	RefreshableTimeline(
 		fetchMethod = { maxId, minId, sinceId -> getStatuses(userId = id, maxId = maxId, minId = minId, sinceId = sinceId, pinned = true) },
-		timelineComponent = { item, onUpdate -> Status(item, onUpdate) }
+		timelineComponent = { item, onUpdate -> Status(item, onUpdate, filterContext = "accounts") }
 	)
 }
