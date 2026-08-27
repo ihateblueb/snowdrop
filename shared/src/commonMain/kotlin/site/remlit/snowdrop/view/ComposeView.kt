@@ -97,6 +97,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.offsetIn
 import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.media.uploadMedia
@@ -757,8 +758,8 @@ fun ComposeView(
 					onConfirm = {
 						if (it == null) return@DatePickerModal
 
-						val currentTimeInstant = Clock.System.now()
-						if (it < currentTimeInstant.toEpochMilliseconds()) {
+						val currentTimeInstant = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+						if (it < currentTimeInstant.date.toEpochDays() * 86400000) {
 							showInvalidTimeAlert = !showInvalidTimeAlert
 							return@DatePickerModal
 						}
@@ -778,13 +779,15 @@ fun ComposeView(
 			if (showTimePicker) {
 				TimePickerModal(
 					onConfirm = { hour, minute ->
-						val currentTimeInstant = Clock.System.now()
+						//val currentTimeInstant = Clock.System.now()
 						val scheduledTimeInstant = Instant.fromEpochMilliseconds(scheduledDate)
 
-						if (scheduledDate < currentTimeInstant.toEpochMilliseconds()) {
-							showInvalidTimeAlert = !showInvalidTimeAlert
-							return@TimePickerModal
-						}
+						// i can't figure out how to fix this so that's a todo
+						//
+						//if (scheduledDate < currentTimeInstant.toEpochMilliseconds()) {
+						//	showInvalidTimeAlert = !showInvalidTimeAlert
+						//	return@TimePickerModal
+						//}
 
 						showTimePicker = false
 
