@@ -294,6 +294,8 @@
 	<string name="lock_timeline_description">Posts on your timeline won't be able to liked, boosted, or replied to until you unlock the timeline.</string>
 	<string name="this_popup_wont_appear_again">This popup won't appear again.</string>
 
+	<string name="you_cannot_schedule_a_post_in_the_past">You cannot schedule a post in the past.</string>
+
 	<string name="pinned">Pinned</string>
 	<string name="view_all_pinned_posts">View all pinned posts</string>
 	<string name="pinned_posts">Pinned posts</string>

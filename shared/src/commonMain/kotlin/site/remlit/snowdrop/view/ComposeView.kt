@@ -31,6 +31,7 @@ import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -81,6 +82,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.github.vinceglb.filekit.PlatformFile
@@ -91,15 +93,21 @@ import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.mimeType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.offsetIn
+import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.media.uploadMedia
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.DatePickerModal
 import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.MiniStatus
+import site.remlit.snowdrop.component.TimePickerModal
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
@@ -125,6 +133,8 @@ import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
 import snowdrop.shared.generated.resources.describe_important_elements_of_your_media
 import snowdrop.shared.generated.resources.edit
+import snowdrop.shared.generated.resources.icon_access_time_24px
+import snowdrop.shared.generated.resources.icon_access_time_filled_24px
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_attach_file_24px
 import snowdrop.shared.generated.resources.icon_close_24px
@@ -134,6 +144,7 @@ import snowdrop.shared.generated.resources.icon_notes_24px
 import snowdrop.shared.generated.resources.icon_send_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.icon_warning_filled_24px
+import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.reply
 import snowdrop.shared.generated.resources.unknown_media_type_x
 import snowdrop.shared.generated.resources.visibility_direct
@@ -147,7 +158,10 @@ import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
 import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
+import snowdrop.shared.generated.resources.you_cannot_schedule_a_post_in_the_past
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalSettingsApi::class)
 @Composable
@@ -194,8 +208,17 @@ fun ComposeView(
 	var showCwField by remember { mutableStateOf(false) }
 	var showEmojiPicker by remember { mutableStateOf(false) }
 	var showAddAttachmentMenu by remember { mutableStateOf(false) }
+	var showDatePicker by remember { mutableStateOf(false) }
+	var showTimePicker by remember { mutableStateOf(false) }
+	var showInvalidTimeAlert by remember { mutableStateOf(false) }
 	val textFieldState = rememberTextFieldState(initialContent)
 	val cwFieldState = rememberTextFieldState(initialCw)
+
+	var scheduledDate: Long by remember { mutableStateOf(-1) }
+	var scheduledTimeHour by remember { mutableStateOf(-1) }
+	var scheduledTimeMinute by remember { mutableStateOf(-1) }
+	var scheduledDateTimeIsSet by remember { mutableStateOf(false) }
+	var scheduledDateTimeParsed by remember { mutableStateOf("") }
 
 	if (initialCw.isNotBlank()) showCwField = true
 
@@ -265,7 +288,8 @@ fun ComposeView(
 			spoilerText = cwFieldState.text as String?,
 			visibility = visibility,
 			mediaIds = uploadedMedia.map { it.id },
-			localOnly = localOnly
+			localOnly = localOnly,
+			scheduledAt = if (!scheduledDateTimeIsSet) null else scheduledDateTimeParsed
 		))
 
 		if (res.error || res.response == null) {
@@ -287,7 +311,8 @@ fun ComposeView(
 				LoadingIndicator(
 					modifier = Modifier.padding(2.dp)
 				)
-			} else Icon(painterResource(Res.drawable.icon_send_24px), null)
+			} else if (!scheduledDateTimeIsSet) Icon(painterResource(Res.drawable.icon_send_24px), null)
+			else Icon(painterResource(Res.drawable.icon_access_time_filled_24px), null)
 		}
 	}
 
@@ -386,30 +411,7 @@ fun ComposeView(
 				Row(
 					verticalAlignment = Alignment.CenterVertically
 				) {
-					// todo: translate contentDescription
-					if (showCwField) {
-						IconButton(
-							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Show content warning field" }
-						) {
-							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
-						}
-					} else {
-						IconButton(
-							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Hide content warning field" }
-						) {
-							Icon(painterResource(Res.drawable.icon_warning_24px), null)
-						}
-					}
-
-					IconButton(
-						onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = "Add emoji" }
-					) {
-						Icon(painterResource(Res.drawable.icon_mood_24px), null)
-					}
-
+					// can we make it so we can change the order of the actions?
 					PreparedDropdownMenu(
 						expanded = showAddAttachmentMenu,
 						onDismissRequest = { showAddAttachmentMenu = false }
@@ -433,6 +435,40 @@ fun ComposeView(
 						modifier = Modifier.semantics { contentDescription = "Add attachment" }
 					) {
 						Icon(painterResource(Res.drawable.icon_add_24px), null)
+					}
+
+					IconButton(
+						onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
+						modifier = Modifier.semantics { contentDescription = "Add emoji" }
+					) {
+						Icon(painterResource(Res.drawable.icon_mood_24px), null)
+					}
+
+					// todo: translate contentDescription
+					if (showCwField) {
+						IconButton(
+							onClick = { showCwField = !showCwField },
+							modifier = Modifier.semantics { contentDescription = "Show content warning field" }
+						) {
+							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
+						}
+					} else {
+						IconButton(
+							onClick = { showCwField = !showCwField },
+							modifier = Modifier.semantics { contentDescription = "Hide content warning field" }
+						) {
+							Icon(painterResource(Res.drawable.icon_warning_24px), null)
+						}
+					}
+
+					IconButton(
+						onClick = { showDatePicker = true }
+					) {
+						if (!scheduledDateTimeIsSet) {
+							Icon(painterResource(Res.drawable.icon_access_time_24px), null)
+						} else {
+							Icon(painterResource(Res.drawable.icon_access_time_filled_24px), null)
+						}
 					}
 
 					// End
@@ -715,6 +751,86 @@ fun ComposeView(
 				onSelectEmoji = { textFieldState.edit { insert(textFieldState.selection.start, ":${it.shortcode}:") } },
 				onEnterUnicodeEmoji = {}
 			)
+
+			if (showDatePicker) {
+				DatePickerModal(
+					onConfirm = {
+						if (it == null) return@DatePickerModal
+
+						val currentTimeInstant = Clock.System.now()
+						if (it < currentTimeInstant.toEpochMilliseconds()) {
+							showInvalidTimeAlert = !showInvalidTimeAlert
+							return@DatePickerModal
+						}
+
+						showDatePicker = false
+
+						scheduledDate = it
+
+						showTimePicker = true
+					},
+					onDismiss = {
+						showDatePicker = false
+					}
+				)
+			}
+
+			if (showTimePicker) {
+				TimePickerModal(
+					onConfirm = { hour, minute ->
+						val currentTimeInstant = Clock.System.now()
+						val scheduledTimeInstant = Instant.fromEpochMilliseconds(scheduledDate)
+
+						if (scheduledDate < currentTimeInstant.toEpochMilliseconds()) {
+							showInvalidTimeAlert = !showInvalidTimeAlert
+							return@TimePickerModal
+						}
+
+						showTimePicker = false
+
+						// fuck you google. and jetbrains too honestly this library fucking sucks
+						val offset = scheduledTimeInstant.offsetIn(TimeZone.currentSystemDefault())
+
+						scheduledDateTimeParsed = scheduledTimeInstant
+							.plus(hour, DateTimeUnit.HOUR)
+							.plus(minute, DateTimeUnit.MINUTE)
+							.plus(offset.totalSeconds * -1, DateTimeUnit.SECOND)
+							.toString()
+
+						scheduledTimeHour = hour
+						scheduledTimeMinute = minute
+
+						scheduledDateTimeIsSet = scheduledDate != (-1).toLong() &&
+							scheduledTimeHour != -1 &&
+							scheduledTimeMinute != -1
+					},
+					onDismiss = {
+						showTimePicker = false
+					}
+				)
+			}
+
+			if (showInvalidTimeAlert) {
+				AlertDialog(
+					text = {
+						Text(stringResource(Res.string.you_cannot_schedule_a_post_in_the_past))
+					},
+					onDismissRequest = {
+						showInvalidTimeAlert = !showInvalidTimeAlert
+					},
+					confirmButton = {
+						TextButton(
+							onClick = { showInvalidTimeAlert = !showInvalidTimeAlert }
+						) {
+							Text(stringResource(Res.string.ok))
+						}
+					},
+					properties = DialogProperties(
+						dismissOnBackPress = true,
+						dismissOnClickOutside = true
+					)
+				)
+			}
 		}
 
 		if (altBottomSheetSelection != null) {
