@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -119,6 +120,15 @@ fun StatusMediaAttachment(
 							scrollBar = ScrollBarSpec(size = 0.dp)
 						)
 					}
+					is Resource.Loading -> {
+						Box(
+							modifier = Modifier.fillMaxSize(),
+							contentAlignment = Alignment.Center
+						) {
+							CircularProgressIndicator()
+						}
+
+					}
 					else -> {}
 				}
 			} else {
@@ -127,6 +137,14 @@ fun StatusMediaAttachment(
 					contentDescription = attachment.description,
 					contentScale = ContentScale.Fit,
 					modifier = itemModifier.fillMaxWidth(),
+					onLoading = {
+						Box(
+							modifier = Modifier.fillMaxSize(),
+							contentAlignment = Alignment.Center
+						) {
+							CircularProgressIndicator()
+						}
+					}
 				)
 			}
 
