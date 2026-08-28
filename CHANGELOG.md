@@ -7,6 +7,8 @@
 - Ability to react with Unicode emojis (by typing them into the emoji picker's search box)
 - Loading indicator to "Liked by" / "Boosted by" / "Reacted by" pages
 - Ability to select alt text and post text in the thread view
+- Loading indicator to images
+- Ability to schedule posts
 
 ### Fixed
 - Connecting to LAN addresses on newer Android versions
@@ -23,6 +25,11 @@
 - Fixed Brazillian Portuguese and Simplified Chinese not showing up in Android's app-specific language picker
 - Disabled boosting posts with direct visibility
 - Android debug builds now have a unique name, icon, and package id
+- Fixed Unicode reaction notifications on Chuckya having colons
+- Fixed timelines not loading on snac instances because of accounts without the emojis field
+- Emojis are now rendered in CWs
+- Links are now colored according to your theme
+- Settings options now look a lot better and can be toggled by tapping their container
 - Improved wide/tablet screen layout
 
 ## [0.0.7-alpha]
