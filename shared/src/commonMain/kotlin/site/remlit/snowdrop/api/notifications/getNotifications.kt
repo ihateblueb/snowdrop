@@ -4,6 +4,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import io.ktor.client.request.*
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Notification
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
@@ -11,7 +12,7 @@ import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
 suspend fun getNotifications(
-	limit: Int = 100,
+	limit: Int = blockingSettings.getInt("notifs_per_page", 100),
 
 	maxId: String? = null,
 	sinceId: String? = null,
