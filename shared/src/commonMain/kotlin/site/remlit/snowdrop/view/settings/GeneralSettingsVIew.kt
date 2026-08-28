@@ -15,9 +15,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -38,6 +41,7 @@ import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getDefaultVisibility
 import site.remlit.snowdrop.util.putDefaultVisibility
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
@@ -47,10 +51,12 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.lock_timeline
 import snowdrop.shared.generated.resources.lock_timeline_short_description
+import snowdrop.shared.generated.resources.number_of_recent_emojis_to_save
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
@@ -195,6 +201,9 @@ fun GeneralSettingsView() = ViewSurface {
 							haptics,
 							onCheckedChange = { blockingSettings.putBoolean("haptics", it) }
 						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("haptics", !haptics)
 					}
 				)
 			}
@@ -212,6 +221,45 @@ fun GeneralSettingsView() = ViewSurface {
 							timelineLocked,
 							onCheckedChange = { blockingSettings.putBoolean("timeline_locked", it) }
 						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("timeline_locked", !timelineLocked)
+					}
+				)
+			}
+		}
+		item {
+			// idk why but it only works to use blockingSettings here. normal settings flow thing always just returns the default 20
+			val maxRecentEmojis = blockingSettings.getInt("max_recent_emojis", 20)
+			val sliderState = rememberSliderState(
+				value = maxRecentEmojis.toFloat(),
+				valueRange = 4f..50f,
+				steps = 45
+			).apply { // wtf is an apply and why do i need to do this Here
+				onValueChangeFinished = {
+					blockingSettings.putInt("max_recent_emojis", value.roundToInt())
+				}
+			}
+
+			Card {
+				ListItem(
+					headlineContent = {
+						Text(
+							translation(
+								Res.string.number_of_recent_emojis_to_save,
+								mapOf("number" to AnnotatedString(
+									sliderState.value.roundToInt().toString()
+								))
+							)
+						)
+					},
+					supportingContent = {
+						Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+							Slider(
+								state = sliderState,
+
+							)
+						}
 					}
 				)
 			}

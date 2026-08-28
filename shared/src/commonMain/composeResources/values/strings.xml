@@ -76,6 +76,7 @@
 	<string name="general">General</string>
 	<string name="default_post_visibility">Default post visibility</string>
 	<string name="haptics">Haptics</string>
+	<string name="number_of_recent_emojis_to_save">Number of recent emojis to save: {number}</string>
 
 	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>

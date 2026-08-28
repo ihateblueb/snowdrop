@@ -99,6 +99,9 @@ fun EmojiPicker(
 		val recentlyUsedShortcodes by remember { settings.getStringFlow("emojis_recently_used_${getCurrentAccountId()}", "") }
 			.collectAsStateWithLifecycle("")
 
+		val maxRecentEmojis by remember { settings.getIntFlow("max_recent_emojis", 20) }
+			.collectAsStateWithLifecycle(20)
+
 		val categorized = mutableMapOf<String, List<Emoji>>()
 
 		val recentlyUsed = mutableListOf<Emoji>()
@@ -215,7 +218,10 @@ fun EmojiPicker(
 
 													settings.putString(
 														"emojis_recently_used_${getCurrentAccountId()}",
-														newRecentlyUsed.distinct().take(20).joinToString(separator = " ")
+														newRecentlyUsed
+															.distinct()
+															.take(maxRecentEmojis)
+															.joinToString(separator = " ")
 													)
 												}
 											})
