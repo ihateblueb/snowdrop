@@ -383,7 +383,9 @@ fun App() = safe {
 			) {
 				if (wide) Scaffold { paddingValues ->
 					Row {
-						sideBar()
+						if (loggedIn == true)
+							sideBar()
+
 						content(paddingValues)
 					}
 				} else Scaffold(
