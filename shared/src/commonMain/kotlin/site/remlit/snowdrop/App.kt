@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -28,6 +29,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,7 +46,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,6 +86,8 @@ import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
+import site.remlit.snowdrop.util.getScreenWidth
+import site.remlit.snowdrop.util.getScreenWidthDp
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
@@ -179,11 +186,17 @@ val bottomNavEnterAnimation = fadeIn() + slideInVertically(initialOffsetY = { it
 val bottomNavExitAnimation = slideOutVertically(targetOffsetY = { it }) + fadeOut()
 
 
+var wide = false
+
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
 	setupAppSettings()
 	setupCache()
+
+	val localDensity = LocalDensity.current
+	// as per material recommendations: https://m3.material.io/foundations/layout/breakpoints/overview
+	wide = with(localDensity) { getScreenWidth().toDp() >= 840.dp }
 
 	/*
 	* Variables & Handlers for Whole App Stuff
@@ -269,69 +282,128 @@ fun App() = safe {
 	// app really starts here
 	AppTheme {
 		Provided {
+			val navigationBarOrder by remember { getNavigationBarOrder() }
+				.collectAsStateWithLifecycle(defaultNavigationBarOrder)
+			val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
+				.collectAsStateWithLifecycle(true)
+			val hideUnreadNotificationsBadge by remember { settings.getBooleanFlow("hide_unread_notifications_badge", false) }
+				.collectAsStateWithLifecycle(false)
 
-			Scaffold(
-				bottomBar = {
-					AnimatedVisibility(
-						visible = (loggedIn == true && !shouldHideBottomBar),
-						enter = bottomNavEnterAnimation,
-						exit = bottomNavExitAnimation,
-					) {
-						NavigationBar {
-							val navigationBarOrder by remember { getNavigationBarOrder() }
-								.collectAsStateWithLifecycle(defaultNavigationBarOrder)
-							val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
-								.collectAsStateWithLifecycle(true)
-							val hideUnreadNotificationsBadge by remember { settings.getBooleanFlow("hide_unread_notifications_badge", false) }
-								.collectAsStateWithLifecycle(false)
 
-							key(navigationBarOrder) {
-								navigationBarOrder.mapToNavigationOptions()
-									.forEach { item ->
-										NavigationBarItem(
-											selected = atRoute(item.toRouteClass(), currentDest),
-											onClick = { /* unimportant due to interaction source */ },
-											interactionSource = navigationBarInteractionSource(item),
-											icon = {
-												if (item == NavigationBarOption.Notifications &&
-													showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+			@Composable
+			fun fab() {
+				FloatingActionButton(
+					onClick = { navController.navigate(ComposeRoute()) }
+				) {
+					if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
+					else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
+				}
+			}
 
-													BadgedBox(badge = { Badge() }) {
-														NavigationBarIcon(item)
-													}
-												else NavigationBarIcon(item)
-											},
-											label = {
-												if (showNavigationBarLabels)
-													Text(
-														NavigationBarLabel(item),
-														overflow = TextOverflow.Ellipsis,
-														maxLines = 1
-													)
+
+			@Composable
+			fun bottomBar() {
+				AnimatedVisibility(
+					visible = (loggedIn == true && !shouldHideBottomBar),
+					enter = bottomNavEnterAnimation,
+					exit = bottomNavExitAnimation,
+				) {
+					NavigationBar {
+						key(navigationBarOrder) {
+							navigationBarOrder.mapToNavigationOptions()
+								.forEach { item ->
+									NavigationBarItem(
+										selected = atRoute(item.toRouteClass(), currentDest),
+										onClick = { /* unimportant due to interaction source */ },
+										interactionSource = navigationBarInteractionSource(item),
+										icon = {
+											if (item == NavigationBarOption.Notifications &&
+												showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+
+												BadgedBox(badge = { Badge() }) {
+													NavigationBarIcon(item)
+												}
+											else NavigationBarIcon(item)
+										},
+										label = {
+											if (showNavigationBarLabels)
+												Text(
+													NavigationBarLabel(item),
+													overflow = TextOverflow.Ellipsis,
+													maxLines = 1
+												)
+										}
+									)
+								}
+						}
+					}
+				}
+			}
+
+			@Composable
+			fun sideBar() {
+				NavigationRail(
+					header = { fab() }
+				) {
+					key(navigationBarOrder) {
+						navigationBarOrder.mapToNavigationOptions()
+							.forEach { item ->
+								NavigationRailItem(
+									selected = atRoute(item.toRouteClass(), currentDest),
+									onClick = { /* unimportant due to interaction source */ },
+									interactionSource = navigationBarInteractionSource(item),
+									icon = {
+										if (item == NavigationBarOption.Notifications &&
+											showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+
+											BadgedBox(badge = { Badge() }) {
+												NavigationBarIcon(item)
 											}
-										)
+										else NavigationBarIcon(item)
+									},
+									alwaysShowLabel = showNavigationBarLabels,
+									label = {
+										if (showNavigationBarLabels)
+											Text(
+												NavigationBarLabel(item),
+												overflow = TextOverflow.Ellipsis,
+												maxLines = 1
+											)
 									}
+								)
 							}
-						}
 					}
-				},
-				floatingActionButton = {
-					AnimatedVisibility(
-						visible = shouldShowComposeFab,
-						enter = bottomNavEnterAnimation,
-						exit = bottomNavExitAnimation,
-					) {
-						FloatingActionButton(
-							onClick = { navController.navigate(ComposeRoute()) }
-						) {
-							if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
-							else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
-						}
+				}
+			}
+
+
+			@Composable
+			fun CustomScaffold(
+				content: @Composable (paddingValues: PaddingValues) -> Unit
+			) {
+				if (wide) Scaffold { paddingValues ->
+					Row {
+						if (loggedIn == true)
+							sideBar()
+
+						content(paddingValues)
 					}
-				},
-				floatingActionButtonPosition = FabPosition.End,
-				snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-			) { paddingValues ->
+				} else Scaffold(
+					bottomBar = { if (!wide) bottomBar() },
+					floatingActionButton = {
+						AnimatedVisibility(
+							visible = shouldShowComposeFab,
+							enter = bottomNavEnterAnimation,
+							exit = bottomNavExitAnimation,
+						) { fab() }
+					},
+					floatingActionButtonPosition = FabPosition.End,
+					snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+				) { paddingValues -> content(paddingValues) }
+			}
+
+
+			CustomScaffold { paddingValues ->
 				Box(
 					modifier = Modifier.fillMaxSize()
 						.padding(paddingValues)

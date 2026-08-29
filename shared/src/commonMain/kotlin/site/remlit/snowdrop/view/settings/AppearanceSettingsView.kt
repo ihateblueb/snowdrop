@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package site.remlit.snowdrop.view.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,6 +14,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,9 +37,11 @@ import sh.calvin.reorderable.ReorderableColumn
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
+import site.remlit.snowdrop.util.ListItemShape
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
+import site.remlit.snowdrop.util.listItemClip
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.putNavigationBarOrder
@@ -75,7 +82,10 @@ fun AppearanceSettingsView() = ViewSurface {
 			val amoledBlack by settings.getBooleanFlow("amoled_black", false)
 				.collectAsStateWithLifecycle(false)
 
-			Card {
+			Card(
+				modifier = Modifier.listItemClip(0, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(0, 4),
+			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.use_amoled_dark_theme)) },
 					supportingContent = { Text(stringResource(Res.string.using_on_a_nonamoled_screen_may_cause_contrast_issues)) },
@@ -84,7 +94,11 @@ fun AppearanceSettingsView() = ViewSurface {
 							amoledBlack,
 							onCheckedChange = { blockingSettings.putBoolean("amoled_black", it) }
 						)
-					}
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("amoled_black", !amoledBlack)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 		}
@@ -92,7 +106,10 @@ fun AppearanceSettingsView() = ViewSurface {
 			val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
 				.collectAsStateWithLifecycle(false)
 
-			Card {
+			Card(
+				modifier = Modifier.listItemClip(1, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 4),
+			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.always_show_compose_button)) },
 					trailingContent = {
@@ -100,7 +117,11 @@ fun AppearanceSettingsView() = ViewSurface {
 							alwaysShowComposeButton,
 							onCheckedChange = { blockingSettings.putBoolean("always_show_compose_button", it) }
 						)
-					}
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("always_show_compose_button", !alwaysShowComposeButton)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 		}
@@ -108,7 +129,10 @@ fun AppearanceSettingsView() = ViewSurface {
 			val showNavigationBarLabels by settings.getBooleanFlow("show_navigation_bar_labels", true)
 				.collectAsStateWithLifecycle(true)
 
-			Card {
+			Card(
+				modifier = Modifier.listItemClip(2, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(2, 4),
+			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.show_navigation_bar_labels)) },
 					trailingContent = {
@@ -116,7 +140,11 @@ fun AppearanceSettingsView() = ViewSurface {
 							showNavigationBarLabels,
 							onCheckedChange = { blockingSettings.putBoolean("show_navigation_bar_labels", it) }
 						)
-					}
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("show_navigation_bar_labels", !showNavigationBarLabels)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 		}
@@ -124,7 +152,10 @@ fun AppearanceSettingsView() = ViewSurface {
 			val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
 				.collectAsStateWithLifecycle(false)
 
-			Card {
+			Card(
+				modifier = Modifier.listItemClip(3, 4).padding(bottom = 10.dp),
+				shape = ListItemShape(3, 4),
+			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.show_send_post_at_bottom_of_composer)) },
 					trailingContent = {
@@ -132,7 +163,11 @@ fun AppearanceSettingsView() = ViewSurface {
 							swapPostButtonAndCharLimit,
 							onCheckedChange = { blockingSettings.putBoolean("swap_post_button_and_char_limit", it) }
 						)
-					}
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("swap_post_button_and_char_limit", !swapPostButtonAndCharLimit)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 		}
@@ -146,7 +181,10 @@ fun AppearanceSettingsView() = ViewSurface {
 
 			var showBottomBarTabOrder by remember { mutableStateOf(false) }
 
-			Card {
+			Card(
+				modifier = Modifier.listItemClip(0, 1), // add padding if we do more options
+				shape = ListItemShape(0, 1),
+			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.navigation_bar_tab_order)) },
 					trailingContent = {
@@ -160,7 +198,8 @@ fun AppearanceSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						showBottomBarTabOrder = !showBottomBarTabOrder
-					}
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 			AnimatedVisibility(
@@ -175,7 +214,7 @@ fun AppearanceSettingsView() = ViewSurface {
 							add(to, removeAt(from))
 						}
 					},
-					modifier = Modifier.padding(horizontal = 10.dp)
+					modifier = Modifier.padding(horizontal = 10.dp).background(MaterialTheme.colorScheme.surfaceContainerHigh)
 				) { _, item, _ ->
 					key(item) {
 						ReorderableItem {
