@@ -85,34 +85,29 @@ fun MiniStatus(
 				navHandler.navigate(ThreadRoute(status.id))
 			})
 	) {
-	if (!isVisible && filtered && !isHiddenFilter) {
-		Column(
-			modifier = Modifier.fillMaxWidth()
-				.clickable { filteredState[filterStateKey] = true }
-		) {
+		if (!isFilterVisible) {
 			Row(
-				modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
-					.fillMaxWidth(),
-				horizontalArrangement = Arrangement.spacedBy(10.dp),
+				modifier = Modifier
+					.fillMaxWidth()
+					.clickable { isFilterVisible = true; statusStateController.filtered[filterStateKey] = true }
+					.padding(10.dp),
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Icon(painterResource(Res.drawable.icon_filter_alt_24px), null)
-
 				Column {
 					Text(
 						translation(
 							Res.string.filtered_by_x,
 							mapOf("filters" to AnnotatedString(
-								applicableFilters.joinToString { "${it.filter.title}" }
+								applicableFilters.joinToString { it.filter.title.orEmpty() }
 							))
 						)
 					)
-					Text(
-						translation(Res.string.show_content),
-						fontSize = 13.sp
-					)
+					Text(translation(Res.string.show_content), fontSize = 13.sp)
 				}
-			} else Column(modifier = Modifier.padding(10.dp)) {
+			}
+		} else Column(modifier = Modifier.padding(10.dp)) {
 			Row(
 				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically
