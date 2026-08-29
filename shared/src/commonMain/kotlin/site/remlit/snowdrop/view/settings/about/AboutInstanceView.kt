@@ -34,6 +34,7 @@ import site.remlit.snowdrop.util.getCurrentAccountHost
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
 import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.instance_favicon
 import snowdrop.shared.generated.resources.rules
 
 @Composable
@@ -69,7 +70,7 @@ fun AboutInstanceView() = ViewSurface {
 					) {
 						KamelImage(
 							resource = { asyncPainterResource("https://${getCurrentAccountHost()}/favicon.ico") },
-							contentDescription = "Instance favicon",
+							contentDescription = stringResource(Res.string.instance_favicon),
 							contentScale = ContentScale.Fit,
 							modifier = Modifier.height(48.dp)
 								.width(48.dp),

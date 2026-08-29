@@ -54,6 +54,7 @@ import snowdrop.shared.generated.resources.icon_drag_indicator_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
+import snowdrop.shared.generated.resources.reorder
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
@@ -237,7 +238,10 @@ fun AppearanceSettingsView() = ViewSurface {
 										),
 										onClick = {},
 									) {
-										Icon(painterResource(Res.drawable.icon_drag_indicator_24px), contentDescription = "Reorder")
+										Icon(
+											painterResource(Res.drawable.icon_drag_indicator_24px),
+											contentDescription = stringResource(Res.string.reorder)
+										)
 									}
 								}
 							}

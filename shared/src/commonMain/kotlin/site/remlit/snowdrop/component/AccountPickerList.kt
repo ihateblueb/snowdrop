@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.ListItemShape
@@ -42,6 +43,7 @@ import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_drag_indicator_24px
+import snowdrop.shared.generated.resources.reorder
 
 /**
  * Account picker component.
@@ -154,7 +156,10 @@ fun AccountPickerList(
 							),
 							onClick = {},
 						) {
-							Icon(painterResource(Res.drawable.icon_drag_indicator_24px), contentDescription = "Reorder")
+							Icon(
+								painterResource(Res.drawable.icon_drag_indicator_24px),
+								contentDescription = stringResource(Res.string.reorder)
+							)
 						}
 					}
 				}
