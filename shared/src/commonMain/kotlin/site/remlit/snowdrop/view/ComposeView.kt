@@ -129,8 +129,14 @@ import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.add_attachment
+import snowdrop.shared.generated.resources.add_emoji
+import snowdrop.shared.generated.resources.add_file
+import snowdrop.shared.generated.resources.add_photo_or_video
 import snowdrop.shared.generated.resources.alt_text
 import snowdrop.shared.generated.resources.compose
+import snowdrop.shared.generated.resources.content_warning_field_hide
+import snowdrop.shared.generated.resources.content_warning_field_show
 import snowdrop.shared.generated.resources.content_warning
 import snowdrop.shared.generated.resources.describe_important_elements_of_your_media
 import snowdrop.shared.generated.resources.edit
@@ -419,44 +425,51 @@ fun ComposeView(
 					) {
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24), null) },
-							text = { Text("Add photo or video") },
+							text = { Text(stringResource(Res.string.add_photo_or_video)) },
 							shape = MenuDefaults.leadingItemShape,
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
 						)
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
-							text = { Text("Add file") },
+							text = { Text(stringResource(Res.string.add_file)) },
 							shape = MenuDefaults.trailingItemShape,
 							onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
 						)
 					}
 
+					val addAttachmentDescription = stringResource(Res.string.add_attachment)
+
 					IconButton(
 						onClick = { showAddAttachmentMenu = !showAddAttachmentMenu; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = "Add attachment" }
+						modifier = Modifier.semantics { contentDescription = addAttachmentDescription }
 					) {
 						Icon(painterResource(Res.drawable.icon_add_24px), null)
 					}
 
+					val addEmojiDescription = stringResource(Res.string.add_emoji)
+
 					IconButton(
 						onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = "Add emoji" }
+						modifier = Modifier.semantics { contentDescription = addEmojiDescription }
 					) {
 						Icon(painterResource(Res.drawable.icon_mood_24px), null)
 					}
+
+					val showContentWarningFieldDescription = stringResource(Res.string.content_warning_field_show)
+					val hideContentWarningFieldDescription = stringResource(Res.string.content_warning_field_hide)
 
 					// todo: translate contentDescription
 					if (showCwField) {
 						IconButton(
 							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Show content warning field" }
+							modifier = Modifier.semantics { contentDescription = showContentWarningFieldDescription }
 						) {
 							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
 						}
 					} else {
 						IconButton(
 							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Hide content warning field" }
+							modifier = Modifier.semantics { contentDescription = hideContentWarningFieldDescription }
 						) {
 							Icon(painterResource(Res.drawable.icon_warning_24px), null)
 						}
