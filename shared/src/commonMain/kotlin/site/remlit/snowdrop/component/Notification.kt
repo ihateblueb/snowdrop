@@ -242,13 +242,7 @@ fun Notification(
 					Column(
 						modifier = Modifier.padding(top = 10.dp)
 					) {
-						if (filterContext != null && notification.status.filtered?.any {
-							it.filter.context.contains(filterContext)
-						} == true) {
-							Status(notification.status, {}, filterContext = filterContext)
-						} else {
-							MiniStatus(notification.status)
-						}
+						MiniStatus(notification.status, filterContext = filterContext)
 					}
 				}
 				//</editor-fold>
