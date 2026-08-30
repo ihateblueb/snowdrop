@@ -325,7 +325,7 @@
 	<string name="append_re_on_reply_content_warnings">Append RE: on reply content warnings</string>
 
 	<string name="timeline_dropdown_menu">Timeline dropdown menu</string>
-	<string name="remaining_characters">Remaining characters</string>
+	<string name="x_remaining_characters">{number} remaining characters</string>
 
 	<string name="visibility_picker">Visibility picker</string>
 	<string name="submit_scheduled_post">Submit scheduled post</string>

@@ -154,7 +154,7 @@ import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.icon_warning_filled_24px
 import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.post_verb
-import snowdrop.shared.generated.resources.remaining_characters
+import snowdrop.shared.generated.resources.x_remaining_characters
 import snowdrop.shared.generated.resources.reply
 import snowdrop.shared.generated.resources.schedule_post
 import snowdrop.shared.generated.resources.submit_scheduled_post
@@ -401,7 +401,11 @@ fun ComposeView(
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
-							val __translation_remaining_characters = stringResource(Res.string.remaining_characters)
+							val __translation_remaining_characters = translation(
+								Res.string.x_remaining_characters,
+								mapOf("number" to AnnotatedString("${remainingChars}"))
+							).text
+
 							Text(
 								"$remainingChars",
 								color = MaterialTheme.colorScheme.onSurfaceVariant,
