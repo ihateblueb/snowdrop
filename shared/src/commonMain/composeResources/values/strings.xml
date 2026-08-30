@@ -330,6 +330,13 @@
 	<string name="schedule_post">Schedule post</string>
 	<string name="post_verb">Post</string>
 
+	<string name="open_all_content_warnings">Open all content warnings</string>
+	<string name="close_all_content_warnings">Close all content warnings</string>
+
+	<string name="ascendant_post">Ascendant post</string>
+	<string name="main_thread_post">Main thread post</string>
+	<string name="descendant_post">Descendant post</string>
+
 	<string name="close">Close</string>
 	<string name="back">Back</string>
 	<string name="more">More</string>
