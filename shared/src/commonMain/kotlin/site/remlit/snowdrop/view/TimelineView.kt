@@ -81,7 +81,9 @@ import snowdrop.shared.generated.resources.local
 import snowdrop.shared.generated.resources.lock
 import snowdrop.shared.generated.resources.lock_timeline
 import snowdrop.shared.generated.resources.lock_timeline_description
+import snowdrop.shared.generated.resources.more
 import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
 import snowdrop.shared.generated.resources.timeline_dropdown_menu
 import snowdrop.shared.generated.resources.unlock
@@ -164,12 +166,10 @@ fun TimelineView() = ViewSurface {
 
 		@Composable
 		fun RenderTimelineSelectionDropdown() {
-			val __translate_timeline_dropdown_menu = stringResource(Res.string.timeline_dropdown_menu)
 			PreparedDropdownMenu(
 				expanded = timelinePickerOpen,
 				onDismissRequest = { timelinePickerOpen = false },
-				offset = DpOffset(0.dp, 15.dp),
-				modifier = Modifier.semantics { contentDescription = __translate_timeline_dropdown_menu }
+				offset = DpOffset(0.dp, 15.dp)
 			) {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(0) },
@@ -267,6 +267,28 @@ fun TimelineView() = ViewSurface {
 				}
 			},
 			title = {
+				val __translation_home = stringResource(Res.string.home)
+				val __translation_local = stringResource(Res.string.local)
+				val __translation_bubble = stringResource(Res.string.bubble)
+				val __translation_global = stringResource(Res.string.global)
+				val __translation_bookmarks = stringResource(Res.string.bookmarks)
+				val __translation_list = stringResource(Res.string.list)
+
+				val __translate_timeline_dropdown_menu = stringResource(Res.string.timeline_dropdown_menu)
+
+				val __translation = remember(timelineType) {
+					when (timelineType) {
+						0 -> __translation_home
+						1 -> __translation_local
+						2 -> __translation_bubble
+						3 -> __translation_global
+
+						4 -> __translation_bookmarks
+						5 -> lists?.first { it.id == listId }?.title ?: __translation_list
+						else -> ""
+					}
+				}
+
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(10.dp),
 					verticalAlignment = Alignment.CenterVertically,
@@ -277,17 +299,11 @@ fun TimelineView() = ViewSurface {
 						onClick = {
 							timelinePickerOpen = !timelinePickerOpen
 						}
-					)
-				) {
-					when (timelineType) {
-						0 -> Text(stringResource(Res.string.home))
-						1 -> Text(stringResource(Res.string.local))
-						2 -> Text(stringResource(Res.string.bubble))
-						3 -> Text(stringResource(Res.string.global))
-
-						4 -> Text(stringResource(Res.string.bookmarks))
-						5 -> Text(lists?.first { it.id == listId }?.title ?: stringResource(Res.string.list))
+					).semantics {
+						contentDescription = __translate_timeline_dropdown_menu
 					}
+				) {
+					Text(__translation)
 
 					if (timelinePickerOpen) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
 					else Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
@@ -296,8 +312,14 @@ fun TimelineView() = ViewSurface {
 				}
 			},
 			actions = {
+				val __translation_more = stringResource(Res.string.more)
+				val __translation_settings = stringResource(Res.string.settings)
+
 				var showDropdown by remember { mutableStateOf(false) }
-				IconButton(onClick = { showDropdown = !showDropdown }) {
+				IconButton(
+					onClick = { showDropdown = !showDropdown },
+					modifier = Modifier.semantics { contentDescription = __translation_more }
+				) {
 					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 				}
 
@@ -323,7 +345,10 @@ fun TimelineView() = ViewSurface {
 				}
 
 				// settings
-				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
+				IconButton(
+					onClick = { navHandler.navigate(SettingsRoute) },
+					modifier = Modifier.semantics { contentDescription = __translation_settings }
+				) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
 			}
