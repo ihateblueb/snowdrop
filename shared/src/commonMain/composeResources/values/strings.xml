@@ -321,4 +321,8 @@
 
 	<string name="instance_favicon">Instance favicon</string>
 	<string name="append_re_on_reply_content_warnings">Append RE: on reply content warnings</string>
+
+	<string name="timeline_dropdown_menu">Timeline dropdown menu</string>
+	<string name="close">Close</string>
+	<string name="back">Back</string>
 </resources>

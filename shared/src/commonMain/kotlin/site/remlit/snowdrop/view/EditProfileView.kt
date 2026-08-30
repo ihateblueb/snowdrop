@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.accounts.updateCredentials
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
@@ -103,11 +104,7 @@ fun EditProfileView() = ViewSurface {
 
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.editing_profile))
 		},

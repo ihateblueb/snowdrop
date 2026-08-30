@@ -26,6 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -81,6 +83,7 @@ import snowdrop.shared.generated.resources.lock_timeline
 import snowdrop.shared.generated.resources.lock_timeline_description
 import snowdrop.shared.generated.resources.ok
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
+import snowdrop.shared.generated.resources.timeline_dropdown_menu
 import snowdrop.shared.generated.resources.unlock
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -161,10 +164,12 @@ fun TimelineView() = ViewSurface {
 
 		@Composable
 		fun RenderTimelineSelectionDropdown() {
+			val __translate_timeline_dropdown_menu = stringResource(Res.string.timeline_dropdown_menu)
 			PreparedDropdownMenu(
 				expanded = timelinePickerOpen,
 				onDismissRequest = { timelinePickerOpen = false },
-				offset = DpOffset(0.dp, 15.dp)
+				offset = DpOffset(0.dp, 15.dp),
+				modifier = Modifier.semantics { contentDescription = __translate_timeline_dropdown_menu }
 			) {
 				DropdownMenuItem(
 					leadingIcon = { RenderTimelineTypeIcon(0) },

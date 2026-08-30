@@ -108,6 +108,7 @@ import site.remlit.snowdrop.component.DatePickerModal
 import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.MiniStatus
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.TimePickerModal
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
@@ -380,11 +381,7 @@ fun ComposeView(
 	Scaffold(
 		topBar = {
 			TopAppBar(
-				navigationIcon = {
-					IconButton(onClick = { navHandler.popBackStack() }) {
-						Icon(painterResource(Res.drawable.icon_close_24px), null)
-					}
-				},
+				navigationIcon = { NavigationBackButton(close = true) },
 				title = {
 					if (inReplyToId != null) Text(stringResource(Res.string.reply))
 					else if (editingId != null) Text(stringResource(Res.string.edit))
