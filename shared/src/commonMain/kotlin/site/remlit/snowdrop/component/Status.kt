@@ -47,6 +47,9 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -146,6 +149,7 @@ import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.pinned
+import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
 import snowdrop.shared.generated.resources.report
@@ -434,9 +438,11 @@ fun Status(
 					/*
 					* Header
 					*/
+					val __translation_post_by_x = translation(Res.string.post_by_x, mapOf("display_name" to AnnotatedString(realStatus.account!!.displayName()))).text
 					Row(
 						modifier = Modifier.padding(5.dp)
-							.fillMaxWidth(),
+							.fillMaxWidth()
+							.semantics { contentDescription = __translation_post_by_x },
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						// todo: this needs to be clipped since it's casting the clickable effect outside of the avatar boundaries
@@ -444,7 +450,7 @@ fun Status(
 							modifier = Modifier.padding(end = 10.dp)
 								.clickable(onClick = {
 									navHandler.navigate(ProfileRoute(realStatus.account!!.id))
-								})
+								}).semantics { hideFromAccessibility() }
 						) {
 							Avatar(
 								realStatus.account!!,
