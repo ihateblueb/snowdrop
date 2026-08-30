@@ -168,13 +168,13 @@ fun ThreadView(id: String) = ViewSurface {
 					key = { it.id },
 				) { item ->
 					Box(modifier = Modifier.semantics { contentDescription = __translation_ascendant_post }) {
-						StatusComponent(item, {  })
+						StatusComponent(item, {  }, filterContext = "threads")
 					}
 				}
 
 				item(key = status!!.id) {
 					Box(modifier = Modifier.semantics { contentDescription = __translation_main_thread_post }) {
-						StatusComponent(status!!, {  })
+						StatusComponent(status!!, {  }, filterContext = "threads")
 					}
 				}
 
@@ -183,7 +183,7 @@ fun ThreadView(id: String) = ViewSurface {
 					key = { it.id }
 				) { item ->
 					Box(modifier = Modifier.semantics { contentDescription = __translation_descendant_post }) {
-						StatusComponent(item, {  })
+						StatusComponent(item, {  }, filterContext = "threads")
 					}
 				}
 			}
