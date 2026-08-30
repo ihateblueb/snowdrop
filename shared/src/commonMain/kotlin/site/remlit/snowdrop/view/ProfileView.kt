@@ -74,6 +74,7 @@ import site.remlit.snowdrop.api.accounts.getStatuses
 import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
@@ -187,9 +188,7 @@ fun ProfileView(id: String) = ViewSurface {
 				// re: because then clicking on yourself from a status will act like MyProfile when it isn't the
 				//     MyProfile page, it shouldn't do that.
 				if (atRoute<ProfileRoute>(currentDest)) {
-					IconButton(onClick = { navHandler.popBackStack() }) {
-						Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-					}
+					NavigationBackButton()
 				}
 			},
 			title = {

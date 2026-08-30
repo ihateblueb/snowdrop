@@ -57,6 +57,8 @@
 	<string name="reply">Reply</string>
 	<string name="compose">Compose</string>
 
+	<string name="visibility">Visibility</string>
+
 	<string name="visibility_public">Public</string>
 	<string name="visibility_public_description">Visible to anyone, shows on global timeline</string>
 	<string name="visibility_unlisted">Unlisted</string>
@@ -71,6 +73,12 @@
 
 	<string name="content_warning">Content warning</string>
 	<string name="write_your_post_here">Write your post here...</string>
+
+	<string name="add_attachment">Add attachment</string>
+	<string name="add_photo_or_video">Add photo or video</string>
+	<string name="add_file">Add file</string>
+	<string name="content_warning_field_show">Show content warning field</string>
+	<string name="content_warning_field_hide">Hide content warning field</string>
 
 	<string name="settings">Settings</string>
 	<string name="general">General</string>
@@ -312,4 +320,26 @@
 	<string name="reply_to_x">Reply to {handle}</string>
 
 	<string name="search">Search</string>
+
+	<string name="instance_favicon">Instance favicon</string>
+	<string name="append_re_on_reply_content_warnings">Append RE: on reply content warnings</string>
+
+	<string name="timeline_dropdown_menu">Timeline dropdown menu</string>
+	<string name="x_remaining_characters">{number} remaining characters</string>
+
+	<string name="visibility_picker">Visibility picker</string>
+	<string name="submit_scheduled_post">Submit scheduled post</string>
+	<string name="schedule_post">Schedule post</string>
+	<string name="post_verb">Post</string>
+
+	<string name="open_all_content_warnings">Open all content warnings</string>
+	<string name="close_all_content_warnings">Close all content warnings</string>
+
+	<string name="ascendant_post">Ascendant post</string>
+	<string name="main_thread_post">Main thread post</string>
+	<string name="descendant_post">Descendant post</string>
+
+	<string name="close">Close</string>
+	<string name="back">Back</string>
+	<string name="more">More</string>
 </resources>

@@ -47,6 +47,9 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -146,6 +149,7 @@ import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.pinned
+import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
 import snowdrop.shared.generated.resources.report
@@ -193,6 +197,9 @@ fun Status(
 
 
 	/* Preferences */
+	val appendReOnReplies by settings.getBooleanFlow("append_re_on_replies", true)
+		.collectAsStateWithLifecycle(true)
+
 	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
 		.collectAsStateWithLifecycle(false)
 
@@ -423,9 +430,11 @@ fun Status(
 					/*
 					* Header
 					*/
+					val __translation_post_by_x = translation(Res.string.post_by_x, mapOf("display_name" to AnnotatedString(realStatus.account!!.displayName()))).text
 					Row(
 						modifier = Modifier.padding(5.dp)
-							.fillMaxWidth(),
+							.fillMaxWidth()
+							.semantics { contentDescription = __translation_post_by_x },
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						// todo: this needs to be clipped since it's casting the clickable effect outside of the avatar boundaries
@@ -433,7 +442,7 @@ fun Status(
 							modifier = Modifier.padding(end = 10.dp)
 								.clickable(onClick = {
 									navHandler.navigate(ProfileRoute(realStatus.account!!.id))
-								})
+								}).semantics { hideFromAccessibility() }
 						) {
 							Avatar(
 								realStatus.account!!,
@@ -735,7 +744,10 @@ fun Status(
 							navHandler.navigate(
 								ComposeRoute(
 									inReplyToId = realStatus.id,
-									cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
+									cw = if (!realStatus.spoilerText.isNullOrBlank()) {
+											if (appendReOnReplies && realStatus.spoilerText?.lowercase()?.startsWith("re: ") == false)
+												"RE: ${realStatus.spoilerText}" else "${realStatus.spoilerText}"
+									} else "",
 									// what a block
 									content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
 										realStatus.mentions.filter { it.id != currentAccount?.id }
@@ -774,7 +786,7 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
-								contentColor = BoostColor
+								contentColor = BoostColor()
 							) else null,
 							enabled = (isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted" || realStatus.visibility == "local"
 						) {
@@ -782,7 +794,7 @@ fun Status(
 								if (realStatus.reblogged) Icon(
 									painterResource(Res.drawable.icon_repeat_inner_fill_24px),
 									null,
-									tint = BoostColor
+									tint = BoostColor()
 								) else Icon(
 									painterResource(Res.drawable.icon_repeat_24px),
 									null
@@ -815,13 +827,13 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
-								contentColor = LikeColor
+								contentColor = LikeColor()
 							) else null
 						) {
 							if (realStatus.favourited) Icon(
 								painterResource(Res.drawable.icon_star_filled_24px),
 								null,
-								tint = LikeColor
+								tint = LikeColor()
 							) else Icon(
 								painterResource(Res.drawable.icon_star_24px),
 								null

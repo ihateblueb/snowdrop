@@ -29,12 +29,13 @@ fun PreparedDropdownMenu(
 	expanded: Boolean,
 	onDismissRequest: () -> Unit,
 	offset: DpOffset = DpOffset(0.dp, 0.dp),
+	modifier: Modifier = Modifier,
 	content: @Composable () -> Unit
 ) {
 	DropdownMenuPopup(
 		expanded = expanded,
 		onDismissRequest = onDismissRequest,
-		modifier = Modifier.offset(x = offset.x, y = offset.y)
+		modifier = Modifier.offset(x = offset.x, y = offset.y).then(modifier)
 	) {
 		DropdownMenuGroup(
 			shapes = MenuDefaults.groupShape(0, 1),

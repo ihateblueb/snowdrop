@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.util.ListItemShape
@@ -50,6 +51,7 @@ import site.remlit.snowdrop.util.putDefaultVisibility
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.append_re_on_reply_content_warnings
 import snowdrop.shared.generated.resources.default_post_visibility
 import snowdrop.shared.generated.resources.general
 import snowdrop.shared.generated.resources.haptics
@@ -73,11 +75,7 @@ fun GeneralSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.general))
 		}
@@ -208,7 +206,7 @@ fun GeneralSettingsView() = ViewSurface {
 
 			Card(
 				modifier = Modifier.listItemClip(0, 2).padding(bottom = 2.dp),
-				shape = ListItemShape(0, 2),
+				shape = ListItemShape(0, 3),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.haptics)) },
@@ -230,8 +228,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(1, 2).padding(bottom = 10.dp),
-				shape = ListItemShape(1, 2),
+				modifier = Modifier.listItemClip(1, 3).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 3),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.lock_timeline)) },
@@ -244,6 +242,29 @@ fun GeneralSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("timeline_locked", !timelineLocked)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val timelineLocked by settings.getBooleanFlow("append_re_on_replies", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card(
+				modifier = Modifier.listItemClip(2, 3).padding(bottom = 10.dp),
+				shape = ListItemShape(2, 3),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.append_re_on_reply_content_warnings)) },
+					trailingContent = {
+						Switch(
+							timelineLocked,
+							onCheckedChange = { blockingSettings.putBoolean("append_re_on_replies", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("append_re_on_replies", !timelineLocked)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)

@@ -108,6 +108,7 @@ import site.remlit.snowdrop.component.DatePickerModal
 import site.remlit.snowdrop.component.EmojiPicker
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.MiniStatus
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.TimePickerModal
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
@@ -129,8 +130,14 @@ import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
 import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.add_attachment
+import snowdrop.shared.generated.resources.add_emoji
+import snowdrop.shared.generated.resources.add_file
+import snowdrop.shared.generated.resources.add_photo_or_video
 import snowdrop.shared.generated.resources.alt_text
 import snowdrop.shared.generated.resources.compose
+import snowdrop.shared.generated.resources.content_warning_field_hide
+import snowdrop.shared.generated.resources.content_warning_field_show
 import snowdrop.shared.generated.resources.content_warning
 import snowdrop.shared.generated.resources.describe_important_elements_of_your_media
 import snowdrop.shared.generated.resources.edit
@@ -146,7 +153,11 @@ import snowdrop.shared.generated.resources.icon_send_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
 import snowdrop.shared.generated.resources.icon_warning_filled_24px
 import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.post_verb
+import snowdrop.shared.generated.resources.x_remaining_characters
 import snowdrop.shared.generated.resources.reply
+import snowdrop.shared.generated.resources.schedule_post
+import snowdrop.shared.generated.resources.submit_scheduled_post
 import snowdrop.shared.generated.resources.unknown_media_type_x
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_direct_description
@@ -154,6 +165,7 @@ import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_followers_description
 import snowdrop.shared.generated.resources.visibility_local
 import snowdrop.shared.generated.resources.visibility_local_description
+import snowdrop.shared.generated.resources.visibility_picker
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
@@ -304,9 +316,11 @@ fun ComposeView(
 
 	@Composable
 	fun PostButton() {
+		val __translation = stringResource(if (scheduledDateTimeIsSet) Res.string.submit_scheduled_post else Res.string.post_verb)
 		FilledTonalIconButton(
 			onClick = { coroutineScope.launch { sendPost() } },
-			enabled = canSubmit
+			enabled = canSubmit,
+			modifier = Modifier.semantics { contentDescription =  __translation }
 		) {
 			if (isSending) {
 				LoadingIndicator(
@@ -374,11 +388,7 @@ fun ComposeView(
 	Scaffold(
 		topBar = {
 			TopAppBar(
-				navigationIcon = {
-					IconButton(onClick = { navHandler.popBackStack() }) {
-						Icon(painterResource(Res.drawable.icon_close_24px), null)
-					}
-				},
+				navigationIcon = { NavigationBackButton(close = true) },
 				title = {
 					if (inReplyToId != null) Text(stringResource(Res.string.reply))
 					else if (editingId != null) Text(stringResource(Res.string.edit))
@@ -391,9 +401,15 @@ fun ComposeView(
 							horizontalArrangement = Arrangement.spacedBy(5.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
+							val __translation_remaining_characters = translation(
+								Res.string.x_remaining_characters,
+								mapOf("number" to AnnotatedString("${remainingChars}"))
+							).text
+
 							Text(
 								"$remainingChars",
-								color = MaterialTheme.colorScheme.onSurfaceVariant
+								color = MaterialTheme.colorScheme.onSurfaceVariant,
+								modifier = Modifier.semantics { contentDescription = __translation_remaining_characters }
 							)
 						}
 					} else {
@@ -419,51 +435,60 @@ fun ComposeView(
 					) {
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24), null) },
-							text = { Text("Add photo or video") },
+							text = { Text(stringResource(Res.string.add_photo_or_video)) },
 							shape = MenuDefaults.leadingItemShape,
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
 						)
 						DropdownMenuItem(
 							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
-							text = { Text("Add file") },
+							text = { Text(stringResource(Res.string.add_file)) },
 							shape = MenuDefaults.trailingItemShape,
 							onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
 						)
 					}
 
+					val addAttachmentDescription = stringResource(Res.string.add_attachment)
+
 					IconButton(
 						onClick = { showAddAttachmentMenu = !showAddAttachmentMenu; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = "Add attachment" }
+						modifier = Modifier.semantics { contentDescription = addAttachmentDescription }
 					) {
 						Icon(painterResource(Res.drawable.icon_add_24px), null)
 					}
 
+					val addEmojiDescription = stringResource(Res.string.add_emoji)
+
 					IconButton(
 						onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = "Add emoji" }
+						modifier = Modifier.semantics { contentDescription = addEmojiDescription }
 					) {
 						Icon(painterResource(Res.drawable.icon_mood_24px), null)
 					}
+
+					val __translate_showContentWarningFieldDescription = stringResource(Res.string.content_warning_field_show)
+					val __translate_hideContentWarningFieldDescription = stringResource(Res.string.content_warning_field_hide)
+					val __translation_schedulePost = stringResource(Res.string.schedule_post)
 
 					// todo: translate contentDescription
 					if (showCwField) {
 						IconButton(
 							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Show content warning field" }
+							modifier = Modifier.semantics { contentDescription = __translate_showContentWarningFieldDescription }
 						) {
 							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
 						}
 					} else {
 						IconButton(
 							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = "Hide content warning field" }
+							modifier = Modifier.semantics { contentDescription = __translate_hideContentWarningFieldDescription }
 						) {
 							Icon(painterResource(Res.drawable.icon_warning_24px), null)
 						}
 					}
 
 					IconButton(
-						onClick = { showDatePicker = true }
+						onClick = { showDatePicker = true },
+						modifier = Modifier.semantics { contentDescription = __translation_schedulePost }
 					) {
 						if (!scheduledDateTimeIsSet) {
 							Icon(painterResource(Res.drawable.icon_access_time_24px), null)
@@ -535,11 +560,13 @@ fun ComposeView(
 							horizontalArrangement = Arrangement.End
 						) {
 							Row {
+								val __translation_visibility_picker = stringResource(Res.string.visibility_picker)
 								TextButton(
 									onClick = {
 										visibilityDropdownOpen = !visibilityDropdownOpen
 									},
-									enabled = visibilityEnabled
+									enabled = visibilityEnabled,
+									modifier = Modifier.semantics { contentDescription = __translation_visibility_picker }
 								) {
 									Visibility(visibility, true, localOnly)
 								}

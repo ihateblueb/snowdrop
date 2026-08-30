@@ -34,6 +34,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
@@ -49,11 +50,11 @@ import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.always_show_compose_button
 import snowdrop.shared.generated.resources.appearance
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_drag_indicator_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
+import snowdrop.shared.generated.resources.reorder
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
@@ -65,11 +66,7 @@ fun AppearanceSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.appearance))
 		}
@@ -237,7 +234,10 @@ fun AppearanceSettingsView() = ViewSurface {
 										),
 										onClick = {},
 									) {
-										Icon(painterResource(Res.drawable.icon_drag_indicator_24px), contentDescription = "Reorder")
+										Icon(
+											painterResource(Res.drawable.icon_drag_indicator_24px),
+											contentDescription = stringResource(Res.string.reorder)
+										)
 									}
 								}
 							}
