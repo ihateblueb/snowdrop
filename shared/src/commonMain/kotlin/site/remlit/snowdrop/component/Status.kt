@@ -788,7 +788,7 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
-								contentColor = BoostColor
+								contentColor = BoostColor()
 							) else null,
 							enabled = (isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted" || realStatus.visibility == "local"
 						) {
@@ -796,7 +796,7 @@ fun Status(
 								if (realStatus.reblogged) Icon(
 									painterResource(Res.drawable.icon_repeat_inner_fill_24px),
 									null,
-									tint = BoostColor
+									tint = BoostColor()
 								) else Icon(
 									painterResource(Res.drawable.icon_repeat_24px),
 									null
@@ -829,13 +829,13 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
-								contentColor = LikeColor
+								contentColor = LikeColor()
 							) else null
 						) {
 							if (realStatus.favourited) Icon(
 								painterResource(Res.drawable.icon_star_filled_24px),
 								null,
-								tint = LikeColor
+								tint = LikeColor()
 							) else Icon(
 								painterResource(Res.drawable.icon_star_24px),
 								null
