@@ -57,6 +57,8 @@
 	<string name="reply">Reply</string>
 	<string name="compose">Compose</string>
 
+	<string name="visibility">Visibility</string>
+
 	<string name="visibility_public">Public</string>
 	<string name="visibility_public_description">Visible to anyone, shows on global timeline</string>
 	<string name="visibility_unlisted">Unlisted</string>
