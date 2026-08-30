@@ -3,6 +3,7 @@ package site.remlit.snowdrop.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -55,9 +56,13 @@ import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.ascendant_post
+import snowdrop.shared.generated.resources.close_all_content_warnings
+import snowdrop.shared.generated.resources.descendant_post
 import snowdrop.shared.generated.resources.icon_visibility_24px
 import snowdrop.shared.generated.resources.icon_visibility_off_24px
+import snowdrop.shared.generated.resources.main_thread_post
+import snowdrop.shared.generated.resources.open_all_content_warnings
 import snowdrop.shared.generated.resources.post
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.reply_to_x
@@ -121,11 +126,17 @@ fun ThreadView(id: String) = ViewSurface {
 			}
 		},
 		actions = {
-			IconButton(onClick = {
-				forcedContentWarning = !forcedContentWarning
-				statusStateController.defaultCwValue = forcedContentWarning
-				statusStateController.setAllCw(forcedContentWarning)
-			}) {
+			val __translation = stringResource(if (!forcedContentWarning) Res.string.open_all_content_warnings else
+				Res.string.close_all_content_warnings)
+
+			IconButton(
+				onClick = {
+					forcedContentWarning = !forcedContentWarning
+					statusStateController.defaultCwValue = forcedContentWarning
+					statusStateController.setAllCw(forcedContentWarning)
+				},
+				modifier = Modifier.semantics { contentDescription = __translation }
+			) {
 				if (!forcedContentWarning) Icon(painterResource(Res.drawable.icon_visibility_24px), null)
 				else Icon(painterResource(Res.drawable.icon_visibility_off_24px), null)
 			}
@@ -143,26 +154,37 @@ fun ThreadView(id: String) = ViewSurface {
 		}
 	} else {
 		Column(modifier = Modifier.fillMaxSize()) {
+			val __translation_ascendant_post = stringResource(Res.string.ascendant_post)
+			val __translation_main_thread_post = stringResource(Res.string.main_thread_post)
+			val __translation_descendant_post = stringResource(Res.string.descendant_post)
+
 			LazyColumn(
 				state = listState,
 				modifier = Modifier.weight(1f)
 			) {
+				// todo: this labelling might be bad long term
 				items(
 					items = ancestors,
-					key = { it.id }
+					key = { it.id },
 				) { item ->
-					StatusComponent(item, {  })
+					Box(modifier = Modifier.semantics { contentDescription = __translation_ascendant_post }) {
+						StatusComponent(item, {  })
+					}
 				}
 
 				item(key = status!!.id) {
-					StatusComponent(status!!, {  })
+					Box(modifier = Modifier.semantics { contentDescription = __translation_main_thread_post }) {
+						StatusComponent(status!!, {  })
+					}
 				}
 
 				items(
 					items = descendants,
 					key = { it.id }
 				) { item ->
-					StatusComponent(item, {  })
+					Box(modifier = Modifier.semantics { contentDescription = __translation_descendant_post }) {
+						StatusComponent(item, {  })
+					}
 				}
 			}
 			Column(
