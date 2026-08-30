@@ -90,6 +90,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.DraftsView
 import site.remlit.snowdrop.api.media.uploadMedia
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
@@ -120,10 +121,12 @@ import snowdrop.shared.generated.resources.alt_text
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning
 import snowdrop.shared.generated.resources.describe_important_elements_of_your_media
+import snowdrop.shared.generated.resources.drafts
 import snowdrop.shared.generated.resources.edit
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_attach_file_24px
 import snowdrop.shared.generated.resources.icon_close_24px
+import snowdrop.shared.generated.resources.icon_draft_24px
 import snowdrop.shared.generated.resources.icon_image_24
 import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_notes_24px
@@ -351,6 +354,14 @@ fun ComposeView(
 					else Text(stringResource(Res.string.compose))
 				},
 				actions = {
+					val __translation_drafts = stringResource(Res.string.drafts)
+					IconButton(
+						onClick = { navHandler.navigate(DraftsView) },
+						modifier = Modifier.semantics { contentDescription = __translation_drafts }
+					) {
+						Icon(painterResource(Res.drawable.icon_draft_24px), null)
+					}
+
 					if (swapPostButtonAndCharLimit) {
 						Row(
 							modifier = Modifier.padding(end = 10.dp),
