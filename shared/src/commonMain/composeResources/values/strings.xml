@@ -320,4 +320,5 @@
 	<string name="search">Search</string>
 
 	<string name="instance_favicon">Instance favicon</string>
+	<string name="append_re_on_reply_content_warnings">Append RE: on reply content warnings</string>
 </resources>

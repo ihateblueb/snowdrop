@@ -195,6 +195,9 @@ fun Status(
 	LaunchedEffect(Unit) { firstCompositionDone = true }
 
 	/* Preferences */
+	val appendReOnReplies by settings.getBooleanFlow("append_re_on_replies", true)
+		.collectAsStateWithLifecycle(true)
+
 	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
 		.collectAsStateWithLifecycle(false)
 
@@ -743,7 +746,10 @@ fun Status(
 							navHandler.navigate(
 								ComposeRoute(
 									inReplyToId = realStatus.id,
-									cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
+									cw = if (!realStatus.spoilerText.isNullOrBlank()) {
+											if (appendReOnReplies && realStatus.spoilerText?.lowercase()?.startsWith("re: ") == false)
+												"RE: ${realStatus.spoilerText}" else "${realStatus.spoilerText}"
+									} else "",
 									// what a block
 									content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
 										realStatus.mentions.filter { it.id != currentAccount?.id }
