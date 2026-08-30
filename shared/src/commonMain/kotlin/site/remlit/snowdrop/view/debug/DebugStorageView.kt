@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.cache.blockingCache
@@ -50,11 +51,7 @@ fun DebugStorageView(
 	}
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			when (storage) {
 				0 -> Text(stringResource(Res.string.storage))

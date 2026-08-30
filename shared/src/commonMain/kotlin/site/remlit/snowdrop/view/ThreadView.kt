@@ -43,6 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
 import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalStatusStateController
@@ -101,11 +102,7 @@ fun ThreadView(id: String) = ViewSurface {
 	}
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			if (status == null) Column {
 				Text(stringResource(Res.string.post))

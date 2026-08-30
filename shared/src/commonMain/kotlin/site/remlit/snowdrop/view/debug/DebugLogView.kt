@@ -28,6 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.log.Level
 import site.remlit.snowdrop.util.LocalNavController
@@ -44,11 +45,7 @@ fun DebugLogView() = ViewSurface {
 	val clipboardManager = LocalClipboardManager.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.logs))
 		},

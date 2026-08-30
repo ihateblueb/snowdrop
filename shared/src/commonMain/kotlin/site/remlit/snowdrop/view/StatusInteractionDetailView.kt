@@ -36,6 +36,7 @@ import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
 import site.remlit.snowdrop.api.statuses.getStatusReactions
 import site.remlit.snowdrop.api.statuses.getStatusRebloggedBy
 import site.remlit.snowdrop.component.AccountRow
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
@@ -68,11 +69,7 @@ fun StatusInteractionDetailView(
 	var loaded by remember { mutableStateOf(false) }
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			when (type) {
 				InteractionViewType.Boost -> Text(stringResource(Res.string.boosted_by))

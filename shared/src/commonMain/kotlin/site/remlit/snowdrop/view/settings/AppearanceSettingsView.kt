@@ -34,6 +34,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
@@ -66,11 +67,7 @@ fun AppearanceSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.appearance))
 		}
