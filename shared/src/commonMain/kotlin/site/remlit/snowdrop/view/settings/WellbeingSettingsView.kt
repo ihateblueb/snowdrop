@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
@@ -33,7 +32,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.hide_follow_counters
 import snowdrop.shared.generated.resources.hide_interaction_counters
 import snowdrop.shared.generated.resources.hide_unread_notifications_badge
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.wellbeing
 
 @OptIn(ExperimentalSettingsApi::class)

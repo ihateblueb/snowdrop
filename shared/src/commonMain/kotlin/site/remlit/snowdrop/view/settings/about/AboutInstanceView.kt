@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
@@ -34,7 +33,6 @@ import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.instance_favicon
 import snowdrop.shared.generated.resources.rules
 

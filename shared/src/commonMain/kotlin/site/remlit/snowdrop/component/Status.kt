@@ -126,8 +126,7 @@ import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
-import snowdrop.shared.generated.resources.icon_flag_24px
-import snowdrop.shared.generated.resources.icon_image_24
+import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_keep_off_24px
 import snowdrop.shared.generated.resources.icon_link_24px
@@ -135,13 +134,14 @@ import snowdrop.shared.generated.resources.icon_lock_24px
 import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_outlined_flag_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_inner_fill_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_24px
-import snowdrop.shared.generated.resources.icon_star_filled_24px
+import snowdrop.shared.generated.resources.icon_star_border_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
@@ -652,7 +652,7 @@ fun Status(
 									}
 
 									if (realStatus.mediaAttachments.isNotEmpty()) {
-										Icon(painterResource(Res.drawable.icon_image_24), null)
+										Icon(painterResource(Res.drawable.icon_image_24px), null)
 									}
 								}
 							}
@@ -839,11 +839,11 @@ fun Status(
 							) else null
 						) {
 							if (realStatus.favourited) Icon(
-								painterResource(Res.drawable.icon_star_filled_24px),
+								painterResource(Res.drawable.icon_star_24px),
 								null,
 								tint = LikeColor()
 							) else Icon(
-								painterResource(Res.drawable.icon_star_24px),
+								painterResource(Res.drawable.icon_star_border_24px),
 								null
 							)
 
@@ -973,7 +973,7 @@ fun Status(
 								DropdownMenuItem(
 									text = { Text(stringResource(Res.string.show_likes)) },
 									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_star_24px), null)
+										Icon(painterResource(Res.drawable.icon_star_border_24px), null)
 									},
 									shape = MenuDefaults.middleItemShape,
 									onClick = {
@@ -1021,7 +1021,7 @@ fun Status(
 								DangerDropdownItem(
 									text = { Text(stringResource(Res.string.report)) },
 									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_flag_24px), null)
+										Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
 									},
 									shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
 									onClick = { }

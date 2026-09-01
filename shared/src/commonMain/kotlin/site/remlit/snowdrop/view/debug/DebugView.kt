@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,7 +31,6 @@ import snowdrop.shared.generated.resources.clear_accounts
 import snowdrop.shared.generated.resources.clear_cache
 import snowdrop.shared.generated.resources.clear_settings
 import snowdrop.shared.generated.resources.debug
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_refresh_24px
 import snowdrop.shared.generated.resources.logs
