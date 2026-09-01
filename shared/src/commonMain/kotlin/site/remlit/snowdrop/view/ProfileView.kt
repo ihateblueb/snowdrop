@@ -112,7 +112,6 @@ import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_keep_24px

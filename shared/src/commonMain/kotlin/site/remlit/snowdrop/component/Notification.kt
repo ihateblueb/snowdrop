@@ -59,7 +59,7 @@ import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_mood_24px
-import snowdrop.shared.generated.resources.icon_notifications_active_24
+import snowdrop.shared.generated.resources.icon_notifications_active_24px
 import snowdrop.shared.generated.resources.icon_person_add_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_poll_24px
@@ -183,7 +183,7 @@ fun Notification(
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"status" -> Icon(
-							painterResource(Res.drawable.icon_notifications_active_24), null,
+							painterResource(Res.drawable.icon_notifications_active_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"bite" -> Icon(

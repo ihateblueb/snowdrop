@@ -146,7 +146,7 @@ import snowdrop.shared.generated.resources.icon_access_time_filled_24px
 import snowdrop.shared.generated.resources.icon_add_24px
 import snowdrop.shared.generated.resources.icon_attach_file_24px
 import snowdrop.shared.generated.resources.icon_close_24px
-import snowdrop.shared.generated.resources.icon_image_24
+import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_notes_24px
 import snowdrop.shared.generated.resources.icon_send_24px
@@ -434,7 +434,7 @@ fun ComposeView(
 						onDismissRequest = { showAddAttachmentMenu = false }
 					) {
 						DropdownMenuItem(
-							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24), null) },
+							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24px), null) },
 							text = { Text(stringResource(Res.string.add_photo_or_video)) },
 							shape = MenuDefaults.leadingItemShape,
 							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }

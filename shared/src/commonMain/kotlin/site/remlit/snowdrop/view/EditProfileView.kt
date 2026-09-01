@@ -43,7 +43,6 @@ import snowdrop.shared.generated.resources.discoverable
 import snowdrop.shared.generated.resources.discoverable_description
 import snowdrop.shared.generated.resources.display_name
 import snowdrop.shared.generated.resources.editing_profile
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.locked_account
 import snowdrop.shared.generated.resources.locked_account_description
 import snowdrop.shared.generated.resources.save
