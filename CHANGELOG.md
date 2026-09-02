@@ -9,6 +9,9 @@
 - Ability to select alt text and post text in the thread view
 - Loading indicator to images
 - Ability to schedule posts
+- Proper scroll-to-top and saved timeline/notifications state (if you want the old behavior you can long press)
+- Switched to Material Rounded icons
+- Setting to disable adding "RE:" to CWs
 
 ### Fixed
 - Connecting to LAN addresses on newer Android versions
@@ -31,6 +34,8 @@
 - Links are now colored according to your theme
 - Settings options now look a lot better and can be toggled by tapping their container
 - Improved wide/tablet screen layout
+- Better handling of "RE:" on posts that already have it
+- More content descriptions around the app for better accessibility
 
 ## [0.0.7-alpha]
 
