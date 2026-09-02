@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -16,11 +17,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +38,8 @@ import site.remlit.snowdrop.component.Notification
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Marker
+import site.remlit.snowdrop.model.Notification
+import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.checkForUnreadNotifications
@@ -62,7 +67,10 @@ import snowdrop.shared.generated.resources.reactions
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun NotificationsView() = ViewSurface {
+fun NotificationsView(
+	notificationsListState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
+	notifications: SnapshotStateList<Notification> = remember { mutableStateListOf() }
+) = ViewSurface {
 	val coroutineScope = rememberCoroutineScope()
 	val snackbarController = LocalSnackbarController.current
 	val hapticFeedback = LocalHapticFeedback.current
@@ -267,6 +275,9 @@ fun NotificationsView() = ViewSurface {
 				item,
 				onAction = { coroutineScope.launch { readNotifications() } }
 			)
-		}, // todo: onUpdate
+		},
+		listState = notificationsListState,
+		timeline = notifications
+		// todo: onUpdate
 	)
 }

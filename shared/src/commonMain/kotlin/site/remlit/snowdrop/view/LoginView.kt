@@ -187,7 +187,7 @@ fun LoginView() = ViewSurface {
 		}
 
 		navController.popBackStack()
-		navController.navigate(TimelineRoute)
+		navController.navigate(TimelineRoute())
 	}
 
 	if (!oauthCallbackCode.isNullOrBlank())

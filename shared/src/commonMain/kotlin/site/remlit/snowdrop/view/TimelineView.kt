@@ -20,11 +20,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -51,7 +54,10 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.dropdown.MenuDivider
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.model.viewModel.TimelineViewModel
+import site.remlit.snowdrop.model.viewModel.timelineViewModelFactory
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
@@ -93,7 +99,10 @@ import snowdrop.shared.generated.resources.unlock
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
-fun TimelineView() = ViewSurface {
+fun TimelineView(
+	timelineListState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
+	timelinePosts: SnapshotStateList<Status> = remember { mutableStateListOf() }
+) = ViewSurface {
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
@@ -102,8 +111,6 @@ fun TimelineView() = ViewSurface {
 		val snackbarController = LocalSnackbarController.current
 		val haptics = LocalHapticFeedback.current
 		val coroutineScope = rememberCoroutineScope()
-
-		val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 
 		var refreshKey by rememberSaveable { mutableStateOf(0) }
 
@@ -363,7 +370,7 @@ fun TimelineView() = ViewSurface {
 				indication = null,
 				onClick = {
 					coroutineScope.launch {
-						listState.animateScrollToItem(0)
+						timelineListState.animateScrollToItem(0)
 					}
 				}
 			),
@@ -401,7 +408,8 @@ fun TimelineView() = ViewSurface {
 			timelineComponent = { item, onUpdate -> Status(item, onUpdate, lockable = true) },
 			refreshKey = refreshKey,
 			countTowardsScrollingUpward = true,
-			listState = listState
+			listState = timelineListState,
+			timeline = timelinePosts
 		)
 	}
 }
