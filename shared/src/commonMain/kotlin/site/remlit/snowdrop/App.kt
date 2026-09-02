@@ -35,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -48,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -87,7 +87,6 @@ import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getScreenWidth
-import site.remlit.snowdrop.util.getScreenWidthDp
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
@@ -209,6 +208,8 @@ fun App() = safe {
 	val currentDest = navBackStackEntry?.destination
 
 	val snackbarHostState = remember { SnackbarHostState() }
+	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
+	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
@@ -411,6 +412,7 @@ fun App() = safe {
 				) {
 					if (showAccountSwitcher) {
 						ModalBottomSheet(
+							sheetState = accountSwitcherSheetState,
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
 							var reordering by remember { mutableStateOf(false) }
