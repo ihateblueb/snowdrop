@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.SettingsRoute
@@ -98,6 +101,9 @@ fun TimelineView() = ViewSurface {
 		val navHandler = LocalNavController.current
 		val snackbarController = LocalSnackbarController.current
 		val haptics = LocalHapticFeedback.current
+		val coroutineScope = rememberCoroutineScope()
+
+		val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 
 		var refreshKey by rememberSaveable { mutableStateOf(0) }
 
@@ -351,7 +357,16 @@ fun TimelineView() = ViewSurface {
 				) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
-			}
+			},
+			modifier = Modifier.clickable(
+				interactionSource = MutableInteractionSource(),
+				indication = null,
+				onClick = {
+					coroutineScope.launch {
+						listState.animateScrollToItem(0)
+					}
+				}
+			),
 		)
 		//</editor-fold>
 
@@ -385,7 +400,8 @@ fun TimelineView() = ViewSurface {
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
 			timelineComponent = { item, onUpdate -> Status(item, onUpdate, lockable = true) },
 			refreshKey = refreshKey,
-			countTowardsScrollingUpward = true
+			countTowardsScrollingUpward = true,
+			listState = listState
 		)
 	}
 }

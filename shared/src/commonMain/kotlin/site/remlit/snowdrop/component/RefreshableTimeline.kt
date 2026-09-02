@@ -100,6 +100,8 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 			factory = timelineViewModelFactory<T>()
 		),
 
+	listState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
+
 	fetchMethod: suspend (
 			maxId: String?,
 			minId: String?,
@@ -148,7 +150,6 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isFetchingMore = false
 	}
 
-	val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 	listState.also {
 		it.ScrollEndCallback {
 			if (!isFetchingMore && !isRefreshing) coroutineScope.launch { addToTimeline() }
