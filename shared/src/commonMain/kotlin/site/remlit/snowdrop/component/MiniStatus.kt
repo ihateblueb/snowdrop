@@ -46,7 +46,8 @@ import snowdrop.shared.generated.resources.x_attachments
 @Composable
 fun MiniStatus(
 	status: Status,
-	showContentEvenIfCw: Boolean = false
+	showContentEvenIfCw: Boolean = false,
+	history: Boolean = false
 ) {
 	val navHandler = LocalNavController.current
 
@@ -73,16 +74,17 @@ fun MiniStatus(
 					modifier = Modifier.weight(1f)
 				)
 
-				Row(
-					horizontalArrangement = Arrangement.spacedBy(5.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Text(
-						"${status.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
-						fontSize = 13.sp
-					)
-					Visibility(status.visibility!!)
-				}
+				if (!history)
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Text(
+							"${status.getCreatedAtTimestamp()?.toRelativeString(short = true)}",
+							fontSize = 13.sp
+						)
+						Visibility(status.visibility!!)
+					}
 			}
 
 			@Composable
