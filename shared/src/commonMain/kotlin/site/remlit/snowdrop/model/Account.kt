@@ -45,7 +45,7 @@ data class Account(
 
 	val fields: List<Field> = emptyList(),
 	val source: Source? = null,
-	val emojis: List<Emoji>,
+	val emojis: List<Emoji> = emptyList(),
 
 	@SerialName("attribution_domains")
 	val attributionDomains: List<String> = emptyList(),
@@ -61,7 +61,11 @@ data class Account(
 
 	var pleroma: Pleroma? = null,
 ) : IdentifiableObject<String> {
-	fun displayName(): String = displayName?.ifBlank { null } ?: username
+	fun displayName(): String = displayName
+		// api sends displayName unescaped and this can cause problems if names contain > or <
+		?.replace("<", "&lt;")
+		?.replace(">", "&gt;")
+		?.ifBlank { null } ?: username
 
 	@Serializable
 	data class Field(

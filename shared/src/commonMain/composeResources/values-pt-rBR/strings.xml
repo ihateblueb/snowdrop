@@ -168,8 +168,8 @@
     </plurals>
     <plurals name="x_hour_simple">
         <item quantity="one">{time}h</item>
-        <item quantity="many">{time}hrs</item>
-        <item quantity="other">{time}hrs</item>
+        <item quantity="many">{time}h</item>
+        <item quantity="other">{time}h</item>
     </plurals>
     <plurals name="x_hour">
         <item quantity="one">{time} hora</item>
@@ -278,4 +278,7 @@
     <string name="show_send_post_at_bottom_of_composer">Mostrar botão de enviar postagem abaixo do compositor</string>
     <string name="replies">Respostas</string>
     <string name="copy_oauth_link">Copiar link de autenticação</string>
+    <string name="visibility_local">Local</string>
+    <string name="visibility_local_description">Visível apenas para usuários na sua instância</string>
+    <string name="visibility_local_label">(apenas local)</string>
 </resources>

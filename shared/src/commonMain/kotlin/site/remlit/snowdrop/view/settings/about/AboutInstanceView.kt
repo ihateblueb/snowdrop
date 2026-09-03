@@ -25,15 +25,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about_instance
-import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.instance_favicon
 import snowdrop.shared.generated.resources.rules
 
 @Composable
@@ -43,11 +43,7 @@ fun AboutInstanceView() = ViewSurface {
 	val instance by remember { fetchInstance() }.collectAsStateWithLifecycle(null)
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.about_instance))
 		}
@@ -69,7 +65,7 @@ fun AboutInstanceView() = ViewSurface {
 					) {
 						KamelImage(
 							resource = { asyncPainterResource("https://${getCurrentAccountHost()}/favicon.ico") },
-							contentDescription = "Instance favicon",
+							contentDescription = stringResource(Res.string.instance_favicon),
 							contentScale = ContentScale.Fit,
 							modifier = Modifier.height(48.dp)
 								.width(48.dp),

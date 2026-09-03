@@ -6,6 +6,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
@@ -13,7 +14,7 @@ import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
 suspend fun getHomeTimeline(
-	limit: Int = 30,
+	limit: Int = blockingSettings.getInt("posts_per_page", 30),
 
 	maxId: String? = null,
 	sinceId: String? = null,

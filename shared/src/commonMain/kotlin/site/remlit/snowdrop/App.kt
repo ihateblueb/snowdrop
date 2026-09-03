@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
@@ -28,21 +30,28 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -63,6 +72,8 @@ import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.model.NavigationBarOption
+import site.remlit.snowdrop.model.Notification
+import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -81,6 +92,7 @@ import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
+import site.remlit.snowdrop.util.getScreenWidth
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.navigationBarInteractionSource
@@ -115,9 +127,9 @@ object StartRoute
 @Serializable
 object LoginRoute
 @Serializable
-object TimelineRoute
+data class TimelineRoute(val forceReload: Boolean = false)
 @Serializable
-object NotificationsRoute
+data class NotificationsRoute(val forceReload: Boolean = false)
 @Serializable
 data class ExploreRoute(val immediateFocus: Boolean)
 @Serializable
@@ -181,11 +193,17 @@ val bottomNavEnterAnimation = fadeIn() + slideInVertically(initialOffsetY = { it
 val bottomNavExitAnimation = slideOutVertically(targetOffsetY = { it }) + fadeOut()
 
 
+var wide = false
+
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
 	setupAppSettings()
 	setupCache()
+
+	val localDensity = LocalDensity.current
+	// as per material recommendations: https://m3.material.io/foundations/layout/breakpoints/overview
+	wide = with(localDensity) { getScreenWidth().toDp() >= 840.dp }
 
 	/*
 	* Variables & Handlers for Whole App Stuff
@@ -198,6 +216,16 @@ fun App() = safe {
 	val currentDest = navBackStackEntry?.destination
 
 	val snackbarHostState = remember { SnackbarHostState() }
+	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
+	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+	// i know that having these *here* seems extremely weird but this is what you're supposed to do. compose is weird
+	val timelineListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+	val timelinePosts: SnapshotStateList<Status> = remember { mutableStateListOf() }
+
+	val notificationsListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+	val notifications: SnapshotStateList<Notification> = remember { mutableStateListOf() }
+
 
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
@@ -271,69 +299,128 @@ fun App() = safe {
 	// app really starts here
 	AppTheme {
 		Provided {
+			val navigationBarOrder by remember { getNavigationBarOrder() }
+				.collectAsStateWithLifecycle(defaultNavigationBarOrder)
+			val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
+				.collectAsStateWithLifecycle(true)
+			val hideUnreadNotificationsBadge by remember { settings.getBooleanFlow("hide_unread_notifications_badge", false) }
+				.collectAsStateWithLifecycle(false)
 
-			Scaffold(
-				bottomBar = {
-					AnimatedVisibility(
-						visible = (loggedIn == true && !shouldHideBottomBar),
-						enter = bottomNavEnterAnimation,
-						exit = bottomNavExitAnimation,
-					) {
-						NavigationBar {
-							val navigationBarOrder by remember { getNavigationBarOrder() }
-								.collectAsStateWithLifecycle(defaultNavigationBarOrder)
-							val showNavigationBarLabels by remember { settings.getBooleanFlow("show_navigation_bar_labels", true) }
-								.collectAsStateWithLifecycle(true)
-							val hideUnreadNotificationsBadge by remember { settings.getBooleanFlow("hide_unread_notifications_badge", false) }
-								.collectAsStateWithLifecycle(false)
 
-							key(navigationBarOrder) {
-								navigationBarOrder.mapToNavigationOptions()
-									.forEach { item ->
-										NavigationBarItem(
-											selected = atRoute(item.toRouteClass(), currentDest),
-											onClick = { /* unimportant due to interaction source */ },
-											interactionSource = navigationBarInteractionSource(item),
-											icon = {
-												if (item == NavigationBarOption.Notifications &&
-													showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+			@Composable
+			fun fab() {
+				FloatingActionButton(
+					onClick = { navController.navigate(ComposeRoute()) }
+				) {
+					if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
+					else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
+				}
+			}
 
-													BadgedBox(badge = { Badge() }) {
-														NavigationBarIcon(item)
-													}
-												else NavigationBarIcon(item)
-											},
-											label = {
-												if (showNavigationBarLabels)
-													Text(
-														NavigationBarLabel(item),
-														overflow = TextOverflow.Ellipsis,
-														maxLines = 1
-													)
+
+			@Composable
+			fun bottomBar() {
+				AnimatedVisibility(
+					visible = (loggedIn == true && !shouldHideBottomBar),
+					enter = bottomNavEnterAnimation,
+					exit = bottomNavExitAnimation,
+				) {
+					NavigationBar {
+						key(navigationBarOrder) {
+							navigationBarOrder.mapToNavigationOptions()
+								.forEach { item ->
+									NavigationBarItem(
+										selected = atRoute(item.toRouteClass(), currentDest),
+										onClick = { /* unimportant due to interaction source */ },
+										interactionSource = navigationBarInteractionSource(item, timelineListState, notificationsListState),
+										icon = {
+											if (item == NavigationBarOption.Notifications &&
+												showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+
+												BadgedBox(badge = { Badge() }) {
+													NavigationBarIcon(item)
+												}
+											else NavigationBarIcon(item)
+										},
+										label = {
+											if (showNavigationBarLabels)
+												Text(
+													NavigationBarLabel(item),
+													overflow = TextOverflow.Ellipsis,
+													maxLines = 1
+												)
+										}
+									)
+								}
+						}
+					}
+				}
+			}
+
+			@Composable
+			fun sideBar() {
+				NavigationRail(
+					header = { fab() }
+				) {
+					key(navigationBarOrder) {
+						navigationBarOrder.mapToNavigationOptions()
+							.forEach { item ->
+								NavigationRailItem(
+									selected = atRoute(item.toRouteClass(), currentDest),
+									onClick = { /* unimportant due to interaction source */ },
+									interactionSource = navigationBarInteractionSource(item, timelineListState, notificationsListState),
+									icon = {
+										if (item == NavigationBarOption.Notifications &&
+											showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
+
+											BadgedBox(badge = { Badge() }) {
+												NavigationBarIcon(item)
 											}
-										)
+										else NavigationBarIcon(item)
+									},
+									alwaysShowLabel = showNavigationBarLabels,
+									label = {
+										if (showNavigationBarLabels)
+											Text(
+												NavigationBarLabel(item),
+												overflow = TextOverflow.Ellipsis,
+												maxLines = 1
+											)
 									}
+								)
 							}
-						}
 					}
-				},
-				floatingActionButton = {
-					AnimatedVisibility(
-						visible = shouldShowComposeFab,
-						enter = bottomNavEnterAnimation,
-						exit = bottomNavExitAnimation,
-					) {
-						FloatingActionButton(
-							onClick = { navController.navigate(ComposeRoute()) }
-						) {
-							if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
-							else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
-						}
+				}
+			}
+
+
+			@Composable
+			fun CustomScaffold(
+				content: @Composable (paddingValues: PaddingValues) -> Unit
+			) {
+				if (wide) Scaffold { paddingValues ->
+					Row {
+						if (loggedIn == true)
+							sideBar()
+
+						content(paddingValues)
 					}
-				},
-				floatingActionButtonPosition = FabPosition.End,
-				snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-			) { paddingValues ->
+				} else Scaffold(
+					bottomBar = { if (!wide) bottomBar() },
+					floatingActionButton = {
+						AnimatedVisibility(
+							visible = shouldShowComposeFab,
+							enter = bottomNavEnterAnimation,
+							exit = bottomNavExitAnimation,
+						) { fab() }
+					},
+					floatingActionButtonPosition = FabPosition.End,
+					snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+				) { paddingValues -> content(paddingValues) }
+			}
+
+
+			CustomScaffold { paddingValues ->
 				Box(
 					modifier = Modifier.fillMaxSize()
 						.padding(paddingValues)
@@ -341,6 +428,7 @@ fun App() = safe {
 				) {
 					if (showAccountSwitcher) {
 						ModalBottomSheet(
+							sheetState = accountSwitcherSheetState,
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
 							var reordering by remember { mutableStateOf(false) }
@@ -411,8 +499,16 @@ fun App() = safe {
 						}
 
 						composable<LoginRoute> { LoginView() }
-						composable<TimelineRoute> { TimelineView() }
-						composable<NotificationsRoute> { NotificationsView() }
+						composable<TimelineRoute> {
+							val args = it.toRoute<TimelineRoute>()
+							if (args.forceReload) TimelineView()
+							else TimelineView(timelineListState, timelinePosts)
+						}
+						composable<NotificationsRoute> {
+							val args = it.toRoute<NotificationsRoute>()
+							if (args.forceReload) NotificationsView()
+							else NotificationsView(notificationsListState, notifications)
+						}
 						composable<ExploreRoute> {
 							val args = it.toRoute<ExploreRoute>()
 							ExploreView(args.immediateFocus)

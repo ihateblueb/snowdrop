@@ -7,8 +7,18 @@
 - Ability to react with Unicode emojis (by typing them into the emoji picker's search box)
 - Loading indicator to "Liked by" / "Boosted by" / "Reacted by" pages
 - Ability to select alt text and post text in the thread view
+- Loading indicator to images
+- Ability to schedule posts
+- Proper scroll-to-top and saved timeline/notifications state (if you want the old behavior you can long press)
+- Switched to Material Rounded icons
+- Setting to disable adding "RE:" to CWs
 
 ### Fixed
+- Connecting to LAN addresses on newer Android versions
+  - Android 16 requires permission NEARBY_WIFI_DEVICES
+  - Android 17 requires permission ACCESS_LOCAL_NETWORK
+  - Both have been added to the manifest but are not required to use the app
+  - Whichever permission applies to you can be manually granted in settings (the app won't ask)
 - Notifications marked as read when you accept a follow request/bite back
 - Bite back status shown properly
 - Boost button now filled when boosted
@@ -18,6 +28,14 @@
 - Fixed Brazilian Portuguese and Simplified Chinese not showing up in Android's app-specific language picker
 - Disabled boosting posts with direct visibility
 - Android debug builds now have a unique name, icon, and package id
+- Fixed Unicode reaction notifications on Chuckya having colons
+- Fixed timelines not loading on snac instances because of accounts without the emojis field
+- Emojis are now rendered in CWs
+- Links are now colored according to your theme
+- Settings options now look a lot better and can be toggled by tapping their container
+- Improved wide/tablet screen layout
+- Better handling of "RE:" on posts that already have it
+- More content descriptions around the app for better accessibility
 
 ## [0.0.7-alpha]
 

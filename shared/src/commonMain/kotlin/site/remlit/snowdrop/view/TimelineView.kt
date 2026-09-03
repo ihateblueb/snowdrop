@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -19,19 +20,26 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.SettingsRoute
@@ -46,7 +54,10 @@ import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.dropdown.MenuDivider
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.model.IdentifiableObject
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.model.viewModel.TimelineViewModel
+import site.remlit.snowdrop.model.viewModel.timelineViewModelFactory
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
@@ -79,13 +90,19 @@ import snowdrop.shared.generated.resources.local
 import snowdrop.shared.generated.resources.lock
 import snowdrop.shared.generated.resources.lock_timeline
 import snowdrop.shared.generated.resources.lock_timeline_description
+import snowdrop.shared.generated.resources.more
 import snowdrop.shared.generated.resources.ok
+import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
+import snowdrop.shared.generated.resources.timeline_dropdown_menu
 import snowdrop.shared.generated.resources.unlock
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
-fun TimelineView() = ViewSurface {
+fun TimelineView(
+	timelineListState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
+	timelinePosts: SnapshotStateList<Status> = remember { mutableStateListOf() }
+) = ViewSurface {
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
@@ -93,6 +110,7 @@ fun TimelineView() = ViewSurface {
 		val navHandler = LocalNavController.current
 		val snackbarController = LocalSnackbarController.current
 		val haptics = LocalHapticFeedback.current
+		val coroutineScope = rememberCoroutineScope()
 
 		var refreshKey by rememberSaveable { mutableStateOf(0) }
 
@@ -262,6 +280,28 @@ fun TimelineView() = ViewSurface {
 				}
 			},
 			title = {
+				val __translation_home = stringResource(Res.string.home)
+				val __translation_local = stringResource(Res.string.local)
+				val __translation_bubble = stringResource(Res.string.bubble)
+				val __translation_global = stringResource(Res.string.global)
+				val __translation_bookmarks = stringResource(Res.string.bookmarks)
+				val __translation_list = stringResource(Res.string.list)
+
+				val __translate_timeline_dropdown_menu = stringResource(Res.string.timeline_dropdown_menu)
+
+				val __translation = remember(timelineType) {
+					when (timelineType) {
+						0 -> __translation_home
+						1 -> __translation_local
+						2 -> __translation_bubble
+						3 -> __translation_global
+
+						4 -> __translation_bookmarks
+						5 -> lists?.first { it.id == listId }?.title ?: __translation_list
+						else -> ""
+					}
+				}
+
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(10.dp),
 					verticalAlignment = Alignment.CenterVertically,
@@ -272,17 +312,11 @@ fun TimelineView() = ViewSurface {
 						onClick = {
 							timelinePickerOpen = !timelinePickerOpen
 						}
-					)
-				) {
-					when (timelineType) {
-						0 -> Text(stringResource(Res.string.home))
-						1 -> Text(stringResource(Res.string.local))
-						2 -> Text(stringResource(Res.string.bubble))
-						3 -> Text(stringResource(Res.string.global))
-
-						4 -> Text(stringResource(Res.string.bookmarks))
-						5 -> Text(lists?.first { it.id == listId }?.title ?: stringResource(Res.string.list))
+					).semantics {
+						contentDescription = __translate_timeline_dropdown_menu
 					}
+				) {
+					Text(__translation)
 
 					if (timelinePickerOpen) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
 					else Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
@@ -291,8 +325,14 @@ fun TimelineView() = ViewSurface {
 				}
 			},
 			actions = {
+				val __translation_more = stringResource(Res.string.more)
+				val __translation_settings = stringResource(Res.string.settings)
+
 				var showDropdown by remember { mutableStateOf(false) }
-				IconButton(onClick = { showDropdown = !showDropdown }) {
+				IconButton(
+					onClick = { showDropdown = !showDropdown },
+					modifier = Modifier.semantics { contentDescription = __translation_more }
+				) {
 					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
 				}
 
@@ -318,10 +358,22 @@ fun TimelineView() = ViewSurface {
 				}
 
 				// settings
-				IconButton(onClick = { navHandler.navigate(SettingsRoute) }) {
+				IconButton(
+					onClick = { navHandler.navigate(SettingsRoute) },
+					modifier = Modifier.semantics { contentDescription = __translation_settings }
+				) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
 				}
-			}
+			},
+			modifier = Modifier.clickable(
+				interactionSource = MutableInteractionSource(),
+				indication = null,
+				onClick = {
+					coroutineScope.launch {
+						timelineListState.animateScrollToItem(0)
+					}
+				}
+			),
 		)
 		//</editor-fold>
 
@@ -355,7 +407,9 @@ fun TimelineView() = ViewSurface {
 			fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
 			timelineComponent = { item, onUpdate -> Status(item, onUpdate, lockable = true) },
 			refreshKey = refreshKey,
-			countTowardsScrollingUpward = true
+			countTowardsScrollingUpward = true,
+			listState = timelineListState,
+			timeline = timelinePosts
 		)
 	}
 }

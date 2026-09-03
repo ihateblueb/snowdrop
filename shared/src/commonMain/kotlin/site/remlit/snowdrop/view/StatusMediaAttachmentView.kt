@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.StatusMediaAttachment
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -61,11 +62,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 			.fillMaxSize()
 	) {
 		TopAppBar(
-			navigationIcon = {
-				IconButton(onClick = { navHandler.popBackStack() }) {
-					Icon(painterResource(Res.drawable.icon_close_24px), null)
-				}
-			},
+			navigationIcon = { NavigationBackButton(close = true) },
 			title = {},
 			colors = TopAppBarDefaults.topAppBarColors(
 				containerColor = Color(0x80000000),

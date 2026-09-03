@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getPlatform
 
 @Composable
@@ -43,8 +42,7 @@ fun Reaction(reaction: Status.Reaction, showTooltip: Boolean = true) {
 				TooltipAnchorPosition.Above
 			),
 			tooltip = {
-				if (reaction.name.isUnicodeEmoji()) PlainTooltip { Text(reaction.name) }
-				else PlainTooltip { Text(":${reaction.name}:") }
+				if (reaction.url != null) PlainTooltip { Text(":${reaction.name}:") }
 			},
 			state = rememberTooltipState()
 		) { renderContent() }

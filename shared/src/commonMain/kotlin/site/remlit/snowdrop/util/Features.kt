@@ -18,7 +18,8 @@ enum class Software {
 	Sharkey,
 	IceshrimpJS,
 	IceshrimpNET,
-	Mitra
+	Mitra,
+	GoToSocial
 }
 
 /**
@@ -82,6 +83,9 @@ suspend fun determineFeatures() {
 	if ("""\(compatible; Mitra .*\)""".toRegex().containsMatchIn(version))
 		software = Software.Mitra
 
+	if (v2?.sourceUrl != null && v2.sourceUrl.contains(("superseriousbusiness/gotosocial").toRegex()))
+		software = Software.GoToSocial
+
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
@@ -130,6 +134,14 @@ suspend fun determineFeatures() {
 		software == Software.IceshrimpNET
 	) putFeature("local_visibility", true)
 	else putFeature("local_visibility", false)
+
+	// on some platforms, local-only setting is separate from visibility scope
+	if (
+		software == Software.Glitch ||
+		software == Software.Chuckya ||
+		software == Software.GoToSocial
+	) putFeature("local_only_toggle", true)
+	else putFeature("local_only_toggle", false)
 
 	determiningFeatures = false
 }

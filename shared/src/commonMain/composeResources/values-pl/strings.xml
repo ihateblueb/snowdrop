@@ -297,4 +297,7 @@
     <string name="show_send_post_at_bottom_of_composer">Pokaż przycisk „Wyślij” na dole widoku tworzenia</string>
     <string name="replies">Odpowiedzi</string>
     <string name="copy_oauth_link">Skopiuj link do autoryzacji OAuth</string>
+    <string name="visibility_local">Lokalny</string>
+    <string name="visibility_local_description">Widoczny tylko dla osób na Twojej instancji</string>
+    <string name="visibility_local_label">(tylko lokalnie)</string>
 </resources>

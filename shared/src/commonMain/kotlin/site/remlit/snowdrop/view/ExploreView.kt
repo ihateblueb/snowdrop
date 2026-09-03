@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -39,6 +37,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.search
 import site.remlit.snowdrop.component.AccountRow
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
@@ -46,7 +45,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.accounts
 import snowdrop.shared.generated.resources.explore
-import snowdrop.shared.generated.resources.icon_arrow_back_24
+import snowdrop.shared.generated.resources.icon_arrow_back_24px
 import snowdrop.shared.generated.resources.icon_search_24px
 import snowdrop.shared.generated.resources.nothing_to_see_here
 import snowdrop.shared.generated.resources.posts
@@ -78,9 +77,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 	TopAppBar(
 		navigationIcon = {
 			if (showResults)
-				IconButton(onClick = { showResults = false; textFieldState.clearText() }) {
-					Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-				}
+				NavigationBackButton()
 		},
 		title = {
 			if (!showResults) Text(stringResource(Res.string.explore))

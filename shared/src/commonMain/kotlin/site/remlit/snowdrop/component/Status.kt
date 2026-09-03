@@ -47,6 +47,9 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -99,7 +102,6 @@ import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
-import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.extension.toFormatShort
@@ -124,8 +126,7 @@ import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
-import snowdrop.shared.generated.resources.icon_flag_24px
-import snowdrop.shared.generated.resources.icon_image_24
+import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_keep_off_24px
 import snowdrop.shared.generated.resources.icon_link_24px
@@ -133,13 +134,14 @@ import snowdrop.shared.generated.resources.icon_lock_24px
 import snowdrop.shared.generated.resources.icon_mood_24px
 import snowdrop.shared.generated.resources.icon_more_horiz_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_outlined_flag_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_inner_fill_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_24px
-import snowdrop.shared.generated.resources.icon_star_filled_24px
+import snowdrop.shared.generated.resources.icon_star_border_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.icon_warning_24px
@@ -147,6 +149,7 @@ import snowdrop.shared.generated.resources.mute
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.pinned
+import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
 import snowdrop.shared.generated.resources.report
@@ -196,6 +199,9 @@ fun Status(
 	LaunchedEffect(Unit) { firstCompositionDone = true }
 
 	/* Preferences */
+	val appendReOnReplies by settings.getBooleanFlow("append_re_on_replies", true)
+		.collectAsStateWithLifecycle(true)
+
 	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
 		.collectAsStateWithLifecycle(false)
 
@@ -432,9 +438,11 @@ fun Status(
 					/*
 					* Header
 					*/
+					val __translation_post_by_x = translation(Res.string.post_by_x, mapOf("display_name" to AnnotatedString(realStatus.account!!.displayName()))).text
 					Row(
 						modifier = Modifier.padding(5.dp)
-							.fillMaxWidth(),
+							.fillMaxWidth()
+							.semantics { contentDescription = __translation_post_by_x },
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						// todo: this needs to be clipped since it's casting the clickable effect outside of the avatar boundaries
@@ -442,7 +450,7 @@ fun Status(
 							modifier = Modifier.padding(end = 10.dp)
 								.clickable(onClick = {
 									navHandler.navigate(ProfileRoute(realStatus.account!!.id))
-								})
+								}).semantics { hideFromAccessibility() }
 						) {
 							Avatar(
 								realStatus.account!!,
@@ -631,8 +639,9 @@ fun Status(
 									Icon(painterResource(Res.drawable.icon_warning_24px), null)
 
 									Column(modifier = Modifier.weight(1f)) {
-										Text(
+										HtmlContent(
 											realStatus.spoilerText!!,
+											emojis = realStatus.emojis,
 											fontWeight = FontWeight.Medium
 										)
 										Text(
@@ -643,7 +652,7 @@ fun Status(
 									}
 
 									if (realStatus.mediaAttachments.isNotEmpty()) {
-										Icon(painterResource(Res.drawable.icon_image_24), null)
+										Icon(painterResource(Res.drawable.icon_image_24px), null)
 									}
 								}
 							}
@@ -678,7 +687,7 @@ fun Status(
 											TooltipAnchorPosition.Above
 										),
 										tooltip = {
-											if (!it.name.isUnicodeEmoji()) PlainTooltip { Text(":${it.name}:") }
+											if (it.url != null) PlainTooltip { Text(":${it.name}:") }
 										},
 										state = rememberTooltipState()
 									) {
@@ -743,7 +752,10 @@ fun Status(
 							navHandler.navigate(
 								ComposeRoute(
 									inReplyToId = realStatus.id,
-									cw = if (!realStatus.spoilerText.isNullOrBlank()) "RE: ${realStatus.spoilerText}" else "",
+									cw = if (!realStatus.spoilerText.isNullOrBlank()) {
+											if (appendReOnReplies && realStatus.spoilerText?.lowercase()?.startsWith("re: ") == false)
+												"RE: ${realStatus.spoilerText}" else "${realStatus.spoilerText}"
+									} else "",
 									// what a block
 									content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
 										realStatus.mentions.filter { it.id != currentAccount?.id }
@@ -782,7 +794,7 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
-								contentColor = BoostColor
+								contentColor = BoostColor()
 							) else null,
 							enabled = (isMine && realStatus.visibility != "direct") || realStatus.visibility == "public" || realStatus.visibility == "unlisted" || realStatus.visibility == "local"
 						) {
@@ -790,7 +802,7 @@ fun Status(
 								if (realStatus.reblogged) Icon(
 									painterResource(Res.drawable.icon_repeat_inner_fill_24px),
 									null,
-									tint = BoostColor
+									tint = BoostColor()
 								) else Icon(
 									painterResource(Res.drawable.icon_repeat_24px),
 									null
@@ -823,15 +835,15 @@ fun Status(
 								}
 							},
 							colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
-								contentColor = LikeColor
+								contentColor = LikeColor()
 							) else null
 						) {
 							if (realStatus.favourited) Icon(
-								painterResource(Res.drawable.icon_star_filled_24px),
-								null,
-								tint = LikeColor
-							) else Icon(
 								painterResource(Res.drawable.icon_star_24px),
+								null,
+								tint = LikeColor()
+							) else Icon(
+								painterResource(Res.drawable.icon_star_border_24px),
 								null
 							)
 
@@ -961,7 +973,7 @@ fun Status(
 								DropdownMenuItem(
 									text = { Text(stringResource(Res.string.show_likes)) },
 									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_star_24px), null)
+										Icon(painterResource(Res.drawable.icon_star_border_24px), null)
 									},
 									shape = MenuDefaults.middleItemShape,
 									onClick = {
@@ -1009,7 +1021,7 @@ fun Status(
 								DangerDropdownItem(
 									text = { Text(stringResource(Res.string.report)) },
 									leadingIcon = {
-										Icon(painterResource(Res.drawable.icon_flag_24px), null)
+										Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
 									},
 									shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
 									onClick = { }

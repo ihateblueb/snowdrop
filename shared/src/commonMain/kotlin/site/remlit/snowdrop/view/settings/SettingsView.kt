@@ -20,8 +20,8 @@ import site.remlit.snowdrop.AboutSettingsRoute
 import site.remlit.snowdrop.AppearanceSettingsRoute
 import site.remlit.snowdrop.GeneralSettingsRoute
 import site.remlit.snowdrop.LoginRoute
-import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.WellbeingSettingsRoute
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.SettingsCard
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -32,7 +32,6 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about
 import snowdrop.shared.generated.resources.appearance
 import snowdrop.shared.generated.resources.general
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_favorite_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_logout_24px
@@ -52,11 +51,7 @@ fun SettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.settings))
 		}

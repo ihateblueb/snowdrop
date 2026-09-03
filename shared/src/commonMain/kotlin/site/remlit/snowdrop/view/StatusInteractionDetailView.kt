@@ -1,16 +1,12 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -30,12 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
 import site.remlit.snowdrop.api.statuses.getStatusReactions
 import site.remlit.snowdrop.api.statuses.getStatusRebloggedBy
 import site.remlit.snowdrop.component.AccountRow
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
@@ -46,7 +42,6 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.bgIO
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.boosted_by
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.liked_by
 import snowdrop.shared.generated.resources.nothing_to_see_here
 import snowdrop.shared.generated.resources.reacted_by
@@ -68,11 +63,7 @@ fun StatusInteractionDetailView(
 	var loaded by remember { mutableStateOf(false) }
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			when (type) {
 				InteractionViewType.Boost -> Text(stringResource(Res.string.boosted_by))

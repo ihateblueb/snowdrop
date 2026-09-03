@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -16,6 +15,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugLogRoute
 import site.remlit.snowdrop.DebugStorageRoute
+import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.bg
@@ -31,7 +31,6 @@ import snowdrop.shared.generated.resources.clear_accounts
 import snowdrop.shared.generated.resources.clear_cache
 import snowdrop.shared.generated.resources.clear_settings
 import snowdrop.shared.generated.resources.debug
-import snowdrop.shared.generated.resources.icon_arrow_back_24
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
 import snowdrop.shared.generated.resources.icon_refresh_24px
 import snowdrop.shared.generated.resources.logs
@@ -44,11 +43,7 @@ fun DebugView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
 	TopAppBar(
-		navigationIcon = {
-			IconButton(onClick = { navHandler.popBackStack() }) {
-				Icon(painterResource(Res.drawable.icon_arrow_back_24), null)
-			}
-		},
+		navigationIcon = { NavigationBackButton() },
 		title = {
 			Text(stringResource(Res.string.debug))
 		}
