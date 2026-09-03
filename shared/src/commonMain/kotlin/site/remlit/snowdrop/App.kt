@@ -163,6 +163,8 @@ data class ComposeRoute(
 	val content: String = "",
 	val visibility: String? = null
 )
+@Serializable
+object DraftsView
 
 @Serializable
 object SettingsRoute
@@ -548,6 +550,7 @@ fun App() = safe {
 								args.visibility
 							)
 						}
+						transitionedComposable<DraftsView> { DraftsView() }
 
 						// Settings
 						transitionedComposable<SettingsRoute> { SettingsView() }

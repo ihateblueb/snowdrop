@@ -191,15 +191,15 @@ fun ThreadView(id: String) = ViewSurface {
 				modifier = Modifier.fillMaxWidth()
 					.padding(all = 10.dp)
 			) {
-				val replyToString = translation(
+				val __translation_replyToString = translation(
 					Res.string.reply_to_x,
 					mapOf("handle" to AnnotatedString("@${status!!.account!!.acct}"))
-				)
+				).text
 
 				Row(
 					modifier = Modifier.clip(RoundedCornerShape(100))
 						.background(MaterialTheme.colorScheme.surfaceContainer)
-						.semantics { contentDescription = replyToString.text }
+						.semantics { contentDescription = __translation_replyToString }
 						.clickable {
 							navHandler.navigate(
 								ComposeRoute(
@@ -221,7 +221,7 @@ fun ThreadView(id: String) = ViewSurface {
 					Spacer(Modifier.size(10.dp))
 
 					Text(
-						replyToString,
+						__translation_replyToString,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						maxLines = 1,
 						overflow = TextOverflow.Ellipsis

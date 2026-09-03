@@ -674,7 +674,7 @@ fun Status(
 					*
 					*/
 					if ((getFeature("reactions") && realStatus.reactions.isNotEmpty()) || (getFeature("reactions_pleroma") && realStatus.pleroma?.reactions?.isNotEmpty() == true)) {
-						val cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
+						val __translation_cannotUseRemoteEmojiMessage = stringResource(Res.string.you_cannot_react_with_a_remote_emoji)
 						val reactions = if (getFeature("reactions_pleroma")) realStatus.pleroma!!.reactions else realStatus.reactions
 						LazyRow(
 							contentPadding = PaddingValues(horizontal = 5.dp), //todo: redo all the padding on this entire component
@@ -706,7 +706,7 @@ fun Status(
 
 														updateStatus()
 													} else {
-														snackbarController.showSnackbar(cannotUseRemoteEmojiMessage)
+														snackbarController.showSnackbar(__translation_cannotUseRemoteEmojiMessage)
 													}
 												}
 											},

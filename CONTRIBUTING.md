@@ -64,6 +64,13 @@ Only to be done before a release.
 6. Push: `git push origin master`
 7. Run "Reset all changes in the Weblate repository" on Weblate
 
+## Using translation strings in non-composable lambdas
+
+```kt
+val __translation_drafts = stringResource(Res.string.drafts)
+println(__translation_drafts)
+```
+
 ## Release Checklist
 - [ ] Merge in Weblate changes
 - [ ] Bump version code in [/build.gradle.kts](/build.gradle.kts) and [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts) and commit
