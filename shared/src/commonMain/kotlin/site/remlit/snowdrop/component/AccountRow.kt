@@ -64,7 +64,6 @@ fun AccountRow(
 			HtmlContent(
 				account.displayName(),
 				fontWeight = FontWeight.Medium,
-				simple = true,
 				maxLines = 1,
 				emojis = account.emojis
 			)

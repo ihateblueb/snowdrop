@@ -28,7 +28,7 @@ val defaultEmojiSize = 1.2.em
  * @param mentions List of mentions from the status model
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
- * @param simple If the text should be rendered simply (no styling)
+ * @param simple If the text should be rendered simply (no styling) (warning: do not use on display names!)
  * @param showEmojiTooltips Whether to show emoji tooltips on long-press
  *
  * @param fontWeight Font weight of text

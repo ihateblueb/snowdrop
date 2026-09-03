@@ -50,7 +50,7 @@ import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalStatusStateController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
-import site.remlit.snowdrop.util.annotatedString.mapEmojisToInlineTextContent
+import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -112,11 +112,11 @@ fun ThreadView(id: String) = ViewSurface {
 			if (status == null) Column {
 				Text(stringResource(Res.string.post))
 			} else Column {
-				val mappedEmojis = mapEmojisToInlineTextContent(status!!.account!!.emojis)
+				val (displayName, mappedEmojis) = htmlToAnnotatedString(status!!.account!!.displayName(), emojis = status!!.account!!.emojis)
 				Text(
 					translation(
 						Res.string.post_by_x,
-						mapOf("display_name" to AnnotatedString(status!!.account!!.displayName())
+						mapOf("display_name" to displayName
 							.withEmojis(mappedEmojis))
 					),
 					maxLines = 1,

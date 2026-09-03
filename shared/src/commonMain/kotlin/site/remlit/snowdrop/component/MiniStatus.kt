@@ -68,7 +68,6 @@ fun MiniStatus(
 					status.account.displayName(),
 					emojis = status.account.emojis,
 					fontWeight = FontWeight.Bold,
-					simple = true,
 					maxLines = 1,
 					modifier = Modifier.weight(1f)
 				)

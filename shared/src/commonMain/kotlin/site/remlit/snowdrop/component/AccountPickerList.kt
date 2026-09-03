@@ -116,7 +116,6 @@ fun AccountPickerList(
 						fontWeight = FontWeight.Medium,
 						color = if (getCurrentAccountId() == id) MaterialTheme.colorScheme.onPrimaryContainer
 						else MaterialTheme.colorScheme.onSurface,
-						simple = true,
 						maxLines = 1,
 					)
 					Text(

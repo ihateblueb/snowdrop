@@ -205,8 +205,7 @@ fun ProfileView(id: String) = ViewSurface {
 					HtmlContent(
 						account!!.displayName(),
 						emojis = account!!.emojis,
-						maxLines = 1,
-						simple = true
+						maxLines = 1
 					)
 					Text(
 						translation(
@@ -469,8 +468,7 @@ fun ProfileView(id: String) = ViewSurface {
 											account!!.displayName(),
 											emojis = account!!.emojis,
 											fontWeight = FontWeight.Bold,
-											fontSize = 24.sp,
-											simple = true
+											fontSize = 24.sp
 										)
 
 										if (relationship != null)
