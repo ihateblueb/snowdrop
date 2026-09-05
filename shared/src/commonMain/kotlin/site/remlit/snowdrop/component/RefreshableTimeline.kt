@@ -24,7 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -77,8 +76,6 @@ inline fun LazyListState.ScrollEndCallback(crossinline callback: () -> Unit) {
  * @param modifier Modifier for PullToRefreshBox
  * @param viewModelKey Key for timelineViewModel
  * @param timelineViewModel View model for storing persistent timeline data
- * @param listState List state to use for scrolling to top
- * @param timeline List of posts to initialize the timeline with
  * @param fetchMethod Method following basic pagination requirements
  * @param onRefresh Called upon refresh of the timeline
  * @param timelineComponent Component to use for items in the timeline, must accept T as first parameter
@@ -104,7 +101,6 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		),
 
 	listState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
-	timeline: SnapshotStateList<T> = remember { timelineViewModel.timelineItems },
 
 	fetchMethod: suspend (
 			maxId: String?,
@@ -132,7 +128,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 	// todo: make rememberSaveable
 
-
+	val timeline = remember { timelineViewModel.timelineItems }
 	val refreshState = rememberPullToRefreshState() // this is rememberSaveable
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
 	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
@@ -181,7 +177,6 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 	var initialized by rememberSaveable { mutableStateOf(false) }
 	LaunchedEffect(Unit) {
-		if (timeline.isNotEmpty()) initialized = true
 		if (!initialized) addOrUpdateTimeline(); initialized = true
 	}
 

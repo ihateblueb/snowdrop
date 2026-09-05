@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
@@ -43,12 +42,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -72,8 +68,6 @@ import site.remlit.snowdrop.component.AppTheme
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.model.NavigationBarOption
-import site.remlit.snowdrop.model.Notification
-import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.ExternalUriHandler
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -127,9 +121,9 @@ object StartRoute
 @Serializable
 object LoginRoute
 @Serializable
-data class TimelineRoute(val forceReload: Boolean = false)
+object TimelineRoute
 @Serializable
-data class NotificationsRoute(val forceReload: Boolean = false)
+object NotificationsRoute
 @Serializable
 data class ExploreRoute(val immediateFocus: Boolean)
 @Serializable
@@ -216,14 +210,6 @@ fun App() = safe {
 	val snackbarHostState = remember { SnackbarHostState() }
 	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
 	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-	// i know that having these *here* seems extremely weird but this is what you're supposed to do. compose is weird
-	val timelineListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
-	val timelinePosts: SnapshotStateList<Status> = remember { mutableStateListOf() }
-
-	val notificationsListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
-	val notifications: SnapshotStateList<Notification> = remember { mutableStateListOf() }
-
 
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
@@ -330,7 +316,7 @@ fun App() = safe {
 									NavigationBarItem(
 										selected = atRoute(item.toRouteClass(), currentDest),
 										onClick = { /* unimportant due to interaction source */ },
-										interactionSource = navigationBarInteractionSource(item, timelineListState, notificationsListState),
+										interactionSource = navigationBarInteractionSource(item),
 										icon = {
 											if (item == NavigationBarOption.Notifications &&
 												showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
@@ -366,7 +352,7 @@ fun App() = safe {
 								NavigationRailItem(
 									selected = atRoute(item.toRouteClass(), currentDest),
 									onClick = { /* unimportant due to interaction source */ },
-									interactionSource = navigationBarInteractionSource(item, timelineListState, notificationsListState),
+									interactionSource = navigationBarInteractionSource(item),
 									icon = {
 										if (item == NavigationBarOption.Notifications &&
 											showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
@@ -497,16 +483,8 @@ fun App() = safe {
 						}
 
 						composable<LoginRoute> { LoginView() }
-						composable<TimelineRoute> {
-							val args = it.toRoute<TimelineRoute>()
-							if (args.forceReload) TimelineView()
-							else TimelineView(timelineListState, timelinePosts)
-						}
-						composable<NotificationsRoute> {
-							val args = it.toRoute<NotificationsRoute>()
-							if (args.forceReload) NotificationsView()
-							else NotificationsView(notificationsListState, notifications)
-						}
+						composable<TimelineRoute> { TimelineView() }
+						composable<NotificationsRoute> { NotificationsView() }
 						composable<ExploreRoute> {
 							val args = it.toRoute<ExploreRoute>()
 							ExploreView(args.immediateFocus)

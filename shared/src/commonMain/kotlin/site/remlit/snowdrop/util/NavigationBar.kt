@@ -2,7 +2,6 @@ package site.remlit.snowdrop.util
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -29,11 +28,11 @@ import kotlin.time.Duration.Companion.milliseconds
  * */
 fun navigationBarNavigate(tab: NavigationBarOption, navController: NavController) {
 	when (tab) {
-		NavigationBarOption.Timeline -> navController.navigate(TimelineRoute()) {
-			popUpTo(TimelineRoute()) { inclusive = true }
+		NavigationBarOption.Timeline -> navController.navigate(TimelineRoute) {
+			popUpTo(TimelineRoute) { inclusive = true }
 		}
-		NavigationBarOption.Notifications -> navController.navigate(NotificationsRoute()) {
-			popUpTo(NotificationsRoute()) { inclusive = true }
+		NavigationBarOption.Notifications -> navController.navigate(NotificationsRoute) {
+			popUpTo(NotificationsRoute) { inclusive = true }
 		}
 		NavigationBarOption.Explore -> navController.navigate(ExploreRoute(false)) {
 			popUpTo(ExploreRoute(false)) { inclusive = true }
@@ -54,9 +53,7 @@ fun navigationBarNavigate(tab: NavigationBarOption, navController: NavController
  * */
 @Composable
 fun navigationBarInteractionSource(
-	tab: NavigationBarOption,
-	timelineListState: LazyListState,
-	notificationsListState: LazyListState
+	tab: NavigationBarOption
 ): MutableInteractionSource {
 	val navController = LocalNavController.current
 
@@ -85,47 +82,15 @@ fun navigationBarInteractionSource(
 							haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 							navController.navigate(ExploreRoute(true))
 						}
-						NavigationBarOption.Timeline -> {
-							haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-							navController.navigate(TimelineRoute(true))
-						}
-						NavigationBarOption.Notifications -> {
-							haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-							navController.navigate(NotificationsRoute(true))
-						}
+						else -> {}
 					}
 				}
 
 				is PressInteraction.Release -> {
-					when (tab) {
-						NavigationBarOption.Timeline -> {
-							if (!isLongPress) {
-								vibrateSoft(haptics)
-								if (atRoute<TimelineRoute>(navController.currentDestination)) {
-									timelineListState.animateScrollToItem(0)
-								} else {
-									navigationBarNavigate(tab, navController)
-								}
-							}
-						}
-						NavigationBarOption.Notifications -> {
-							if (!isLongPress) {
-								vibrateSoft(haptics)
-								if (atRoute<NotificationsRoute>(navController.currentDestination)) {
-									notificationsListState.animateScrollToItem(0)
-								} else {
-									navigationBarNavigate(tab, navController)
-								}
-							}
-						}
-						else -> {
-							if (!isLongPress) {
-								vibrateSoft(haptics)
-								navigationBarNavigate(tab, navController)
-							}
-						}
+					if (!isLongPress) {
+						vibrateSoft(haptics)
+						navigationBarNavigate(tab, navController)
 					}
-
 				}
 			}
 		}
