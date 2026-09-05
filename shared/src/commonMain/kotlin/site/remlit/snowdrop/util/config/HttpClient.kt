@@ -13,7 +13,7 @@ import site.remlit.snowdrop.exception.ApiException
 import site.remlit.snowdrop.util.log.debug
 
 val httpClient = HttpClient {
-	val userAgent = "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}-${GradleVariables.gitBranch}"
+	val userAgent = "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}@${GradleVariables.gitBranch}"
 
 	defaultRequest {
 		header("User-Agent", userAgent)
