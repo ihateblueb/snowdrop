@@ -98,7 +98,7 @@ fun MiniStatus(
 						emojis = status.emojis,
 						mentions = status.mentions,
 						maxLines = 3,
-						simple = true
+						simple = !history
 					)
 
 

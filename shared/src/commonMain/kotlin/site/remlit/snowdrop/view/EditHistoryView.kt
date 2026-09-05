@@ -1,7 +1,6 @@
 package site.remlit.snowdrop.view
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.extension.toLocalizedString
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources._current_
 import snowdrop.shared.generated.resources.edit_history
 import kotlin.time.Instant
 
@@ -48,10 +48,15 @@ fun EditHistoryView(id: String) = ViewSurface {
 						Modifier.padding(all = 10.dp),
 						verticalArrangement = Arrangement.spacedBy(10.dp)
 					) {
+						/*
 						Text(
-							Instant.parse(it.createdAt).toLocalizedString(),
+							Instant.parse(it.createdAt).toLocalizedString() +
+								if (it.createdAt == mainStatus?.editedAt)
+									translation(Res.string._current_)
+								else "",
 							color = MaterialTheme.colorScheme.onSurfaceVariant
 						)
+						* */
 
 						MiniStatus(
 							Status(

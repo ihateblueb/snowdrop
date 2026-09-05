@@ -345,4 +345,5 @@
 
 	<string name="edit_history">Edit history</string>
 	<string name="view_edit_history">View edit history</string>
+	<string name="_current_">(current)</string>
 </resources>
