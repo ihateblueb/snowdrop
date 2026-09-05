@@ -142,6 +142,8 @@ data class ProfileRoute(val id: String)
 data class PinnedPostsRoute(val id: String)
 @Serializable
 data class ThreadRoute(val id: String)
+@Serializable
+data class EditHistoryRoute(val id: String)
 /**
  * @param type [InteractionViewType] as a string
  * */
@@ -255,6 +257,7 @@ fun App() = safe {
 
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
 		atRoute<ThreadRoute>(currentDest) ||
+		atRoute<EditHistoryRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
 		atRoute<EditProfileRoute>(currentDest) ||
 		atRoute<AboutSettingsRoute>(currentDest) ||
@@ -520,6 +523,10 @@ fun App() = safe {
 						transitionedComposable<ThreadRoute> {
 							val args = it.toRoute<ThreadRoute>()
 							ThreadView(args.id)
+						}
+						transitionedComposable<EditHistoryRoute> {
+							val args = it.toRoute<EditHistoryRoute>()
+							EditHistoryView(args.id)
 						}
 						transitionedComposable<StatusInteractionDetailRoute> {
 							val args = it.toRoute<StatusInteractionDetailRoute>()

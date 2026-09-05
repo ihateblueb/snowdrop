@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
+import site.remlit.snowdrop.EditHistoryRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.StatusMediaAttachmentRoute
@@ -126,6 +127,7 @@ import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
+import snowdrop.shared.generated.resources.icon_history_24px
 import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_keep_off_24px
@@ -159,6 +161,7 @@ import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
 import snowdrop.shared.generated.resources.unpin
+import snowdrop.shared.generated.resources.view_edit_history
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
 import kotlin.math.ceil
@@ -872,6 +875,21 @@ fun Status(
 								expanded = showDropdown,
 								onDismissRequest = { showDropdown = false }
 							) {
+								if (status.editedAt != null) {
+									DropdownMenuItem(
+										text = { Text(stringResource(Res.string.view_edit_history)) },
+										leadingIcon = {
+											Icon(
+												painterResource(Res.drawable.icon_history_24px),
+												null
+											)
+										},
+										shape = MenuDefaults.leadingItemShape,
+										onClick = { navHandler.navigate(EditHistoryRoute(realStatus.id)) }
+									)
+									MenuDivider()
+								}
+
 								if (status.url != null) {
 									DropdownMenuItem(
 										text = { Text(stringResource(Res.string.copy_link)) },

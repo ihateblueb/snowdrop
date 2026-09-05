@@ -342,4 +342,8 @@
 	<string name="close">Close</string>
 	<string name="back">Back</string>
 	<string name="more">More</string>
+
+	<string name="edit_history">Edit history</string>
+	<string name="view_edit_history">View edit history</string>
+	<string name="_current_">(current)</string>
 </resources>
