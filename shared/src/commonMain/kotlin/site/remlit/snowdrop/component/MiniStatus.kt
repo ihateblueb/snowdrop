@@ -12,6 +12,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,13 +30,17 @@ import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.LocalStatusStateController
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._1_poll
 import snowdrop.shared.generated.resources._1_quoted_post
+import snowdrop.shared.generated.resources.filtered_by_x
 import snowdrop.shared.generated.resources.icon_attachment_20px
+import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_warning_20px
+import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.x_attachments
 
 /**
@@ -46,9 +54,28 @@ import snowdrop.shared.generated.resources.x_attachments
 @Composable
 fun MiniStatus(
 	status: Status,
-	showContentEvenIfCw: Boolean = false
+	showContentEvenIfCw: Boolean = false,
+	filterContext: String? = null
 ) {
 	val navHandler = LocalNavController.current
+	val statusStateController = LocalStatusStateController.current
+	val applicableFilters = status.filtered?.filter {
+		filterContext != null && it.filter.context.contains(filterContext)
+	}.orEmpty()
+	val filterStateKey = "${filterContext ?: "none"}:${status.id}"
+	val isHiddenFilter = applicableFilters.any { it.filter.filterAction == "hide" }
+	var isFilterVisible by remember(filterStateKey, applicableFilters) {
+		mutableStateOf(
+			applicableFilters.isEmpty() || statusStateController.filtered.getOrElse(filterStateKey) {
+				statusStateController.defaultFilteredValue
+			}
+		)
+	}
+
+	if (!statusStateController.filtered.containsKey(filterStateKey))
+		statusStateController.filtered[filterStateKey] = statusStateController.defaultFilteredValue
+
+	if (isHiddenFilter) return
 
 	Column(
 		modifier = Modifier.fillMaxWidth()
@@ -58,7 +85,29 @@ fun MiniStatus(
 				navHandler.navigate(ThreadRoute(status.id))
 			})
 	) {
-		Column(modifier = Modifier.padding(10.dp)) {
+		if (!isFilterVisible) {
+			Row(
+				modifier = Modifier
+					.fillMaxWidth()
+					.clickable { isFilterVisible = true; statusStateController.filtered[filterStateKey] = true }
+					.padding(10.dp),
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				Icon(painterResource(Res.drawable.icon_filter_alt_24px), null)
+				Column {
+					Text(
+						translation(
+							Res.string.filtered_by_x,
+							mapOf("filters" to AnnotatedString(
+								applicableFilters.joinToString { it.filter.title.orEmpty() }
+							))
+						)
+					)
+					Text(translation(Res.string.show_content), fontSize = 13.sp)
+				}
+			}
+		} else Column(modifier = Modifier.padding(10.dp)) {
 			Row(
 				horizontalArrangement = Arrangement.spacedBy(5.dp),
 				verticalAlignment = Alignment.CenterVertically

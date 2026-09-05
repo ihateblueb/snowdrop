@@ -178,7 +178,8 @@ fun Status(
 	onUpdate: (Status?) -> Unit,
 	lockable: Boolean = false,
 	pinned: Boolean = false,
-	showDivider: Boolean = true
+	showDivider: Boolean = true,
+	filterContext: String? = null
 ) {
 	val navHandler = LocalNavController.current
 	val currentDest = navHandler.currentDestination
@@ -190,49 +191,40 @@ fun Status(
 	val cwState = statusStateController.cw
 	val filteredState = statusStateController.filtered
 
-	// this exists so we can make sure other LaunchedEffects don't run until their key changes
-	var firstCompositionDone by remember { mutableStateOf(false) }
-	LaunchedEffect(Unit) { firstCompositionDone = true }
 
 	/* View variables */
 	val currentAccount by remember { getCurrentAccountObjectFlow() }.collectAsStateWithLifecycle(null)
 
 	var status by remember { mutableStateOf(status) }
-	var realStatus by remember { mutableStateOf(status) }
-	var isReblog by remember { mutableStateOf(false) }
-	var rebloggingAccount by remember { mutableStateOf<Account?>(null) }
+	val realStatus = status.reblog ?: status
+	val isReblog = status.reblog != null
+	val rebloggingAccount = status.account
 	var isMine by remember { mutableStateOf(false) }
 	// todo: or is admin? figure out how to do that
 
 	val replyingToAccount by remember { fetchAccountOrNull(realStatus.inReplyToAccountId, snackbarController) }
 		.collectAsStateWithLifecycle(null)
 
-	val filtered = realStatus.filtered != null && realStatus.filtered!!.isNotEmpty()
-	var isVisible by remember {
+	val applicableFilters = realStatus.filtered?.filter {
+			filterContext != null && it.filter.context.contains(filterContext)
+		}.orEmpty()
+	val filtered = applicableFilters.isNotEmpty()
+	val filterStateKey = "${filterContext ?: "none"}:${realStatus.id}"
+	var isVisible by remember(filterStateKey, filtered) {
 		mutableStateOf(
-			!filtered || filteredState.getOrElse(realStatus.id) { true }
+			!filtered || filteredState.getOrElse(filterStateKey) {
+				statusStateController.defaultFilteredValue
+			}
 		)
 	}
-	val isHiddenFilter = filtered && realStatus.filtered!!.any { it.filter.filterAction == "hide" }
+	val isHiddenFilter = filtered && applicableFilters.any { it.filter.filterAction == "hide" }
 
-	LaunchedEffect(filteredState[realStatus.id]) {
-		if (filtered) isVisible = filteredState.getOrElse(realStatus.id) {
+	LaunchedEffect(filteredState[filterStateKey], filterStateKey) {
+		if (filtered) isVisible = filteredState.getOrElse(filterStateKey) {
 			statusStateController.defaultFilteredValue
 		}
 	}
 
-	fun prepStatus() {
-		if (status.reblog != null) {
-			realStatus = status.reblog!!
-			isReblog = true
-			rebloggingAccount = status.account
-		} else {
-			realStatus = status
-		}
-	}
-
-	prepStatus()
-	LaunchedEffect(status) { if (firstCompositionDone) prepStatus() }
 
 	if (realStatus.account?.id == currentAccount?.id)
 		isMine = true
@@ -240,8 +232,8 @@ fun Status(
 	if (!cwState.containsKey(realStatus.id))
 		cwState[realStatus.id] = statusStateController.defaultCwValue
 
-	if (!filteredState.containsKey(realStatus.id))
-		filteredState[realStatus.id] = statusStateController.defaultFilteredValue
+	if (!filteredState.containsKey(filterStateKey))
+		filteredState[filterStateKey] = statusStateController.defaultFilteredValue
 
 	suspend fun updateStatus(delete: Boolean = false) {
 		if (delete) {
@@ -280,7 +272,7 @@ fun Status(
 		if (!isVisible && filtered && !isHiddenFilter) {
 			Column(
 				modifier = Modifier.fillMaxWidth()
-					.clickable { filteredState[realStatus.id] = true }
+					.clickable { filteredState[filterStateKey] = true }
 			) {
 				Row(
 					modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
@@ -295,7 +287,7 @@ fun Status(
 							translation(
 								Res.string.filtered_by_x,
 								mapOf("filters" to AnnotatedString(
-									realStatus.filtered!!.joinToString { "${it.filter.title}" }
+									applicableFilters.joinToString { "${it.filter.title}" }
 								))
 							)
 						)
