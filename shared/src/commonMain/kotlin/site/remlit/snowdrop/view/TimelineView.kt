@@ -61,6 +61,7 @@ import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.vibrate
+import site.remlit.snowdrop.util.waitUntil
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.bookmarks
 import snowdrop.shared.generated.resources.bubble
@@ -172,8 +173,7 @@ fun TimelineView() = ViewSurface {
 			vibrate(true, haptics)
 			timelinePickerOpen = false
 
-			// i feel like there's a more kotlin way to do this but i don't give a fuck rn lol
-			while (timelineType != timeline) delay(5.milliseconds)
+			waitUntil({ timelineType != timeline }, 5.milliseconds)
 			refreshKey++
 		}
 
@@ -183,7 +183,7 @@ fun TimelineView() = ViewSurface {
 			timelinePickerOpen = false
 			listPickerOpen = false
 
-			while (timelineListId != listId) delay(5.milliseconds)
+			waitUntil({ timelineListId != listId }, 5.milliseconds)
 			refreshKey++
 		}
 
