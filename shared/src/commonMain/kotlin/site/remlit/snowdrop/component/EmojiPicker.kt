@@ -47,10 +47,12 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.bottomNavEnterAnimation
 import site.remlit.snowdrop.bottomNavExitAnimation
 import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchEmojis
 import site.remlit.snowdrop.util.extension.isUnicodeEmoji
 import site.remlit.snowdrop.util.getCurrentAccountId
+import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
@@ -143,7 +145,9 @@ fun EmojiPicker(
 		) {
 			val focusManager = LocalFocusManager.current
 
-			if (sheetState.currentValue == SheetValue.PartiallyExpanded)
+			// on android at least, this will cause the keyboard to close shortly after the picker loads
+			// harper doesn't want the keyboard to have a button to close it so this is the solution for now. idk if this is an issue on ios
+			if (sheetState.currentValue == SheetValue.PartiallyExpanded && getPlatform() == Platform.IOS)
 				focusManager.clearFocus()
 
 			Column(

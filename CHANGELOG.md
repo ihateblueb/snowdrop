@@ -9,7 +9,7 @@
 - Ability to select alt text and post text in the thread view
 - Loading indicator to images
 - Ability to schedule posts
-- Proper scroll-to-top and saved timeline/notifications state (if you want the old behavior you can long press)
+- Scroll-to-top when tapping the header on timeline view
 - Switched to Material Rounded icons
 - Setting to disable adding "RE:" to CWs
 
@@ -36,6 +36,7 @@
 - Improved wide/tablet screen layout
 - Better handling of "RE:" on posts that already have it
 - More content descriptions around the app for better accessibility
+- Fixed keyboard closing shortly after opening emoji picker on Android
 
 ## [0.0.7-alpha]
 
