@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,6 +54,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchLists
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
@@ -90,6 +91,7 @@ import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.this_popup_wont_appear_again
 import snowdrop.shared.generated.resources.timeline_dropdown_menu
 import snowdrop.shared.generated.resources.unlock
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalSettingsApi::class)
 @Composable
@@ -116,12 +118,14 @@ fun TimelineView() = ViewSurface {
 			.collectAsStateWithLifecycle(null)
 
 		// 0 - home, 1 - local, 2 - bubble, 3 - global, 4 - bookmarks, 5 - list
-		val timelineType by settings.getIntFlow("timeline", 0)
-			.distinctUntilChanged()
-			.collectAsStateWithLifecycle(0)
-		val listId by settings.getStringFlow("timeline_list_id", "")
-			.distinctUntilChanged()
-			.collectAsStateWithLifecycle("")
+		val initialTimelineType = blockingSettings.getInt("timeline", 0)
+		val timelineType by settings.getIntFlow("timeline", initialTimelineType)
+			.collectAsStateWithLifecycle(initialTimelineType)
+
+		val initialTimelineListId = blockingSettings.getString("timeline_list_id", "")
+		val timelineListId by settings.getStringFlow("timeline_list_id", initialTimelineListId)
+			.collectAsStateWithLifecycle(initialTimelineListId)
+
 
 		var timelinePickerOpen by remember { mutableStateOf(false) }
 		var listPickerOpen by remember { mutableStateOf(false) }
@@ -140,7 +144,7 @@ fun TimelineView() = ViewSurface {
 				3 -> getPublicTimeline(maxId = maxId, minId = minId, sinceId = sinceId, remote = true)
 
 				4 -> getBookmarks(maxId = maxId, minId = minId, sinceId = sinceId)
-				5 -> getListTimeline(list = listId, maxId = maxId, minId = minId, sinceId = sinceId)
+				5 -> getListTimeline(list = timelineListId, maxId = maxId, minId = minId, sinceId = sinceId)
 
 				else -> throw IllegalArgumentException("Invalid timeline type $timelineType")
 			}
@@ -163,12 +167,26 @@ fun TimelineView() = ViewSurface {
 		//</editor-fold>
 
 		//<editor-fold name="Timeline selection dropdown">
-		fun changeTimeline(timeline: Int) {
+		fun changeTimeline(timeline: Int) = coroutineScope.launch {
 			blockingSettings.putInt("timeline", timeline)
 			vibrate(true, haptics)
 			timelinePickerOpen = false
+
+			// i feel like there's a more kotlin way to do this but i don't give a fuck rn lol
+			while (timelineType != timeline) delay(5.milliseconds)
 			refreshKey++
 		}
+
+		fun changeList(listId: String) = coroutineScope.launch {
+			blockingSettings.putString("timeline_list_id", listId)
+			vibrate(true, haptics)
+			timelinePickerOpen = false
+			listPickerOpen = false
+
+			while (timelineListId != listId) delay(5.milliseconds)
+			refreshKey++
+		}
+
 
 		@Composable
 		fun RenderTimelineSelectionDropdown() {
@@ -240,11 +258,8 @@ fun TimelineView() = ViewSurface {
 						lists?.forEachIndexed { index, list ->
 							DropdownMenuItem(
 								onClick = {
-									blockingSettings.putString("timeline_list_id", list.id)
-									blockingSettings.putInt("timeline", 5)
-									vibrate(true, haptics)
-									listPickerOpen = false
-									timelinePickerOpen = false
+									changeTimeline(5)
+									changeList(list.id)
 								},
 								shape = lists.getPreparedDropdownMenuItemShape(index),
 								text = { Text(list.title) }
@@ -282,7 +297,7 @@ fun TimelineView() = ViewSurface {
 
 				val __translate_timeline_dropdown_menu = stringResource(Res.string.timeline_dropdown_menu)
 
-				val __translation = remember(timelineType) {
+				val __translation = remember(timelineType, timelineListId, lists) {
 					when (timelineType) {
 						0 -> __translation_home
 						1 -> __translation_local
@@ -290,10 +305,11 @@ fun TimelineView() = ViewSurface {
 						3 -> __translation_global
 
 						4 -> __translation_bookmarks
-						5 -> lists?.first { it.id == listId }?.title ?: __translation_list
+						5 -> lists?.first { it.id == timelineListId }?.title ?: __translation_list
 						else -> ""
 					}
 				}
+
 
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(10.dp),
