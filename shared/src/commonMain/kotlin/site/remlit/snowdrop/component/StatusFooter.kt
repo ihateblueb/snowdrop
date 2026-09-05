@@ -294,7 +294,7 @@ fun StatusFooter(
 						shape = MenuDefaults.leadingItemShape,
 						onClick = {
 							coroutineScope.launch {
-								clipboardManager.setText(AnnotatedString(realStatus.url!!))
+								clipboardManager.setText(AnnotatedString(realStatus.url))
 								vibrateSoft(haptics)
 								showDropdown = false
 							}
@@ -308,7 +308,7 @@ fun StatusFooter(
 						},
 						shape = MenuDefaults.middleItemShape,
 						onClick = {
-							uriHandler.openUri(realStatus.url!!)
+							uriHandler.openUri(realStatus.url)
 							showDropdown = false
 						}
 					)
