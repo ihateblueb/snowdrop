@@ -218,7 +218,7 @@ fun ComposeView(
 	var canSubmit by remember { mutableStateOf(false) }
 
 	var visibilityDropdownOpen by remember { mutableStateOf(false) }
-	var showCwField by remember { mutableStateOf(false) }
+	var showCwField by remember { mutableStateOf(initialCw.isNotBlank()) }
 	var showEmojiPicker by remember { mutableStateOf(false) }
 	var showAddAttachmentMenu by remember { mutableStateOf(false) }
 	var showDatePicker by remember { mutableStateOf(false) }
@@ -232,8 +232,6 @@ fun ComposeView(
 	var scheduledTimeMinute by remember { mutableStateOf(-1) }
 	var scheduledDateTimeIsSet by remember { mutableStateOf(false) }
 	var scheduledDateTimeParsed by remember { mutableStateOf("") }
-
-	if (initialCw.isNotBlank()) showCwField = true
 
 	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
 	var visibilityEnabled by remember { mutableStateOf(true) }

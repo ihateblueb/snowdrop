@@ -37,6 +37,7 @@
 - Better handling of "RE:" on posts that already have it
 - More content descriptions around the app for better accessibility
 - Fixed keyboard closing shortly after opening emoji picker on Android
+- Fixed being unable to close the CW field in the composer when replying to a post
 
 ## [0.0.7-alpha]
 
