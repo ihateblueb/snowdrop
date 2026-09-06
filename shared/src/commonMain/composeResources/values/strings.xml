@@ -316,6 +316,10 @@
 	<string name="filtered_by_x">Filtered by {filters}</string>
 
 	<string name="replying_to_x">Replying to {handle}</string>
+	<plurals name="replying_to_x_and_x_other">
+		<item quantity="one">Replying to {handle} and {number} other</item>
+		<item quantity="other">Replying to {handle} and {number} others</item>
+	</plurals>
 	<string name="replying_to_self">Replying to self</string>
 	<string name="reply_to_x">Reply to {handle}</string>
 
