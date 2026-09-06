@@ -64,6 +64,7 @@ import snowdrop.shared.generated.resources.icon_person_add_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_poll_24px
 import snowdrop.shared.generated.resources.icon_star_24px
+import snowdrop.shared.generated.resources.icon_star_border_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.reject
 import snowdrop.shared.generated.resources.x_accepted_your_follow_request
@@ -163,7 +164,7 @@ fun Notification(
 				) {
 					when (notification.type) {
 						"favourite" -> Icon(
-							painterResource(Res.drawable.icon_star_24px), null,
+							painterResource(Res.drawable.icon_star_border_24px), null,
 							tint = MaterialTheme.colorScheme.primary
 						)
 						"pleroma:emoji_reaction", "reaction" -> Icon(
