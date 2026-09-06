@@ -88,6 +88,7 @@ import snowdrop.shared.generated.resources.hide_content
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
+import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
@@ -95,6 +96,7 @@ import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
+import snowdrop.shared.generated.resources.replying_to_x_and_x_other
 import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
@@ -439,6 +441,22 @@ fun Status(
 												translation(Res.string.replying_to_self),
 												fontSize = 13.sp
 											)
+										} else if (realStatus.mentions.size > 1) {
+											val others = realStatus.mentions.size - 1
+											Text(
+												translation(
+													Res.plurals.replying_to_x_and_x_other,
+													quantity = others,
+													mapOf(
+														"handle" to if (replyingToAccount != null)
+															AnnotatedString("@${replyingToAccount!!.acct}")
+																.withAccountLink(replyingToAccount!!)
+															else AnnotatedString("..."),
+														"number" to AnnotatedString("$others")
+													)
+												),
+												fontSize = 13.sp
+											)
 										} else {
 											Text(
 												translation(
@@ -447,7 +465,7 @@ fun Status(
 														"handle" to if (replyingToAccount != null)
 															AnnotatedString("@${replyingToAccount!!.acct}")
 																.withAccountLink(replyingToAccount!!)
-														else AnnotatedString("...")
+															else AnnotatedString("...")
 													)
 												),
 												fontSize = 13.sp
@@ -462,6 +480,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
+												filterOutMentionLinks = true,
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -471,6 +490,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
+											filterOutMentionLinks = true,
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)
