@@ -18,8 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -76,6 +78,7 @@ import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.extension.toRelativeString
@@ -92,6 +95,7 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.open_mentioned_accounts_sheet
 import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
@@ -111,7 +115,7 @@ import kotlin.time.Duration.Companion.seconds
  * @since 0.0.1-alpha
  * */
 @Composable
-@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class, ExperimentalMaterial3Api::class)
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
@@ -432,7 +436,12 @@ fun Status(
 							) {
 								// todo: on click, open bottom sheet with a list of accounts
 								if (realStatus.inReplyToId != null) {
+									var showMentionedBottomSheet by remember { mutableStateOf(false) }
+
+									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
 									Row(
+										modifier = Modifier.clickable { showMentionedBottomSheet = !showMentionedBottomSheet }
+											.semantics { contentDescription = __translation_open_sheet },
 										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
 									) {
 										Icon(painterResource(Res.drawable.icon_reply_20px), null)
@@ -473,6 +482,16 @@ fun Status(
 											)
 										}
 									}
+
+									if (showMentionedBottomSheet)
+										ModalBottomSheet(onDismissRequest = { showMentionedBottomSheet = false }) {
+											realStatus.mentions.forEach {
+												val account by remember { fetchAccount(it.id, snackbarController) }
+													.collectAsStateWithLifecycle(null)
+
+												if (account != null) AccountRow(account = account!!)
+											}
+										}
 								}
 
 								if (!realStatus.content.isNullOrBlank()) {

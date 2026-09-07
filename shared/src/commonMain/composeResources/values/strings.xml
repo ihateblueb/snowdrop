@@ -346,4 +346,6 @@
 	<string name="close">Close</string>
 	<string name="back">Back</string>
 	<string name="more">More</string>
+
+	<string name="open_mentioned_accounts_sheet">Open mentioned accounts sheet</string>
 </resources>
