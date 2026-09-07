@@ -84,8 +84,8 @@ import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_inner_fill_24px
 import snowdrop.shared.generated.resources.icon_reply_24px
 import snowdrop.shared.generated.resources.icon_reply_all_24px
+import snowdrop.shared.generated.resources.icon_star_filled_24px
 import snowdrop.shared.generated.resources.icon_star_24px
-import snowdrop.shared.generated.resources.icon_star_border_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.mute
@@ -252,11 +252,11 @@ fun StatusFooter(
 			) else null
 		) {
 			if (realStatus.favourited) Icon(
-				painterResource(Res.drawable.icon_star_24px),
+				painterResource(Res.drawable.icon_star_filled_24px),
 				null,
 				tint = LikeColor()
 			) else Icon(
-				painterResource(Res.drawable.icon_star_border_24px),
+				painterResource(Res.drawable.icon_star_24px),
 				null
 			)
 
@@ -386,7 +386,7 @@ fun StatusFooter(
 				DropdownMenuItem(
 					text = { Text(stringResource(Res.string.show_likes)) },
 					leadingIcon = {
-						Icon(painterResource(Res.drawable.icon_star_border_24px), null)
+						Icon(painterResource(Res.drawable.icon_star_24px), null)
 					},
 					shape = MenuDefaults.middleItemShape,
 					onClick = {
