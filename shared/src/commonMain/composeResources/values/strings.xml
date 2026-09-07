@@ -353,4 +353,6 @@
 	<string name="you_are_posting_publicly">You are posting publicly</string>
 	<string name="anyone_will_be_able_to_see_this_post">Anyone, even people who you don't follow or mention, will be able to see this post.</string>
 	<string name="dont_show_again">Don't show again</string>
+
+	<string name="open_mentioned_accounts_sheet">Open mentioned accounts sheet</string>
 </resources>
