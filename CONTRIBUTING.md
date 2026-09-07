@@ -1,7 +1,11 @@
 # Contributing
 
+## AI contributions
+In no way are AI generated pull requests, issues, or code welcome in this codebase. You will have your issue or pull
+request closed, and we will ignore you if you break this rule.
+
 ## IDEs and IDE Extensions
-Essentially only IntelliJ IDEA will be enough to fully work with Snowdrop. You can use the free or paid edition, both
+IntelliJ IDEA or Android Studio will work to develop for Snowdrop. You can use the free or paid edition, both
 work very similarly. IntelliJ will suggest extensions to install, it's usually good at getting that right so you should
 listen to it. To make certain large files less daunting, we sometimes use `//<editor-fold name="">`, so having those
 enabled and using them is very reccomended.
@@ -11,16 +15,13 @@ If you introduce a component or util method, please add KDoc comments! They're e
 the same as Javadoc. `@since` is optional because it isn't critical, but `@param` is required
 if any parameters are required.
 
-## AI contributions
-In no way are AI generated pull requests, issues, or code welcome in this codebase. You will have your issue or pull
-request closed, and we will ignore you if you break this rule.
-
 ## What API should I use as a reference?
 Always up-to-date Iceshrimp.NET with all non-essential values nullable. Most Iceshrimp.NET instances will have an API
 reference at `/swagger`. If you don't know any, you can use https://next.iceshrimp.dev/.
 
 ## Adding icons
-We use Material Icons, which you can find here: https://fonts.google.com/icons. Icons can be two sizes: 20px or 24px.
+We use Material Rounded Icons, which you can find here: https://fonts.google.com/icons
+Make sure you pick "Material Symbols (new)" and the "Rounded" style. Icons can be either 20px or 24px (most likely you want 24px.)
 To add an icon, click on it, swap the tab to "Android" in the opened sidebar, and download the XML.
 Prefix that file with `icon_`, then drop it in `shared/commonMain/composeResources/drawable`.
 Change the color from `@android/*` to `#000000`, otherwise the app will instantly crash.
@@ -64,10 +65,39 @@ Only to be done before a release.
 6. Push: `git push origin master`
 7. Run "Reset all changes in the Weblate repository" on Weblate
 
+# Building & Making Releases
+
+## Building a Release APK for Android
+1. Open your IDE (either IDEA or Android Studio)
+2. From the menu bar, select `Build -> Generate Signed App Bundle or APK...`
+3. When asked whether to build an AAB or APK, pick APK
+4. Select or create your signing keys if necessary, it's a one-time setup
+5. Pick the Release build variant, hit Create, and the build will start
+6. The built APK will be at `androidApp/release/androidApp-release.apk`
+
+## Building for iOS and Uploading to App Store Connect
+1. Ensure the team ID and build/marketing version are correct in `iosApp/Configuration/Config.xcconfig`
+   1. When making new builds between releases just bump the build version, otherwise both build and marketing
+   2. New marketing versions require the app to be re-reviewed by Apple which can take a good few hours, new builds don't though as long as the marketing version isn't updated
+2. Open Xcode (I use 26.3 on OSX Sequoia) and the iosApp Xcode project
+3. To build, select `Product -> Archive` from the menu bar
+4. To monitor the build status, click the icon in the top left area (but below the play/pause buttons) that looks like a clipboard (it should be the rightmost one)
+5. Once it's built, open the Organizer by selecting `Window -> Organizer` from the menu bar
+6. Pick the correct build, click Distribute App, and pick the default App Store Connect option before clicking Distribute to upload
+
 ## Release Checklist
 - [ ] Merge in Weblate changes
-- [ ] Bump version code in [/build.gradle.kts](/build.gradle.kts) and [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts) and commit
-- [ ] Checkout the latest commit as detached HEAD
-- [ ] Build -> Generate Signed App Bundle or APK...
-- [ ] Rename built APK to `snowdrop-release-versionhere.apk`
-- [ ] Create GitHub release with APK
+- [ ] Bump version code in:
+  - [ ] [/build.gradle.kts](/build.gradle.kts)
+  - [ ] [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts)
+  - [ ] [/iosApp/Configuration/Config.xcconfig](/iosApp/Configuration/Config.xcconfig)
+  - [ ] ...and commit
+- [ ] Check out the latest commit as detached HEAD
+- [ ] Build for Android
+  - [ ] Rename built APK to `snowdrop-release-versionhere.apk`
+  - [ ] Add to GH release
+- [ ] Build for iOS and upload to ASC
+  - [ ] Write a list of new things of note since the last build for TestFlight
+  - [ ] Also include current commit hash
+- [ ] Write GH release notes and a fedi post if we want to make one
+- [ ] Publish the release
