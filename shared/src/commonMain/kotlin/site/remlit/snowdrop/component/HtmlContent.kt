@@ -1,6 +1,5 @@
 package site.remlit.snowdrop.component
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,7 +44,6 @@ fun HtmlContent(
 	modifier: Modifier = Modifier,
 
 	mentions: List<Status.Mention> = emptyList(),
-	filterOutMentionLinks: Boolean = false,
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
@@ -59,7 +57,6 @@ fun HtmlContent(
 	val (annotatedString, mappedEmojis) = htmlToAnnotatedString(
 		string,
 		mentions,
-		filterOutMentionLinks,
 		emojis,
 		emojiSize,
 		simple,
