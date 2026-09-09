@@ -14,6 +14,7 @@
 - Setting to disable adding "RE:" to CWs
 - Improved reply indicator, hide mentions, bottom sheet to view mentions
 - Warning when posting publicly if setting enabled
+- Long pressing version number copies it
 
 ### Fixed
 - Connecting to LAN addresses on newer Android versions
@@ -27,7 +28,7 @@
 - Use proper backstack (i.e. fix being able to go back to login and other buggy-looking behavior)
 - Fixed error shown on snackbar when not logged in
 - Fixed emojis not being detected properly via regex
-- Fixed Brazillian Portuguese and Simplified Chinese not showing up in Android's app-specific language picker
+- Fixed Brazilian Portuguese and Simplified Chinese not showing up in Android's app-specific language picker
 - Disabled boosting posts with direct visibility
 - Android debug builds now have a unique name, icon, and package id
 - Fixed Unicode reaction notifications on Chuckya having colons
@@ -40,6 +41,8 @@
 - More content descriptions around the app for better accessibility
 - Fixed keyboard closing shortly after opening emoji picker on Android
 - Fixed being unable to close the CW field in the composer when replying to a post
+- Filter recently used in emoji picker when searching
+- Fix star icon
 
 ## [0.0.7-alpha]
 
