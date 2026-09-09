@@ -110,7 +110,11 @@ fun EmojiPicker(
 		recentlyUsedShortcodes.split(" ").forEach { r ->
 			emojis.firstOrNull { it.shortcode == r }?.let { recentlyUsed.add(it) }
 		}
-		categorized[stringResource(Res.string.recently_used)] = recentlyUsed
+		recentlyUsed.filter { it.shortcode.lowercase().contains(query) }
+			.forEach {
+				val category = stringResource(Res.string.recently_used)
+				categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
+			}
 
 		// sorted alphabetically
 		emojis.sortedBy { it.category }

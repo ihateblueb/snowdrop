@@ -65,6 +65,8 @@ import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
 import snowdrop.shared.generated.resources.visibility_unlisted
+import snowdrop.shared.generated.resources.warn_when_posting_publicly
+import snowdrop.shared.generated.resources.whenever_you_post_publicly_a_confirmation_dialog_will_pop_up
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -203,8 +205,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(0, 2).padding(bottom = 2.dp),
-				shape = ListItemShape(0, 3),
+				modifier = Modifier.listItemClip(0, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(0, 4),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.haptics)) },
@@ -226,8 +228,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(1, 3).padding(bottom = 2.dp),
-				shape = ListItemShape(1, 3),
+				modifier = Modifier.listItemClip(1, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 4),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.lock_timeline)) },
@@ -246,23 +248,47 @@ fun GeneralSettingsView() = ViewSurface {
 			}
 		}
 		item {
-			val timelineLocked by settings.getBooleanFlow("append_re_on_replies", true)
+			val warnWhenPostingPublicly by settings.getBooleanFlow("warn_when_posting_publicly", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card(
+				modifier = Modifier.listItemClip(2, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(2, 4),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.warn_when_posting_publicly)) },
+					supportingContent = { Text(stringResource(Res.string.whenever_you_post_publicly_a_confirmation_dialog_will_pop_up)) },
+					trailingContent = {
+						Switch(
+							warnWhenPostingPublicly,
+							onCheckedChange = { blockingSettings.putBoolean("warn_when_posting_publicly", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("warn_when_posting_publicly", !warnWhenPostingPublicly)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val appendReOnReplies by settings.getBooleanFlow("append_re_on_replies", true)
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(2, 3).padding(bottom = 10.dp),
-				shape = ListItemShape(2, 3),
+				modifier = Modifier.listItemClip(3, 4).padding(bottom = 10.dp),
+				shape = ListItemShape(3, 4),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.append_re_on_reply_content_warnings)) },
 					trailingContent = {
 						Switch(
-							timelineLocked,
+							appendReOnReplies,
 							onCheckedChange = { blockingSettings.putBoolean("append_re_on_replies", it) }
 						)
 					},
 					modifier = Modifier.clickable {
-						blockingSettings.putBoolean("append_re_on_replies", !timelineLocked)
+						blockingSettings.putBoolean("append_re_on_replies", !appendReOnReplies)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)

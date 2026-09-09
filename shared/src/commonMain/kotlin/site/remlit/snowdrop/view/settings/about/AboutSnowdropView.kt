@@ -3,7 +3,7 @@ package site.remlit.snowdrop.view.settings.about
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +60,10 @@ import snowdrop.shared.generated.resources.view_source
 @Composable
 fun AboutSnowdropView() = ViewSurface {
 	val navHandler = LocalNavController.current
+	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
+	val clipboardManager = LocalClipboardManager.current
+
+	val snowdropVersion = "${GradleVariables.version} (${GradleVariables.gitCommit}@${GradleVariables.gitBranch})"
 
 	val showDebugOption by remember { settings.getBooleanFlow("show_debug_option", false) }
 		.collectAsStateWithLifecycle(false)
@@ -98,14 +104,15 @@ fun AboutSnowdropView() = ViewSurface {
 
 		Column(
 			horizontalAlignment = Alignment.CenterHorizontally,
-			modifier = Modifier.clickable(
+			modifier = Modifier.combinedClickable(
 				interactionSource = MutableInteractionSource(),
 				indication = null,
-				onClick = { versionClicks++ }
+				onClick = { versionClicks++ },
+				onLongClick = { clipboardManager.setText(AnnotatedString(snowdropVersion)) }
 			)
 		) {
 			Text(
-				"${GradleVariables.version} (${GradleVariables.gitCommit}@${GradleVariables.gitBranch})",
+				snowdropVersion,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				fontFamily = FontFamily.Monospace
 			)

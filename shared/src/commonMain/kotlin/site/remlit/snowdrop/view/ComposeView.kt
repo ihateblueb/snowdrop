@@ -135,6 +135,8 @@ import snowdrop.shared.generated.resources.add_emoji
 import snowdrop.shared.generated.resources.add_file
 import snowdrop.shared.generated.resources.add_photo_or_video
 import snowdrop.shared.generated.resources.alt_text
+import snowdrop.shared.generated.resources.anyone_will_be_able_to_see_this_post
+import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning_field_hide
 import snowdrop.shared.generated.resources.content_warning_field_show
@@ -171,6 +173,7 @@ import snowdrop.shared.generated.resources.visibility_public_description
 import snowdrop.shared.generated.resources.visibility_unlisted
 import snowdrop.shared.generated.resources.visibility_unlisted_description
 import snowdrop.shared.generated.resources.write_your_post_here
+import snowdrop.shared.generated.resources.you_are_posting_publicly
 import snowdrop.shared.generated.resources.you_cannot_schedule_a_post_in_the_past
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
@@ -262,6 +265,10 @@ fun ComposeView(
 	val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
 		.collectAsStateWithLifecycle(false)
 
+	var showPubliclyPostingWarning by remember { mutableStateOf(false) }
+	val warnWhenPostingPublicly by settings.getBooleanFlow("warn_when_posting_publicly", false)
+		.collectAsStateWithLifecycle(false)
+
 	var sendingDone by remember { mutableStateOf(false) }
 	var isSending by remember { mutableStateOf(false) }
 
@@ -312,11 +319,45 @@ fun ComposeView(
 		vibrateConfirm(haptics)
 	}
 
+	fun launchPost() = coroutineScope.launch { sendPost() }
+
+	if (showPubliclyPostingWarning)
+		AlertDialog(
+			title = { Text(stringResource(Res.string.you_are_posting_publicly)) },
+			text = { Text(stringResource(Res.string.anyone_will_be_able_to_see_this_post)) },
+			onDismissRequest = { showPubliclyPostingWarning = !showPubliclyPostingWarning },
+			confirmButton = {
+				TextButton(
+					onClick = {
+						showPubliclyPostingWarning = !showPubliclyPostingWarning
+						launchPost()
+					}
+				) {
+					Text(stringResource(Res.string.ok))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showPubliclyPostingWarning = !showPubliclyPostingWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			properties = DialogProperties(
+				dismissOnBackPress = true,
+				dismissOnClickOutside = true
+			)
+		)
+
 	@Composable
 	fun PostButton() {
 		val __translation = stringResource(if (scheduledDateTimeIsSet) Res.string.submit_scheduled_post else Res.string.post_verb)
 		FilledTonalIconButton(
-			onClick = { coroutineScope.launch { sendPost() } },
+			onClick = {
+				if (warnWhenPostingPublicly && (visibility == "public" || visibility == "unlisted"))
+					showPubliclyPostingWarning = true
+				else launchPost()
+			},
 			enabled = canSubmit,
 			modifier = Modifier.semantics { contentDescription =  __translation }
 		) {

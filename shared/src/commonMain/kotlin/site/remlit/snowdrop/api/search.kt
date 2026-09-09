@@ -6,6 +6,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.response.SearchResponse
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
@@ -14,6 +15,7 @@ import site.remlit.snowdrop.util.settings
 @OptIn(ExperimentalSettingsApi::class)
 suspend fun search(
 	query: String,
+	limit: Int = blockingSettings.getInt("posts_per_page", 30),
 
 	type: String? = null,
 	resolve: Boolean? = null,
@@ -23,7 +25,6 @@ suspend fun search(
 
 	maxId: String? = null,
 	minId: String? = null,
-	limit: Int? = null,
 	offset: Int? = null,
 ): ApiResponse<SearchResponse> = safeApiRequest { currentAccountId, host ->
 	val token = settings.getString("account_${currentAccountId}_token", "")
@@ -32,6 +33,8 @@ suspend fun search(
 		header("Authorization", "Bearer $token")
 
 		parameter("q", query)
+		parameter("limit", limit)
+
 		if (type != null) parameter("type", type)
 		if (resolve != null) parameter("resolve", resolve)
 		if (following != null) parameter("following", following)
@@ -40,7 +43,6 @@ suspend fun search(
 
 		if (maxId != null) parameter("max_id", maxId)
 		if (minId != null) parameter("min_id", minId)
-		if (limit != null) parameter("limit", limit)
 		if (offset != null) parameter("offset", offset)
 	}
 
