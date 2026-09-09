@@ -32,7 +32,6 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -83,7 +82,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -121,7 +119,6 @@ import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
-import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
@@ -139,6 +136,7 @@ import snowdrop.shared.generated.resources.add_file
 import snowdrop.shared.generated.resources.add_photo_or_video
 import snowdrop.shared.generated.resources.alt_text
 import snowdrop.shared.generated.resources.anyone_will_be_able_to_see_this_post
+import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.compose
 import snowdrop.shared.generated.resources.content_warning_field_hide
 import snowdrop.shared.generated.resources.content_warning_field_show
@@ -327,8 +325,24 @@ fun ComposeView(
 		AlertDialog(
 			title = { Text(stringResource(Res.string.you_are_posting_publicly)) },
 			text = { Text(stringResource(Res.string.anyone_will_be_able_to_see_this_post)) },
-			onDismissRequest = { showPubliclyPostingWarning = false },
-			confirmButton = { launchPost() },
+			onDismissRequest = { showPubliclyPostingWarning = !showPubliclyPostingWarning },
+			confirmButton = {
+				TextButton(
+					onClick = {
+						showPubliclyPostingWarning = !showPubliclyPostingWarning
+						launchPost()
+					}
+				) {
+					Text(stringResource(Res.string.ok))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showPubliclyPostingWarning = !showPubliclyPostingWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
 			properties = DialogProperties(
 				dismissOnBackPress = true,
 				dismissOnClickOutside = true
