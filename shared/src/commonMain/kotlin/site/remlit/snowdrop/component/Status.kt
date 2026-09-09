@@ -3,6 +3,7 @@ package site.remlit.snowdrop.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
@@ -439,8 +440,14 @@ fun Status(
 
 									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
 									Row(
-										modifier = Modifier.clickable { showMentionedBottomSheet = !showMentionedBottomSheet }
-											.semantics { contentDescription = __translation_open_sheet },
+										modifier = Modifier.clickable(
+											onClick = {
+												if (realStatus.mentions.size > 1)
+													showMentionedBottomSheet = !showMentionedBottomSheet
+											},
+											interactionSource = MutableInteractionSource(),
+											indication = null
+										).semantics { contentDescription = __translation_open_sheet },
 										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
 									) {
 										Icon(painterResource(Res.drawable.icon_reply_20px), null)
