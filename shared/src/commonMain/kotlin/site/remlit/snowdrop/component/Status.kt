@@ -92,7 +92,6 @@ import snowdrop.shared.generated.resources.hide_content
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
-import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
@@ -101,7 +100,7 @@ import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
-import snowdrop.shared.generated.resources.replying_to_x_and_x_other
+import snowdrop.shared.generated.resources.replying_to_x_and_x_others
 import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
@@ -462,7 +461,7 @@ fun Status(
 											val others = realStatus.mentions.size - 1
 											Text(
 												translation(
-													Res.plurals.replying_to_x_and_x_other,
+													Res.plurals.replying_to_x_and_x_others,
 													quantity = others,
 													mapOf(
 														"handle" to if (replyingToAccount != null)

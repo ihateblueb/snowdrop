@@ -316,7 +316,7 @@
 	<string name="filtered_by_x">Filtered by {filters}</string>
 
 	<string name="replying_to_x">Replying to {handle}</string>
-	<plurals name="replying_to_x_and_x_other">
+	<plurals name="replying_to_x_and_x_others">
 		<item quantity="one">Replying to {handle} and {number} other</item>
 		<item quantity="other">Replying to {handle} and {number} others</item>
 	</plurals>
