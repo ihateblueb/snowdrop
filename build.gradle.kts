@@ -10,6 +10,6 @@ plugins {
 	alias(libs.plugins.kotlinMultiplatform) apply false
 }
 
-version = "0.0.7-alpha"
-extraProperties.set("versionCode", 7)
+version = "0.0.8-alpha"
+extraProperties.set("versionCode", 8)
 // todo: sync version with iOS app
