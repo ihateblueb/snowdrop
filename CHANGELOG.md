@@ -12,6 +12,8 @@
 - Scroll-to-top when tapping the header on timeline view
 - Switched to Material Rounded icons
 - Setting to disable adding "RE:" to CWs
+- Improved reply indicator, hide mentions, bottom sheet to view mentions
+- Warning when posting publicly if setting enabled
 
 ### Fixed
 - Connecting to LAN addresses on newer Android versions
@@ -65,7 +67,7 @@
 - CW field is now focused when the field is shown in the composer
 - Visibility is now properly shown on boosted posts
 - Search box now uses field state and horizontally scrolls
-- Fixed keyboard opening if explore tab was long-pressed and you're returning from a post
+- Fixed keyboard opening if explore tab was long-pressed, and you're returning from a post
 
 ## [0.0.6-alpha]
 
