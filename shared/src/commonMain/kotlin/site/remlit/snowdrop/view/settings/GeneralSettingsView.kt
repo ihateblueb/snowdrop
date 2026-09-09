@@ -248,7 +248,7 @@ fun GeneralSettingsView() = ViewSurface {
 			}
 		}
 		item {
-			val timelineLocked by settings.getBooleanFlow("warn_when_posting_publicly", false)
+			val warnWhenPostingPublicly by settings.getBooleanFlow("warn_when_posting_publicly", false)
 				.collectAsStateWithLifecycle(false)
 
 			Card(
@@ -260,19 +260,19 @@ fun GeneralSettingsView() = ViewSurface {
 					supportingContent = { Text(stringResource(Res.string.whenever_you_post_publicly_a_confirmation_dialog_will_pop_up)) },
 					trailingContent = {
 						Switch(
-							timelineLocked,
+							warnWhenPostingPublicly,
 							onCheckedChange = { blockingSettings.putBoolean("warn_when_posting_publicly", it) }
 						)
 					},
 					modifier = Modifier.clickable {
-						blockingSettings.putBoolean("warn_when_posting_publicly", !timelineLocked)
+						blockingSettings.putBoolean("warn_when_posting_publicly", !warnWhenPostingPublicly)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
 		}
 		item {
-			val timelineLocked by settings.getBooleanFlow("append_re_on_replies", true)
+			val appendReOnReplies by settings.getBooleanFlow("append_re_on_replies", true)
 				.collectAsStateWithLifecycle(true)
 
 			Card(
@@ -283,12 +283,12 @@ fun GeneralSettingsView() = ViewSurface {
 					headlineContent = { Text(stringResource(Res.string.append_re_on_reply_content_warnings)) },
 					trailingContent = {
 						Switch(
-							timelineLocked,
+							appendReOnReplies,
 							onCheckedChange = { blockingSettings.putBoolean("append_re_on_replies", it) }
 						)
 					},
 					modifier = Modifier.clickable {
-						blockingSettings.putBoolean("append_re_on_replies", !timelineLocked)
+						blockingSettings.putBoolean("append_re_on_replies", !appendReOnReplies)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
