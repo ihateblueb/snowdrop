@@ -3,6 +3,7 @@ package site.remlit.snowdrop.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
@@ -18,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -76,6 +79,7 @@ import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.extension.toRelativeString
@@ -91,10 +95,12 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.open_mentioned_accounts_sheet
 import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
+import snowdrop.shared.generated.resources.replying_to_x_and_x_others
 import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
@@ -109,7 +115,7 @@ import kotlin.time.Duration.Companion.seconds
  * @since 0.0.1-alpha
  * */
 @Composable
-@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class, ExperimentalMaterial3Api::class)
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
@@ -429,7 +435,18 @@ fun Status(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
 								if (realStatus.inReplyToId != null) {
+									var showMentionedBottomSheet by remember { mutableStateOf(false) }
+
+									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
 									Row(
+										modifier = Modifier.clickable(
+											onClick = {
+												if (realStatus.mentions.size > 1)
+													showMentionedBottomSheet = !showMentionedBottomSheet
+											},
+											interactionSource = MutableInteractionSource(),
+											indication = null
+										).semantics { contentDescription = __translation_open_sheet },
 										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
 									) {
 										Icon(painterResource(Res.drawable.icon_reply_20px), null)
@@ -437,6 +454,22 @@ fun Status(
 										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
 											Text(
 												translation(Res.string.replying_to_self),
+												fontSize = 13.sp
+											)
+										} else if (realStatus.mentions.size > 1) {
+											val others = realStatus.mentions.size - 1
+											Text(
+												translation(
+													Res.plurals.replying_to_x_and_x_others,
+													quantity = others,
+													mapOf(
+														"handle" to if (replyingToAccount != null)
+															AnnotatedString("@${replyingToAccount!!.acct}")
+																.withAccountLink(replyingToAccount!!)
+															else AnnotatedString("..."),
+														"number" to AnnotatedString("$others")
+													)
+												),
 												fontSize = 13.sp
 											)
 										} else {
@@ -447,13 +480,23 @@ fun Status(
 														"handle" to if (replyingToAccount != null)
 															AnnotatedString("@${replyingToAccount!!.acct}")
 																.withAccountLink(replyingToAccount!!)
-														else AnnotatedString("...")
+															else AnnotatedString("...")
 													)
 												),
 												fontSize = 13.sp
 											)
 										}
 									}
+
+									if (showMentionedBottomSheet)
+										ModalBottomSheet(onDismissRequest = { showMentionedBottomSheet = false }) {
+											realStatus.mentions.forEach {
+												val account by remember { fetchAccount(it.id, snackbarController) }
+													.collectAsStateWithLifecycle(null)
+
+												if (account != null) AccountRow(account = account!!)
+											}
+										}
 								}
 
 								if (!realStatus.content.isNullOrBlank()) {
@@ -462,6 +505,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
+												filterOutMentionLinks = true,
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -471,6 +515,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
+											filterOutMentionLinks = true,
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)

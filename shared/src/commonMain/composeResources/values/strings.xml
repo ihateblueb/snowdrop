@@ -316,6 +316,10 @@
 	<string name="filtered_by_x">Filtered by {filters}</string>
 
 	<string name="replying_to_x">Replying to {handle}</string>
+	<plurals name="replying_to_x_and_x_others">
+		<item quantity="one">Replying to {handle} and {number} other</item>
+		<item quantity="other">Replying to {handle} and {number} others</item>
+	</plurals>
 	<string name="replying_to_self">Replying to self</string>
 	<string name="reply_to_x">Reply to {handle}</string>
 
@@ -343,10 +347,13 @@
 	<string name="back">Back</string>
 	<string name="more">More</string>
 
+	<string name="open_mentioned_accounts_sheet">Open mentioned accounts sheet</string>
 	<string name="warn_when_posting_publicly">Warn when posting publicly</string>
 	<string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Whenever you post on public or unlisted, a confirmation dialog will pop up.</string>
 
 	<string name="you_are_posting_publicly">You are posting publicly</string>
 	<string name="anyone_will_be_able_to_see_this_post">Anyone, even people who you don't follow or mention, will be able to see this post.</string>
 	<string name="dont_show_again">Don't show again</string>
+
+	<string name="open_mentioned_accounts_sheet">Open mentioned accounts sheet</string>
 </resources>
