@@ -42,10 +42,10 @@ import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.util.blockingSettings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.accounts
 import snowdrop.shared.generated.resources.explore
-import snowdrop.shared.generated.resources.icon_arrow_back_24px
 import snowdrop.shared.generated.resources.icon_search_24px
 import snowdrop.shared.generated.resources.nothing_to_see_here
 import snowdrop.shared.generated.resources.posts
@@ -145,7 +145,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 				Text(stringResource(Res.string.nothing_to_see_here))
 			}
 		} else {
-			val limit = 20
+			val limit = blockingSettings.getInt("posts_per_page", 30)
 			var offset by remember { mutableStateOf(0) }
 			when (selectedTab) {
 				0 -> RefreshableTimeline(
@@ -155,7 +155,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 						offset += limit
 						ApiResponse(error = res.error, message = res.message, response = res.response?.statuses)
 					},
-					onRefresh = { offset = 0 },
+					onRefresh = { }, // TODO: fix this. idk how to get around this but it's what's preventing pagination
 					refreshKey = refreshKey,
 					timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 					distinctCheck = true
@@ -167,7 +167,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 						offset += limit
 						ApiResponse(error = res.error, message = res.message, response = res.response?.accounts)
 					},
-					onRefresh = { offset = 0 },
+					onRefresh = { },
 					refreshKey = refreshKey,
 					timelineComponent = { item, _ -> AccountRow(account = item) },
 					distinctCheck = true
