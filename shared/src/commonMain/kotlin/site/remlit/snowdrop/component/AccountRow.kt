@@ -3,10 +3,12 @@ package site.remlit.snowdrop.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,9 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.util.LocalNavController
+import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_lock_20px
+import snowdrop.shared.generated.resources.icon_smart_toy_20px
 
 /**
  * Account row showing avatar, display name, and username.
@@ -61,12 +67,32 @@ fun AccountRow(
 		Avatar(account)
 
 		Column {
-			HtmlContent(
-				account.displayName(),
-				fontWeight = FontWeight.Medium,
-				maxLines = 1,
-				emojis = account.emojis
-			)
+			FlowRow(
+				horizontalArrangement = Arrangement.spacedBy(5.dp),
+				verticalArrangement = Arrangement.Center,
+				itemVerticalAlignment = Alignment.CenterVertically
+			) {
+				HtmlContent(
+					account.displayName(),
+					fontWeight = FontWeight.Medium,
+					maxLines = 1,
+					emojis = account.emojis
+				)
+
+				if (account.locked)
+					Icon(
+						painterResource(Res.drawable.icon_lock_20px),
+						null,
+						tint = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+
+				if (account.bot)
+					Icon(
+						painterResource(Res.drawable.icon_smart_toy_20px),
+						null,
+						tint = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+			}
 			Text(
 				"@${account.acct}",
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
