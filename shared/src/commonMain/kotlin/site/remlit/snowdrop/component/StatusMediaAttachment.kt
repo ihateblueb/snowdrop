@@ -21,8 +21,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,10 +32,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.russhwolf.settings.ExperimentalSettingsApi
 import io.github.kdroidfilter.composemediaplayer.InitialPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
 import io.kamel.core.Resource
@@ -41,7 +45,7 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Status
-import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_attach_file_24px
@@ -66,6 +70,7 @@ import snowdrop.shared.generated.resources.unknown_media_type_x
  *
  * @since 0.0.4-alpha
  * */
+@OptIn(ExperimentalSettingsApi::class)
 @Composable
 fun StatusMediaAttachment(
 	attachment: Status.MediaAttachment,
@@ -85,8 +90,9 @@ fun StatusMediaAttachment(
 
 	var itemModifier: Modifier = Modifier
 
-	val preventAttachmentDownload: Boolean = blockingSettings.getBoolean("disable_attachments_download", false)
-	val overrideAttachmentDownload = remember { mutableStateOf(false) }
+	val preventAttachmentDownload by remember { settings.getBooleanFlow("disable_attachments_download", false) }
+		.collectAsStateWithLifecycle(true)
+	var overrideAttachmentDownload by remember { mutableStateOf(false) }
 	val type = attachment.type.split("/").first()
 
 	Box(
@@ -111,7 +117,7 @@ fun StatusMediaAttachment(
 			)
 		}
 
-		if (!preventAttachmentDownload || overrideAttachmentDownload.value) {
+		if (!preventAttachmentDownload || overrideAttachmentDownload || !includeFallback) {
 			when (type) {
 				"image" -> if (supportZoomGestures) {
 					val zoomState = rememberZoomState()
@@ -202,7 +208,7 @@ fun StatusMediaAttachment(
 						mapOf("type" to AnnotatedString(type))
 					)
 				)
-				TextButton(onClick = { overrideAttachmentDownload.value = true }) {
+				TextButton(onClick = { overrideAttachmentDownload = true }) {
 					Icon(painterResource(Res.drawable.icon_attach_file_24px), null)
 					Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 					Text(translation(Res.string.load_attachment))
