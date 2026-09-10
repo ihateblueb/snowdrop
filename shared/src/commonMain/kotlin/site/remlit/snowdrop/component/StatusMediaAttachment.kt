@@ -21,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +41,13 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.icon_attach_file_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.load_attachment
+import snowdrop.shared.generated.resources.media_type
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.unknown_media_type_x
 
@@ -80,6 +85,10 @@ fun StatusMediaAttachment(
 
 	var itemModifier: Modifier = Modifier
 
+	val preventAttachmentDownload: Boolean = blockingSettings.getBoolean("disable_attachments_download", false)
+	val overrideAttachmentDownload = remember { mutableStateOf(false) }
+	val type = attachment.type.split("/").first()
+
 	Box(
 		modifier = modifier.let {
 			if (includeFallback) it.clip(RoundedCornerShape(10.dp))
@@ -102,77 +111,101 @@ fun StatusMediaAttachment(
 			)
 		}
 
-		when (val type = attachment.type.split("/").first()) {
-			"image" -> if (supportZoomGestures) {
-				val zoomState = rememberZoomState()
+		if (!preventAttachmentDownload || overrideAttachmentDownload.value) {
+			when (type) {
+				"image" -> if (supportZoomGestures) {
+					val zoomState = rememberZoomState()
 
-				LaunchedEffect(zoomState.zoomable.userTransform) {
-					onTransform(zoomState.zoomable.userTransform)
+					LaunchedEffect(zoomState.zoomable.userTransform) {
+						onTransform(zoomState.zoomable.userTransform)
+					}
+
+					when (val res = asyncPainterResource(attachment.url)) {
+						is Resource.Success -> {
+							ZoomImage(
+								painter = res.value,
+								contentDescription = attachment.description,
+								modifier = Modifier.fillMaxSize(),
+								zoomState = zoomState,
+								scrollBar = ScrollBarSpec(size = 0.dp)
+							)
+						}
+
+						is Resource.Loading -> {
+							Box(
+								modifier = Modifier.fillMaxSize(),
+								contentAlignment = Alignment.Center
+							) {
+								CircularProgressIndicator()
+							}
+
+						}
+
+						else -> {}
+					}
+				} else {
+					KamelImage(
+						resource = { asyncPainterResource(attachment.url) },
+						contentDescription = attachment.description,
+						contentScale = ContentScale.Fit,
+						modifier = itemModifier.fillMaxWidth(),
+						onLoading = {
+							Box(
+								modifier = Modifier.fillMaxSize(),
+								contentAlignment = Alignment.Center
+							) {
+								CircularProgressIndicator()
+							}
+						}
+					)
 				}
 
-				when (val res = asyncPainterResource(attachment.url)) {
-					is Resource.Success -> {
-						ZoomImage(
-							painter = res.value,
-							contentDescription = attachment.description,
-							modifier = Modifier.fillMaxSize(),
-							zoomState = zoomState,
-							scrollBar = ScrollBarSpec(size = 0.dp)
+				"video", "gifv" -> {
+					VideoPlayer(
+						url = attachment.url,
+						initialPlayerState = initialPlayerState,
+						showProgress = showVideoProgress,
+						clickToPause = showVideoProgress,
+						onPlayerStateChange = onVideoPlayerStateChange
+					)
+				}
+
+				else -> {
+					Column(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						verticalArrangement = Arrangement.Center,
+						modifier = Modifier.fillMaxSize()
+					) {
+						Text(
+							translation(
+								Res.string.unknown_media_type_x,
+								mapOf("type" to AnnotatedString(type))
+							)
 						)
-					}
-					is Resource.Loading -> {
-						Box(
-							modifier = Modifier.fillMaxSize(),
-							contentAlignment = Alignment.Center
-						) {
-							CircularProgressIndicator()
+						TextButton(onClick = { uriHandler.openUri(attachment.url) }) {
+							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
+							Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+							Text(translation(Res.string.open_in_browser))
 						}
-
 					}
-					else -> {}
 				}
-			} else {
-				KamelImage(
-					resource = { asyncPainterResource(attachment.url) },
-					contentDescription = attachment.description,
-					contentScale = ContentScale.Fit,
-					modifier = itemModifier.fillMaxWidth(),
-					onLoading = {
-						Box(
-							modifier = Modifier.fillMaxSize(),
-							contentAlignment = Alignment.Center
-						) {
-							CircularProgressIndicator()
-						}
-					}
-				)
 			}
-
-			"video", "gifv" -> {
-				VideoPlayer(
-					url = attachment.url,
-					initialPlayerState = initialPlayerState,
-					showProgress = showVideoProgress,
-					clickToPause = showVideoProgress,
-					onPlayerStateChange = onVideoPlayerStateChange
-				)
-			}
-
-			else -> {
-				Column(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.Center,
-					modifier = Modifier.fillMaxSize()
-				) {
-					Text(translation(
-						Res.string.unknown_media_type_x,
+		} else {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center,
+				modifier = Modifier.fillMaxSize()
+			) {
+				Text(
+					translation(
+						Res.string.media_type,
 						mapOf("type" to AnnotatedString(type))
-					))
-					TextButton(onClick = { uriHandler.openUri(attachment.url) }) {
-						Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
-						Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-						Text(translation(Res.string.open_in_browser))
-					}
+					)
+				)
+				TextButton(onClick = { overrideAttachmentDownload.value = true }) {
+					Icon(painterResource(Res.drawable.icon_attach_file_24px), null)
+					Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+					Text(translation(Res.string.load_attachment))
 				}
 			}
 		}

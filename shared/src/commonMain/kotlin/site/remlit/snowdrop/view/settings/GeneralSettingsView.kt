@@ -52,6 +52,7 @@ import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.append_re_on_reply_content_warnings
 import snowdrop.shared.generated.resources.default_post_visibility
+import snowdrop.shared.generated.resources.disable_attachments_download
 import snowdrop.shared.generated.resources.general
 import snowdrop.shared.generated.resources.haptics
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
@@ -289,6 +290,29 @@ fun GeneralSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("append_re_on_replies", !appendReOnReplies)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val disableAttachmentsDownload by settings.getBooleanFlow("disable_attachments_download", false)
+				.collectAsStateWithLifecycle(false)
+			
+			Card(
+				modifier = Modifier.listItemClip(2, 3).padding(bottom = 10.dp),
+				shape = ListItemShape(2, 3),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.disable_attachments_download)) },
+					trailingContent = {
+						Switch(
+							disableAttachmentsDownload,
+							onCheckedChange = { blockingSettings.putBoolean("disable_attachments_download", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("disable_attachments_download", !disableAttachmentsDownload)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
