@@ -301,7 +301,7 @@ fun GeneralSettingsView() = ViewSurface {
 			
 			Card(
 				modifier = Modifier.listItemClip(5, 5).padding(bottom = 10.dp),
-				shape = ListItemShape(5, 5),
+				shape = ListItemShape(4, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.disable_attachments_download)) },
