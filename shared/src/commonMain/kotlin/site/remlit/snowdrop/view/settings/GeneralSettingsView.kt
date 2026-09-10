@@ -206,8 +206,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(0, 4).padding(bottom = 2.dp),
-				shape = ListItemShape(0, 4),
+				modifier = Modifier.listItemClip(0, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(0, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.haptics)) },
@@ -229,8 +229,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(1, 4).padding(bottom = 2.dp),
-				shape = ListItemShape(1, 4),
+				modifier = Modifier.listItemClip(1, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.lock_timeline)) },
@@ -253,8 +253,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(2, 4).padding(bottom = 2.dp),
-				shape = ListItemShape(2, 4),
+				modifier = Modifier.listItemClip(2, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(2, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.warn_when_posting_publicly)) },
@@ -277,8 +277,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(3, 4).padding(bottom = 10.dp),
-				shape = ListItemShape(3, 4),
+				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(3, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.append_re_on_reply_content_warnings)) },
@@ -300,8 +300,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 			
 			Card(
-				modifier = Modifier.listItemClip(2, 3).padding(bottom = 10.dp),
-				shape = ListItemShape(2, 3),
+				modifier = Modifier.listItemClip(5, 5).padding(bottom = 10.dp),
+				shape = ListItemShape(5, 5),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.disable_attachments_download)) },
