@@ -1,6 +1,13 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.8-alpha)]
+## [Unreleased (0.0.9-alpha)]
+
+### Added
+- Bot and locked icon for profile views and account row
+
+### Fixed
+
+## [0.0.8-alpha]
 
 ### Added
 - Support for "local" visibility (Akkoma, Pleroma, and Iceshrimp.NET)
