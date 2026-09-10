@@ -300,7 +300,7 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 			
 			Card(
-				modifier = Modifier.listItemClip(5, 5).padding(bottom = 10.dp),
+				modifier = Modifier.listItemClip(4, 5).padding(bottom = 10.dp),
 				shape = ListItemShape(4, 5),
 			) {
 				ListItem(
