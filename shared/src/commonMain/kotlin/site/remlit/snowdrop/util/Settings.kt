@@ -250,3 +250,20 @@ fun checkForUnreadNotifications(
 		// todo: subscribe to ws and adjust as needed
 	}
 }
+
+/**
+ * Get post visibility that's not broader than the replied post' and the default visibility setting for current user.
+ *
+ * @since 0.0.9-alpha
+ * */
+fun getVisibilityForCompose(parentVisibility: String? = null): String {
+	var defaultVisibility = getDefaultVisibilityBlocking()
+	var visibilities = listOf("public", "unlisted", "private", "direct")
+
+	return when {
+		parentVisibility == null -> defaultVisibility
+		!visibilities.contains(parentVisibility) -> parentVisibility
+		visibilities.indexOf(defaultVisibility) > visibilities.indexOf(parentVisibility) -> defaultVisibility
+		else -> parentVisibility
+	}
+}
