@@ -48,7 +48,7 @@ import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_attach_file_24px
+import snowdrop.shared.generated.resources.icon_download_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.load_attachment
 import snowdrop.shared.generated.resources.media_type
@@ -90,8 +90,8 @@ fun StatusMediaAttachment(
 
 	var itemModifier: Modifier = Modifier
 
-	val preventAttachmentDownload by remember { settings.getBooleanFlow("disable_attachments_download", false) }
-		.collectAsStateWithLifecycle(true)
+	val disableAttachmentsDownload by remember { settings.getBooleanFlow("disable_attachments_download", false) }
+		.collectAsStateWithLifecycle(false)
 	var overrideAttachmentDownload by remember { mutableStateOf(false) }
 	val type = attachment.type.split("/").first()
 
@@ -117,7 +117,7 @@ fun StatusMediaAttachment(
 			)
 		}
 
-		if (!preventAttachmentDownload || overrideAttachmentDownload || !includeFallback) {
+		if (!disableAttachmentsDownload || overrideAttachmentDownload || !includeFallback) {
 			when (type) {
 				"image" -> if (supportZoomGestures) {
 					val zoomState = rememberZoomState()
@@ -209,7 +209,7 @@ fun StatusMediaAttachment(
 					)
 				)
 				TextButton(onClick = { overrideAttachmentDownload = true }) {
-					Icon(painterResource(Res.drawable.icon_attach_file_24px), null)
+					Icon(painterResource(Res.drawable.icon_download_24px), null)
 					Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 					Text(translation(Res.string.load_attachment))
 				}
