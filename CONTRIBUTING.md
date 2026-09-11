@@ -61,24 +61,27 @@ Only to be done before a release.
 2. Add Weblate repository: `git remote add weblate https://translate.codeberg.org/git/snowdrop/snowdrop/`
 3. Fetch changes: `git fetch weblate`
 4. Merge: `git merge --squash weblate/master` (please ensure it's squashed otherwise we'll have like 30 weblate commits)
-5. Commit.
-6. Push: `git push origin master`
-7. Run "Reset all changes in the Weblate repository" on Weblate
+5. If there are any new languages, add them to `iosApp/iosApp/Info.plist` and `androidApp/src/main/res/xml/locale_config.xml`
+6. Commit.
+7. Push: `git push origin master`
+8. Run "Reset all changes in the Weblate repository" on Weblate
 
 # Building & Making Releases
 
 ## Building a Release APK for Android
 1. Open your IDE (either IDEA or Android Studio)
-2. From the menu bar, select `Build -> Generate Signed App Bundle or APK...`
-3. When asked whether to build an AAB or APK, pick APK
-4. Select or create your signing keys if necessary, it's a one-time setup
-5. Pick the Release build variant, hit Create, and the build will start
-6. The built APK will be at `androidApp/release/androidApp-release.apk`
+2. Run Gradle tasks `:shared:clean` and `:androidApp:clean`
+3. From the menu bar, select `Build -> Generate Signed App Bundle or APK...`
+4. When asked whether to build an AAB or APK, pick APK
+5. Select or create your signing keys if necessary, it's a one-time setup
+6. Pick the Release build variant, hit Create, and the build will start
+7. The built APK will be at `androidApp/release/androidApp-release.apk`
 
 ## Building for iOS and Uploading to App Store Connect
 1. Ensure the team ID and build/marketing version are correct in `iosApp/Configuration/Config.xcconfig`
-   1. When making new builds between releases just bump the build version, otherwise both build and marketing
-   2. New marketing versions require the app to be re-reviewed by Apple which can take a good few hours, new builds don't though as long as the marketing version isn't updated
+   1. **If you aren't the one building for iOS don't modify this file; it should not be updated in git**
+   2. When making new builds between releases just bump the build version, otherwise both build and marketing
+   3. New marketing versions require the app to be re-reviewed by Apple which can take a good few hours, new builds don't though as long as the marketing version isn't updated
 2. Open Xcode (I use 26.3 on OSX Sequoia) and the iosApp Xcode project
 3. To build, select `Product -> Archive` from the menu bar
 4. To monitor the build status, click the icon in the top left area (but below the play/pause buttons) that looks like a clipboard (it should be the rightmost one)
@@ -90,7 +93,7 @@ Only to be done before a release.
 - [ ] Bump version code in:
   - [ ] [/build.gradle.kts](/build.gradle.kts)
   - [ ] [/androidApp/build.gradle.kts](/androidApp/build.gradle.kts)
-  - [ ] [/iosApp/Configuration/Config.xcconfig](/iosApp/Configuration/Config.xcconfig)
+  - [ ] [/iosApp/Configuration/Config.xcconfig](/iosApp/Configuration/Config.xcconfig) **(don't modify this unless you're the one building for ASC)**
   - [ ] ...and commit
 - [ ] Check out the latest commit as detached HEAD
 - [ ] Build for Android
