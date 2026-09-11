@@ -125,6 +125,7 @@ import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getDefaultVisibilityBlocking
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.getVisibilityForCompose
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrateConfirm
@@ -236,7 +237,7 @@ fun ComposeView(
 	var scheduledDateTimeIsSet by remember { mutableStateOf(false) }
 	var scheduledDateTimeParsed by remember { mutableStateOf("") }
 
-	var visibility by remember { mutableStateOf(visibility ?: getDefaultVisibilityBlocking()) }
+	var visibility by remember { mutableStateOf(getVisibilityForCompose(visibility)) }
 	var visibilityEnabled by remember { mutableStateOf(true) }
 
 	var localOnly by remember { mutableStateOf(localOnly == true) }
