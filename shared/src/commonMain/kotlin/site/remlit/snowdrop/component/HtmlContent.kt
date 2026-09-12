@@ -27,6 +27,7 @@ val defaultEmojiSize = 1.2.em
  * @param modifier Modifier for text
  *
  * @param mentions List of mentions from the status model
+ * @param filterOutMentionLinks If links of mentioned users should be removed, do not use!
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling) (warning: do not use on display names!)

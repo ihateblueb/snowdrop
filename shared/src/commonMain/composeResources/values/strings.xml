@@ -319,6 +319,12 @@
 
 	<string name="filtered_by_x">Filtered by {filters}</string>
 
+	<string name="mentions_x">Mentions {handle}</string>
+	<plurals name="mentions_x_and_x_others">
+		<item quantity="one">Mentions {handle} and {number} other</item>
+		<item quantity="other">Mentions {handle} and {number} others</item>
+	</plurals>
+
 	<string name="replying_to_x">Replying to {handle}</string>
 	<plurals name="replying_to_x_and_x_others">
 		<item quantity="one">Replying to {handle} and {number} other</item>
@@ -358,6 +364,4 @@
 	<string name="you_are_posting_publicly">You are posting publicly</string>
 	<string name="anyone_will_be_able_to_see_this_post">Anyone, even people who you don't follow or mention, will be able to see this post.</string>
 	<string name="dont_show_again">Don't show again</string>
-
-	<string name="open_mentioned_accounts_sheet">Open mentioned accounts sheet</string>
 </resources>

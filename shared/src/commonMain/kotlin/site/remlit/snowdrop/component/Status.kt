@@ -89,6 +89,7 @@ import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.filtered_by_x
 import snowdrop.shared.generated.resources.hide_content
+import snowdrop.shared.generated.resources.icon_alternate_email_20px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
@@ -434,7 +435,8 @@ fun Status(
 							Column(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
-								if (realStatus.inReplyToId != null) {
+								//<editor-fold name="Replying to/Mentions Row">
+								if (realStatus.inReplyToId != null /* || realStatus.mentions.isNotEmpty() */) {
 									var showMentionedBottomSheet by remember { mutableStateOf(false) }
 
 									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
@@ -449,14 +451,30 @@ fun Status(
 										).semantics { contentDescription = __translation_open_sheet },
 										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
 									) {
-										Icon(painterResource(Res.drawable.icon_reply_20px), null)
+										Icon(painterResource(
+											if (realStatus.inReplyToId != null) Res.drawable.icon_reply_20px
+											else Res.drawable.icon_alternate_email_20px,
+										), null)
 
 										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
 											Text(
 												translation(Res.string.replying_to_self),
 												fontSize = 13.sp
 											)
-										} else if (realStatus.mentions.size > 1) {
+										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size <= 1) {
+											Text(
+												translation(
+													Res.string.replying_to_x,
+													mapOf(
+														"handle" to if (replyingToAccount != null)
+															AnnotatedString("@${replyingToAccount!!.acct}")
+																.withAccountLink(replyingToAccount!!)
+														else AnnotatedString("...")
+													)
+												),
+												fontSize = 13.sp
+											)
+										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size > 1) {
 											val others = realStatus.mentions.size - 1
 											Text(
 												translation(
@@ -472,20 +490,47 @@ fun Status(
 												),
 												fontSize = 13.sp
 											)
-										} else {
-											Text(
-												translation(
-													Res.string.replying_to_x,
-													mapOf(
-														"handle" to if (replyingToAccount != null)
-															AnnotatedString("@${replyingToAccount!!.acct}")
-																.withAccountLink(replyingToAccount!!)
-															else AnnotatedString("...")
-													)
-												),
-												fontSize = 13.sp
-											)
 										}
+										/*
+										* else if (realStatus.inReplyToAccountId == null) {
+											if (realStatus.mentions.size == 1) {
+												val account by remember { fetchAccount(realStatus.mentions.first().id) }
+													.collectAsStateWithLifecycle(null)
+
+												Text(
+													translation(
+														Res.string.mentions_x,
+														mapOf(
+															"handle" to if (account != null)
+																AnnotatedString("@${account!!.acct}")
+																	.withAccountLink(account!!)
+															else AnnotatedString("...")
+														)
+													),
+													fontSize = 13.sp
+												)
+											} else if (realStatus.mentions.size > 1) {
+												val account by remember { fetchAccount(realStatus.mentions.first().id) }
+													.collectAsStateWithLifecycle(null)
+
+												val others = realStatus.mentions.size - 1
+												Text(
+													translation(
+														Res.plurals.mentions_x_and_x_others,
+														quantity = others,
+														mapOf(
+															"handle" to if (account != null)
+																AnnotatedString("@${account!!.acct}")
+																	.withAccountLink(account!!)
+															else AnnotatedString("..."),
+															"number" to AnnotatedString("$others")
+														)
+													),
+													fontSize = 13.sp
+												)
+											}
+										}
+										* */
 									}
 
 									if (showMentionedBottomSheet)
@@ -498,6 +543,7 @@ fun Status(
 											}
 										}
 								}
+								//</editor-fold>
 
 								if (!realStatus.content.isNullOrBlank()) {
 									if (threadViewMainStatus) {
@@ -505,7 +551,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
-												filterOutMentionLinks = true,
+												filterOutMentionLinks = false,
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -515,7 +561,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
-											filterOutMentionLinks = true,
+											filterOutMentionLinks = false,
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)
