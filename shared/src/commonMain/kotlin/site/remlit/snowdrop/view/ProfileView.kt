@@ -115,8 +115,10 @@ import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_keep_24px
+import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_smart_toy_20px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_on_x
 import snowdrop.shared.generated.resources.likes
@@ -462,7 +464,8 @@ fun ProfileView(id: String) = ViewSurface {
 								Column {
 									FlowRow(
 										horizontalArrangement = Arrangement.spacedBy(5.dp),
-										verticalArrangement = Arrangement.Center
+										verticalArrangement = Arrangement.Center,
+										itemVerticalAlignment = Alignment.CenterVertically
 									) {
 										HtmlContent(
 											account!!.displayName(),
@@ -470,6 +473,20 @@ fun ProfileView(id: String) = ViewSurface {
 											fontWeight = FontWeight.Bold,
 											fontSize = 24.sp
 										)
+
+										if (account!!.locked)
+											Icon(
+												painterResource(Res.drawable.icon_lock_20px),
+												null,
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+
+										if (account!!.bot)
+											Icon(
+												painterResource(Res.drawable.icon_smart_toy_20px),
+												null,
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
 
 										if (relationship != null)
 											Row(

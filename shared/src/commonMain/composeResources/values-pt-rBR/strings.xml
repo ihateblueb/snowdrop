@@ -281,4 +281,11 @@
     <string name="visibility_local">Local</string>
     <string name="visibility_local_description">Visível apenas para usuários na sua instância</string>
     <string name="visibility_local_label">(apenas local)</string>
+    <string name="add_attachment">Anexar</string>
+    <string name="add_photo_or_video">Anexar imagem ou vídeo</string>
+    <string name="add_file">Anexar arquivo</string>
+    <string name="content_warning_field_show">Mostrar campo de aviso de conteúdo</string>
+    <string name="content_warning_field_hide">Esconder campo de aviso de conteúdo</string>
+    <string name="number_of_recent_emojis_to_save">Número de emojis recentes para salvar: {number}</string>
+    <string name="you_cannot_schedule_a_post_in_the_past">Você não pode agendar uma postagem para o passado.</string>
 </resources>

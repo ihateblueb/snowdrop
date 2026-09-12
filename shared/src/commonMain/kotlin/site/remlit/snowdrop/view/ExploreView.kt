@@ -67,6 +67,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 
 	var showResults by rememberSaveable { mutableStateOf(false) }
 	var refreshKey by rememberSaveable { mutableStateOf(0) }
+	var tabChanged by rememberSaveable { mutableStateOf(true) }
 
 	LaunchedEffect(immediateFocus) {
 		if (!immediateFocus || showResults) return@LaunchedEffect
@@ -90,6 +91,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
 		onKeyboardAction = {
 			showResults = true
+			tabChanged = true
 			keyboardController?.hide()
 			refreshKey++
 		},
@@ -125,11 +127,17 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 		) {
 			Tab(
 				selectedTab == 0,
-				onClick = { selectedTab = 0 },
+				onClick = {
+					tabChanged = true
+					selectedTab = 0
+				},
 				text = { Text(stringResource(Res.string.posts)) })
 			Tab(
 				selectedTab == 1,
-				onClick = { selectedTab = 1 },
+				onClick = {
+					tabChanged = true
+					selectedTab = 1
+				},
 				text = { Text(stringResource(Res.string.accounts)) })
 			// todo: implement hashtags in search results
 			// Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.hashtags)) })
@@ -152,10 +160,20 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					viewModelKey = postsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
 						val res = search(textFieldState.text as String, resolve = true, offset = offset, limit = limit, type = "statuses")
-						offset += limit
+						res.response?.statuses?.size?.let {
+							if (it < limit) // should we just assume it's bottomed out at this point though?
+								offset += res.response.statuses.size
+							else
+								offset += limit
+						}
 						ApiResponse(error = res.error, message = res.message, response = res.response?.statuses)
 					},
-					onRefresh = { }, // TODO: fix this. idk how to get around this but it's what's preventing pagination
+					onRefresh = {
+						if (tabChanged) {
+							offset = 0
+							tabChanged = false
+						}
+					}, // TODO: this is MOSTLY fixed by this jank, however refreshing will still just display the next of results. harper pls fix
 					refreshKey = refreshKey,
 					timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
 					distinctCheck = true
@@ -164,10 +182,20 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 					viewModelKey = accountsTimelineViewModelKey,
 					fetchMethod = { _, _, _ ->
 						val res = search(textFieldState.text as String, resolve = true, offset = offset, limit = limit, type = "accounts")
-						offset += limit
+						res.response?.accounts?.size?.let {
+							if (it < limit)
+								offset += res.response.accounts.size
+							else
+								offset += limit
+						}
 						ApiResponse(error = res.error, message = res.message, response = res.response?.accounts)
 					},
-					onRefresh = { },
+					onRefresh = {
+						if (tabChanged) {
+							offset = 0
+							tabChanged = false
+						}
+					},
 					refreshKey = refreshKey,
 					timelineComponent = { item, _ -> AccountRow(account = item) },
 					distinctCheck = true

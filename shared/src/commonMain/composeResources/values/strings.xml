@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="timeline">Timeline</string>
 	<string name="notifications">Notifications</string>
@@ -87,6 +88,7 @@
 	<string name="number_of_recent_emojis_to_save">Number of recent emojis to save: {number}</string>
 	<string name="posts_per_page">Posts to fetch per page: {number}</string>
 	<string name="notifs_per_page">Notifications to fetch per page: {number}</string>
+	<string name="disable_attachments_download">Disable automatic download of attachments</string>
 
 	<string name="wellbeing">Wellbeing</string>
 	<string name="hide_interaction_counters">Hide interaction counters on posts</string>
@@ -197,6 +199,8 @@
 
 	<string name="recently_used">Recently Used</string>
 	<string name="unknown_media_type_x">Unknown media type {type}</string>
+	<string name="media_type">Media type {type}</string>
+	<string name="load_attachment">Load attachment</string>
 
 	<string name="mentions">Mentions</string>
 	<string name="likes">Likes</string>

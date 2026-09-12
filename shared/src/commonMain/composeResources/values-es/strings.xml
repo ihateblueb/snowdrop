@@ -106,6 +106,7 @@
         <item quantity="other">{count} seguidores</item>
     </plurals>
     <plurals name="x_following">
+        <item quantity="one">{count} siguiendo</item>
         <item quantity="many">{count} siguiendo</item>
         <item quantity="other">{count} siguiendo</item>
     </plurals>
@@ -276,4 +277,30 @@
     <string name="visibility_local">Local</string>
     <string name="visibility_local_description">Solo para usuarios de la instancia</string>
     <string name="visibility_local_label">(solo local)</string>
+    <string name="you_cannot_schedule_a_post_in_the_past">No puedes programar una publicación en una fecha que ya ha pasado.</string>
+    <string name="visibility">Visibilidad</string>
+    <string name="add_attachment">Adjuntar archivo</string>
+    <string name="add_photo_or_video">Adjuntar fotografía o vídeo</string>
+    <string name="add_file">Añadir archivo</string>
+    <string name="content_warning_field_show">Mostrar aviso de contenido</string>
+    <string name="content_warning_field_hide">Ocultar aviso de contenido</string>
+    <string name="number_of_recent_emojis_to_save">Límite de emojis recientes: {number}</string>
+    <string name="posts_per_page">Publicaciones por página: {number}</string>
+    <string name="notifs_per_page">Notificaciones por página: {number}</string>
+    <string name="instance_favicon">Favicon de la página</string>
+    <string name="append_re_on_reply_content_warnings">Anteponer RE: en las advertencias de contenido de la respuesta</string>
+    <string name="timeline_dropdown_menu">Menú desplegable del cronograma</string>
+    <string name="x_remaining_characters">Quedan {number} caracteres</string>
+    <string name="visibility_picker">Opciones de visibilidad</string>
+    <string name="submit_scheduled_post">Programar publicación</string>
+    <string name="schedule_post">Programar publicación</string>
+    <string name="post_verb">Publicación</string>
+    <string name="open_all_content_warnings">Mostrar todas las advertencias</string>
+    <string name="close_all_content_warnings">Ocultar todas las advertencias</string>
+    <string name="ascendant_post">Publicación principal</string>
+    <string name="main_thread_post">Mensaje del hilo principal</string>
+    <string name="descendant_post">Respuesta del hilo</string>
+    <string name="close">Cerrar</string>
+    <string name="back">Atrás</string>
+    <string name="more">Más</string>
 </resources>
