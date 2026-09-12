@@ -38,6 +38,7 @@ import site.remlit.snowdrop.util.LocalNavController
 fun htmlToAnnotatedString(
 	string: String,
 	mentions: List<Status.Mention> = emptyList(),
+	filterOutMentionLinks: Boolean = false,
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
@@ -57,10 +58,19 @@ fun htmlToAnnotatedString(
 		}
 	}
 
+	var cleanString = string
+	if (filterOutMentionLinks) mentions.forEach { mention ->
+		val split = mention.acct.split("@")
+		val regex = """@${split[0]}|@${mention.acct}""".toRegex()
+
+		cleanString = cleanString.replace(regex, "")
+			.trimStart()
+	}
+
 	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize, showEmojiTooltips)
-	return remember(string, emojis) {
+	return remember(cleanString, emojis) {
 		htmlToAnnotatedString(
-			if (simple) htmlToString(string) else string,
+			if (simple) htmlToString(cleanString) else cleanString,
 			style = HtmlStyle.DEFAULT.copy(
 				textLinkStyles = TextLinkStyles(
 					style = SpanStyle(color = theme.primary, textDecoration = TextDecoration.Underline)
