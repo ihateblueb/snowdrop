@@ -26,6 +26,7 @@ val defaultEmojiSize = 1.2.em
  * @param modifier Modifier for text
  *
  * @param mentions List of mentions from the status model
+ * @param stripLeadingMentionLinks If links of mentioned users should be removed from the beginning of the content
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling) (warning: do not use on display names!)
@@ -44,6 +45,7 @@ fun HtmlContent(
 	modifier: Modifier = Modifier,
 
 	mentions: List<Status.Mention> = emptyList(),
+	stripLeadingMentionLinks: Boolean = false,
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
@@ -57,6 +59,7 @@ fun HtmlContent(
 	val (annotatedString, mappedEmojis) = htmlToAnnotatedString(
 		string,
 		mentions,
+		stripLeadingMentionLinks,
 		emojis,
 		emojiSize,
 		simple,

@@ -53,7 +53,9 @@ import snowdrop.shared.generated.resources.appearance
 import snowdrop.shared.generated.resources.icon_drag_indicator_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.mentions_will_be_shown_separately
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
+import snowdrop.shared.generated.resources.remove_mentions_from_the_start_of_posts
 import snowdrop.shared.generated.resources.reorder
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
@@ -94,6 +96,30 @@ fun AppearanceSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("amoled_black", !amoledBlack)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val removeMentionsFromTheStartOfPosts by settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card(
+				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(3, 5),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.remove_mentions_from_the_start_of_posts)) },
+					supportingContent = { Text(stringResource(Res.string.mentions_will_be_shown_separately)) },
+					trailingContent = {
+						Switch(
+							removeMentionsFromTheStartOfPosts,
+							onCheckedChange = { blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", !removeMentionsFromTheStartOfPosts)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)

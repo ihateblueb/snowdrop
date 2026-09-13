@@ -3,9 +3,11 @@ package site.remlit.snowdrop.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -76,25 +80,33 @@ import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.annotatedString.withEmojis
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
+import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
+import site.remlit.snowdrop.util.extension.toPixels
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.filtered_by_x
 import snowdrop.shared.generated.resources.hide_content
+import snowdrop.shared.generated.resources.icon_alternate_email_20px
 import snowdrop.shared.generated.resources.icon_filter_alt_24px
 import snowdrop.shared.generated.resources.icon_image_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.mentions_x
+import snowdrop.shared.generated.resources.mentions_x_and_x_others
+import snowdrop.shared.generated.resources.open_mentioned_accounts_sheet
 import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
 import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
+import snowdrop.shared.generated.resources.replying_to_x_and_x_others
 import snowdrop.shared.generated.resources.show_content
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
@@ -109,7 +121,7 @@ import kotlin.time.Duration.Companion.seconds
  * @since 0.0.1-alpha
  * */
 @Composable
-@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class)
+@OptIn(ExperimentalSettingsApi::class, ExperimentalGridApi::class, ExperimentalMaterial3Api::class)
 fun Status(
 	status: Status,
 	onUpdate: (Status?) -> Unit,
@@ -422,24 +434,62 @@ fun Status(
 
 					@Composable
 					fun renderContent() {
+						val initialRemoveMentionsFromTheStartOfPosts = blockingSettings.getBoolean("remove_mentions_from_the_start_of_posts", false)
+						val removeMentionsFromTheStartOfPosts by remember { settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", initialRemoveMentionsFromTheStartOfPosts) }
+							.collectAsStateWithLifecycle(initialRemoveMentionsFromTheStartOfPosts)
+
 						Column(
 							verticalArrangement = Arrangement.spacedBy(10.dp)
 						) {
 							Column(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
-								if (realStatus.inReplyToId != null) {
-									Row(
-										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
-									) {
-										Icon(painterResource(Res.drawable.icon_reply_20px), null)
+								// i don't recommend messing with this, it's very messy and easy to break.
+								//<editor-fold name="Replying to/Mentions Row">
+								if (realStatus.inReplyToId != null || (realStatus.mentions.isNotEmpty() && removeMentionsFromTheStartOfPosts)) {
+									var showMentionedBottomSheet by remember { mutableStateOf(false) }
 
-										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
+									val skipReplyToSelf = if (removeMentionsFromTheStartOfPosts) realStatus.mentions.isNotEmpty()
+										else false
+
+									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
+									Row(
+										modifier = Modifier.clickable(
+											onClick = {
+												if (realStatus.mentions.size > 1 &&
+													(realStatus.inReplyToAccountId != realStatus.account!!.id ||
+														realStatus.inReplyToAccountId == realStatus.account!!.id &&
+														skipReplyToSelf)
+												) showMentionedBottomSheet = !showMentionedBottomSheet
+											},
+											interactionSource = MutableInteractionSource(),
+											indication = null
+										).semantics { contentDescription = __translation_open_sheet },
+										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
+									) {
+										Icon(painterResource(
+											if (removeMentionsFromTheStartOfPosts &&
+												(realStatus.inReplyToAccountId == null || skipReplyToSelf)
+											) Res.drawable.icon_alternate_email_20px
+											else Res.drawable.icon_reply_20px,
+										), null)
+
+										val lineHeight = 8.dp.toPixels().sp
+
+										if (
+											realStatus.inReplyToAccountId == realStatus.account!!.id &&
+											!skipReplyToSelf
+										) {
 											Text(
 												translation(Res.string.replying_to_self),
-												fontSize = 13.sp
+												fontSize = 13.sp,
+												lineHeight = lineHeight
 											)
-										} else {
+										} else if (
+											realStatus.inReplyToAccountId != null &&
+											realStatus.inReplyToAccountId != realStatus.account!!.id &&
+											realStatus.mentions.size == 1
+										) {
 											Text(
 												translation(
 													Res.string.replying_to_x,
@@ -450,11 +500,82 @@ fun Status(
 														else AnnotatedString("...")
 													)
 												),
-												fontSize = 13.sp
+												fontSize = 13.sp,
+												lineHeight = lineHeight
 											)
+										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size > 1) {
+											val others = realStatus.mentions.size - 1
+											Text(
+												translation(
+													Res.plurals.replying_to_x_and_x_others,
+													quantity = others,
+													mapOf(
+														"handle" to if (replyingToAccount != null)
+															AnnotatedString("@${replyingToAccount!!.acct}")
+																.withAccountLink(replyingToAccount!!)
+															else AnnotatedString("..."),
+														"number" to AnnotatedString("$others")
+													)
+												),
+												fontSize = 13.sp,
+												lineHeight = lineHeight
+											)
+										} else if (removeMentionsFromTheStartOfPosts &&
+											(realStatus.inReplyToAccountId == null ||
+												realStatus.inReplyToAccountId == realStatus.account!!.id)
+										) {
+											if (realStatus.mentions.size == 1) {
+												val account by remember { fetchAccount(realStatus.mentions.first().id) }
+													.collectAsStateWithLifecycle(null)
+
+												Text(
+													translation(
+														Res.string.mentions_x,
+														mapOf(
+															"handle" to if (account != null)
+																AnnotatedString("@${account!!.acct}")
+																	.withAccountLink(account!!)
+															else AnnotatedString("...")
+														)
+													),
+													fontSize = 13.sp,
+													lineHeight = lineHeight
+												)
+											} else if (realStatus.mentions.size > 1) {
+												val account by remember { fetchAccount(realStatus.mentions.first().id) }
+													.collectAsStateWithLifecycle(null)
+
+												val others = realStatus.mentions.size - 1
+												Text(
+													translation(
+														Res.plurals.mentions_x_and_x_others,
+														quantity = others,
+														mapOf(
+															"handle" to if (account != null)
+																AnnotatedString("@${account!!.acct}")
+																	.withAccountLink(account!!)
+															else AnnotatedString("..."),
+															"number" to AnnotatedString("$others")
+														)
+													),
+													fontSize = 13.sp,
+													lineHeight = lineHeight
+												)
+											}
 										}
 									}
+
+									if (showMentionedBottomSheet)
+										ModalBottomSheet(onDismissRequest = { showMentionedBottomSheet = false }) {
+											realStatus.mentions.forEach {
+												val account by remember { fetchAccount(it.id, snackbarController) }
+													.collectAsStateWithLifecycle(null)
+
+												if (account != null) AccountRow(account = account!!)
+											}
+										}
 								}
+								//</editor-fold>
 
 								if (!realStatus.content.isNullOrBlank()) {
 									if (threadViewMainStatus) {
@@ -462,6 +583,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
+												stripLeadingMentionLinks = removeMentionsFromTheStartOfPosts,
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -471,6 +593,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
+											stripLeadingMentionLinks = removeMentionsFromTheStartOfPosts,
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)

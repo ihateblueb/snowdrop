@@ -20,6 +20,7 @@ import site.remlit.snowdrop.component.defaultEmojiSize
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.log.debug
 
 /**
  * HTML content to AnnotatedString processor.
@@ -27,6 +28,7 @@ import site.remlit.snowdrop.util.LocalNavController
  * @param string Source string
  *
  * @param mentions List of mentions from the status model
+ * @param stripLeadingMentionLinks If links of mentioned users should be removed from the beginning of the content
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling)
@@ -38,6 +40,7 @@ import site.remlit.snowdrop.util.LocalNavController
 fun htmlToAnnotatedString(
 	string: String,
 	mentions: List<Status.Mention> = emptyList(),
+	stripLeadingMentionLinks: Boolean = false,
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
@@ -57,10 +60,40 @@ fun htmlToAnnotatedString(
 		}
 	}
 
+	var cleanString = string
+	if (stripLeadingMentionLinks) {
+		val prefixHtml = "(<div.*?>)".toRegex()
+		val suffixHtml = "(</div>)".toRegex()
+
+		cleanString = cleanString.replace(prefixHtml, "")
+			.replace(suffixHtml, "")
+
+		mentions.forEach { mention ->
+			val split = mention.acct.split("@")
+
+			fun shortAndFullMention(block: (String) -> String): String =
+				if (split[0] == mention.acct) block(split[0])
+				else "${block(split[0])}${block(mention.acct.replace(".", """\."""))}"
+
+			// ignore the ide error here
+			var regex = "^("
+
+			regex += shortAndFullMention { "@$it|" }
+			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span><span> <\/span>|""" }
+			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span>|""" }
+			regex += shortAndFullMention { """<a.*?>.*?@$it.*?<\/a>""" }
+
+			regex += ")"
+
+			cleanString = cleanString.replace(regex.toRegex(), "")
+				.trimStart()
+		}
+	}
+
 	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize, showEmojiTooltips)
-	return remember(string, emojis) {
+	return remember(cleanString, emojis) {
 		htmlToAnnotatedString(
-			if (simple) htmlToString(string) else string,
+			if (simple) htmlToString(cleanString) else cleanString,
 			style = HtmlStyle.DEFAULT.copy(
 				textLinkStyles = TextLinkStyles(
 					style = SpanStyle(color = theme.primary, textDecoration = TextDecoration.Underline)
