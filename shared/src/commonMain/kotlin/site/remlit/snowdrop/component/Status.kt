@@ -461,19 +461,31 @@ fun Status(
 										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
 									) {
 										Icon(painterResource(
-											if (realStatus.inReplyToId != null) Res.drawable.icon_reply_20px
-											else Res.drawable.icon_alternate_email_20px,
+											if (removeMentionsFromTheStartOfPosts &&
+												(realStatus.inReplyToAccountId == null ||
+													(realStatus.inReplyToAccountId == realStatus.account!!.id
+													&& realStatus.mentions.isNotEmpty()))
+											) Res.drawable.icon_alternate_email_20px
+											else Res.drawable.icon_reply_20px,
 										), null)
 
 										val lineHeight = 8.dp.toPixels().sp
 
-										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
+										if (
+											realStatus.inReplyToAccountId == realStatus.account!!.id &&
+											(removeMentionsFromTheStartOfPosts && realStatus.mentions.isEmpty() ||
+												!removeMentionsFromTheStartOfPosts)
+										) {
 											Text(
 												translation(Res.string.replying_to_self),
 												fontSize = 13.sp,
 												lineHeight = lineHeight
 											)
-										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size <= 1) {
+										} else if (
+											realStatus.inReplyToAccountId != null &&
+											realStatus.inReplyToAccountId != realStatus.account!!.id &&
+											realStatus.mentions.size == 1
+										) {
 											Text(
 												translation(
 													Res.string.replying_to_x,
@@ -504,7 +516,10 @@ fun Status(
 												fontSize = 13.sp,
 												lineHeight = lineHeight
 											)
-										} else if (removeMentionsFromTheStartOfPosts && realStatus.inReplyToAccountId == null) {
+										} else if (removeMentionsFromTheStartOfPosts &&
+											(realStatus.inReplyToAccountId == null ||
+												realStatus.inReplyToAccountId == realStatus.account!!.id)
+										) {
 											if (realStatus.mentions.size == 1) {
 												val account by remember { fetchAccount(realStatus.mentions.first().id) }
 													.collectAsStateWithLifecycle(null)

@@ -298,30 +298,6 @@ fun GeneralSettingsView() = ViewSurface {
 			}
 		}
 		item {
-			val removeMentionsFromTheStartOfPosts by settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", false)
-				.collectAsStateWithLifecycle(false)
-
-			Card(
-				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),
-				shape = ListItemShape(3, 5),
-			) {
-				ListItem(
-					headlineContent = { Text(stringResource(Res.string.remove_mentions_from_the_start_of_posts)) },
-					supportingContent = { Text(stringResource(Res.string.mentions_will_be_shown_separately)) },
-					trailingContent = {
-						Switch(
-							removeMentionsFromTheStartOfPosts,
-							onCheckedChange = { blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", it) }
-						)
-					},
-					modifier = Modifier.clickable {
-						blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", !removeMentionsFromTheStartOfPosts)
-					},
-					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
-				)
-			}
-		}
-		item {
 			val disableAttachmentsDownload by settings.getBooleanFlow("disable_attachments_download", false)
 				.collectAsStateWithLifecycle(false)
 			
