@@ -59,9 +59,11 @@ import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
 import snowdrop.shared.generated.resources.lock_timeline
 import snowdrop.shared.generated.resources.lock_timeline_short_description
+import snowdrop.shared.generated.resources.mentions_will_be_shown_separately
 import snowdrop.shared.generated.resources.notifs_per_page
 import snowdrop.shared.generated.resources.number_of_recent_emojis_to_save
 import snowdrop.shared.generated.resources.posts_per_page
+import snowdrop.shared.generated.resources.remove_mentions_from_the_start_of_posts
 import snowdrop.shared.generated.resources.visibility_direct
 import snowdrop.shared.generated.resources.visibility_followers
 import snowdrop.shared.generated.resources.visibility_public
@@ -290,6 +292,30 @@ fun GeneralSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("append_re_on_replies", !appendReOnReplies)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val removeMentionsFromTheStartOfPosts by settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card(
+				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),
+				shape = ListItemShape(3, 5),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.remove_mentions_from_the_start_of_posts)) },
+					supportingContent = { Text(stringResource(Res.string.mentions_will_be_shown_separately)) },
+					trailingContent = {
+						Switch(
+							removeMentionsFromTheStartOfPosts,
+							onCheckedChange = { blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", !removeMentionsFromTheStartOfPosts)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)

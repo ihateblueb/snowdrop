@@ -60,39 +60,34 @@ fun htmlToAnnotatedString(
 		}
 	}
 
+	var cleanString = string
+	if (stripLeadingMentionLinks) {
+		val prefixHtml = "(<div.*?>)".toRegex()
+		val suffixHtml = "(</div>)".toRegex()
 
-	val prefixHtml = "^(<div.*?>)".toRegex()
-	val suffixHtml = "$(</div>)".toRegex()
+		cleanString = cleanString.replace(prefixHtml, "")
+			.replace(suffixHtml, "")
 
-	debug { "cleanString 0  $string" }
+		mentions.forEach { mention ->
+			val split = mention.acct.split("@")
 
-	var cleanString = string.replace(prefixHtml, "")
-		.replace(suffixHtml, "")
+			fun shortAndFullMention(block: (String) -> String): String =
+				if (split[0] == mention.acct) block(split[0])
+				else "${block(split[0])}${block(mention.acct.replace(".", """\."""))}"
 
-	debug { "cleanString 1  $cleanString" }
+			// ignore the ide error here
+			var regex = "^("
 
-	if (stripLeadingMentionLinks) mentions.forEach { mention ->
-		val split = mention.acct.split("@")
+			regex += shortAndFullMention { "@$it|" }
+			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span><span> <\/span>|""" }
+			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span>|""" }
+			regex += shortAndFullMention { """<a.*?>.*?@$it.*?<\/a>""" }
 
-		fun shortAndFullMention(block: (String) -> String): String =
-			if (split[0] == mention.acct) block(split[0])
-			else "${block(split[0])}${block(mention.acct.replace(".", """\."""))}"
+			regex += ")"
 
-		var regex = "^("
-
-		regex += shortAndFullMention { "@$it|" }
-		regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span><span> <\/span>|""" }
-		regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span>|""" }
-		regex += shortAndFullMention { """<a.*?>.*?@$it.*?<\/a>""" }
-
-		regex += ")"
-
-		debug { "cleanString re $regex" }
-
-		debug { "cleanString 2* $cleanString" }
-
-		cleanString = cleanString.replace(regex.toRegex(), "")
-			.trimStart()
+			cleanString = cleanString.replace(regex.toRegex(), "")
+				.trimStart()
+		}
 	}
 
 	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize, showEmojiTooltips)

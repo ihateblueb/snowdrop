@@ -86,6 +86,7 @@ import site.remlit.snowdrop.util.extension.toPixels
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
+import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import snowdrop.shared.generated.resources.Res
@@ -433,6 +434,10 @@ fun Status(
 
 					@Composable
 					fun renderContent() {
+						val initialRemoveMentionsFromTheStartOfPosts = blockingSettings.getBoolean("remove_mentions_from_the_start_of_posts", true)
+						val removeMentionsFromTheStartOfPosts by remember { settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", initialRemoveMentionsFromTheStartOfPosts) }
+							.collectAsStateWithLifecycle(initialRemoveMentionsFromTheStartOfPosts)
+
 						Column(
 							verticalArrangement = Arrangement.spacedBy(10.dp)
 						) {
@@ -440,7 +445,7 @@ fun Status(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
 								//<editor-fold name="Replying to/Mentions Row">
-								if (realStatus.inReplyToId != null || realStatus.mentions.isNotEmpty()) {
+								if (realStatus.inReplyToId != null || (realStatus.mentions.isNotEmpty() && removeMentionsFromTheStartOfPosts)) {
 									var showMentionedBottomSheet by remember { mutableStateOf(false) }
 
 									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
@@ -499,7 +504,7 @@ fun Status(
 												fontSize = 13.sp,
 												lineHeight = lineHeight
 											)
-										} else if (realStatus.inReplyToAccountId == null) {
+										} else if (removeMentionsFromTheStartOfPosts && realStatus.inReplyToAccountId == null) {
 											if (realStatus.mentions.size == 1) {
 												val account by remember { fetchAccount(realStatus.mentions.first().id) }
 													.collectAsStateWithLifecycle(null)
@@ -559,7 +564,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
-												stripLeadingMentionLinks = true, // todo: setting
+												stripLeadingMentionLinks = removeMentionsFromTheStartOfPosts,
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -569,7 +574,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
-											stripLeadingMentionLinks = true, // todo: setting
+											stripLeadingMentionLinks = removeMentionsFromTheStartOfPosts,
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)
