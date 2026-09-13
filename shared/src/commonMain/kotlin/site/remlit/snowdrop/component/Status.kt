@@ -444,15 +444,19 @@ fun Status(
 							Column(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
+								// i don't recommend messing with this, it's very messy and easy to break.
 								//<editor-fold name="Replying to/Mentions Row">
 								if (realStatus.inReplyToId != null || (realStatus.mentions.isNotEmpty() && removeMentionsFromTheStartOfPosts)) {
 									var showMentionedBottomSheet by remember { mutableStateOf(false) }
+
+									val skipReplyToSelf = if (removeMentionsFromTheStartOfPosts) realStatus.mentions.isNotEmpty()
+										else false
 
 									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
 									Row(
 										modifier = Modifier.clickable(
 											onClick = {
-												if (realStatus.mentions.size > 1)
+												if (realStatus.mentions.size > 1 && !skipReplyToSelf)
 													showMentionedBottomSheet = !showMentionedBottomSheet
 											},
 											interactionSource = MutableInteractionSource(),
@@ -462,9 +466,7 @@ fun Status(
 									) {
 										Icon(painterResource(
 											if (removeMentionsFromTheStartOfPosts &&
-												(realStatus.inReplyToAccountId == null ||
-													(realStatus.inReplyToAccountId == realStatus.account!!.id
-													&& realStatus.mentions.isNotEmpty()))
+												(realStatus.inReplyToAccountId == null || skipReplyToSelf)
 											) Res.drawable.icon_alternate_email_20px
 											else Res.drawable.icon_reply_20px,
 										), null)
@@ -473,8 +475,7 @@ fun Status(
 
 										if (
 											realStatus.inReplyToAccountId == realStatus.account!!.id &&
-											(removeMentionsFromTheStartOfPosts && realStatus.mentions.isEmpty() ||
-												!removeMentionsFromTheStartOfPosts)
+											!skipReplyToSelf
 										) {
 											Text(
 												translation(Res.string.replying_to_self),
