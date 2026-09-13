@@ -434,7 +434,7 @@ fun Status(
 
 					@Composable
 					fun renderContent() {
-						val initialRemoveMentionsFromTheStartOfPosts = blockingSettings.getBoolean("remove_mentions_from_the_start_of_posts", true)
+						val initialRemoveMentionsFromTheStartOfPosts = blockingSettings.getBoolean("remove_mentions_from_the_start_of_posts", false)
 						val removeMentionsFromTheStartOfPosts by remember { settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", initialRemoveMentionsFromTheStartOfPosts) }
 							.collectAsStateWithLifecycle(initialRemoveMentionsFromTheStartOfPosts)
 

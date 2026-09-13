@@ -298,8 +298,8 @@ fun GeneralSettingsView() = ViewSurface {
 			}
 		}
 		item {
-			val removeMentionsFromTheStartOfPosts by settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", true)
-				.collectAsStateWithLifecycle(true)
+			val removeMentionsFromTheStartOfPosts by settings.getBooleanFlow("remove_mentions_from_the_start_of_posts", false)
+				.collectAsStateWithLifecycle(false)
 
 			Card(
 				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),

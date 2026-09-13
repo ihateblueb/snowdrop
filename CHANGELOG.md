@@ -6,6 +6,7 @@
 - Bot and locked icon for profile views and account row
 
 ### Fixed
+- Less buggy and optional mention style which strips mentions and shows them above the post content
 
 ## [0.0.8-alpha]
 
