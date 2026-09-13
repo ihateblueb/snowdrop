@@ -1,5 +1,8 @@
 # Contributing
 
+It's recommended you connect with other contributors on our channel in the [Iceshrimp Zulip](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)
+if you want to contribute.
+
 ## AI contributions
 In no way are AI generated pull requests, issues, or code welcome in this codebase. You will have your issue or pull
 request closed, and we will ignore you if you break this rule.
