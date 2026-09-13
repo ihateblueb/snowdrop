@@ -177,6 +177,7 @@ import snowdrop.shared.generated.resources.you_are_posting_publicly
 import snowdrop.shared.generated.resources.you_cannot_schedule_a_post_in_the_past
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalSettingsApi::class)
@@ -853,7 +854,7 @@ fun ComposeView(
 							//
 							// i think 5m is pretty standard so we should use it
 							// if some other software has some further limit we can revisit
-							.plus(5, DateTimeUnit.MINUTE)
+							.plus(5.minutes)
 						val scheduledTimeInstant = Instant.fromEpochMilliseconds(scheduledDate) // will be utc so we correct it
 
 						showTimePicker = false
