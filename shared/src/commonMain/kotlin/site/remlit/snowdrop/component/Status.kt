@@ -457,8 +457,9 @@ fun Status(
 										modifier = Modifier.clickable(
 											onClick = {
 												if (realStatus.mentions.size > 1 &&
-													realStatus.inReplyToAccountId != realStatus.account!!.id &&
-													!skipReplyToSelf
+													(realStatus.inReplyToAccountId != realStatus.account!!.id ||
+														realStatus.inReplyToAccountId == realStatus.account!!.id &&
+														skipReplyToSelf)
 												) showMentionedBottomSheet = !showMentionedBottomSheet
 											},
 											interactionSource = MutableInteractionSource(),
