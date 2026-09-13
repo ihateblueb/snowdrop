@@ -265,7 +265,8 @@ fun NotificationsView() = ViewSurface {
 		timelineComponent = { item, _ ->
 			Notification(
 				item,
-				onAction = { coroutineScope.launch { readNotifications() } }
+				onAction = { coroutineScope.launch { readNotifications() } },
+				filterContext = "notifications"
 			)
 		}, // todo: onUpdate
 	)
