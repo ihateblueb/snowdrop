@@ -2,19 +2,19 @@
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="branding/wordmark-white.svg">
         <source media="(prefers-color-scheme: light)" srcset="branding/wordmark-black.svg">
-        <img height="50" alt="Aster" src="branding/wordmark-black.svg">
+        <img height="50" alt="Snowdrop" src="branding/wordmark-black.svg">
     </picture>
 </h1>
 
-[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/) ![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg) 
+[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/)
+![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg)
+[![Zulip](.github/assets/badge/zulip.svg)](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)
 
 An attempt to make a Mastodon client that is multiplatform (iOS and Android)
 and supports extensions brought by Mastodon API compatible software
 like Iceshrimp.NET.
 
 Uses Material 3 (supporting dynamic color schemes) for UI and icons.
-
-Chat with us on the [Iceshrimp Zulip](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)!
 
 ## Screenshots
 
