@@ -2,11 +2,13 @@
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="branding/wordmark-white.svg">
         <source media="(prefers-color-scheme: light)" srcset="branding/wordmark-black.svg">
-        <img height="50" alt="Aster" src="branding/wordmark-black.svg">
+        <img height="50" alt="Snowdrop" src="branding/wordmark-black.svg">
     </picture>
 </h1>
 
-[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/) ![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg) 
+[![Translation status](https://translate.codeberg.org/widget/snowdrop/svg-badge.svg)](https://translate.codeberg.org/engage/snowdrop/)
+[![Zulip](.github/assets/badge/zulip.svg)](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)
+![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg)
 
 An attempt to make a Mastodon client that is multiplatform (iOS and Android)
 and supports extensions brought by Mastodon API compatible software
@@ -14,19 +16,22 @@ like Iceshrimp.NET.
 
 Uses Material 3 (supporting dynamic color schemes) for UI and icons.
 
-Chat with us on the [Iceshrimp Zulip](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)!
-
 ## Screenshots
 
 <div style="display: flex; align-content: center; gap: 10px;">
 	<img src=".github/assets/timeline.png" height="250px">
-	<img src=".github/assets/filtered_notifications.png" height="250px">
+	<img src=".github/assets/thread.png" height="250px">
+	<img src=".github/assets/notifications.png" height="250px">
 	<img src=".github/assets/post_search.png" height="250px">
 	<img src=".github/assets/user_search.png" height="250px">
-	<img src=".github/assets/settings.png" height="250px">
+	<img src=".github/assets/reaction_picker.png" height="250px">
+	<img src=".github/assets/image_viewer_alt.png" height="250px">
+	<img src=".github/assets/post_composer.png" height="250px">
+	<img src=".github/assets/settings_1.png" height="250px">
+	<img src=".github/assets/settings_2.png" height="250px">
 	<img src=".github/assets/account_switcher.png" height="250px">
-	<img src=".github/assets/profile_top.png" height="250px">
-	<img src=".github/assets/profile_bottom.png" height="250px">
+	<img src=".github/assets/profile_1.png" height="250px">
+	<img src=".github/assets/profile_2.png" height="250px">
 </div>
 
 ## Software Compatibility
