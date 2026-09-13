@@ -379,20 +379,14 @@ fun Status(
 								realStatus.account!!.displayName(),
 								emojis = realStatus.account!!.emojis,
 								fontWeight = FontWeight.Medium,
-								maxLines = 1,
-								modifier = Modifier.clickable(onClick = {
-									navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
-								})
+								maxLines = 1
 							)
 							Text(
 								"@${realStatus.account?.acct}",
 								overflow = TextOverflow.Ellipsis,
 								color = MaterialTheme.colorScheme.onSurfaceVariant,
 								fontSize = 13.sp,
-								maxLines = 1,
-								modifier = Modifier.clickable(onClick = {
-									navHandler.navigate(ProfileRoute(realStatus.account?.id!!))
-								})
+								maxLines = 1
 							)
 						}
 
