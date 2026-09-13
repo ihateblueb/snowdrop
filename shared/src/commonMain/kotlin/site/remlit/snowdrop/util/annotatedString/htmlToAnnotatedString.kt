@@ -20,6 +20,7 @@ import site.remlit.snowdrop.component.defaultEmojiSize
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.log.debug
 
 /**
  * HTML content to AnnotatedString processor.
@@ -27,6 +28,7 @@ import site.remlit.snowdrop.util.LocalNavController
  * @param string Source string
  *
  * @param mentions List of mentions from the status model
+ * @param stripLeadingMentionLinks If links of mentioned users should be removed from the beginning of the content
  * @param emojis List of emojis
  * @param emojiSize Text size of emojis
  * @param simple If the text should be rendered simply (no styling)
@@ -38,7 +40,7 @@ import site.remlit.snowdrop.util.LocalNavController
 fun htmlToAnnotatedString(
 	string: String,
 	mentions: List<Status.Mention> = emptyList(),
-	filterOutMentionLinks: Boolean = false,
+	stripLeadingMentionLinks: Boolean = false,
 	emojis: List<Emoji> = emptyList(),
 	emojiSize: TextUnit = defaultEmojiSize,
 	simple: Boolean = false,
@@ -58,12 +60,38 @@ fun htmlToAnnotatedString(
 		}
 	}
 
-	var cleanString = string
-	if (filterOutMentionLinks) mentions.forEach { mention ->
-		val split = mention.acct.split("@")
-		val regex = """@${split[0]}|@${mention.acct}""".toRegex()
 
-		cleanString = cleanString.replace(regex, "")
+	val prefixHtml = "^(<div.*?>)".toRegex()
+	val suffixHtml = "$(</div>)".toRegex()
+
+	debug { "cleanString 0  $string" }
+
+	var cleanString = string.replace(prefixHtml, "")
+		.replace(suffixHtml, "")
+
+	debug { "cleanString 1  $cleanString" }
+
+	if (stripLeadingMentionLinks) mentions.forEach { mention ->
+		val split = mention.acct.split("@")
+
+		fun shortAndFullMention(block: (String) -> String): String =
+			if (split[0] == mention.acct) block(split[0])
+			else "${block(split[0])}${block(mention.acct.replace(".", """\."""))}"
+
+		var regex = "^("
+
+		regex += shortAndFullMention { "@$it|" }
+		regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span><span> <\/span>|""" }
+		regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span>|""" }
+		regex += shortAndFullMention { """<a.*?>.*?@$it.*?<\/a>""" }
+
+		regex += ")"
+
+		debug { "cleanString re $regex" }
+
+		debug { "cleanString 2* $cleanString" }
+
+		cleanString = cleanString.replace(regex.toRegex(), "")
 			.trimStart()
 	}
 

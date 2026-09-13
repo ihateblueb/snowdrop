@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
@@ -81,6 +82,7 @@ import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchAccountOrNull
+import site.remlit.snowdrop.util.extension.toPixels
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.extension.toRelativeString
 import site.remlit.snowdrop.util.getFeature
@@ -96,6 +98,8 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_reply_20px
 import snowdrop.shared.generated.resources.icon_warning_24px
+import snowdrop.shared.generated.resources.mentions_x
+import snowdrop.shared.generated.resources.mentions_x_and_x_others
 import snowdrop.shared.generated.resources.open_mentioned_accounts_sheet
 import snowdrop.shared.generated.resources.pinned
 import snowdrop.shared.generated.resources.post_by_x
@@ -436,7 +440,7 @@ fun Status(
 								verticalArrangement = Arrangement.spacedBy(5.dp)
 							) {
 								//<editor-fold name="Replying to/Mentions Row">
-								if (realStatus.inReplyToId != null /* || realStatus.mentions.isNotEmpty() */) {
+								if (realStatus.inReplyToId != null || realStatus.mentions.isNotEmpty()) {
 									var showMentionedBottomSheet by remember { mutableStateOf(false) }
 
 									val __translation_open_sheet = translation(Res.string.open_mentioned_accounts_sheet).text
@@ -449,17 +453,20 @@ fun Status(
 											interactionSource = MutableInteractionSource(),
 											indication = null
 										).semantics { contentDescription = __translation_open_sheet },
-										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally)
+										horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
 									) {
 										Icon(painterResource(
 											if (realStatus.inReplyToId != null) Res.drawable.icon_reply_20px
 											else Res.drawable.icon_alternate_email_20px,
 										), null)
 
+										val lineHeight = 8.dp.toPixels().sp
+
 										if (realStatus.inReplyToAccountId == realStatus.account!!.id) {
 											Text(
 												translation(Res.string.replying_to_self),
-												fontSize = 13.sp
+												fontSize = 13.sp,
+												lineHeight = lineHeight
 											)
 										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size <= 1) {
 											Text(
@@ -472,7 +479,8 @@ fun Status(
 														else AnnotatedString("...")
 													)
 												),
-												fontSize = 13.sp
+												fontSize = 13.sp,
+												lineHeight = lineHeight
 											)
 										} else if (realStatus.inReplyToAccountId != null && realStatus.mentions.size > 1) {
 											val others = realStatus.mentions.size - 1
@@ -488,11 +496,10 @@ fun Status(
 														"number" to AnnotatedString("$others")
 													)
 												),
-												fontSize = 13.sp
+												fontSize = 13.sp,
+												lineHeight = lineHeight
 											)
-										}
-										/*
-										* else if (realStatus.inReplyToAccountId == null) {
+										} else if (realStatus.inReplyToAccountId == null) {
 											if (realStatus.mentions.size == 1) {
 												val account by remember { fetchAccount(realStatus.mentions.first().id) }
 													.collectAsStateWithLifecycle(null)
@@ -507,7 +514,8 @@ fun Status(
 															else AnnotatedString("...")
 														)
 													),
-													fontSize = 13.sp
+													fontSize = 13.sp,
+													lineHeight = lineHeight
 												)
 											} else if (realStatus.mentions.size > 1) {
 												val account by remember { fetchAccount(realStatus.mentions.first().id) }
@@ -526,11 +534,11 @@ fun Status(
 															"number" to AnnotatedString("$others")
 														)
 													),
-													fontSize = 13.sp
+													fontSize = 13.sp,
+													lineHeight = lineHeight
 												)
 											}
 										}
-										* */
 									}
 
 									if (showMentionedBottomSheet)
@@ -551,7 +559,7 @@ fun Status(
 											HtmlContent(
 												string = realStatus.content!!,
 												mentions = realStatus.mentions,
-												filterOutMentionLinks = false,
+												stripLeadingMentionLinks = true, // todo: setting
 												emojis = realStatus.emojis,
 												emojiSize = 1.5.em,
 												showEmojiTooltips = false // will cause a crash if we show emoji tooltips
@@ -561,7 +569,7 @@ fun Status(
 										HtmlContent(
 											string = realStatus.content!!,
 											mentions = realStatus.mentions,
-											filterOutMentionLinks = false,
+											stripLeadingMentionLinks = true, // todo: setting
 											emojis = realStatus.emojis,
 											emojiSize = 1.5.em
 										)
