@@ -845,26 +845,33 @@ fun ComposeView(
 			if (showTimePicker) {
 				TimePickerModal(
 					onConfirm = { hour, minute ->
-						//val currentTimeInstant = Clock.System.now()
-						val scheduledTimeInstant = Instant.fromEpochMilliseconds(scheduledDate)
-
-						// i can't figure out how to fix this so that's a todo
-						//
-						//if (scheduledDate < currentTimeInstant.toEpochMilliseconds()) {
-						//	showInvalidTimeAlert = !showInvalidTimeAlert
-						//	return@TimePickerModal
-						//}
+						val currentTimeInstant = Clock.System.now() // will be correct timezone
+							// mastodon:  >=5m in the future
+							// iceshrimp: >=1m in the future
+							// akkoma:    >=5m in the future
+							// gotosoc:   >=5m in the future
+							//
+							// i think 5m is pretty standard so we should use it
+							// if some other software has some further limit we can revisit
+							.plus(5, DateTimeUnit.MINUTE)
+						val scheduledTimeInstant = Instant.fromEpochMilliseconds(scheduledDate) // will be utc so we correct it
 
 						showTimePicker = false
 
 						// fuck you google. and jetbrains too honestly this library fucking sucks
 						val offset = scheduledTimeInstant.offsetIn(TimeZone.currentSystemDefault())
 
-						scheduledDateTimeParsed = scheduledTimeInstant
+						val scheduledTimePlusTzOffset = scheduledTimeInstant
 							.plus(hour, DateTimeUnit.HOUR)
 							.plus(minute, DateTimeUnit.MINUTE)
 							.plus(offset.totalSeconds * -1, DateTimeUnit.SECOND)
-							.toString()
+
+						if (scheduledTimePlusTzOffset < currentTimeInstant) {
+							showInvalidTimeAlert = !showInvalidTimeAlert
+							return@TimePickerModal
+						}
+
+						scheduledDateTimeParsed = scheduledTimePlusTzOffset.toString()
 
 						scheduledTimeHour = hour
 						scheduledTimeMinute = minute
