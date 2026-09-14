@@ -111,7 +111,7 @@ fun MiniStatus(
 					if (status.poll != null)
 						attachmentStrings.add(translation(Res.string._1_poll))
 
-					if (status.quote != null || status.quotedStatus != null)
+					if (status.quote != null)
 						attachmentStrings.add(translation(Res.string._1_quoted_post))
 
 					if (attachmentStrings.isNotEmpty())

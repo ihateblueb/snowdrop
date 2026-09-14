@@ -68,8 +68,6 @@ data class Status(
 	val language: String? = null,
 
 	val state: String? = null,
-	@SerialName("quoted_status")
-	val quotedStatus: Quote? = null,
 
 	@SerialName("created_at")
 	val createdAt: String? = null,
@@ -77,7 +75,7 @@ data class Status(
 	val editedAt: String? = null,
 
 	val pleroma: Pleroma? = null,
-) : IdentifiableObject<String> {
+) : IdentifiableObject<String>, Quote {
 	@Serializable
 	data class QuoteApproval(
 		val automatic: List<String> = listOf(),

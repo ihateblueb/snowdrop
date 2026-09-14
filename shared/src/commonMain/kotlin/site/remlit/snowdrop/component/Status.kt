@@ -7,7 +7,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.PaddingValues
@@ -71,6 +70,7 @@ import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.model.MastodonQuote
 import site.remlit.snowdrop.util.LocalStatusStateController
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -631,10 +631,18 @@ fun Status(
 
 							if (realStatus.poll != null) Poll(realStatus)
 
-							val quote = realStatus.quote ?: realStatus.quotedStatus
-							if (quote?.quotedStatus != null) {
-								MiniStatus(quote.quotedStatus)
+							when (val quote = realStatus.quote) {
+								is MastodonQuote -> {
+									if (quote.quotedStatus != null) {
+										MiniStatus(quote.quotedStatus)
+									}
+								}
+								is Status -> {
+									MiniStatus(quote)
+								}
+								else -> {}
 							}
+
 						}
 					}
 
