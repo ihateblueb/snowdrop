@@ -424,7 +424,8 @@ fun ProfileView(id: String) = ViewSurface {
 
 										if (isMe) {
 											OutlinedButton(onClick = {
-												navHandler.navigate(EditProfileRoute)
+												if (!atRoute<EditProfileRoute>(navHandler.currentDestination))
+													navHandler.navigate(EditProfileRoute)
 											}) {
 												Text(stringResource(Res.string.edit_profile))
 											}
@@ -443,7 +444,6 @@ fun ProfileView(id: String) = ViewSurface {
 											} else {
 												FilledTonalButton(
 													onClick = {
-														// todo: add confirmation to follow- only if account is locked
 														if (account!!.locked) {
 															showRelationshipActionWarning = !showRelationshipActionWarning
 														} else follow()
