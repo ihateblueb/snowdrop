@@ -149,7 +149,8 @@
 	<string name="show_boosts">Show boosts</string>
 	<string name="show_likes">Show likes</string>
 	<string name="show_reactions">Show reactions</string>
-	<string name="mute">Mute</string>
+	<string name="mute_conversation">Mute conversation</string>
+	<string name="unmute_conversation">Unmute conversation</string>
 	<string name="report">Report</string>
 	<string name="edit">Edit</string>
 	<string name="delete">Delete</string>

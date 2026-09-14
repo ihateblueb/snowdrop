@@ -36,11 +36,13 @@ import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
 import site.remlit.snowdrop.api.statuses.deleteStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
+import site.remlit.snowdrop.api.statuses.muteStatus
 import site.remlit.snowdrop.api.statuses.pinStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.unbookmarkStatus
 import site.remlit.snowdrop.api.statuses.unfavouriteStatus
+import site.remlit.snowdrop.api.statuses.unmuteStatus
 import site.remlit.snowdrop.api.statuses.unpinStatus
 import site.remlit.snowdrop.api.statuses.unreblogStatus
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
@@ -88,7 +90,7 @@ import snowdrop.shared.generated.resources.icon_star_filled_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
-import snowdrop.shared.generated.resources.mute
+import snowdrop.shared.generated.resources.mute_conversation
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.report
@@ -96,6 +98,7 @@ import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.show_likes
 import snowdrop.shared.generated.resources.show_reactions
 import snowdrop.shared.generated.resources.unbookmark
+import snowdrop.shared.generated.resources.unmute_conversation
 import snowdrop.shared.generated.resources.unpin
 
 @OptIn(ExperimentalSettingsApi::class)
@@ -422,15 +425,6 @@ fun StatusFooter(
 
 				MenuDivider()
 
-				DropdownMenuItem(
-					text = { Text(stringResource(Res.string.mute)) },
-					leadingIcon = {
-						Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
-					},
-					shape = MenuDefaults.middleItemShape,
-					onClick = { }
-				)
-
 				if (!isMine) {
 					DangerDropdownItem(
 						text = { Text(stringResource(Res.string.report)) },
@@ -444,7 +438,30 @@ fun StatusFooter(
 
 				// if mine
 				if (isMine) {
-					MenuDivider()
+					DropdownMenuItem(
+						text = {
+							if (!realStatus.muted) Text(stringResource(Res.string.mute_conversation))
+							else Text(stringResource(Res.string.unmute_conversation))
+						},
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
+						},
+						shape = MenuDefaults.middleItemShape,
+						onClick = {
+							coroutineScope.launch {
+								vibrate(true, haptics)
+
+								val res = if (realStatus.muted) unmuteStatus(realStatus.id) else muteStatus(realStatus.id)
+								if (res.error || res.response == null) {
+									res.handleError(snackbarController)
+									vibrateError(haptics)
+								}
+
+								updateStatus(false)
+								showDropdown = false
+							}
+						}
+					)
 
 					DropdownMenuItem(
 						text = {
