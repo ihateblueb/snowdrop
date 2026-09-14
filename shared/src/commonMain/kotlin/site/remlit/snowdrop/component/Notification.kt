@@ -6,6 +6,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.biteBack
 import site.remlit.snowdrop.api.followRequest.authorizeFollowRequest
+import site.remlit.snowdrop.api.followRequest.ignoreFollowRequest
 import site.remlit.snowdrop.api.followRequest.rejectFollowRequest
 import site.remlit.snowdrop.model.Notification
 import site.remlit.snowdrop.util.LocalNavController
@@ -48,6 +50,7 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.annotatedString.htmlToAnnotatedString
 import site.remlit.snowdrop.util.annotatedString.withAccountLink
 import site.remlit.snowdrop.util.extension.toRelativeString
+import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.translation
 import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.util.vibrateError
@@ -55,6 +58,7 @@ import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.a_poll_you_have_voted_in_has_ended
 import snowdrop.shared.generated.resources.accept
 import snowdrop.shared.generated.resources.bite_back
+import snowdrop.shared.generated.resources.icon_block_24px
 import snowdrop.shared.generated.resources.icon_check_24px
 import snowdrop.shared.generated.resources.icon_close_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
@@ -65,6 +69,7 @@ import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_poll_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
+import snowdrop.shared.generated.resources.ignore
 import snowdrop.shared.generated.resources.reject
 import snowdrop.shared.generated.resources.x_accepted_your_follow_request
 import snowdrop.shared.generated.resources.x_bit_you
@@ -252,9 +257,13 @@ fun Notification(
 				if (notification.type == "follow_request") {
 					var actionsVisible by rememberSaveable { mutableStateOf(true) }
 
-					fun respondToFollowRequest(accept: Boolean) = coroutineScope.launch {
-						val res = if (accept) authorizeFollowRequest(notification.account.id)
-						else rejectFollowRequest(notification.account.id)
+					fun respondToFollowRequest(type: String) = coroutineScope.launch {
+						val res = when (type) {
+							"accept" -> authorizeFollowRequest(notification.account.id)
+							"reject" -> rejectFollowRequest(notification.account.id)
+							"ignore" -> ignoreFollowRequest(notification.account.id)
+							else -> TODO() // TODO: make this an enum
+						}
 
 						if (res.error || res.response == null) {
 							res.handleError(snackbarController)
@@ -271,17 +280,23 @@ fun Notification(
 						enter = expandVertically(),
 						exit = shrinkVertically()
 					) {
-						Row(
+						FlowRow(
 							modifier = Modifier.padding(top = 10.dp, start = actionsStartPadding),
 							horizontalArrangement = Arrangement.spacedBy(10.dp)
 						) {
-							FilledTonalButton(onClick = { respondToFollowRequest(true) }) {
+							FilledTonalButton(onClick = { respondToFollowRequest("accept") }) {
 								Icon(painterResource(Res.drawable.icon_check_24px), null)
 								Text(stringResource(Res.string.accept))
 							}
-							OutlinedButton(onClick = { respondToFollowRequest(false) }) {
+							OutlinedButton(onClick = { respondToFollowRequest("reject") }) {
 								Icon(painterResource(Res.drawable.icon_close_24px), null)
 								Text(stringResource(Res.string.reject))
+							}
+							if (getFeature("ignore_follow_request")) {
+								OutlinedButton(onClick = { respondToFollowRequest("ignore") }) {
+									Icon(painterResource(Res.drawable.icon_block_24px), null)
+									Text(stringResource(Res.string.ignore))
+								}
 							}
 						}
 					}

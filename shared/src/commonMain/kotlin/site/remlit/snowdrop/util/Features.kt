@@ -19,7 +19,8 @@ enum class Software {
 	IceshrimpJS,
 	IceshrimpNET,
 	Mitra,
-	GoToSocial
+	GoToSocial,
+	Friendica
 }
 
 /**
@@ -86,6 +87,9 @@ suspend fun determineFeatures() {
 	if (v2?.sourceUrl != null && v2.sourceUrl.contains(("superseriousbusiness/gotosocial").toRegex()))
 		software = Software.GoToSocial
 
+	if ("""\(compatible; Friendica.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Friendica
+
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
@@ -142,6 +146,11 @@ suspend fun determineFeatures() {
 		software == Software.GoToSocial
 	) putFeature("local_only_toggle", true)
 	else putFeature("local_only_toggle", false)
+
+	if (
+		software == Software.Friendica
+	) putFeature("ignore_follow_request", true)
+	else putFeature("ignore_follow_request", false)
 
 	determiningFeatures = false
 }

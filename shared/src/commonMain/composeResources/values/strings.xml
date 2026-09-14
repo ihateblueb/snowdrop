@@ -133,6 +133,7 @@
 	<string name="save">Save</string>
 	<string name="accept">Accept</string>
 	<string name="reject">Reject</string>
+	<string name="ignore">Ignore</string>
 	<string name="bite_back">Bite back</string>
 
 	<string name="x_boosted">{clickable_display_name} boosted</string>
