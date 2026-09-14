@@ -431,14 +431,16 @@ fun StatusFooter(
 					onClick = { }
 				)
 
-				DangerDropdownItem(
-					text = { Text(stringResource(Res.string.report)) },
-					leadingIcon = {
-						Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
-					},
-					shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
-					onClick = { }
-				)
+				if (!isMine) {
+					DangerDropdownItem(
+						text = { Text(stringResource(Res.string.report)) },
+						leadingIcon = {
+							Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
+						},
+						shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
+						onClick = { }
+					)
+				}
 
 				// if mine
 				if (isMine) {
