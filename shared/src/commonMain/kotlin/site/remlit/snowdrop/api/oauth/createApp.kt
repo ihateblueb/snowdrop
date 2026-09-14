@@ -9,7 +9,7 @@ import site.remlit.snowdrop.util.config.endOfRequest
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 
-const val authScopes = "read write push"
+const val authScopes = "read write follow push"
 const val redirectUri = "snowdrop://oauth-callback"
 
 suspend fun createApp(): ApiResponse<CreateAppResponse> = safeApiRequest { accountId, host ->
