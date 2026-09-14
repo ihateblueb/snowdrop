@@ -330,6 +330,7 @@ fun StatusFooter(
 					onClick = {
 						coroutineScope.launch {
 							vibrate(true, haptics)
+							showDropdown = false
 
 							val res = if (!realStatus.bookmarked) bookmarkStatus(realStatus.id) else unbookmarkStatus(realStatus.id)
 							if (res.error || res.response == null) {
@@ -338,7 +339,6 @@ fun StatusFooter(
 							}
 
 							updateStatus(false)
-							showDropdown = false
 						}
 					}
 				)
@@ -353,14 +353,13 @@ fun StatusFooter(
 						onClick = {
 							coroutineScope.launch {
 								vibrate(true, haptics)
+								showDropdown = false
 
 								val res = biteStatus(realStatus.id)
 								if (res.error) {
 									res.handleError(snackbarController)
 									vibrateError(haptics)
 								}
-
-								showDropdown = false
 							}
 						}
 					)
@@ -450,6 +449,7 @@ fun StatusFooter(
 						onClick = {
 							coroutineScope.launch {
 								vibrate(true, haptics)
+								showDropdown = false
 
 								val res = if (realStatus.muted) unmuteStatus(realStatus.id) else muteStatus(realStatus.id)
 								if (res.error || res.response == null) {
@@ -458,7 +458,6 @@ fun StatusFooter(
 								}
 
 								updateStatus(false)
-								showDropdown = false
 							}
 						}
 					)
@@ -476,6 +475,7 @@ fun StatusFooter(
 						onClick = {
 							coroutineScope.launch {
 								vibrate(true, haptics)
+								showDropdown = false
 
 								val res = if (!realStatus.pinned) pinStatus(realStatus.id)
 								else unpinStatus(realStatus.id)
@@ -485,7 +485,6 @@ fun StatusFooter(
 								}
 
 								updateStatus(false)
-								showDropdown = false
 							}
 						}
 					)
@@ -510,6 +509,7 @@ fun StatusFooter(
 						onClick = {
 							coroutineScope.launch {
 								vibrate(true, haptics)
+								showDropdown = false
 
 								val req = deleteStatus(realStatus.id)
 								if (req.error) {
