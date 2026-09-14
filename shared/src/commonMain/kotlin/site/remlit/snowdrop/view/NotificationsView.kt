@@ -127,14 +127,14 @@ fun NotificationsView() = ViewSurface {
 		return excludedTypes
 	}
 
-	suspend fun readNotifications() {
+	suspend fun readNotifications(vibrate: Boolean) {
 		if (firstNotificationId == null) {
 			warn { "(NotificationsView) firstNotificationId null" }
-			vibrateError(hapticFeedback)
+			if (vibrate) vibrateError(hapticFeedback)
 			return
 		}
 
-		vibrateConfirm(hapticFeedback)
+		if (vibrate) vibrateConfirm(hapticFeedback)
 
 		// todo: test pleroma read notifications
 		val res = if (getFeature("read_notifications_pleroma")) readNotifications(id = firstNotificationId!!)
@@ -142,7 +142,7 @@ fun NotificationsView() = ViewSurface {
 
 		if (res.error) {
 			res.handleError(snackbarController)
-			vibrateError(hapticFeedback)
+			if (vibrate) vibrateError(hapticFeedback)
 			return
 		}
 
@@ -160,7 +160,7 @@ fun NotificationsView() = ViewSurface {
 			}
 
 			IconButton(
-				onClick = { coroutineScope.launch { readNotifications() } }
+				onClick = { coroutineScope.launch { readNotifications(true) } }
 			) {
 				Icon(painterResource(Res.drawable.icon_done_all_24px), null)
 			}
@@ -265,7 +265,7 @@ fun NotificationsView() = ViewSurface {
 		timelineComponent = { item, _ ->
 			Notification(
 				item,
-				onAction = { coroutineScope.launch { readNotifications() } }
+				onAction = { coroutineScope.launch { readNotifications(false) } }
 			)
 		}, // todo: onUpdate
 	)
