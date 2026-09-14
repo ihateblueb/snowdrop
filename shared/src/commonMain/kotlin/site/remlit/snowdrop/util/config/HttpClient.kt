@@ -23,6 +23,17 @@ val httpClient = HttpClient {
 		json(json)
 	}
 
+	install(HttpRequestRetry) {
+		retryOnServerErrors(maxRetries = 5)
+		exponentialDelay()
+	}
+
+	install(HttpTimeout) {
+		requestTimeoutMillis = 1000 * 60 * 10
+		connectTimeoutMillis = 1000 * 60 * 10
+		socketTimeoutMillis = 1000 * 60 * 10
+	}
+
 	debug { "(HttpClient) created ktor client with ua $userAgent" }
 }
 
