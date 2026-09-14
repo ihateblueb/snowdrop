@@ -303,4 +303,9 @@
     <string name="close">Cerrar</string>
     <string name="back">Atrás</string>
     <string name="more">Más</string>
+    <string name="dont_show_again">No mostrar de nuevo</string>
+    <string name="warn_when_posting_publicly">Avisar al publicar de forma pública</string>
+    <string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Te pediremos confirmación cada vez que vayas a publicar de forma pública o no listada.</string>
+    <string name="you_are_posting_publicly">Atención: Tu publicación será pública</string>
+    <string name="anyone_will_be_able_to_see_this_post">Esta publicación será visible para todo el mundo, incluidas las personas a las que no sigues o no has mencionado.</string>
 </resources>

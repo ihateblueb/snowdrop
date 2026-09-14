@@ -288,4 +288,9 @@
     <string name="close">Sulge</string>
     <string name="back">Tagasi</string>
     <string name="more">Veel</string>
+    <string name="warn_when_posting_publicly">Hoiata avalikul postitamisel</string>
+    <string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Kui postitad avalikult või ajajooneväliselt, siis kuvatakse enne postitamist kinnitusvaade.</string>
+    <string name="you_are_posting_publicly">Sa oled postitamas avalikult</string>
+    <string name="anyone_will_be_able_to_see_this_post">Kõik, sealhulgas need, keda sa ei jälgi ega sa pole maininud, võivad seda postitust näha.</string>
+    <string name="dont_show_again">Ära näita enam uuesti</string>
 </resources>
