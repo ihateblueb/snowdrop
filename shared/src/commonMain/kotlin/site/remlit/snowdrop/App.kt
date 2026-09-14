@@ -302,7 +302,10 @@ fun App() = safe {
 			@Composable
 			fun fab() {
 				FloatingActionButton(
-					onClick = { navController.navigate(ComposeRoute()) }
+					onClick = {
+						if (!atRoute<ComposeRoute>(currentDest))
+							navController.navigate(ComposeRoute())
+					}
 				) {
 					if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
 					else Icon(painterResource(Res.drawable.icon_edit_square_24px), null)
