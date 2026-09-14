@@ -89,7 +89,7 @@ data class InstanceV1(
 			@SerialName("image_matrix_limit")
 			val imageMatrixLimit: Int = 0,
 			@SerialName("video_size_limit")
-			val videoSizeLimit: Int = 0,
+			val videoSizeLimit: Long = 0,
 			@SerialName("video_frame_limit")
 			val videoFrameLimit: Int = 0,
 			@SerialName("video_matrix_limit")

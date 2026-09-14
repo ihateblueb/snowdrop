@@ -125,7 +125,7 @@ data class InstanceV2(
 			@SerialName("video_matrix_limit")
 			val videoMatrixLimit: Int = 0,
 			@SerialName("video_size_limit")
-			val videoSizeLimit: Int = 0
+			val videoSizeLimit: Long = 0
 		)
 
 		@Serializable
