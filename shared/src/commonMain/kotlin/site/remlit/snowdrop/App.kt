@@ -73,6 +73,7 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.addNewAccount
 import site.remlit.snowdrop.util.atRoute
+import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.navigationBarNavigate
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -94,6 +95,7 @@ import site.remlit.snowdrop.util.safeReturnable
 import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.showUnreadNotificationsBadge
 import site.remlit.snowdrop.util.transitionedComposable
+import site.remlit.snowdrop.util.updateCurrentAccountObject
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView
@@ -261,6 +263,12 @@ fun App() = safe {
 		(atRoute<TimelineRoute>(currentDest) ||
 			atRoute<ProfileRoute>(currentDest)) &&
 		(scrollingUpward || alwaysShowComposeButton)
+
+
+	if (loggedIn == true) bgIO {
+		debug { "attempting to update current account object" }
+		updateCurrentAccountObject()
+	}
 
 	/*
 	* UI Begins
