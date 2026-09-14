@@ -3,6 +3,10 @@ package site.remlit.snowdrop.component
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -19,9 +23,16 @@ import snowdrop.shared.generated.resources.icon_close_24px
 fun NavigationBackButton(close: Boolean = false) {
 	val navHandler = LocalNavController.current
 
+	var clicked by remember { mutableStateOf(false) }
+
 	val __translation = stringResource(if (close) Res.string.close else Res.string.back)
 	IconButton(
-		onClick = { navHandler.popBackStack() },
+		onClick = {
+			if (!clicked) {
+				clicked = true
+				navHandler.popBackStack()
+			}
+		},
 		modifier = Modifier.semantics { contentDescription = __translation }
 	) {
 		Icon(painterResource(if (close) Res.drawable.icon_close_24px
