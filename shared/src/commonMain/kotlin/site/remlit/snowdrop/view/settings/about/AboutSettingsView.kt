@@ -16,6 +16,7 @@ import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.SettingsCard
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.atRoute
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about
 import snowdrop.shared.generated.resources.about_instance
@@ -44,7 +45,10 @@ fun AboutSettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.about_instance),
-				onClick = { navHandler.navigate(AboutInstanceRoute) }
+				onClick = {
+					if (!atRoute<AboutInstanceRoute>(navHandler.currentDestination))
+						navHandler.navigate(AboutInstanceRoute)
+				}
 			)
 		}
 		item {
@@ -55,7 +59,10 @@ fun AboutSettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.about_snowdrop),
-				onClick = { navHandler.navigate(AboutSnowdropRoute) }
+				onClick = {
+					if (!atRoute<AboutSnowdropRoute>(navHandler.currentDestination))
+						navHandler.navigate(AboutSnowdropRoute)
+				}
 			)
 		}
 	}

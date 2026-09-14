@@ -7,13 +7,11 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.russhwolf.settings.ExperimentalSettingsApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.AboutSettingsRoute
@@ -25,6 +23,7 @@ import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.SettingsCard
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.showAccountSwitcher
@@ -69,7 +68,10 @@ fun SettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.about),
-				onClick = { navHandler.navigate(AboutSettingsRoute) }
+				onClick = {
+					if (!atRoute<AboutSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(AboutSettingsRoute)
+				}
 			)
 		}
 
@@ -83,7 +85,10 @@ fun SettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.general),
-				onClick = { navHandler.navigate(GeneralSettingsRoute) }
+				onClick = {
+					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(GeneralSettingsRoute)
+				}
 			)
 		}
 		item {
@@ -94,7 +99,10 @@ fun SettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.appearance),
-				onClick = { navHandler.navigate(AppearanceSettingsRoute) }
+				onClick = {
+					if (!atRoute<AppearanceSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(AppearanceSettingsRoute)
+				}
 			)
 		}
 		item {
@@ -105,7 +113,10 @@ fun SettingsView() = ViewSurface {
 						modifier = modifier, tint = color)
 				},
 				headlineContent = stringResource(Res.string.wellbeing),
-				onClick = { navHandler.navigate(WellbeingSettingsRoute) }
+				onClick = {
+					if (!atRoute<WellbeingSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(WellbeingSettingsRoute)
+				}
 			)
 		}
 

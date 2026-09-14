@@ -43,6 +43,7 @@ import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
@@ -148,7 +149,12 @@ fun AboutSnowdropView() = ViewSurface {
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
-			Button(onClick = { navHandler.navigate(DebugRoute) }) {
+			Button(
+				onClick = {
+					if (!atRoute<DebugRoute>(navHandler.currentDestination))
+						navHandler.navigate(DebugRoute)
+				}
+			) {
 				Icon(painterResource(Res.drawable.icon_bug_report_24px), null)
 				Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 				Text(translation(Res.string.debug))

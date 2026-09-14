@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,7 +53,7 @@ import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
-import site.remlit.snowdrop.util.bgIO
+import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchLists
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShape
@@ -368,7 +367,10 @@ fun TimelineView() = ViewSurface {
 
 				// settings
 				IconButton(
-					onClick = { navHandler.navigate(SettingsRoute) },
+					onClick = {
+						if (!atRoute<SettingsRoute>(navHandler.currentDestination))
+							navHandler.navigate(SettingsRoute)
+					},
 					modifier = Modifier.semantics { contentDescription = __translation_settings }
 				) {
 					Icon(painterResource(Res.drawable.icon_settings_24px), null)
