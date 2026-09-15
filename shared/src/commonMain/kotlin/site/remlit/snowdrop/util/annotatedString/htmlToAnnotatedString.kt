@@ -67,27 +67,30 @@ fun htmlToAnnotatedString(
 
 		cleanString = cleanString.replace(prefixHtml, "")
 			.replace(suffixHtml, "")
+			.trimStart()
+
+		var accts = ""
 
 		mentions.forEach { mention ->
 			val split = mention.acct.split("@")
 
-			fun shortAndFullMention(block: (String) -> String): String =
-				if (split[0] == mention.acct) block(split[0])
-				else "${block(split[0])}${block(mention.acct.replace(".", """\."""))}"
+			if (accts.isNotEmpty()) accts += "|"
 
-			// ignore the ide error here
-			var regex = "^("
-
-			regex += shortAndFullMention { "@$it|" }
-			regex += shortAndFullMention { """<span class=\"h-card\"[^>]*><a[^>]*>(@$it|<span>@$it</span>)<\/a><\/span><span> <\/span>|""" }
-			regex += shortAndFullMention { """<span class=\"h-card\"[^>]*><a[^>]*>(@$it|<span>@$it</span>)<\/a><\/span>|""" }
-			regex += shortAndFullMention { """<a[^>]*>.*?@$it.*?<\/a>""" }
-
-			regex += ")"
-
-			cleanString = cleanString.replace(regex.toRegex(), "")
-				.trimStart()
+			if (split[0] == mention.acct) accts += "@${split[0]}"
+			else accts += "@${split[0]}|@${mention.acct.replace(".", """\.""")}"
 		}
+
+		// ignore the ide error here
+		var regex = "^(("
+
+		regex += "$accts|"
+		regex += """<span class=\"h-card\"[^>]*><a[^>]*>($accts|<span>($accts)<\/span>)<\/a><\/span><span> <\/span>|"""
+		regex += """<span class=\"h-card\"[^>]*><a[^>]*>($accts|<span>($accts)<\/span>)<\/a><\/span>|"""
+		regex += """<a[^>]*>.*?($accts|<span>($accts)<\/span>).*?<\/a>"""
+
+		regex += ")(\\s+)?)+"
+
+		cleanString = cleanString.replace(regex.toRegex(), "")
 	}
 
 	val mappedEmojis = mapEmojisToInlineTextContent(emojis, emojiSize, showEmojiTooltips)
