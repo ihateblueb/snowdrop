@@ -90,6 +90,9 @@ fun switchAccount(accountId: String, navController: NavController) {
 	navController.navigate(StartRoute) {
 		popUpTo(navController.graph.id) { inclusive = true }
 	}
+	bgIO {
+		updateCurrentAccountObject()
+	}
 }
 
 /**

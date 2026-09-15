@@ -213,6 +213,8 @@ fun App() = safe {
 	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
 	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+	var fetchAccountAndEmojis by remember { mutableStateOf(true) }
+
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
 		if (atRoute<NotificationsRoute>(currentDest))
@@ -265,9 +267,12 @@ fun App() = safe {
 		(scrollingUpward || alwaysShowComposeButton)
 
 
-	if (loggedIn == true) bgIO {
-		debug { "attempting to update current account object" }
-		updateCurrentAccountObject()
+	if (fetchAccountAndEmojis) {
+		fetchAccountAndEmojis = false
+		bgIO {
+			debug { "attempting to update current account object" }
+			updateCurrentAccountObject()
+		}
 	}
 
 	/*
