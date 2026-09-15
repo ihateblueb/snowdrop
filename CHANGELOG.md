@@ -3,10 +3,33 @@
 ## [Unreleased (0.0.9-alpha)]
 
 ### Added
-- Bot and locked icon for profile views and account row
+- Bot and locked icons for profile views and account row
+- Ability to change the app's language in iOS system settings without changing your system language
+- Setting to disable automatic download of attachments
+- A new (opt-in) mention style which strips mentions and shows them above the post content (like Mona)
+- Support for Akkoma-style quotes
+- Ability to mute/unmute conversations (hides it from notificatiosn but not timelines)
+- Support for Friendica's "ignore follow request" option
 
 ### Fixed
-- Less buggy and optional mention style which strips mentions and shows them above the post content
+- Switching search tabs
+- Visibility not being set to the default when replying to posts
+- Being able to schedule posts in the past
+- Report button showing up on your own posts
+- Following users on Friendica (added `follow` auth scope; if you need it then log out and back in)
+- Double haptic feedback when biting back or accepting/denying follow requests
+- Serialization of video_size_limit on some Friendica instances
+- Being able to double-tap into/out of a bunch of menus
+- The emoji picker reopening when tapping immediately after closing it
+- Crash on iOS related to the video player
+
+### Changed
+- Lowered minimum iOS version to 15.0
+- Removed clickable attributes from display names (tap pfps to open profiles instead)
+- Increased request timeout from OkHttp/Darwin defaults to 10m
+- Enabled retrying requests up to 5x if they fail
+- Post action dropdown now closes immediately on bite/bookmark/mute/pin instead of waiting for the request
+- Current account info and emojis are now updated on startup and when switching accounts
 
 ## [0.0.8-alpha]
 
