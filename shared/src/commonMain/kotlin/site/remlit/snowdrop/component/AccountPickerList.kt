@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -92,7 +93,7 @@ fun AccountPickerList(
 			modifier = Modifier.fillMaxWidth()
 				.listItemClip(index, accounts.size)
 				.clickable { switchToThisAccount(id) },
-			shape = ListItemShape(index, accounts.size),
+			shape = if (index == -1) RoundedCornerShape(5.dp) else ListItemShape(index, accounts.size),
 			colors = if (getCurrentAccountId() == id)
 				CardDefaults.cardColors(
 					containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -147,7 +148,7 @@ fun AccountPickerList(
 				val account = pair.second!!
 
 				ReorderableItem {
-					AccountCard(id, index, account) {
+					AccountCard(id, -1, account) {
 						IconButton(
 							modifier = Modifier.draggableHandle(
 								onDragStarted = {},

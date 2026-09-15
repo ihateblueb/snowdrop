@@ -96,6 +96,7 @@ import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.showUnreadNotificationsBadge
 import site.remlit.snowdrop.util.transitionedComposable
 import site.remlit.snowdrop.util.updateCurrentAccountObject
+import site.remlit.snowdrop.util.updateEmojis
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView
@@ -270,8 +271,9 @@ fun App() = safe {
 	if (fetchAccountAndEmojis) {
 		fetchAccountAndEmojis = false
 		bgIO {
-			debug { "attempting to update current account object" }
+			debug { "attempting to update current account object and emojis" }
 			updateCurrentAccountObject()
+			updateEmojis()
 		}
 	}
 
