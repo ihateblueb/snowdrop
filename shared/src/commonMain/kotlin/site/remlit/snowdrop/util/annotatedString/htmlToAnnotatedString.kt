@@ -79,9 +79,9 @@ fun htmlToAnnotatedString(
 			var regex = "^("
 
 			regex += shortAndFullMention { "@$it|" }
-			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span><span> <\/span>|""" }
-			regex += shortAndFullMention { """<span class=\"h-card\".*?><a.*?>.*?@$it.*?<\/a><\/span>|""" }
-			regex += shortAndFullMention { """<a.*?>.*?@$it.*?<\/a>""" }
+			regex += shortAndFullMention { """<span class=\"h-card\"[^>]*><a[^>]*>(@$it|<span>@$it</span>)<\/a><\/span><span> <\/span>|""" }
+			regex += shortAndFullMention { """<span class=\"h-card\"[^>]*><a[^>]*>(@$it|<span>@$it</span>)<\/a><\/span>|""" }
+			regex += shortAndFullMention { """<a[^>]*>.*?@$it.*?<\/a>""" }
 
 			regex += ")"
 
