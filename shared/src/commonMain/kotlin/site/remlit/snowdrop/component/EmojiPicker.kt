@@ -84,68 +84,58 @@ fun EmojiPicker(
 	val coroutineScope = rememberCoroutineScope()
 	val sheetState = rememberBottomSheetState(SheetValue.Hidden)
 
-	LaunchedEffect(visible) {
-		if (visible) sheetState.show()
-		else sheetState.hide()
+	var query by remember { mutableStateOf("") }
+	val emojis by remember { fetchEmojis() }.collectAsStateWithLifecycle(emptyList())
+
+	// these contain shortcodes, find them in emojis list and then only if they are found should they be shown
+	val recentlyUsedShortcodes by remember { settings.getStringFlow("emojis_recently_used_${getCurrentAccountId()}", "") }
+		.collectAsStateWithLifecycle("")
+
+	val maxRecentEmojis by remember { settings.getIntFlow("max_recent_emojis", 20) }
+		.collectAsStateWithLifecycle(20)
+
+	val categorized = mutableMapOf<String, List<Emoji>>()
+
+	val recentlyUsed = mutableListOf<Emoji>()
+	recentlyUsedShortcodes.split(" ").forEach { r ->
+		emojis.firstOrNull { it.shortcode == r }?.let { recentlyUsed.add(it) }
+	}
+	recentlyUsed.filter { it.shortcode.lowercase().contains(query) }
+		.forEach {
+			val category = stringResource(Res.string.recently_used)
+			categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
+		}
+
+	// sorted alphabetically
+	emojis.sortedBy { it.category }
+		.filter { it.shortcode.lowercase().contains(query) }
+		.forEach {
+			val category = it.category ?: stringResource(Res.string.uncategorized)
+			categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
+		}
+
+
+	// category state nonsense
+	val categoryVisibility = mutableStateMapOf<String, Boolean>()
+	fun getHiddenKey(category: String) = "emojipicker_category_${category}_hidden"
+	categorized.forEach { (key) ->
+		categoryVisibility[key] = blockingSettings.getBoolean(getHiddenKey(key), false)
 	}
 
-	AnimatedVisibility(
-		visible = visible,
-		enter = bottomNavEnterAnimation,
-		exit = bottomNavExitAnimation
-	) {
-		var query by remember { mutableStateOf("") }
-		val emojis by remember { fetchEmojis() }.collectAsStateWithLifecycle(emptyList())
+	fun toggleCategory(category: String) {
+		fun getCategoryVisibility(category: String): Boolean = categoryVisibility[category] ?: true
 
-		// these contain shortcodes, find them in emojis list and then only if they are found should they be shown
-		val recentlyUsedShortcodes by remember { settings.getStringFlow("emojis_recently_used_${getCurrentAccountId()}", "") }
-			.collectAsStateWithLifecycle("")
+		categoryVisibility[category] = !getCategoryVisibility(category)
+		blockingSettings.putBoolean(getHiddenKey(category), getCategoryVisibility(category))
+	}
 
-		val maxRecentEmojis by remember { settings.getIntFlow("max_recent_emojis", 20) }
-			.collectAsStateWithLifecycle(20)
+	LaunchedEffect(query) {
+		if (query.isUnicodeEmoji()) onEnterUnicodeEmoji(query)
+	}
 
-		val categorized = mutableMapOf<String, List<Emoji>>()
-
-		val recentlyUsed = mutableListOf<Emoji>()
-		recentlyUsedShortcodes.split(" ").forEach { r ->
-			emojis.firstOrNull { it.shortcode == r }?.let { recentlyUsed.add(it) }
-		}
-		recentlyUsed.filter { it.shortcode.lowercase().contains(query) }
-			.forEach {
-				val category = stringResource(Res.string.recently_used)
-				categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
-			}
-
-		// sorted alphabetically
-		emojis.sortedBy { it.category }
-			.filter { it.shortcode.lowercase().contains(query) }
-			.forEach {
-				val category = it.category ?: stringResource(Res.string.uncategorized)
-				categorized[category] = categorized.getOrElse(category) { listOf() }.plus(it)
-			}
-
-
-		// category state nonsense
-		val categoryVisibility = mutableStateMapOf<String, Boolean>()
-		fun getHiddenKey(category: String) = "emojipicker_category_${category}_hidden"
-		categorized.forEach { (key) ->
-			categoryVisibility[key] = blockingSettings.getBoolean(getHiddenKey(key), false)
-		}
-
-		fun toggleCategory(category: String) {
-			fun getCategoryVisibility(category: String): Boolean = categoryVisibility[category] ?: true
-
-			categoryVisibility[category] = !getCategoryVisibility(category)
-			blockingSettings.putBoolean(getHiddenKey(category), getCategoryVisibility(category))
-		}
-
-		LaunchedEffect(query) {
-			if (query.isUnicodeEmoji()) onEnterUnicodeEmoji(query)
-		}
-
+	if (visible) {
 		ModalBottomSheet(
-			sheetState = sheetState,
-			onDismissRequest = onDismiss,
+			onDismissRequest = onDismiss
 		) {
 			val focusManager = LocalFocusManager.current
 
@@ -246,4 +236,5 @@ fun EmojiPicker(
 			}
 		}
 	}
+
 }
