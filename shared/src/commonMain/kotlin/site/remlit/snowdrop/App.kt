@@ -96,6 +96,7 @@ import site.remlit.snowdrop.util.showAccountSwitcher
 import site.remlit.snowdrop.util.showUnreadNotificationsBadge
 import site.remlit.snowdrop.util.transitionedComposable
 import site.remlit.snowdrop.util.updateCurrentAccountObject
+import site.remlit.snowdrop.util.updateEmojis
 import site.remlit.snowdrop.view.*
 import site.remlit.snowdrop.view.debug.DebugLogView
 import site.remlit.snowdrop.view.debug.DebugView
@@ -213,6 +214,8 @@ fun App() = safe {
 	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
 	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+	var fetchAccountAndEmojis by remember { mutableStateOf(true) }
+
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
 		if (atRoute<NotificationsRoute>(currentDest))
@@ -265,9 +268,13 @@ fun App() = safe {
 		(scrollingUpward || alwaysShowComposeButton)
 
 
-	if (loggedIn == true) bgIO {
-		debug { "attempting to update current account object" }
-		updateCurrentAccountObject()
+	if (fetchAccountAndEmojis) {
+		fetchAccountAndEmojis = false
+		bgIO {
+			debug { "attempting to update current account object and emojis" }
+			updateCurrentAccountObject()
+			updateEmojis()
+		}
 	}
 
 	/*

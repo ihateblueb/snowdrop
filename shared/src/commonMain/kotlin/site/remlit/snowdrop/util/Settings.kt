@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.StartRoute
+import site.remlit.snowdrop.api.getEmojis
 import site.remlit.snowdrop.api.markers.getMarkers
 import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.api.verifyCredentials
@@ -89,6 +90,10 @@ fun switchAccount(accountId: String, navController: NavController) {
 	blockingSettings.putString("current_account", accountId)
 	navController.navigate(StartRoute) {
 		popUpTo(navController.graph.id) { inclusive = true }
+	}
+	bgIO {
+		updateCurrentAccountObject()
+		updateEmojis()
 	}
 }
 
@@ -171,6 +176,14 @@ suspend fun updateCurrentAccountObject() {
 		res.response
 	)
 }
+
+suspend fun updateEmojis() {
+	val res = getEmojis()
+	if (res.error || res.response == null) return
+
+	putCacheEntry("emojis", res.response)
+}
+
 //</editor-fold>
 
 //<editor-fold name="Specific Settings">
