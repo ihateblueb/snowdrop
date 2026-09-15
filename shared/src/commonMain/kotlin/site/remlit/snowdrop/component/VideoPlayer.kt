@@ -13,6 +13,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +41,10 @@ fun VideoPlayer(
 	onPlayerStateChange: (VideoPlayerState) -> Unit = {}
 ) {
 	val playerState = rememberVideoPlayerState(cacheConfig = CacheConfig(enabled = true))
-	playerState.openUri(url, initializeplayerState = initialPlayerState)
+
+	LaunchedEffect(url) {
+		playerState.openUri(url, initializeplayerState = initialPlayerState)
+	}
 
 	var playbackEnded by remember { mutableStateOf(false) }
 	playerState.onPlaybackEnded = { playbackEnded = true }
