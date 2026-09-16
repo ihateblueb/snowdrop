@@ -515,106 +515,171 @@ fun ComposeView(
 			)
 		},
 		bottomBar = {
-			HorizontalFloatingToolbar(
-				expanded = false,
-				modifier = Modifier.fillMaxWidth()
-					.windowInsetsPadding(WindowInsets.ime.exclude(WindowInsets.navigationBars))
-					.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+			Column(
+				verticalArrangement = Arrangement.spacedBy(5.dp)
 			) {
-				Row(
-					verticalAlignment = Alignment.CenterVertically
+				AnimatedVisibility(
+					visible = showMentionSuggestions || showEmojiSuggestions
 				) {
-					// can we make it so we can change the order of the actions?
-					PreparedDropdownMenu(
-						expanded = showAddAttachmentMenu,
-						onDismissRequest = { showAddAttachmentMenu = false }
+					LazyRow(
+						state = suggestionListState,
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						contentPadding = PaddingValues(start = 15.dp)
 					) {
-						DropdownMenuItem(
-							leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24px), null) },
-							text = { Text(stringResource(Res.string.add_photo_or_video)) },
-							shape = MenuDefaults.leadingItemShape,
-							onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
-						)
-						DropdownMenuItem(
-							leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
-							text = { Text(stringResource(Res.string.add_file)) },
-							shape = MenuDefaults.trailingItemShape,
-							onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
-						)
+						if (showMentionSuggestions)
+							suggestedMentions.forEach {
+								item {
+									key (it) {
+										SuggestionChip(
+											onClick = {
+												textFieldState.edit {
+													replace(matchedMentionRange.first, matchedMentionRange.last + 1, "@${it.acct} ")
+												}
+												showMentionSuggestions = false
+												suggestedMentions.clear()
+											},
+											label = {
+												Text("@${it.acct}")
+											},
+											icon = {
+												Avatar(it, smaller = true)
+											},
+											contentPadding = PaddingValues(5.dp)
+										)
+									}
+								}
+							}
+
+						if (showEmojiSuggestions)
+							suggestedEmojis.forEach {
+								item {
+									key (it) {
+										SuggestionChip(
+											onClick = {
+												textFieldState.edit {
+													replace(matchedEmojiRange.first, matchedEmojiRange.last + 1, ":${it.shortcode}: ")
+												}
+												showEmojiSuggestions = false
+												suggestedEmojis.clear()
+											},
+											label = {
+												Text(":${it.shortcode}:")
+											},
+											icon = {
+												site.remlit.snowdrop.component.Emoji(it)
+											},
+											contentPadding = PaddingValues(5.dp)
+										)
+									}
+								}
+							}
+
 					}
+				}
 
-					val addAttachmentDescription = stringResource(Res.string.add_attachment)
-
-					IconButton(
-						onClick = { showAddAttachmentMenu = !showAddAttachmentMenu; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = addAttachmentDescription }
-					) {
-						Icon(painterResource(Res.drawable.icon_add_24px), null)
-					}
-
-					val addEmojiDescription = stringResource(Res.string.add_emoji)
-
-					IconButton(
-						onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
-						modifier = Modifier.semantics { contentDescription = addEmojiDescription }
-					) {
-						Icon(painterResource(Res.drawable.icon_mood_24px), null)
-					}
-
-					val __translate_showContentWarningFieldDescription = stringResource(Res.string.content_warning_field_show)
-					val __translate_hideContentWarningFieldDescription = stringResource(Res.string.content_warning_field_hide)
-					val __translation_schedulePost = stringResource(Res.string.schedule_post)
-
-					// todo: translate contentDescription
-					if (showCwField) {
-						IconButton(
-							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = __translate_showContentWarningFieldDescription }
-						) {
-							Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
-						}
-					} else {
-						IconButton(
-							onClick = { showCwField = !showCwField },
-							modifier = Modifier.semantics { contentDescription = __translate_hideContentWarningFieldDescription }
-						) {
-							Icon(painterResource(Res.drawable.icon_warning_24px), null)
-						}
-					}
-
-					IconButton(
-						onClick = { showDatePicker = true },
-						modifier = Modifier.semantics { contentDescription = __translation_schedulePost }
-					) {
-						if (!scheduledDateTimeIsSet) {
-							Icon(painterResource(Res.drawable.icon_access_time_24px), null)
-						} else {
-							Icon(painterResource(Res.drawable.icon_access_time_filled_24px), null)
-						}
-					}
-
-					// End
+				//<editor-fold name="HorizontalFloatingToolbar">
+				HorizontalFloatingToolbar(
+					expanded = false,
+					modifier = Modifier.fillMaxWidth()
+						.windowInsetsPadding(WindowInsets.ime.exclude(WindowInsets.navigationBars))
+						.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+				) {
 					Row(
-						modifier = Modifier.fillMaxWidth(),
-						horizontalArrangement = Arrangement.End
+						verticalAlignment = Alignment.CenterVertically
 					) {
-						Row(
-							modifier = if (!swapPostButtonAndCharLimit) Modifier.padding(end = 10.dp)
-								else Modifier,
-							horizontalArrangement = Arrangement.spacedBy(5.dp),
-							verticalAlignment = Alignment.CenterVertically
+						// can we make it so we can change the order of the actions?
+						PreparedDropdownMenu(
+							expanded = showAddAttachmentMenu,
+							onDismissRequest = { showAddAttachmentMenu = false }
 						) {
-							if (swapPostButtonAndCharLimit) {
-								PostButton()
+							DropdownMenuItem(
+								leadingIcon = { Icon(painterResource(Res.drawable.icon_image_24px), null) },
+								text = { Text(stringResource(Res.string.add_photo_or_video)) },
+								shape = MenuDefaults.leadingItemShape,
+								onClick = { galleryLauncher.launch(); showAddAttachmentMenu = false }
+							)
+							DropdownMenuItem(
+								leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
+								text = { Text(stringResource(Res.string.add_file)) },
+								shape = MenuDefaults.trailingItemShape,
+								onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
+							)
+						}
+
+						val addAttachmentDescription = stringResource(Res.string.add_attachment)
+
+						IconButton(
+							onClick = { showAddAttachmentMenu = !showAddAttachmentMenu; focusManager.clearFocus() },
+							modifier = Modifier.semantics { contentDescription = addAttachmentDescription }
+						) {
+							Icon(painterResource(Res.drawable.icon_add_24px), null)
+						}
+
+						val addEmojiDescription = stringResource(Res.string.add_emoji)
+
+						IconButton(
+							onClick = { showEmojiPicker = !showEmojiPicker; focusManager.clearFocus() },
+							modifier = Modifier.semantics { contentDescription = addEmojiDescription }
+						) {
+							Icon(painterResource(Res.drawable.icon_mood_24px), null)
+						}
+
+						val __translate_showContentWarningFieldDescription = stringResource(Res.string.content_warning_field_show)
+						val __translate_hideContentWarningFieldDescription = stringResource(Res.string.content_warning_field_hide)
+						val __translation_schedulePost = stringResource(Res.string.schedule_post)
+
+						// todo: translate contentDescription
+						if (showCwField) {
+							IconButton(
+								onClick = { showCwField = !showCwField },
+								modifier = Modifier.semantics { contentDescription = __translate_showContentWarningFieldDescription }
+							) {
+								Icon(painterResource(Res.drawable.icon_warning_filled_24px), null)
+							}
+						} else {
+							IconButton(
+								onClick = { showCwField = !showCwField },
+								modifier = Modifier.semantics { contentDescription = __translate_hideContentWarningFieldDescription }
+							) {
+								Icon(painterResource(Res.drawable.icon_warning_24px), null)
+							}
+						}
+
+						IconButton(
+							onClick = { showDatePicker = true },
+							modifier = Modifier.semantics { contentDescription = __translation_schedulePost }
+						) {
+							if (!scheduledDateTimeIsSet) {
+								Icon(painterResource(Res.drawable.icon_access_time_24px), null)
 							} else {
-								Text(
-									"$remainingChars",
-									color = MaterialTheme.colorScheme.onSurfaceVariant
-								)
+								Icon(painterResource(Res.drawable.icon_access_time_filled_24px), null)
+							}
+						}
+
+						// End
+						Row(
+							modifier = Modifier.fillMaxWidth(),
+							horizontalArrangement = Arrangement.End
+						) {
+							Row(
+								modifier = if (!swapPostButtonAndCharLimit) Modifier.padding(end = 10.dp)
+								else Modifier,
+								horizontalArrangement = Arrangement.spacedBy(5.dp),
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								if (swapPostButtonAndCharLimit) {
+									PostButton()
+								} else {
+									Text(
+										"$remainingChars",
+										color = MaterialTheme.colorScheme.onSurfaceVariant
+									)
+								}
 							}
 						}
 					}
 				}
+				//</editor-fold>
 			}
 		}
 	) { paddingValues ->
@@ -813,64 +878,6 @@ fun ComposeView(
 								focusedIndicatorColor = Color(0x00000000),
 							)
 						)
-
-						AnimatedVisibility(
-							visible = showMentionSuggestions || showEmojiSuggestions
-						) {
-							LazyRow(
-								state = suggestionListState,
-								horizontalArrangement = Arrangement.spacedBy(5.dp),
-								contentPadding = PaddingValues(start = 15.dp)
-							) {
-								if (showMentionSuggestions) {
-									suggestedMentions.forEach {
-										item {
-											key (it) {
-												SuggestionChip(
-													onClick = {
-														textFieldState.edit {
-															replace(matchedMentionRange.first, matchedMentionRange.last + 1, "@${it.acct} ")
-														}
-														showMentionSuggestions = false
-														suggestedMentions.clear()
-													},
-													label = {
-														Text("@${it.acct}")
-													},
-													icon = {
-														Avatar(it, smaller = true)
-													}
-												)
-											}
-										}
-									}
-								}
-								if (showEmojiSuggestions) {
-									suggestedEmojis.forEach {
-										item {
-											key (it) {
-												SuggestionChip(
-													onClick = {
-														textFieldState.edit {
-															replace(matchedEmojiRange.first, matchedEmojiRange.last + 1, ":${it.shortcode}: ")
-														}
-														showEmojiSuggestions = false
-														suggestedEmojis.clear()
-													},
-													label = {
-														Text(":${it.shortcode}:")
-													},
-													icon = {
-														site.remlit.snowdrop.component.Emoji(it)
-													}
-												)
-											}
-										}
-									}
-								}
-
-							}
-						}
 
 						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
 						AnimatedVisibility(
