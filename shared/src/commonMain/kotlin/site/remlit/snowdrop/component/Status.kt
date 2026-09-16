@@ -211,6 +211,7 @@ fun Status(
 	var inThreadView by remember { mutableStateOf(false) }
 	var threadViewMainStatus by remember { mutableStateOf(false) }
 
+	// todo: investigate this
 	inThreadView = atRoute<ThreadRoute>(currentDest)
 	threadViewMainStatus = inThreadView && navHandler.currentBackStackEntry
 		?.toRoute<ThreadRoute>()?.id == realStatus.id
@@ -425,7 +426,6 @@ fun Status(
 					*  Content
 					*
 					*/
-
 					@Composable
 					fun renderContent() {
 						val initialRemoveMentionsFromTheStartOfPosts = blockingSettings.getBoolean("remove_mentions_from_the_start_of_posts", false)
@@ -571,7 +571,7 @@ fun Status(
 								}
 								//</editor-fold>
 
-								if (!realStatus.content.isNullOrBlank()) {
+								if (!realStatus.content.isNullOrBlank())
 									if (threadViewMainStatus) {
 										SelectionContainer {
 											HtmlContent(
@@ -593,8 +593,8 @@ fun Status(
 										)
 									}
 								}
-							}
 
+							//<editor-fold name="Attachments">
 							if (realStatus.mediaAttachments.isNotEmpty()) {
 								Grid({
 									// its 1:30am so this is probably not ideal, and the bottom in an uneven(3)
@@ -628,18 +628,14 @@ fun Status(
 									}
 								}
 							}
+							//</editor-fold>
 
 							if (realStatus.poll != null) Poll(realStatus)
 
 							when (val quote = realStatus.quote) {
-								is MastodonQuote -> {
-									if (quote.quotedStatus != null) {
-										MiniStatus(quote.quotedStatus)
-									}
-								}
-								is Status -> {
-									MiniStatus(quote)
-								}
+								is MastodonQuote -> if (quote.quotedStatus != null)
+									MiniStatus(quote.quotedStatus, isQuote = true)
+								is Status -> MiniStatus(quote, isQuote = true)
 								else -> {}
 							}
 

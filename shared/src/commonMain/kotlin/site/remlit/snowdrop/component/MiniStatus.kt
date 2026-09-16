@@ -46,6 +46,7 @@ import snowdrop.shared.generated.resources.x_attachments
 @Composable
 fun MiniStatus(
 	status: Status,
+	isQuote: Boolean = false,
 	showContentEvenIfCw: Boolean = false
 ) {
 	val navHandler = LocalNavController.current
@@ -94,7 +95,7 @@ fun MiniStatus(
 						string = status.content ?: "",
 						emojis = status.emojis,
 						mentions = status.mentions,
-						maxLines = 2,
+						maxLines = if (isQuote) 5 else 2,
 						simple = true
 					)
 
