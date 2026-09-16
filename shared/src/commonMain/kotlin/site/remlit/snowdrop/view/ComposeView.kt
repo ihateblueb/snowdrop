@@ -254,7 +254,11 @@ fun ComposeView(
 	val mentionListState = rememberLazyListState()
 
 	LaunchedEffect(textFieldState.text) {
-		val match = mentionRegex.find(textFieldState.text) ?: return@LaunchedEffect
+		val match = mentionRegex.find(textFieldState.text)
+		if (match == null) {
+			suggestedMentions.clear()
+			return@LaunchedEffect
+		}
 		matchedMention = match.value.substring(1) // preceding @
 		matchedMentionRange = match.range
 		showMentionSuggestions = true
