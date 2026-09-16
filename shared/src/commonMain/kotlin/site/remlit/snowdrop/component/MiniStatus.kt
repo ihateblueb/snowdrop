@@ -94,7 +94,7 @@ fun MiniStatus(
 						string = status.content ?: "",
 						emojis = status.emojis,
 						mentions = status.mentions,
-						maxLines = 3,
+						maxLines = 2,
 						simple = true
 					)
 

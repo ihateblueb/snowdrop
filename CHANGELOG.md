@@ -30,6 +30,7 @@
 - Enabled retrying requests up to 5x if they fail
 - Post action dropdown now closes immediately on bite/bookmark/mute/pin instead of waiting for the request
 - Current account info and emojis are now updated on startup and when switching accounts
+- MiniStatus has 2 max lines instead of 3
 
 ## [0.0.8-alpha]
 
