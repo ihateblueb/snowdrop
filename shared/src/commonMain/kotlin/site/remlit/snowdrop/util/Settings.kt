@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.flowOn
 import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.getEmojis
+import site.remlit.snowdrop.api.getPreferences
 import site.remlit.snowdrop.api.markers.getMarkers
 import site.remlit.snowdrop.api.notifications.getNotifications
 import site.remlit.snowdrop.api.verifyCredentials
@@ -182,6 +183,15 @@ suspend fun updateEmojis() {
 	if (res.error || res.response == null) return
 
 	putCacheEntry("emojis", res.response)
+}
+
+
+suspend fun updatePreferencesFromServer() {
+	val res = getPreferences()
+	if (res.error || res.response == null || res.response.defaultVisibility == null) return
+
+	// right now we only have an option for this one
+	putDefaultVisibility(res.response.defaultVisibility)
 }
 
 //</editor-fold>

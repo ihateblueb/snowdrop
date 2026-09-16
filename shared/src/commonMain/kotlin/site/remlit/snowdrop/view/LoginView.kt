@@ -61,6 +61,7 @@ import site.remlit.snowdrop.util.logoutAccount
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.updateCurrentAccountObject
+import site.remlit.snowdrop.util.updatePreferencesFromServer
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources._continue
 import snowdrop.shared.generated.resources.copy_oauth_link
@@ -184,6 +185,7 @@ fun LoginView() = ViewSurface {
 		bgIO {
 			updateCurrentAccountObject()
 			determineFeatures()
+			updatePreferencesFromServer()
 		}
 
 		navController.popBackStack()
