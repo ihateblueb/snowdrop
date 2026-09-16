@@ -3,6 +3,7 @@
 package site.remlit.snowdrop.view.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -31,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
@@ -94,8 +99,9 @@ fun GeneralSettingsView() = ViewSurface {
 			var showVisibilityPicker by remember { mutableStateOf(false) }
 
 			Card(
-				modifier = Modifier.listItemClip(0, 1).padding(bottom = 10.dp),
-				shape = ListItemShape(0, 1),
+				modifier = Modifier.listItemClip(0, if (!showVisibilityPicker) 1 else 2)
+					.padding(bottom = if (!showVisibilityPicker) 10.dp else 2.dp),
+				shape = ListItemShape(0, if (!showVisibilityPicker) 1 else 2),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.default_post_visibility)) },
@@ -116,89 +122,100 @@ fun GeneralSettingsView() = ViewSurface {
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
 			}
+
 			AnimatedVisibility(
 				visible = showVisibilityPicker,
 				enter = dropdownEnterAnimation,
 				exit = dropdownExitAnimation
 			) {
-				Column(
-					modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 10.dp).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+				Card(
+					modifier = Modifier.listItemClip(1, 2).padding(bottom = 10.dp),
+					shape = ListItemShape(1, 2),
+					colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				) {
-					Row(
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.fillMaxWidth().height(42.dp)
-							.selectable(
+					Column(
+						modifier = Modifier.fillMaxWidth().padding(all = 5.dp)
+					) {
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							modifier = Modifier.clip(RoundedCornerShape(10.dp))
+								.fillMaxWidth().height(42.dp)
+								.selectable(
+									selected = defaultVisibility == "public",
+									role = Role.RadioButton,
+									onClick = { putDefaultVisibility("public") }
+								)
+						) {
+							RadioButton(
 								selected = defaultVisibility == "public",
-								role = Role.RadioButton,
-								onClick = { putDefaultVisibility("public") }
+								onClick = null,
+								modifier = Modifier.padding(start = 10.dp)
 							)
-					) {
-						RadioButton(
-							selected = defaultVisibility == "public",
-							onClick = null,
-							modifier = Modifier.padding(start = 10.dp)
-						)
-						Text(
-							stringResource(Res.string.visibility_public),
-							modifier = Modifier.padding(start = 20.dp)
-						)
-					}
-					Row(
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.fillMaxWidth().height(42.dp)
-							.selectable(
+							Text(
+								stringResource(Res.string.visibility_public),
+								modifier = Modifier.padding(start = 20.dp)
+							)
+						}
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							modifier = Modifier.clip(RoundedCornerShape(10.dp))
+								.fillMaxWidth().height(42.dp)
+								.selectable(
+									selected = defaultVisibility == "unlisted",
+									role = Role.RadioButton,
+									onClick = { putDefaultVisibility("unlisted") }
+								)
+						) {
+							RadioButton(
 								selected = defaultVisibility == "unlisted",
-								role = Role.RadioButton,
-								onClick = { putDefaultVisibility("unlisted") }
+								onClick = null,
+								modifier = Modifier.padding(start = 10.dp)
 							)
-					) {
-						RadioButton(
-							selected = defaultVisibility == "unlisted",
-							onClick = null,
-							modifier = Modifier.padding(start = 10.dp)
-						)
-						Text(
-							stringResource(Res.string.visibility_unlisted),
-							modifier = Modifier.padding(start = 20.dp)
-						)
-					}
-					Row(
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.fillMaxWidth().height(42.dp)
-							.selectable(
+							Text(
+								stringResource(Res.string.visibility_unlisted),
+								modifier = Modifier.padding(start = 20.dp)
+							)
+						}
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							modifier = Modifier.clip(RoundedCornerShape(10.dp))
+								.fillMaxWidth().height(42.dp)
+								.selectable(
+									selected = defaultVisibility == "private",
+									role = Role.RadioButton,
+									onClick = { putDefaultVisibility("private") }
+								)
+						) {
+							RadioButton(
 								selected = defaultVisibility == "private",
-								role = Role.RadioButton,
-								onClick = { putDefaultVisibility("private") }
+								onClick = null,
+								modifier = Modifier.padding(start = 10.dp)
 							)
-					) {
-						RadioButton(
-							selected = defaultVisibility == "private",
-							onClick = null,
-							modifier = Modifier.padding(start = 10.dp)
-						)
-						Text(
-							stringResource(Res.string.visibility_followers),
-							modifier = Modifier.padding(start = 20.dp)
-						)
-					}
-					Row(
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.fillMaxWidth().height(42.dp)
-							.selectable(
+							Text(
+								stringResource(Res.string.visibility_followers),
+								modifier = Modifier.padding(start = 20.dp)
+							)
+						}
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
+							modifier = Modifier.clip(RoundedCornerShape(10.dp))
+								.fillMaxWidth().height(42.dp)
+								.selectable(
+									selected = defaultVisibility == "direct",
+									role = Role.RadioButton,
+									onClick = { putDefaultVisibility("direct") }
+								)
+						) {
+							RadioButton(
 								selected = defaultVisibility == "direct",
-								role = Role.RadioButton,
-								onClick = { putDefaultVisibility("direct") }
+								onClick = null,
+								modifier = Modifier.padding(start = 10.dp)
 							)
-					) {
-						RadioButton(
-							selected = defaultVisibility == "direct",
-							onClick = null,
-							modifier = Modifier.padding(start = 10.dp)
-						)
-						Text(
-							stringResource(Res.string.visibility_direct),
-							modifier = Modifier.padding(start = 20.dp)
-						)
+							Text(
+								stringResource(Res.string.visibility_direct),
+								modifier = Modifier.padding(start = 20.dp)
+							)
+						}
 					}
 				}
 			}

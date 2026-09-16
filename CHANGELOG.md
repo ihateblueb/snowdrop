@@ -22,6 +22,7 @@
 - Being able to double-tap into/out of a bunch of menus
 - The emoji picker reopening when tapping immediately after closing it
 - Crash on iOS related to the video player
+- Broken style on navigation bar tab order and default visibility dropdowns in settings
 
 ### Changed
 - Lowered minimum iOS version to 15.0

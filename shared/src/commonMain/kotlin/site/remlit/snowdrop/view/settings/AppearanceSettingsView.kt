@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -149,35 +151,12 @@ fun AppearanceSettingsView() = ViewSurface {
 			}
 		}
 		item {
-			val showNavigationBarLabels by settings.getBooleanFlow("show_navigation_bar_labels", true)
-				.collectAsStateWithLifecycle(true)
-
-			Card(
-				modifier = Modifier.listItemClip(2, 4).padding(bottom = 2.dp),
-				shape = ListItemShape(2, 4),
-			) {
-				ListItem(
-					headlineContent = { Text(stringResource(Res.string.show_navigation_bar_labels)) },
-					trailingContent = {
-						Switch(
-							showNavigationBarLabels,
-							onCheckedChange = { blockingSettings.putBoolean("show_navigation_bar_labels", it) }
-						)
-					},
-					modifier = Modifier.clickable {
-						blockingSettings.putBoolean("show_navigation_bar_labels", !showNavigationBarLabels)
-					},
-					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
-				)
-			}
-		}
-		item {
 			val swapPostButtonAndCharLimit by settings.getBooleanFlow("swap_post_button_and_char_limit", false)
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(3, 4).padding(bottom = 10.dp),
-				shape = ListItemShape(3, 4),
+				modifier = Modifier.listItemClip(2, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(2, 4),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.show_send_post_at_bottom_of_composer)) },
@@ -195,6 +174,29 @@ fun AppearanceSettingsView() = ViewSurface {
 			}
 		}
 		item {
+			val showNavigationBarLabels by settings.getBooleanFlow("show_navigation_bar_labels", true)
+				.collectAsStateWithLifecycle(true)
+
+			Card(
+				modifier = Modifier.listItemClip(3, 4).padding(bottom = 10.dp),
+				shape = ListItemShape(3, 4),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.show_navigation_bar_labels)) },
+					trailingContent = {
+						Switch(
+							showNavigationBarLabels,
+							onCheckedChange = { blockingSettings.putBoolean("show_navigation_bar_labels", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("show_navigation_bar_labels", !showNavigationBarLabels)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
 			var tabOrder by remember { mutableStateOf(getNavigationBarOrderBlocking().mapToNavigationOptions()) }
 
 			LaunchedEffect(tabOrder) {
@@ -205,8 +207,9 @@ fun AppearanceSettingsView() = ViewSurface {
 			var showBottomBarTabOrder by remember { mutableStateOf(false) }
 
 			Card(
-				modifier = Modifier.listItemClip(0, 1), // add padding if we do more options
-				shape = ListItemShape(0, 1),
+				modifier = Modifier.listItemClip(0, if (!showBottomBarTabOrder) 1 else 2)
+					.padding(bottom = if (!showBottomBarTabOrder) 10.dp else 2.dp),
+				shape = ListItemShape(0, if (!showBottomBarTabOrder) 1 else 2),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.navigation_bar_tab_order)) },
@@ -230,40 +233,54 @@ fun AppearanceSettingsView() = ViewSurface {
 				enter = dropdownEnterAnimation,
 				exit = dropdownExitAnimation
 			) {
-				ReorderableColumn(
-					list = tabOrder,
-					onSettle = { from, to ->
-						tabOrder = tabOrder.toMutableList().apply {
-							add(to, removeAt(from))
-						}
-					},
-					modifier = Modifier.padding(horizontal = 10.dp).background(MaterialTheme.colorScheme.surfaceContainerHigh)
-				) { _, item, _ ->
-					key(item) {
-						ReorderableItem {
-							Row(
-								Modifier.fillMaxWidth().padding(vertical = 5.dp, horizontal = 16.dp),
-								horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-								verticalAlignment = Alignment.CenterVertically
+				Card(
+					modifier = Modifier.listItemClip(1, 2)
+						.padding(bottom = 10.dp),
+					shape = ListItemShape(1, 2),
+					colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				) {
+					ReorderableColumn(
+						list = tabOrder,
+						onSettle = { from, to ->
+							tabOrder = tabOrder.toMutableList().apply {
+								add(to, removeAt(from))
+							}
+						},
+						modifier = Modifier.padding(horizontal = 10.dp)
+					) { _, item, _ ->
+						key(item) {
+							ReorderableItem(
+								modifier = Modifier.background(Color.Transparent)
 							) {
-								NavigationBarIcon(item)
-								Text(NavigationBarLabel(item))
-
 								Row(
-									modifier = Modifier.weight(1f),
-									horizontalArrangement = Arrangement.End
+									Modifier.fillMaxWidth()
+										.padding(vertical = 5.dp, horizontal = 10.dp)
+										.background(Color.Transparent),
+									horizontalArrangement = Arrangement.spacedBy(
+										10.dp,
+										Alignment.CenterHorizontally
+									),
+									verticalAlignment = Alignment.CenterVertically
 								) {
-									IconButton(
-										modifier = Modifier.draggableHandle(
-											onDragStarted = {},
-											onDragStopped = {},
-										),
-										onClick = {},
+									NavigationBarIcon(item)
+									Text(NavigationBarLabel(item))
+
+									Row(
+										modifier = Modifier.weight(1f),
+										horizontalArrangement = Arrangement.End
 									) {
-										Icon(
-											painterResource(Res.drawable.icon_drag_indicator_24px),
-											contentDescription = stringResource(Res.string.reorder)
-										)
+										IconButton(
+											modifier = Modifier.draggableHandle(
+												onDragStarted = {},
+												onDragStopped = {},
+											),
+											onClick = {},
+										) {
+											Icon(
+												painterResource(Res.drawable.icon_drag_indicator_24px),
+												contentDescription = stringResource(Res.string.reorder)
+											)
+										}
 									}
 								}
 							}
