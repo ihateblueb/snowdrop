@@ -61,6 +61,7 @@ import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -118,11 +119,13 @@ import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.CreateStatusRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.WarningColor25
+import site.remlit.snowdrop.util.cache.fetchEmojis
 import site.remlit.snowdrop.util.cache.fetchInstance
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
@@ -251,27 +254,48 @@ fun ComposeView(
 	var matchedMentionRange by remember { mutableStateOf(IntRange(0, 0)) }
 	var showMentionSuggestions by remember { mutableStateOf(false) }
 	val suggestedMentions = remember { mutableStateListOf<Account>() }
-	val mentionListState = rememberLazyListState()
+
+	val emojiRegex = ":(([\\w\\-_.])+)$".toRegex()
+	var matchedEmoji by remember { mutableStateOf("") }
+	var matchedEmojiRange by remember { mutableStateOf(IntRange(0, 0)) }
+	var showEmojiSuggestions by remember { mutableStateOf(false) }
+	val suggestedEmojis = remember { mutableStateListOf<Emoji>() }
+	val emojis by remember { fetchEmojis() }.collectAsStateWithLifecycle(emptyList())
+
+	val suggestionListState = rememberLazyListState()
 
 	LaunchedEffect(textFieldState.text) {
-		val match = mentionRegex.find(textFieldState.text)
-		if (match == null) {
+		val mentionMatch = mentionRegex.find(textFieldState.text)
+		val emojiMatch = emojiRegex.find(textFieldState.text)
+		if (mentionMatch != null) {
+			matchedMention = mentionMatch.value.substring(1) // preceding @
+			matchedMentionRange = mentionMatch.range
+			showMentionSuggestions = true
+
+			val res = search(matchedMention, type = "accounts")
+			if (res.error) {
+				res.handleError(snackbarHandler)
+				return@LaunchedEffect
+			}
+			if (res.response == null) return@LaunchedEffect
+
 			suggestedMentions.clear()
-			return@LaunchedEffect
-		}
-		matchedMention = match.value.substring(1) // preceding @
-		matchedMentionRange = match.range
-		showMentionSuggestions = true
+			suggestedMentions.addAll(res.response.accounts)
+		} else if (emojiMatch != null) {
+			matchedEmoji = emojiMatch.value.substring(1) // preceding :
+			matchedEmojiRange = emojiMatch.range
+			showEmojiSuggestions = true
 
-		val res = search(matchedMention, type = "accounts")
-		if (res.error) {
-			res.handleError(snackbarHandler)
-			return@LaunchedEffect
+			suggestedEmojis.clear()
+			suggestedEmojis.addAll(
+				emojis.filter {
+					it.shortcode.lowercase().contains(matchedEmoji.lowercase())
+				}.sortedBy { it.shortcode }
+			)
+		} else {
+			suggestedMentions.clear()
+			suggestedEmojis.clear()
 		}
-		if (res.response == null) return@LaunchedEffect
-
-		suggestedMentions.clear()
-		suggestedMentions.addAll(res.response.accounts)
 	}
 
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
@@ -791,32 +815,60 @@ fun ComposeView(
 						)
 
 						AnimatedVisibility(
-							visible = showMentionSuggestions
+							visible = showMentionSuggestions || showEmojiSuggestions
 						) {
 							LazyRow(
-								state = mentionListState,
+								state = suggestionListState,
 								horizontalArrangement = Arrangement.spacedBy(5.dp),
 								contentPadding = PaddingValues(start = 15.dp)
 							) {
-								suggestedMentions.forEach {
-									item {
-										SuggestionChip(
-											onClick = {
-												textFieldState.edit {
-													replace(matchedMentionRange.first, matchedMentionRange.last + 1, "@${it.acct} ")
-  												}
-												showMentionSuggestions = false
-												suggestedMentions.clear()
-											},
-											label = {
-												Text("@${it.acct}")
-											},
-											icon = {
-												Avatar(it, smaller = true)
+								if (showMentionSuggestions) {
+									suggestedMentions.forEach {
+										item {
+											key (it) {
+												SuggestionChip(
+													onClick = {
+														textFieldState.edit {
+															replace(matchedMentionRange.first, matchedMentionRange.last + 1, "@${it.acct} ")
+														}
+														showMentionSuggestions = false
+														suggestedMentions.clear()
+													},
+													label = {
+														Text("@${it.acct}")
+													},
+													icon = {
+														Avatar(it, smaller = true)
+													}
+												)
 											}
-										)
+										}
 									}
 								}
+								if (showEmojiSuggestions) {
+									suggestedEmojis.forEach {
+										item {
+											key (it) {
+												SuggestionChip(
+													onClick = {
+														textFieldState.edit {
+															replace(matchedEmojiRange.first, matchedEmojiRange.last + 1, ":${it.shortcode}: ")
+														}
+														showEmojiSuggestions = false
+														suggestedEmojis.clear()
+													},
+													label = {
+														Text(":${it.shortcode}:")
+													},
+													icon = {
+														site.remlit.snowdrop.component.Emoji(it)
+													}
+												)
+											}
+										}
+									}
+								}
+
 							}
 						}
 
