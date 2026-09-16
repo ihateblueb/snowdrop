@@ -216,6 +216,12 @@ fun App() = safe {
 
 	var fetchAccountAndEmojis by remember { mutableStateOf(true) }
 
+	var viewingProfileHandle by remember { mutableStateOf("") }
+
+	fun setViewingProfileHandle(handle: String) {
+		viewingProfileHandle = "@${handle} "
+	}
+
 
 	LaunchedEffect(atRoute<NotificationsRoute>(currentDest)) {
 		if (atRoute<NotificationsRoute>(currentDest))
@@ -310,8 +316,10 @@ fun App() = safe {
 			fun fab() {
 				FloatingActionButton(
 					onClick = {
-						if (!atRoute<ComposeRoute>(currentDest))
+						if (!atRoute<ComposeRoute>(currentDest) && !atRoute<ProfileRoute>(currentDest))
 							navController.navigate(ComposeRoute())
+						if (atRoute<ProfileRoute>(currentDest))
+							navController.navigate(ComposeRoute(content = viewingProfileHandle))
 					}
 				) {
 					if (atRoute<ProfileRoute>(currentDest)) Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
@@ -527,7 +535,7 @@ fun App() = safe {
 						}
 						transitionedComposable<ProfileRoute> {
 							val args = it.toRoute<ProfileRoute>()
-							ProfileView(args.id)
+							ProfileView(args.id, setViewingProfileHandle = { handle -> setViewingProfileHandle(handle) })
 						}
 						transitionedComposable<PinnedPostsRoute> {
 							val args = it.toRoute<PinnedPostsRoute>()

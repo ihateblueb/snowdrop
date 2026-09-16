@@ -141,7 +141,10 @@ const val headerHeight = 200
 
 @Composable
 @OptIn(ExperimentalSettingsApi::class)
-fun ProfileView(id: String) = ViewSurface {
+fun ProfileView(
+	id: String,
+	setViewingProfileHandle: ((handle: String) -> Unit)? = null // hoisted up to app to make the mention fab work
+) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val snackbarHandler = LocalSnackbarController.current
 	val currentDest = navHandler.currentDestination
@@ -165,6 +168,9 @@ fun ProfileView(id: String) = ViewSurface {
 	var isMe by remember { mutableStateOf(false) }
 	if (currentAccount != null && currentAccount?.id == account?.id)
 		isMe = true
+
+	if (setViewingProfileHandle != null && !isMe && account?.acct != null)
+		setViewingProfileHandle(account!!.acct)
 
 	var relationship by remember { mutableStateOf<Relationship?>(null) }
 	if (!isMe && account != null) bgIO {
