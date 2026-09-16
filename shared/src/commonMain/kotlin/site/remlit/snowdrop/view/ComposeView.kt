@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
@@ -49,6 +50,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -101,6 +103,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.media.uploadMedia
+import site.remlit.snowdrop.api.search
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
 import site.remlit.snowdrop.component.Avatar
@@ -113,6 +116,7 @@ import site.remlit.snowdrop.component.TimePickerModal
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
+import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.CreateStatusRequest
@@ -241,6 +245,30 @@ fun ComposeView(
 	var visibilityEnabled by remember { mutableStateOf(true) }
 
 	var localOnly by remember { mutableStateOf(localOnly == true) }
+
+	val mentionRegex = "@(([\\w@.])+)$".toRegex()
+	var matchedMention by remember { mutableStateOf("") }
+	var matchedMentionRange by remember { mutableStateOf(IntRange(0, 0)) }
+	var showMentionSuggestions by remember { mutableStateOf(false) }
+	val suggestedMentions = remember { mutableStateListOf<Account>() }
+	val mentionListState = rememberLazyListState()
+
+	LaunchedEffect(textFieldState.text) {
+		val match = mentionRegex.find(textFieldState.text) ?: return@LaunchedEffect
+		matchedMention = match.value.substring(1) // preceding @
+		matchedMentionRange = match.range
+		showMentionSuggestions = true
+
+		val res = search(matchedMention, type = "accounts")
+		if (res.error) {
+			res.handleError(snackbarHandler)
+			return@LaunchedEffect
+		}
+		if (res.response == null) return@LaunchedEffect
+
+		suggestedMentions.clear()
+		suggestedMentions.addAll(res.response.accounts)
+	}
 
 	val replyTarget by remember { fetchStatusOrNull(inReplyToId, snackbarHandler) }
 		.collectAsStateWithLifecycle(null)
@@ -757,6 +785,36 @@ fun ComposeView(
 								focusedIndicatorColor = Color(0x00000000),
 							)
 						)
+
+						AnimatedVisibility(
+							visible = showMentionSuggestions
+						) {
+							LazyRow(
+								state = mentionListState,
+								horizontalArrangement = Arrangement.spacedBy(5.dp),
+								contentPadding = PaddingValues(start = 15.dp)
+							) {
+								suggestedMentions.forEach {
+									item {
+										SuggestionChip(
+											onClick = {
+												textFieldState.edit {
+													replace(matchedMentionRange.first, matchedMentionRange.last + 1, "@${it.acct} ")
+  												}
+												showMentionSuggestions = false
+												suggestedMentions.clear()
+											},
+											label = {
+												Text("@${it.acct}")
+											},
+											icon = {
+												Avatar(it, smaller = true)
+											}
+										)
+									}
+								}
+							}
+						}
 
 						//<editor-fold name="Media, Attachments, and Alt Text Sheet">
 						AnimatedVisibility(
