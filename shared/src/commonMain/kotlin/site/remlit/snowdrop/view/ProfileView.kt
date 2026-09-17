@@ -80,10 +80,12 @@ import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
+import site.remlit.snowdrop.component.dropdown.MenuDivider
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.model.request.UpdateFollowRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.atRoute
@@ -111,6 +113,7 @@ import snowdrop.shared.generated.resources.copy_handle
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follows_you
+import snowdrop.shared.generated.resources.hide_boosts
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
@@ -118,6 +121,8 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_repeat_24px
+import snowdrop.shared.generated.resources.icon_repeat_off_24px
 import snowdrop.shared.generated.resources.icon_smart_toy_20px
 import snowdrop.shared.generated.resources.icon_tooth_24px
 import snowdrop.shared.generated.resources.joined_on_x
@@ -129,6 +134,7 @@ import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.replies
 import snowdrop.shared.generated.resources.request_to_follow
+import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.unfollow
 import snowdrop.shared.generated.resources.view_all_pinned_posts
 import snowdrop.shared.generated.resources.x_followers
@@ -286,6 +292,44 @@ fun ProfileView(
 							dropdownVisible = false
 						}
 					)
+
+					if (!isMe) {
+						MenuDivider()
+
+						DropdownMenuItem(
+							text = {
+								if (relationship?.showingReblogs == false)
+									Text(stringResource(Res.string.show_boosts))
+								else
+									Text(stringResource(Res.string.hide_boosts))
+							},
+							leadingIcon = {
+								if (relationship?.showingReblogs == false)
+									Icon(painterResource(Res.drawable.icon_repeat_24px), null)
+								else
+									Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
+							},
+							shape = MenuDefaults.trailingItemShape,
+							onClick = {
+								coroutineScope.launch {
+									vibrate(true, haptics)
+									dropdownVisible = false
+
+									val res: ApiResponse<Relationship> = if (relationship?.showingReblogs == false)
+										followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
+									else
+										followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
+
+									if (res.error || res.response == null) {
+										res.handleError(snackbarHandler)
+										return@launch
+									}
+
+									relationship = res.response
+								}
+							}
+						)
+					}
 				}
 			}
 		)
