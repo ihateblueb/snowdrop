@@ -35,8 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
+import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.compressImage
+import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
+import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.saveImageToGallery
+import io.github.vinceglb.filekit.write
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
 import kotlinx.coroutines.launch
@@ -50,6 +54,7 @@ import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.config.httpClient
+import site.remlit.snowdrop.util.getOSVersion
 import site.remlit.snowdrop.util.getPlatform
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.converted_to_png
@@ -114,8 +119,11 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 								val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
 								val filename = regex.find(attachment.url)?.value ?: return@launch
 
+								snackbarHandler.showSnackbar(getOSVersion().toString())
 								var converted = false
-								if (getPlatform() == Platform.IOS && mimeType == "image/webp") {
+								if (getPlatform() == Platform.IOS &&
+									(mimeType == "image/webp" || mimeType == "image/jxl" ||
+										(mimeType == "image/avif" && getOSVersion() < 26))) {
 									image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
 									converted = true
 								}
