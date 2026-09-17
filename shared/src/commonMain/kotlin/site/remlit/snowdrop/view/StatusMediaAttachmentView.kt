@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.ImageFormat
+import io.github.vinceglb.filekit.compressImage
 import io.github.vinceglb.filekit.saveImageToGallery
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
@@ -43,11 +45,14 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.StatusMediaAttachment
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.config.httpClient
+import site.remlit.snowdrop.util.getPlatform
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.converted_to_png
 import snowdrop.shared.generated.resources.icon_download_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
@@ -71,6 +76,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	var showAltSheet by remember { mutableStateOf(false) }
 
 	val __translation_image_saved = stringResource(Res.string.image_saved)
+	val __converted_to_png = stringResource(Res.string.converted_to_png)
 	val __issue_saving_image = stringResource(Res.string.issue_saving_image)
 
 	Column(
@@ -102,14 +108,22 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 
 								if (attachment?.url == null) return@launch
 
-								val res = httpClient.get(attachment.url).bodyAsBytes()
+								val res = httpClient.get(attachment.url)
+								var image = res.bodyAsBytes()
+								val mimeType = res.headers["content-type"]
 								val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
 								val filename = regex.find(attachment.url)?.value ?: return@launch
 
-								val saver = FileKit.saveImageToGallery(res, filename)
+								var converted = false
+								if (getPlatform() == Platform.IOS && mimeType == "image/webp") {
+									image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
+									converted = true
+								}
+
+								val saver = FileKit.saveImageToGallery(image, filename)
 
 								if (saver.isSuccess)
-									snackbarHandler.showSnackbar(__translation_image_saved)
+									snackbarHandler.showSnackbar(__translation_image_saved + if (converted) " $__converted_to_png" else "")
 								else
 									snackbarHandler.showSnackbar(__issue_saving_image)
 							}
