@@ -67,10 +67,12 @@ import site.remlit.snowdrop.EditProfileRoute
 import site.remlit.snowdrop.PinnedPostsRoute
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
+import site.remlit.snowdrop.api.accounts.blockAccount
 import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getLikes
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
+import site.remlit.snowdrop.api.accounts.unblockAccount
 import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.HtmlContent
@@ -80,6 +82,7 @@ import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
+import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
 import site.remlit.snowdrop.component.dropdown.MenuDivider
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
@@ -104,9 +107,13 @@ import site.remlit.snowdrop.util.vibrate
 import site.remlit.snowdrop.util.vibrateError
 import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_block_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unblock_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
+import snowdrop.shared.generated.resources.block
+import snowdrop.shared.generated.resources.blocked
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.copy_handle
@@ -116,6 +123,7 @@ import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.hide_boosts
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
+import snowdrop.shared.generated.resources.icon_block_24px
 import snowdrop.shared.generated.resources.icon_compare_arrows_20px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_lock_20px
@@ -135,6 +143,7 @@ import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.replies
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.show_boosts
+import snowdrop.shared.generated.resources.unblock
 import snowdrop.shared.generated.resources.unfollow
 import snowdrop.shared.generated.resources.view_all_pinned_posts
 import snowdrop.shared.generated.resources.x_followers
@@ -193,6 +202,47 @@ fun ProfileView(
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by rememberSaveable { mutableStateOf(0) }
 
+	var dropdownVisible by remember { mutableStateOf(false) }
+
+	fun follow() = bg {
+		val res = followAccount(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+	}
+
+	fun unfollow() = bg {
+		val res = unfollowAccount(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+	}
+
+	fun block() = bg {
+		val res = blockAccount(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+	}
+
+	fun unblock() = bg {
+		val res = unblockAccount(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+	}
+
+	var showRelationshipActionWarning by remember { mutableStateOf(false) }
+	var showBlockWarning by remember { mutableStateOf(false) }
+
 	Column {
 		TopAppBar(
 			navigationIcon = {
@@ -250,7 +300,6 @@ fun ProfileView(
 					}
 				}
 
-				var dropdownVisible by remember { mutableStateOf(false) }
 				IconButton(
 					onClick = {
 						dropdownVisible = !dropdownVisible
@@ -286,7 +335,7 @@ fun ProfileView(
 						leadingIcon = {
 							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 						},
-						shape = MenuDefaults.trailingItemShape,
+						shape = if (isMe) MenuDefaults.trailingItemShape else MenuDefaults.middleItemShape,
 						onClick = {
 							uriHandler.openUri(account!!.url)
 							dropdownVisible = false
@@ -309,16 +358,15 @@ fun ProfileView(
 								else
 									Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
 							},
-							shape = MenuDefaults.trailingItemShape,
+							shape = MenuDefaults.middleItemShape,
 							onClick = {
 								coroutineScope.launch {
 									vibrate(true, haptics)
 									dropdownVisible = false
 
-									val res: ApiResponse<Relationship> = if (relationship?.showingReblogs == false)
+									val res = if (relationship?.showingReblogs == false)
 										followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
-									else
-										followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
+									else followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
 
 									if (res.error || res.response == null) {
 										res.handleError(snackbarHandler)
@@ -328,6 +376,20 @@ fun ProfileView(
 									relationship = res.response
 								}
 							}
+						)
+
+						DangerDropdownItem(
+							text = {
+								if (relationship?.blocking == false)
+									Text(stringResource(Res.string.block))
+								else
+									Text(stringResource(Res.string.unblock))
+							},
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_block_24px), null)
+							},
+							shape = MenuDefaults.trailingItemShape,
+							onClick = { showBlockWarning = !showBlockWarning }
 						)
 					}
 				}
@@ -412,66 +474,6 @@ fun ProfileView(
 									horizontalArrangement = Arrangement.End
 								) {
 									Row {
-										fun follow() = bg {
-											val res = followAccount(account!!.id)
-											if (res.error || res.response == null) {
-												res.handleError(snackbarHandler)
-												return@bg
-											}
-											relationship = res.response
-										}
-
-										fun unfollow() = bg {
-											val res = unfollowAccount(account!!.id)
-											if (res.error || res.response == null) {
-												res.handleError(snackbarHandler)
-												return@bg
-											}
-											relationship = res.response
-										}
-
-										var showRelationshipActionWarning by remember { mutableStateOf(false) }
-										if (showRelationshipActionWarning)
-											AlertDialog(
-												text = {
-													if (relationship!!.following || relationship!!.requested) {
-														if (relationship!!.requested) Text(translation(
-															Res.string.are_you_sure_you_want_to_cancel_your_follow_request_to_x,
-															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
-														)) else Text(translation(
-															Res.string.are_you_sure_you_want_to_unfollow_x,
-															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
-														))
-													} else {
-														if (account!!.locked) Text(translation(
-															Res.string.are_you_sure_you_want_to_send_a_follow_request_to_x,
-															mapOf("handle" to AnnotatedString("@${account!!.acct}"))
-														))
-													}
-												},
-												dismissButton = {
-													TextButton(
-														onClick = { showRelationshipActionWarning = !showRelationshipActionWarning }
-													) {
-														Text(stringResource(Res.string.cancel))
-													}
-												},
-												confirmButton = {
-													TextButton(
-														onClick = {
-															if (relationship!!.following || relationship!!.requested) unfollow()
-															else follow()
-
-															showRelationshipActionWarning = !showRelationshipActionWarning
-														}
-													) {
-														Text(stringResource(Res.string.yes))
-													}
-												},
-												onDismissRequest = { showRelationshipActionWarning = !showRelationshipActionWarning },
-												modifier = Modifier,
-											)
-
 										if (isMe) {
 											OutlinedButton(onClick = {
 												if (!atRoute<EditProfileRoute>(navHandler.currentDestination))
@@ -490,6 +492,16 @@ fun ProfileView(
 												) {
 													if (relationship!!.requested) Text(stringResource(Res.string.cancel_request))
 													else Text(stringResource(Res.string.unfollow))
+												}
+											} else if (relationship!!.blocking) {
+												FilledTonalButton(
+													onClick = { showBlockWarning = !showBlockWarning },
+													colors = ButtonDefaults.buttonColors().copy(
+														containerColor = MaterialTheme.colorScheme.errorContainer,
+														contentColor = MaterialTheme.colorScheme.onErrorContainer
+													)
+												) {
+													Text(stringResource(Res.string.blocked))
 												}
 											} else {
 												FilledTonalButton(
@@ -731,4 +743,85 @@ fun ProfileView(
 			)
 		}
 	}
+
+	if (showRelationshipActionWarning)
+		AlertDialog(
+			text = {
+				if (relationship!!.following || relationship!!.requested) {
+					if (relationship!!.requested) Text(translation(
+						Res.string.are_you_sure_you_want_to_cancel_your_follow_request_to_x,
+						mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+					)) else Text(translation(
+						Res.string.are_you_sure_you_want_to_unfollow_x,
+						mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+					))
+				} else {
+					if (account!!.locked) Text(translation(
+						Res.string.are_you_sure_you_want_to_send_a_follow_request_to_x,
+						mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+					))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showRelationshipActionWarning = !showRelationshipActionWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						if (relationship!!.following || relationship!!.requested) unfollow()
+						else follow()
+
+						showRelationshipActionWarning = !showRelationshipActionWarning
+					}
+				) {
+					Text(stringResource(Res.string.yes))
+				}
+			},
+			onDismissRequest = { showRelationshipActionWarning = !showRelationshipActionWarning },
+			modifier = Modifier,
+		)
+
+	if (showBlockWarning)
+		AlertDialog(
+			text = {
+				if (relationship!!.blocking) {
+					Text(translation(
+						Res.string.are_you_sure_you_want_to_unblock_x,
+						mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+					))
+				} else {
+					Text(translation(
+						Res.string.are_you_sure_you_want_to_block_x,
+						mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+					))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showBlockWarning = !showBlockWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						if (relationship!!.blocking) unblock()
+						else block()
+
+						showBlockWarning = !showBlockWarning
+						if (dropdownVisible)
+							dropdownVisible = false
+					}
+				) {
+					Text(stringResource(Res.string.yes))
+				}
+			},
+			onDismissRequest = { showBlockWarning = !showBlockWarning },
+			modifier = Modifier,
+		)
 }

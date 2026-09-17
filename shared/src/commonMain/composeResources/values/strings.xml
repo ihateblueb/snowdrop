@@ -23,6 +23,7 @@
 	<string name="cancel_request">Cancel request</string>
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
+	<string name="blocked">Blocked</string>
 
 	<string name="joined_on_x">Joined on {date_time}</string>
 
@@ -153,6 +154,8 @@
 	<string name="bite_post">Bite this post</string>
 	<string name="hide_boosts">Hide boosts</string>
 	<string name="show_boosts">Show boosts</string>
+	<string name="block">Block</string>
+	<string name="unblock">Unblock</string>
 	<string name="show_likes">Show likes</string>
 	<string name="show_reactions">Show reactions</string>
 	<string name="mute_conversation">Mute conversation</string>
@@ -173,6 +176,8 @@
 	<string name="are_you_sure_you_want_to_cancel_your_follow_request_to_x">Are you sure you want to cancel your follow request to {handle}?</string>
 	<string name="are_you_sure_you_want_to_unfollow_x">Are you sure you want to unfollow {handle}?</string>
 	<string name="are_you_sure_you_want_to_send_a_follow_request_to_x">Are you sure you want to send a follow request to {handle}?</string>
+	<string name="are_you_sure_you_want_to_block_x">Are you sure you want to block {handle}?</string>
+	<string name="are_you_sure_you_want_to_unblock_x">Are you sure you want to unblock {handle}?</string>
 
 	<string name="mutuals">Mutuals</string>
 	<string name="follows_you">Follows you</string>
