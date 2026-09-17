@@ -1,5 +1,6 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.util.config.kamelTweenAnimation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_broken_image_20px
 import snowdrop.shared.generated.resources.icon_broken_image_24px
@@ -90,6 +92,7 @@ fun Avatar(
 			contentScale = ContentScale.Crop,
 			onLoading = { fallback() },
 			onFailure = { fallback(fail = true) },
+			animationSpec = kamelTweenAnimation,
 			modifier = Modifier.clip(RoundedCornerShape(radius)).then(modifier)
 				.height(size)
 				.width(size),

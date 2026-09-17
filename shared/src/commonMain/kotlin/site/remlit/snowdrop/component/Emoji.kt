@@ -1,5 +1,6 @@
 package site.remlit.snowdrop.component
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import site.remlit.snowdrop.model.Emoji
+import site.remlit.snowdrop.util.config.kamelTweenAnimation
 
 const val emojiSize = 24
 const val mediumEmojiSize = 36
@@ -63,6 +65,7 @@ fun Emoji(
 			contentScale = ContentScale.Fit,
 			onLoading = { fallback() },
 			onFailure = { fallback() },
+			animationSpec = kamelTweenAnimation,
 			modifier = Modifier.emojiSize(),
 		)
 	}
