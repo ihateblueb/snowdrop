@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,6 +51,7 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.config.httpClient
+import site.remlit.snowdrop.util.convertToHeif
 import site.remlit.snowdrop.util.getOSVersion
 import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.translation
@@ -80,8 +80,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	var showAltSheet by remember { mutableStateOf(false) }
 
 	val __translation_image_saved = stringResource(Res.string.image_saved)
-	val __converted_to_png = translation(Res.string.converted_to_type, mapOf("type" to AnnotatedString("PNG")))
-	val __converted_to_jpeg = translation(Res.string.converted_to_type, mapOf("type" to AnnotatedString("JPEG")))
+	val __converted_to_type = translation(Res.string.converted_to_type).toString()
 	val __issue_saving_image = stringResource(Res.string.issue_saving_image)
 
 	Column(
@@ -119,6 +118,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 								val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
 								val filename = regex.find(attachment.url)?.value ?: return@launch
 
+								// welcome to my conversion code. enjoy your stay
 								var converted = ""
 								if (getPlatform() == Platform.IOS &&
 									(mimeType == "image/webp" || mimeType == "image/jxl" ||
@@ -131,6 +131,15 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 									} else if (iosImageConversionChoice == "png") {
 										image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
 										converted = "PNG"
+									} else if (iosImageConversionChoice == "heif") {
+										val convertedImg = image.convertToHeif()
+										if (convertedImg == null) {
+											snackbarHandler.showSnackbar("Error converting to HEIF")
+											return@launch
+										}
+										image = convertedImg
+										converted = "HEIF"
+
 									} else {
 										val png = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
 										val jpeg = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
@@ -154,7 +163,7 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 
 								if (saver.isSuccess)
 									snackbarHandler.showSnackbar(__translation_image_saved +
-										if (converted == "PNG") " $__converted_to_png" else if (converted == "JPEG") " $__converted_to_jpeg" else "")
+										if (converted != "") " ${__converted_to_type.replace("{type}", converted)}" else "")
 								else
 									snackbarHandler.showSnackbar(__issue_saving_image)
 							}

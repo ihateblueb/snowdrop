@@ -312,18 +312,18 @@ fun GeneralSettingsView() = ViewSurface {
 								modifier = Modifier.clip(RoundedCornerShape(10.dp))
 									.fillMaxWidth().height(42.dp)
 									.selectable(
-										selected = iosImageConversionChoice == "jpeg",
+										selected = iosImageConversionChoice == "heif",
 										role = Role.RadioButton,
-										onClick = { blockingSettings.putString("ios_image_conversion_choice", "jpeg") }
+										onClick = { blockingSettings.putString("ios_image_conversion_choice", "heif") }
 									)
 							) {
 								RadioButton(
-									selected = iosImageConversionChoice == "jpeg",
+									selected = iosImageConversionChoice == "heif",
 									onClick = null,
 									modifier = Modifier.padding(start = 10.dp)
 								)
 								Text(
-									"JPEG",
+									"HEIF",
 									modifier = Modifier.padding(start = 20.dp)
 								)
 							}
@@ -344,6 +344,26 @@ fun GeneralSettingsView() = ViewSurface {
 								)
 								Text(
 									"PNG",
+									modifier = Modifier.padding(start = 20.dp)
+								)
+							}
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
+								modifier = Modifier.clip(RoundedCornerShape(10.dp))
+									.fillMaxWidth().height(42.dp)
+									.selectable(
+										selected = iosImageConversionChoice == "jpeg",
+										role = Role.RadioButton,
+										onClick = { blockingSettings.putString("ios_image_conversion_choice", "jpeg") }
+									)
+							) {
+								RadioButton(
+									selected = iosImageConversionChoice == "jpeg",
+									onClick = null,
+									modifier = Modifier.padding(start = 10.dp)
+								)
+								Text(
+									"JPEG",
 									modifier = Modifier.padding(start = 20.dp)
 								)
 							}
