@@ -10,11 +10,11 @@
 [![Zulip](.github/assets/badge/zulip.svg)](https://chat.iceshrimp.dev/#narrow/channel/12-snowdrop)
 ![Kotlin Multiplatform](.github/assets/badge/kotlin_multiplatform.svg)
 
-An attempt to make a Mastodon client that is multiplatform (iOS and Android)
-and supports extensions brought by Mastodon API compatible software
-like Iceshrimp.NET.
+A Mastodon client that is multiplatform (iOS and Android) and supports extensions brought by
+compatible software like Iceshrimp.NET.
 
-Uses Material 3 (supporting dynamic color schemes) for UI and icons.
+Uses Compose Multiplatform, Kotlin, and Material 3 (supporting dynamic color schemes) for UI and
+icons.
 
 ## Screenshots
 
