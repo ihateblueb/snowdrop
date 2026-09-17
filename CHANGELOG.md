@@ -10,6 +10,10 @@
 - Support for Akkoma-style quotes
 - Ability to mute/unmute conversations (hides it from notificatiosn but not timelines)
 - Support for Friendica's "ignore follow request" option
+- Suggested mentions and emojis in the composer
+- Fade-in for avatars and emojis
+- Saving images (configurable only on iOS in general setion)
+- Ability to hide/show boosts
 
 ### Fixed
 - Switching search tabs
@@ -23,6 +27,8 @@
 - The emoji picker reopening when tapping immediately after closing it
 - Crash on iOS related to the video player
 - Broken style on navigation bar tab order and default visibility dropdowns in settings
+- Post content getting stripped when API returns mentions in the wrong order
+- Mention FAB not adding the handle to the initial content
 
 ### Changed
 - Lowered minimum iOS version to 15.0
@@ -32,6 +38,7 @@
 - Post action dropdown now closes immediately on bite/bookmark/mute/pin instead of waiting for the request
 - Current account info and emojis are now updated on startup and when switching accounts
 - MiniStatus has 2 max lines instead of 3
+- Default visibility is now fetched from the server and set accordingly on first login
 
 ## [0.0.8-alpha]
 
