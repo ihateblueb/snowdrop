@@ -318,7 +318,7 @@ fun App() = safe {
 					onClick = {
 						if (!atRoute<ComposeRoute>(currentDest) && !atRoute<ProfileRoute>(currentDest))
 							navController.navigate(ComposeRoute())
-						if (atRoute<ProfileRoute>(currentDest))
+						if (!atRoute<ComposeRoute>(currentDest) && atRoute<ProfileRoute>(currentDest))
 							navController.navigate(ComposeRoute(content = viewingProfileHandle))
 					}
 				) {
