@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,22 +33,34 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.saveImageToGallery
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsBytes
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.StatusMediaAttachment
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
+import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.cache.fetchStatus
+import site.remlit.snowdrop.util.config.httpClient
 import snowdrop.shared.generated.resources.Res
-import snowdrop.shared.generated.resources.icon_close_24px
+import snowdrop.shared.generated.resources.icon_download_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.image_saved
+import snowdrop.shared.generated.resources.issue_saving_image
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurface {
 	val navHandler = LocalNavController.current
 	val uriHandler = LocalUriHandler.current
+	val snackbarHandler = LocalSnackbarController.current
+	val coroutineScope = rememberCoroutineScope()
 
 	val status by remember { fetchStatus(id) }.collectAsStateWithLifecycle(null)
 	val pager = rememberPagerState(startingPosition) { status?.mediaAttachments?.size ?: 0 }
@@ -56,6 +69,9 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	//  should make it true (single tap, zoom out)
 	var showDecorations by remember { mutableStateOf(true) }
 	var showAltSheet by remember { mutableStateOf(false) }
+
+	val __translation_image_saved = stringResource(Res.string.image_saved)
+	val __issue_saving_image = stringResource(Res.string.issue_saving_image)
 
 	Column(
 		modifier = Modifier.background(Color.Black)
@@ -76,6 +92,31 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 					enabled = !status?.mediaAttachments[pager.currentPage]?.description.isNullOrBlank()
 				) {
 					Icon(painterResource(Res.drawable.icon_info_24px), null)
+				}
+
+				if (status?.mediaAttachments[pager.currentPage]?.type == "image") {
+					IconButton(
+						onClick = {
+							coroutineScope.launch {
+								val attachment = status?.mediaAttachments[pager.currentPage]
+
+								if (attachment?.url == null) return@launch
+
+								val res = httpClient.get(attachment.url).bodyAsBytes()
+								val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
+								val filename = regex.find(attachment.url)?.value ?: return@launch
+
+								val saver = FileKit.saveImageToGallery(res, filename)
+
+								if (saver.isSuccess)
+									snackbarHandler.showSnackbar(__translation_image_saved)
+								else
+									snackbarHandler.showSnackbar(__issue_saving_image)
+							}
+						},
+					) {
+						Icon(painterResource(Res.drawable.icon_download_24px), null)
+					}
 				}
 
 				IconButton(onClick = { uriHandler.openUri(status?.mediaAttachments[pager.currentPage]?.url ?: "") }) {
