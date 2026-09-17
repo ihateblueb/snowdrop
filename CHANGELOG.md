@@ -12,7 +12,7 @@
 - Support for Friendica's "ignore follow request" option
 - Suggested mentions and emojis in the composer
 - Fade-in for avatars and emojis
-- Saving images (configurable only on iOS in general setion)
+- Saving images (configurable only on iOS in general section)
 - Ability to hide/show boosts
 
 ### Fixed
