@@ -387,7 +387,7 @@ fun GeneralSettingsView() = ViewSurface {
 									Column {
 										Slider(
 											state = sliderState,
-											enabled = iosImageConversionChoice != "png",
+											enabled = iosImageConversionChoice == "jpeg" || iosImageConversionChoice == "auto",
 											track = {
 												SliderDefaults.Track(sliderState = sliderState, drawTick = { _, _ -> })
 											}
