@@ -194,7 +194,7 @@ fun ProfileView(
 			res.handleError(snackbarHandler)
 			return@bgIO
 		}
-		relationship = res.response.first()
+		relationship = res.response.firstOrNull()
 	}
 
 	val pinnedStatuses = remember { mutableStateListOf<Status>() }
