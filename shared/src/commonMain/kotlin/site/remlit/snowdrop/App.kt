@@ -85,6 +85,7 @@ import site.remlit.snowdrop.util.cache.setupCache
 import site.remlit.snowdrop.util.checkForUnreadNotifications
 import site.remlit.snowdrop.util.config.kamelConfig
 import site.remlit.snowdrop.util.defaultNavigationBarOrder
+import site.remlit.snowdrop.util.getCurrentAccountId
 import site.remlit.snowdrop.util.getNavigationBarOrder
 import site.remlit.snowdrop.util.getNavigationBarOrderBlocking
 import site.remlit.snowdrop.util.getScreenWidth
@@ -274,7 +275,7 @@ fun App() = safe {
 		(scrollingUpward || alwaysShowComposeButton)
 
 
-	if (fetchAccountAndEmojis) {
+	if (fetchAccountAndEmojis && getCurrentAccountId().isNotBlank()) {
 		fetchAccountAndEmojis = false
 		bgIO {
 			debug { "attempting to update current account object and emojis" }
