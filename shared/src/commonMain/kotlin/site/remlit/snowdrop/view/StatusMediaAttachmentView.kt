@@ -104,73 +104,72 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 					Icon(painterResource(Res.drawable.icon_info_24px), null)
 				}
 
-				if (status?.mediaAttachments[pager.currentPage]?.type == "image") {
-					IconButton(
-						onClick = {
-							coroutineScope.launch {
-								val attachment = status?.mediaAttachments[pager.currentPage]
+				IconButton(
+					onClick = {
+						coroutineScope.launch {
+							val attachment = status?.mediaAttachments[pager.currentPage]
 
-								if (attachment?.url == null) return@launch
+							if (attachment?.url == null) return@launch
 
-								val res = httpClient.get(attachment.url)
-								var image = res.bodyAsBytes()
-								val mimeType = res.headers["content-type"]
-								val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
-								val filename = regex.find(attachment.url)?.value ?: return@launch
+							val res = httpClient.get(attachment.url)
+							var image = res.bodyAsBytes()
+							val mimeType = res.headers["content-type"]
+							val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
+							val filename = regex.find(attachment.url)?.value ?: return@launch
 
-								// welcome to my conversion code. enjoy your stay
-								var converted = ""
-								if (getPlatform() == Platform.IOS &&
-									(mimeType == "image/webp" || mimeType == "image/jxl" ||
-										(mimeType == "image/avif" && getOSVersion() < 26))) {
-									val iosImageConversionChoice = blockingSettings.getString("ios_image_conversion_choice", "auto")
-									val iosJpegQuality = blockingSettings.getInt("ios_jpeg_quality", 85)
-									if (iosImageConversionChoice == "jpeg") {
-										image = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
+							// welcome to my conversion code. enjoy your stay
+							var converted = ""
+							if (getPlatform() == Platform.IOS &&
+								(mimeType == "image/webp" || mimeType == "image/jxl" ||
+									(mimeType == "image/avif" && getOSVersion() < 26))) {
+								val iosImageConversionChoice = blockingSettings.getString("ios_image_conversion_choice", "auto")
+								val iosJpegQuality = blockingSettings.getInt("ios_jpeg_quality", 85)
+								if (iosImageConversionChoice == "jpeg") {
+									image = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
+									converted = "JPEG"
+								} else if (iosImageConversionChoice == "png") {
+									image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
+									converted = "PNG"
+								} else if (iosImageConversionChoice == "heif") {
+									val convertedImg = image.convertToHeif()
+									if (convertedImg == null) {
+										snackbarHandler.showSnackbar("Error converting to HEIF")
+										return@launch
+									}
+									image = convertedImg
+									converted = "HEIF"
+
+								} else {
+									val png = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
+									val jpeg = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
+
+									// "where did you get this algorithm?" "i made it the fuck up"
+									// although it works fairly well
+									if (png.size > 4000000) { // 4mb
+										image = jpeg
 										converted = "JPEG"
-									} else if (iosImageConversionChoice == "png") {
-										image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
+									} else if (png.size / 5 < jpeg.size || png.size < 1000000) { // 1mb
+										image = png
 										converted = "PNG"
-									} else if (iosImageConversionChoice == "heif") {
-										val convertedImg = image.convertToHeif()
-										if (convertedImg == null) {
-											snackbarHandler.showSnackbar("Error converting to HEIF")
-											return@launch
-										}
-										image = convertedImg
-										converted = "HEIF"
-
 									} else {
-										val png = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
-										val jpeg = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
-
-										// "where did you get this algorithm?" "i made it the fuck up"
-										// although it works fairly well
-										if (png.size > 4000000) { // 4mb
-											image = jpeg
-											converted = "JPEG"
-										} else if (png.size / 5 < jpeg.size || png.size < 1000000) { // 1mb
-											image = png
-											converted = "PNG"
-										} else {
-											image = jpeg
-											converted = "JPEG"
-										}
+										image = jpeg
+										converted = "JPEG"
 									}
 								}
-
-								val saver = FileKit.saveImageToGallery(image, filename)
-
-								if (saver.isSuccess)
-									snackbarHandler.showSnackbar(__translation_image_saved +
-										if (converted != "") " ${__converted_to_type.replace("{type}", converted)}" else "")
-								else
-									snackbarHandler.showSnackbar(__issue_saving_image)
 							}
-						},
-					) {
-						Icon(painterResource(Res.drawable.icon_download_24px), null)
-					}
+
+							val saver = FileKit.saveImageToGallery(image, filename)
+
+							if (saver.isSuccess)
+								snackbarHandler.showSnackbar(__translation_image_saved +
+									if (converted != "") " ${__converted_to_type.replace("{type}", converted)}" else "")
+							else
+								snackbarHandler.showSnackbar(__issue_saving_image)
+						}
+					},
+					enabled = status?.mediaAttachments[pager.currentPage]?.type == "image"
+				) {
+					Icon(painterResource(Res.drawable.icon_download_24px), null)
 				}
 
 				IconButton(onClick = { uriHandler.openUri(status?.mediaAttachments[pager.currentPage]?.url ?: "") }) {
