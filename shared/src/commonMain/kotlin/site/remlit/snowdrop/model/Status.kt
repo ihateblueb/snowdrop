@@ -67,8 +67,6 @@ data class Status(
 	//val application: Unit? = null,
 	val language: String? = null,
 
-	val state: String? = null,
-
 	@SerialName("created_at")
 	val createdAt: String? = null,
 	@SerialName("edited_at")
