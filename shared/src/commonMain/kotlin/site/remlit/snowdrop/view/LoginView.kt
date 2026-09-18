@@ -58,6 +58,7 @@ import site.remlit.snowdrop.util.getAccountObject
 import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.logoutAccount
+import site.remlit.snowdrop.util.openInAppBrowser
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.switchAccount
 import site.remlit.snowdrop.util.updateCurrentAccountObject
@@ -139,7 +140,7 @@ fun LoginView() = ViewSurface {
 				"&client_id=${res.response.clientId}"
 			debug { "(LoginView) created auth link: $authLink" }
 
-			uriHandler.openUri(authLink)
+			openInAppBrowser(authLink)
 		}
 	}
 

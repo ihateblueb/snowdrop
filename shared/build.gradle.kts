@@ -44,6 +44,7 @@ kotlin {
 			implementation(libs.kotlinx.coroutines.android)
 
 			implementation(libs.kamel.decoder.image.bitmap.resizing)
+			implementation(libs.androidx.browser)
 		}
 		iosMain.dependencies {
 			implementation(libs.ktor.client.darwin)

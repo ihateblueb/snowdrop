@@ -24,6 +24,7 @@ object ExternalUriHandler {
 		listener?.let {
 			it.invoke(uri)
 			cached = null
+			closeInAppBrowser()
 		}
 	}
 }
