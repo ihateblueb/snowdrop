@@ -418,7 +418,8 @@ fun StatusFooter(
 
 							val tempAttachments = realStatus.mediaAttachments
 							tempAttachments.forEachIndexed { index, attachment ->
-								attachment.description = res.response.mediaAttachments?.get(index)?.description ?: attachment.description
+								if (res.response.mediaAttachments!!.size - 1 < index) return@forEachIndexed
+								attachment.description = res.response.mediaAttachments[index].description
 							}
 
 							originalText = realStatus.content!!
