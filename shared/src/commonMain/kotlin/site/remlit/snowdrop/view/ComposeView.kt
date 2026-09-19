@@ -221,7 +221,9 @@ fun ComposeView(
 		type = FileKitType.ImageAndVideo,
 		mode = filekitMode
 	) { files -> if (files != null) mediaAttachments.addAll(files) }
-	//val fileLauncher = rememberDirectoryPickerLauncher { file -> if (file != null) mediaAttachments.add(file) }
+	val fileLauncher = rememberFilePickerLauncher(
+		mode = filekitMode
+	) { files -> if (files != null) mediaAttachments.addAll(files) }
 
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
@@ -605,7 +607,7 @@ fun ComposeView(
 								leadingIcon = { Icon(painterResource(Res.drawable.icon_attach_file_24px), null) },
 								text = { Text(stringResource(Res.string.add_file)) },
 								shape = MenuDefaults.trailingItemShape,
-								onClick = { /* fileLauncher.launch() */; coroutineScope.launch { snackbarHandler.showSnackbar("todo") }; showAddAttachmentMenu = false }
+								onClick = { fileLauncher.launch(); showAddAttachmentMenu = false }
 							)
 						}
 
