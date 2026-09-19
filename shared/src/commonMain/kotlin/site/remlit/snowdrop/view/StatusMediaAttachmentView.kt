@@ -35,11 +35,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
+import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.compressImage
+import io.github.vinceglb.filekit.delete
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
+import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.saveImageToGallery
+import io.github.vinceglb.filekit.saveVideoToGallery
+import io.github.vinceglb.filekit.write
 import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsBytes
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.utils.io.asSource
 import kotlinx.coroutines.launch
+import kotlinx.io.buffered
+import kotlinx.io.readByteArray
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.component.NavigationBackButton
@@ -57,11 +67,14 @@ import site.remlit.snowdrop.util.getPlatform
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.converted_to_type
+import snowdrop.shared.generated.resources.file_saved
 import snowdrop.shared.generated.resources.icon_download_24px
 import snowdrop.shared.generated.resources.icon_info_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.image_saved
 import snowdrop.shared.generated.resources.issue_saving_image
+import snowdrop.shared.generated.resources.issue_saving_video
+import snowdrop.shared.generated.resources.video_saved
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,8 +93,20 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	var showAltSheet by remember { mutableStateOf(false) }
 
 	val __translation_image_saved = stringResource(Res.string.image_saved)
-	val __converted_to_type = translation(Res.string.converted_to_type).toString()
-	val __issue_saving_image = stringResource(Res.string.issue_saving_image)
+	val __translation_file_saved = stringResource(Res.string.file_saved)
+	val __translation_video_saved = stringResource(Res.string.video_saved)
+	val __translation_converted_to_type = translation(Res.string.converted_to_type).toString()
+	val __translation_issue_saving_image = stringResource(Res.string.issue_saving_image)
+	val __translation_issue_saving_video = stringResource(Res.string.issue_saving_video)
+
+	var currentFileBytes: ByteArray? = null
+	val fkFileSaver = rememberFileSaverLauncher(FileKitDialogSettings.createDefault()) { file ->
+		coroutineScope.launch {
+			file?.write(currentFileBytes!!)
+			snackbarHandler.showSnackbar(__translation_file_saved)
+			currentFileBytes = null
+		}
+	}
 
 	Column(
 		modifier = Modifier.background(Color.Black)
@@ -112,10 +137,17 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 							if (attachment?.url == null) return@launch
 
 							val res = httpClient.get(attachment.url)
-							var image = res.bodyAsBytes()
+							var file = res.bodyAsChannel().asSource().buffered().readByteArray()
 							val mimeType = res.headers["content-type"]
-							val regex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
-							val filename = regex.find(attachment.url)?.value ?: return@launch
+
+							val filenameFromUrlRegex = "[^/\\\\&?]+\\.\\w{3,4}(?=([?&].*$|$))".toRegex()
+							val filenameFromContentDisposition = "filename[^;=\\n]*=((['\"]).*?\\2|[^;\\n]*)".toRegex()
+							val urlFilename = filenameFromUrlRegex.find(attachment.url)?.value
+							val disposition = res.headers["content-disposition"]
+								?.let { filenameFromContentDisposition.find(it) }?.value
+								?.replace("\"", "")
+								?.replace("filename=", "")
+							val filename = disposition ?: urlFilename ?: return@launch
 
 							// welcome to my conversion code. enjoy your stay
 							var converted = ""
@@ -125,49 +157,65 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 								val iosImageConversionChoice = blockingSettings.getString("ios_image_conversion_choice", "auto")
 								val iosJpegQuality = blockingSettings.getInt("ios_jpeg_quality", 85)
 								if (iosImageConversionChoice == "jpeg") {
-									image = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
+									file = FileKit.compressImage(file, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
 									converted = "JPEG"
 								} else if (iosImageConversionChoice == "png") {
-									image = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
+									file = FileKit.compressImage(file, imageFormat = ImageFormat.PNG)
 									converted = "PNG"
 								} else if (iosImageConversionChoice == "heif") {
-									val convertedImg = image.convertToHeif()
+									val convertedImg = file.convertToHeif()
 									if (convertedImg == null) {
 										snackbarHandler.showSnackbar("Error converting to HEIF")
 										return@launch
 									}
-									image = convertedImg
+									file = convertedImg
 									converted = "HEIF"
 
 								} else {
-									val png = FileKit.compressImage(image, imageFormat = ImageFormat.PNG)
-									val jpeg = FileKit.compressImage(image, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
+									val png = FileKit.compressImage(file, imageFormat = ImageFormat.PNG)
+									val jpeg = FileKit.compressImage(file, imageFormat = ImageFormat.JPEG, quality = iosJpegQuality)
 
 									// "where did you get this algorithm?" "i made it the fuck up"
 									// although it works fairly well
 									if (png.size > 4000000) { // 4mb
-										image = jpeg
+										file = jpeg
 										converted = "JPEG"
 									} else if (png.size / 5 < jpeg.size || png.size < 1000000) { // 1mb
-										image = png
+										file = png
 										converted = "PNG"
 									} else {
-										image = jpeg
+										file = jpeg
 										converted = "JPEG"
 									}
 								}
 							}
 
-							val saver = FileKit.saveImageToGallery(image, filename)
+							if (mimeType!!.startsWith("image")) {
+								val saver = FileKit.saveImageToGallery(file, filename)
 
-							if (saver.isSuccess)
-								snackbarHandler.showSnackbar(__translation_image_saved +
-									if (converted != "") " ${__converted_to_type.replace("{type}", converted)}" else "")
-							else
-								snackbarHandler.showSnackbar(__issue_saving_image)
+								if (saver.isSuccess)
+									snackbarHandler.showSnackbar(__translation_image_saved +
+										if (converted != "") " ${__translation_converted_to_type.replace("{type}", converted)}" else "")
+								else
+									snackbarHandler.showSnackbar(__translation_issue_saving_image)
+							} else if (mimeType.startsWith("video")) {
+								// this is stupid. double write.
+								val platformFile = PlatformFile(FileKit.filesDir, filename)
+								platformFile.write(file)
+								val saver = FileKit.saveVideoToGallery(platformFile)
+								platformFile.delete()
+
+								if (saver.isSuccess)
+									snackbarHandler.showSnackbar(__translation_video_saved)
+								else
+									snackbarHandler.showSnackbar(__translation_issue_saving_video)
+							} else {
+								currentFileBytes = file
+								fkFileSaver.launch(suggestedName = filename, defaultExtension = null)
+							}
 						}
 					},
-					enabled = status?.mediaAttachments[pager.currentPage]?.type == "image"
+					enabled = status?.mediaAttachments[pager.currentPage]?.type != null
 				) {
 					Icon(painterResource(Res.drawable.icon_download_24px), null)
 				}

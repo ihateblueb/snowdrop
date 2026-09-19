@@ -315,7 +315,10 @@
 	<string name="you_cannot_react_with_a_remote_emoji">You cannot react with a remote emoji</string>
 	<string name="image_saved">Image saved</string>
 	<string name="converted_to_type">(converted to {type})</string>
+	<string name="file_saved">File saved</string>
+	<string name="video_saved">Video saved</string>
 	<string name="issue_saving_image">There was an issue saving the image. You may need to grant the app permission, or the image may not be a savable type.</string>
+	<string name="issue_saving_video">There was an issue saving the video. You may need to grant the app permission.</string>
 
 	<string name="translate">Translate</string>
 
