@@ -434,23 +434,26 @@ fun ComposeView(
 	) {
 		var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 		LaunchedEffect(file) {
-			coroutineScope.launch { bitmap = file.toImageBitmap() }
+			coroutineScope.launch {
+				if (file.mimeType()?.primaryType == "image")
+					bitmap = file.toImageBitmap()
+			}
 		}
 
 		Box(
 			modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)
-		)
-		if (bitmap != null) {
+		) {
 			when (val type = file.mimeType()?.primaryType) {
 				"image" -> {
-					Image(
-						bitmap = bitmap!!,
-						contentDescription = null,
-						modifier = Modifier.fillMaxWidth().let {
-							if (detailedView) it.heightIn(min = 100.dp, max = 200.dp)
-							else it.fillMaxHeight()
-						}
-					)
+					if (bitmap != null)
+						Image(
+							bitmap = bitmap!!,
+							contentDescription = null,
+							modifier = Modifier.fillMaxWidth().let {
+								if (detailedView) it.heightIn(min = 100.dp, max = 200.dp)
+								else it.fillMaxHeight()
+							}
+						)
 				}
 
 				else -> {
