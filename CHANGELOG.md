@@ -13,7 +13,13 @@
 - Suggested mentions and emojis in the composer
 - Fade-in for avatars and emojis
 - Saving images (configurable only on iOS in general section)
+- Saving videos
+- Saving other files
 - Ability to hide/show boosts
+- Blocking/unblocking
+- Muting/unmuting (w/ options on software that has support)
+- Translating posts (content, CW, poll options)
+- Ability to attach generic files in the composer
 
 ### Fixed
 - Switching search tabs
@@ -29,6 +35,10 @@
 - Broken style on navigation bar tab order and default visibility dropdowns in settings
 - Post content getting stripped when API returns mentions in the wrong order
 - Mention FAB not adding the handle to the initial content
+- Mastodon ShallowQuote type not being serialized properly
+- Crash when relationship object is empty
+- Bad verify_credentials call when signed out
+- Crash when attaching a video in the composer
 
 ### Changed
 - Lowered minimum iOS version to 15.0
@@ -39,6 +49,7 @@
 - Current account info and emojis are now updated on startup and when switching accounts
 - MiniStatus has 2 max lines instead of 3
 - Default visibility is now fetched from the server and set accordingly on first login
+- OAuth is now done with an in-app browser
 
 ## [0.0.8-alpha]
 
