@@ -158,6 +158,12 @@ suspend fun determineFeatures() {
 	) putFeature("remove_follower", false)
 	else putFeature("remove_follower", true)
 
+	if (
+		software == Software.Sharkey ||
+		software == Software.Friendica
+	) putFeature("temp_mutes", false)
+	else putFeature("temp_mutes", true)
+
 	determiningFeatures = false
 }
 
