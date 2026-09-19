@@ -8,7 +8,7 @@
 - Setting to disable automatic download of attachments
 - A new (opt-in) mention style which strips mentions and shows them above the post content (like Mona)
 - Support for Akkoma-style quotes
-- Ability to mute/unmute conversations (hides it from notificatiosn but not timelines)
+- Ability to mute/unmute conversations (hides it from notifications but not timelines)
 - Support for Friendica's "ignore follow request" option
 - Suggested mentions and emojis in the composer
 - Fade-in for avatars and emojis
