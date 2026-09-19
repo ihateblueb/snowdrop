@@ -194,14 +194,10 @@ fun Status(
 	if (!filteredState.containsKey(realStatus.id))
 		filteredState[realStatus.id] = statusStateController.defaultFilteredValue
 
-	suspend fun updateStatus(delete: Boolean = false, newStatus: Status?) {
+	suspend fun updateStatus(delete: Boolean = false) {
 		if (delete) {
 			isVisible = false
 			return onUpdate(null)
-		}
-
-		if (newStatus != null) {
-			onUpdate(newStatus)
 		}
 
 		val res = getStatus(status.id)
@@ -783,10 +779,11 @@ fun Status(
 						realStatus = realStatus,
 						rebloggingAccount = rebloggingAccount,
 						isMine = isMine,
-						updateStatus = { delete, newStatus -> updateStatus(delete, newStatus) },
+						updateStatus = { delete -> updateStatus(delete) },
 						lockable = lockable,
-						onTranslated = { from ->
+						setTranslation = { from, status ->
 							translatedFrom = from
+							realStatus = status
 							translationKey++
 						}
 					)

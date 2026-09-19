@@ -114,8 +114,8 @@ fun StatusFooter(
 	realStatus: Status,
 	rebloggingAccount: Account?,
 	isMine: Boolean,
-	updateStatus: suspend (delete: Boolean, newStatus: Status?) -> Unit,
-	onTranslated: (from: String) -> Unit,
+	updateStatus: suspend (delete: Boolean) -> Unit,
+	setTranslation: (from: String, status: Status) -> Unit,
 
 	lockable: Boolean,
 ) {
@@ -225,8 +225,8 @@ fun StatusFooter(
 						return@launch
 					}
 
-					if (rebloggingAccount?.id == currentAccount?.id) updateStatus(true, res.response)
-					else updateStatus(false, res.response)
+					if (rebloggingAccount?.id == currentAccount?.id) updateStatus(true)
+					else updateStatus(false)
 				}
 			},
 			colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -267,7 +267,7 @@ fun StatusFooter(
 						return@launch
 					}
 
-					updateStatus(false, res.response)
+					updateStatus(false)
 				}
 			},
 			colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
@@ -359,7 +359,7 @@ fun StatusFooter(
 								return@launch
 							}
 
-							updateStatus(false, res.response)
+							updateStatus(false)
 						}
 					}
 				)
@@ -394,8 +394,7 @@ fun StatusFooter(
 									realStatus.mediaAttachments = originalAttachments!!
 								}
 								showingTranslated = !showingTranslated
-								updateStatus(false, realStatus)
-								onTranslated(translatedFrom)
+								setTranslation(translatedFrom, realStatus)
 								return@launch
 							}
 
@@ -440,9 +439,7 @@ fun StatusFooter(
 
 							translatedFrom = res.response.detectedSourceLanguage
 
-							updateStatus(false, realStatus)
-
-							onTranslated(translatedFrom)
+							setTranslation(translatedFrom, realStatus)
 						}
 					}
 				)
@@ -562,7 +559,7 @@ fun StatusFooter(
 									return@launch
 								}
 
-								updateStatus(false, res.response)
+								updateStatus(false)
 							}
 						}
 					)
@@ -590,7 +587,7 @@ fun StatusFooter(
 									return@launch
 								}
 
-								updateStatus(false, res.response)
+								updateStatus(false)
 							}
 						}
 					)
@@ -624,7 +621,7 @@ fun StatusFooter(
 									return@launch
 								}
 
-								updateStatus(true, null)
+								updateStatus(true)
 							}
 						}
 					)
@@ -647,7 +644,7 @@ fun StatusFooter(
 					return@launch
 				}
 
-				updateStatus(false, res.response)
+				updateStatus(false)
 			}
 		},
 		onEnterUnicodeEmoji = {
@@ -661,7 +658,7 @@ fun StatusFooter(
 					return@launch
 				}
 
-				updateStatus(false, res.response)
+				updateStatus(false)
 			}
 		}
 	)
