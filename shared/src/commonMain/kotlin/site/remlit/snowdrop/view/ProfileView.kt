@@ -35,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +73,7 @@ import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getLikes
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
+import site.remlit.snowdrop.api.accounts.removeAccountFromFollowers
 import site.remlit.snowdrop.api.accounts.unblockAccount
 import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.component.Avatar
@@ -109,6 +111,7 @@ import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_block_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_remove_x_from_followers
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unblock_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
@@ -129,6 +132,7 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_person_remove_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_off_24px
 import snowdrop.shared.generated.resources.icon_smart_toy_20px
@@ -140,6 +144,7 @@ import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.profile
+import snowdrop.shared.generated.resources.remove_follower
 import snowdrop.shared.generated.resources.replies
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.show_boosts
@@ -204,6 +209,8 @@ fun ProfileView(
 
 	var dropdownVisible by remember { mutableStateOf(false) }
 
+	var relActionKey by remember { mutableStateOf(0) }
+
 	fun follow() = bg {
 		val res = followAccount(account!!.id)
 		if (res.error || res.response == null) {
@@ -211,6 +218,7 @@ fun ProfileView(
 			return@bg
 		}
 		relationship = res.response
+		relActionKey++
 	}
 
 	fun unfollow() = bg {
@@ -220,6 +228,17 @@ fun ProfileView(
 			return@bg
 		}
 		relationship = res.response
+		relActionKey++
+	}
+
+	fun removeFollower() = bg {
+		val res = removeAccountFromFollowers(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+		relActionKey++
 	}
 
 	fun block() = bg {
@@ -229,6 +248,7 @@ fun ProfileView(
 			return@bg
 		}
 		relationship = res.response
+		relActionKey++
 	}
 
 	fun unblock() = bg {
@@ -238,163 +258,180 @@ fun ProfileView(
 			return@bg
 		}
 		relationship = res.response
+		relActionKey++
 	}
 
 	var showRelationshipActionWarning by remember { mutableStateOf(false) }
+	var showRemoveFollowerWarning by remember { mutableStateOf(false) }
 	var showBlockWarning by remember { mutableStateOf(false) }
 
 	Column {
-		TopAppBar(
-			navigationIcon = {
-				// not sure why you can't just check isMe.. if you do it just doesn't ever show up
-				//
-				// re: because then clicking on yourself from a status will act like MyProfile when it isn't the
-				//     MyProfile page, it shouldn't do that.
-				if (atRoute<ProfileRoute>(currentDest)) {
-					NavigationBackButton()
-				}
-			},
-			title = {
-				if (account == null) Column {
-					Text(translation(Res.string.profile))
-					Text(
-						translation(
-							Res.plurals.x_posts,
-							quantity = 0,
-							mapOf("count" to AnnotatedString("0"))
-						),
-						fontSize = 14.sp
-					)
-				} else Column {
-					HtmlContent(
-						account!!.displayName(),
-						emojis = account!!.emojis,
-						maxLines = 1
-					)
-					Text(
-						translation(
-							Res.plurals.x_posts,
-							quantity = account!!.statusesCount.toInt(),
-							mapOf("count" to AnnotatedString(formatNumber(account!!.statusesCount)))
-						),
-						fontSize = 14.sp
-					)
-				}
-			},
-			actions = {
-				if (getFeature("biting") && !isMe) {
-					IconButton(
-						onClick = {
-							coroutineScope.launch {
-								vibrate(true, haptics)
-
-								val res = biteAccount(account!!.id)
-								if (res.error) {
-									res.handleError(snackbarHandler)
-									vibrateError(haptics)
-								}
-							}
-						}
-					) {
-						Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+		key(relActionKey) {
+			TopAppBar(
+				navigationIcon = {
+					// not sure why you can't just check isMe.. if you do it just doesn't ever show up
+					//
+					// re: because then clicking on yourself from a status will act like MyProfile when it isn't the
+					//     MyProfile page, it shouldn't do that.
+					if (atRoute<ProfileRoute>(currentDest)) {
+						NavigationBackButton()
 					}
-				}
-
-				IconButton(
-					onClick = {
-						dropdownVisible = !dropdownVisible
+				},
+				title = {
+					if (account == null) Column {
+						Text(translation(Res.string.profile))
+						Text(
+							translation(
+								Res.plurals.x_posts,
+								quantity = 0,
+								mapOf("count" to AnnotatedString("0"))
+							),
+							fontSize = 14.sp
+						)
+					} else Column {
+						HtmlContent(
+							account!!.displayName(),
+							emojis = account!!.emojis,
+							maxLines = 1
+						)
+						Text(
+							translation(
+								Res.plurals.x_posts,
+								quantity = account!!.statusesCount.toInt(),
+								mapOf("count" to AnnotatedString(formatNumber(account!!.statusesCount)))
+							),
+							fontSize = 14.sp
+						)
 					}
-				) {
-					Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
-				}
-
-				PreparedDropdownMenu(
-					expanded = dropdownVisible,
-					onDismissRequest = { dropdownVisible = false }
-				) {
-					DropdownMenuItem(
-						text = { Text(stringResource(Res.string.copy_handle)) },
-						leadingIcon = {
-							Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
-						},
-						shape = MenuDefaults.leadingItemShape,
-						onClick = {
-							coroutineScope.launch {
-								val local = !account!!.acct.contains("@")
-								clipboardManager.setText(AnnotatedString(
-									"@${account!!.acct}" + if (local) "@${getCurrentAccountHost()}" else ""
-								))
-								vibrateSoft(haptics)
-								dropdownVisible = false
-							}
-						}
-					)
-
-					DropdownMenuItem(
-						text = { Text(stringResource(Res.string.open_in_browser)) },
-						leadingIcon = {
-							Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
-						},
-						shape = if (isMe) MenuDefaults.trailingItemShape else MenuDefaults.middleItemShape,
-						onClick = {
-							uriHandler.openUri(account!!.url)
-							dropdownVisible = false
-						}
-					)
-
-					if (!isMe) {
-						MenuDivider()
-
-						DropdownMenuItem(
-							text = {
-								if (relationship?.showingReblogs == false)
-									Text(stringResource(Res.string.show_boosts))
-								else
-									Text(stringResource(Res.string.hide_boosts))
-							},
-							leadingIcon = {
-								if (relationship?.showingReblogs == false)
-									Icon(painterResource(Res.drawable.icon_repeat_24px), null)
-								else
-									Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
-							},
-							shape = MenuDefaults.middleItemShape,
+				},
+				actions = {
+					if (getFeature("biting") && !isMe) {
+						IconButton(
 							onClick = {
 								coroutineScope.launch {
 									vibrate(true, haptics)
-									dropdownVisible = false
 
-									val res = if (relationship?.showingReblogs == false)
-										followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
-									else followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
-
-									if (res.error || res.response == null) {
+									val res = biteAccount(account!!.id)
+									if (res.error) {
 										res.handleError(snackbarHandler)
-										return@launch
+										vibrateError(haptics)
 									}
+								}
+							}
+						) {
+							Icon(painterResource(Res.drawable.icon_tooth_24px), null)
+						}
+					}
 
-									relationship = res.response
+					IconButton(
+						onClick = {
+							dropdownVisible = !dropdownVisible
+						}
+					) {
+						Icon(painterResource(Res.drawable.icon_more_vert_24px), null)
+					}
+
+					PreparedDropdownMenu(
+						expanded = dropdownVisible,
+						onDismissRequest = { dropdownVisible = false }
+					) {
+						DropdownMenuItem(
+							text = { Text(stringResource(Res.string.copy_handle)) },
+							leadingIcon = {
+								Icon(painterResource(Res.drawable.icon_alternate_email_24px), null)
+							},
+							shape = MenuDefaults.leadingItemShape,
+							onClick = {
+								coroutineScope.launch {
+									val local = !account!!.acct.contains("@")
+									clipboardManager.setText(AnnotatedString(
+										"@${account!!.acct}" + if (local) "@${getCurrentAccountHost()}" else ""
+									))
+									vibrateSoft(haptics)
+									dropdownVisible = false
 								}
 							}
 						)
 
-						DangerDropdownItem(
-							text = {
-								if (relationship?.blocking == false)
-									Text(stringResource(Res.string.block))
-								else
-									Text(stringResource(Res.string.unblock))
-							},
+						DropdownMenuItem(
+							text = { Text(stringResource(Res.string.open_in_browser)) },
 							leadingIcon = {
-								Icon(painterResource(Res.drawable.icon_block_24px), null)
+								Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 							},
-							shape = MenuDefaults.trailingItemShape,
-							onClick = { showBlockWarning = !showBlockWarning }
+							shape = if (isMe) MenuDefaults.trailingItemShape else MenuDefaults.middleItemShape,
+							onClick = {
+								uriHandler.openUri(account!!.url)
+								dropdownVisible = false
+							}
 						)
+
+						if (!isMe) {
+							MenuDivider()
+
+							DropdownMenuItem(
+								text = {
+									if (relationship?.showingReblogs == false)
+										Text(stringResource(Res.string.show_boosts))
+									else
+										Text(stringResource(Res.string.hide_boosts))
+								},
+								leadingIcon = {
+									if (relationship?.showingReblogs == false)
+										Icon(painterResource(Res.drawable.icon_repeat_24px), null)
+									else
+										Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
+								},
+								shape = MenuDefaults.middleItemShape,
+								onClick = {
+									coroutineScope.launch {
+										vibrate(true, haptics)
+										dropdownVisible = false
+
+										val res = if (relationship?.showingReblogs == false)
+											followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
+										else followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
+
+										if (res.error || res.response == null) {
+											res.handleError(snackbarHandler)
+											return@launch
+										}
+
+										relationship = res.response
+									}
+								}
+							)
+
+							if (relationship?.followedBy == true) {
+								DangerDropdownItem(
+									text = {
+										Text(stringResource(Res.string.remove_follower))
+									},
+									leadingIcon = {
+										Icon(painterResource(Res.drawable.icon_person_remove_24px), null)
+									},
+									shape = MenuDefaults.trailingItemShape,
+									onClick = { showRemoveFollowerWarning = !showRemoveFollowerWarning }
+								)
+							}
+
+							DangerDropdownItem(
+								text = {
+									if (relationship?.blocking == false)
+										Text(stringResource(Res.string.block))
+									else
+										Text(stringResource(Res.string.unblock))
+								},
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_block_24px), null)
+								},
+								shape = MenuDefaults.trailingItemShape,
+								onClick = { showBlockWarning = !showBlockWarning }
+							)
+						}
 					}
 				}
-			}
-		)
+			)
+		}
 
 		if (account == null) {
 			Column(
@@ -429,293 +466,295 @@ fun ProfileView(
 
 			RefreshableTimeline(
 				leadingItem = {
-					Column {
-						Box(
-							contentAlignment = Alignment.BottomEnd
-						) {
-							if (account!!.header != null) {
-								KamelImage(
-									resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
-									contentDescription = account!!.headerDescription,
-									contentScale = ContentScale.Crop,
-									onLoading = { fallbackHeader() },
-									onFailure = { fallbackHeader() },
-									modifier = Modifier.height(headerHeight.dp)
-										.fillMaxWidth(),
-								)
-							} else fallbackHeader()
-						}
-
-						// The Rest
-						Column(
-							modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 15.dp)
-								.offset(y = verticalOffset)
-						) {
-							//<editor-fold name="Top of header, Avatar and Edit/Follow button">
-							Row(
-								modifier = Modifier.padding(bottom = 10.dp)
-									.fillMaxWidth(),
-								verticalAlignment = Alignment.Bottom
+					key(relActionKey) {
+						Column {
+							Box(
+								contentAlignment = Alignment.BottomEnd
 							) {
-								// jank outer border
-								Box(contentAlignment = Alignment.Center) {
-									Box(
-										modifier = Modifier.background(
-											MaterialTheme.colorScheme.background,
-											RoundedCornerShape((bigAvatarRadius + 2).dp)
-										).height((bigAvatarSize + 6).dp)
-											.width((bigAvatarSize + 6).dp)
+								if (account!!.header != null) {
+									KamelImage(
+										resource = { asyncPainterResource(account!!.headerStatic ?: account!!.header!!) },
+										contentDescription = account!!.headerDescription,
+										contentScale = ContentScale.Crop,
+										onLoading = { fallbackHeader() },
+										onFailure = { fallbackHeader() },
+										modifier = Modifier.height(headerHeight.dp)
+											.fillMaxWidth(),
 									)
-									Avatar(account = account!!, big = true)
-								}
+								} else fallbackHeader()
+							}
 
+							// The Rest
+							Column(
+								modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 15.dp)
+									.offset(y = verticalOffset)
+							) {
+								//<editor-fold name="Top of header, Avatar and Edit/Follow button">
 								Row(
-									modifier = Modifier.fillMaxWidth(),
-									horizontalArrangement = Arrangement.End
+									modifier = Modifier.padding(bottom = 10.dp)
+										.fillMaxWidth(),
+									verticalAlignment = Alignment.Bottom
 								) {
-									Row {
-										if (isMe) {
-											OutlinedButton(onClick = {
-												if (!atRoute<EditProfileRoute>(navHandler.currentDestination))
-													navHandler.navigate(EditProfileRoute)
-											}) {
-												Text(stringResource(Res.string.edit_profile))
-											}
-										} else if (relationship != null) {
-											if (relationship!!.following || relationship!!.requested) {
-												OutlinedButton(
-													onClick = { showRelationshipActionWarning = !showRelationshipActionWarning },
-													border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
-													colors = ButtonDefaults.outlinedButtonColors(
-														contentColor = MaterialTheme.colorScheme.error
-													)
-												) {
-													if (relationship!!.requested) Text(stringResource(Res.string.cancel_request))
-													else Text(stringResource(Res.string.unfollow))
+									// jank outer border
+									Box(contentAlignment = Alignment.Center) {
+										Box(
+											modifier = Modifier.background(
+												MaterialTheme.colorScheme.background,
+												RoundedCornerShape((bigAvatarRadius + 2).dp)
+											).height((bigAvatarSize + 6).dp)
+												.width((bigAvatarSize + 6).dp)
+										)
+										Avatar(account = account!!, big = true)
+									}
+
+									Row(
+										modifier = Modifier.fillMaxWidth(),
+										horizontalArrangement = Arrangement.End
+									) {
+										Row {
+											if (isMe) {
+												OutlinedButton(onClick = {
+													if (!atRoute<EditProfileRoute>(navHandler.currentDestination))
+														navHandler.navigate(EditProfileRoute)
+												}) {
+													Text(stringResource(Res.string.edit_profile))
 												}
-											} else if (relationship!!.blocking) {
-												FilledTonalButton(
-													onClick = { showBlockWarning = !showBlockWarning },
-													colors = ButtonDefaults.buttonColors().copy(
-														containerColor = MaterialTheme.colorScheme.errorContainer,
-														contentColor = MaterialTheme.colorScheme.onErrorContainer
-													)
-												) {
-													Text(stringResource(Res.string.blocked))
-												}
-											} else {
-												FilledTonalButton(
-													onClick = {
-														if (account!!.locked) {
-															showRelationshipActionWarning = !showRelationshipActionWarning
-														} else follow()
+											} else if (relationship != null) {
+												if (relationship!!.following || relationship!!.requested) {
+													OutlinedButton(
+														onClick = { showRelationshipActionWarning = !showRelationshipActionWarning },
+														border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error),
+														colors = ButtonDefaults.outlinedButtonColors(
+															contentColor = MaterialTheme.colorScheme.error
+														)
+													) {
+														if (relationship!!.requested) Text(stringResource(Res.string.cancel_request))
+														else Text(stringResource(Res.string.unfollow))
 													}
-												) {
-													if (account!!.locked) Text(stringResource(Res.string.request_to_follow))
-													else Text(stringResource(Res.string.follow))
+												} else if (relationship!!.blocking) {
+													FilledTonalButton(
+														onClick = { showBlockWarning = !showBlockWarning },
+														colors = ButtonDefaults.buttonColors().copy(
+															containerColor = MaterialTheme.colorScheme.errorContainer,
+															contentColor = MaterialTheme.colorScheme.onErrorContainer
+														)
+													) {
+														Text(stringResource(Res.string.blocked))
+													}
+												} else {
+													FilledTonalButton(
+														onClick = {
+															if (account!!.locked) {
+																showRelationshipActionWarning = !showRelationshipActionWarning
+															} else follow()
+														}
+													) {
+														if (account!!.locked) Text(stringResource(Res.string.request_to_follow))
+														else Text(stringResource(Res.string.follow))
+													}
 												}
 											}
 										}
 									}
 								}
-							}
-							//</editor-fold>
+								//</editor-fold>
 
-							//<editor-fold name="Display name">
-							Row {
-								Column {
-									FlowRow(
-										horizontalArrangement = Arrangement.spacedBy(5.dp),
-										verticalArrangement = Arrangement.Center,
-										itemVerticalAlignment = Alignment.CenterVertically
-									) {
+								//<editor-fold name="Display name">
+								Row {
+									Column {
+										FlowRow(
+											horizontalArrangement = Arrangement.spacedBy(5.dp),
+											verticalArrangement = Arrangement.Center,
+											itemVerticalAlignment = Alignment.CenterVertically
+										) {
+											HtmlContent(
+												account!!.displayName(),
+												emojis = account!!.emojis,
+												fontWeight = FontWeight.Bold,
+												fontSize = 24.sp
+											)
+
+											if (account!!.locked)
+												Icon(
+													painterResource(Res.drawable.icon_lock_20px),
+													null,
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+
+											if (account!!.bot)
+												Icon(
+													painterResource(Res.drawable.icon_smart_toy_20px),
+													null,
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+
+											if (relationship != null)
+												Row(
+													modifier = Modifier.clip(RoundedCornerShape(10.dp))
+														.background(MaterialTheme.colorScheme.surfaceContainer)
+														.padding(vertical = 0.dp, horizontal = 4.dp),
+													horizontalArrangement = Arrangement.spacedBy(2.dp),
+													verticalAlignment = Alignment.CenterVertically
+												) {
+													if (relationship!!.followedBy && relationship!!.following) {
+														Icon(painterResource(Res.drawable.icon_compare_arrows_20px), null)
+														Text(stringResource(Res.string.mutuals), fontSize = 13.sp)
+													} else if (relationship!!.followedBy) {
+														Icon(painterResource(Res.drawable.icon_arrow_forward_20px), null)
+														Text(stringResource(Res.string.follows_you), fontSize = 13.sp)
+													}
+												}
+										}
+
+										FlowRow(
+											horizontalArrangement = Arrangement.spacedBy(5.dp),
+											verticalArrangement = Arrangement.Center
+										) {
+											Text(
+												"@${account!!.acct}",
+												color = MaterialTheme.colorScheme.onSurface
+											)
+										}
+									}
+								}
+								//</editor-fold>
+
+								//<editor-fold name="Bio"
+								if (account!!.note != null)
+									Column(modifier = Modifier.padding(top = 10.dp)) {
 										HtmlContent(
-											account!!.displayName(),
+											account!!.note!!,
 											emojis = account!!.emojis,
-											fontWeight = FontWeight.Bold,
-											fontSize = 24.sp
+											emojiSize = 1.5.em
 										)
+									}
+								//</editor-fold>
 
-										if (account!!.locked)
-											Icon(
-												painterResource(Res.drawable.icon_lock_20px),
-												null,
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-
-										if (account!!.bot)
-											Icon(
-												painterResource(Res.drawable.icon_smart_toy_20px),
-												null,
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-
-										if (relationship != null)
-											Row(
-												modifier = Modifier.clip(RoundedCornerShape(10.dp))
-													.background(MaterialTheme.colorScheme.surfaceContainer)
-													.padding(vertical = 0.dp, horizontal = 4.dp),
-												horizontalArrangement = Arrangement.spacedBy(2.dp),
-												verticalAlignment = Alignment.CenterVertically
-											) {
-												if (relationship!!.followedBy && relationship!!.following) {
-													Icon(painterResource(Res.drawable.icon_compare_arrows_20px), null)
-													Text(stringResource(Res.string.mutuals), fontSize = 13.sp)
-												} else if (relationship!!.followedBy) {
-													Icon(painterResource(Res.drawable.icon_arrow_forward_20px), null)
-													Text(stringResource(Res.string.follows_you), fontSize = 13.sp)
+								//<editor-fold name="Fields">
+								if (account!!.fields.isNotEmpty())
+									Column(
+										modifier = Modifier.padding(top = 10.dp)
+											.clip(RoundedCornerShape(10.dp))
+											.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
+											.background(MaterialTheme.colorScheme.surfaceContainer),
+									) {
+										Column(
+											modifier = Modifier.padding(10.dp),
+											verticalArrangement = Arrangement.spacedBy(5.dp)
+										) {
+											account!!.fields.forEach { (name, value) ->
+												Row(
+													horizontalArrangement = Arrangement.spacedBy(5.dp)
+												) {
+													HtmlContent(
+														string = name,
+														emojis = account!!.emojis,
+														modifier = Modifier.weight(0.35f),
+														color = MaterialTheme.colorScheme.secondary
+													)
+													HtmlContent(
+														string = value,
+														emojis = account!!.emojis,
+														modifier = Modifier.weight(0.65f)
+													)
 												}
 											}
+										}
 									}
+								//</editor-fold>
 
-									FlowRow(
-										horizontalArrangement = Arrangement.spacedBy(5.dp),
-										verticalArrangement = Arrangement.Center
+								//<editor-fold name="Bottom of Header">
+								Row(modifier = Modifier.padding(top = 10.dp)) {
+									// todo: format this, it's just an ugly timestamp right now
+									Text(
+										translation(
+											Res.string.joined_on_x,
+											mapOf("date_time" to AnnotatedString(
+												Instant.parse(account!!.createdAt).toLocalizedString()
+											))
+										),
+										color = MaterialTheme.colorScheme.onSurfaceVariant
+									)
+								}
+
+								if (!hideFollowCounters)
+									Row(
+										modifier = Modifier.padding(top = 10.dp),
+										horizontalArrangement = Arrangement.spacedBy(10.dp)
 									) {
 										Text(
-											"@${account!!.acct}",
-											color = MaterialTheme.colorScheme.onSurface
+											translation(
+												Res.plurals.x_followers,
+												quantity = account!!.followersCount.toInt(),
+												mapOf("count" to buildAnnotatedString {
+													withStyle(style = SpanStyle(
+														fontWeight = FontWeight.Bold
+													)) { append("${account!!.followersCount}") }
+													toAnnotatedString()
+												})
+											)
+										)
+
+										Text(
+											translation(
+												Res.plurals.x_following,
+												quantity = account!!.followingCount.toInt(),
+												mapOf("count" to buildAnnotatedString {
+													withStyle(style = SpanStyle(
+														fontWeight = FontWeight.Bold
+													)) { append("${account!!.followingCount}") }
+													toAnnotatedString()
+												})
+											)
+										)
+									}
+								//</editor-fold>
+							}
+
+							// tabs
+							Column(
+								modifier = Modifier.offset(y = verticalOffset)
+							) {
+								PrimaryTabRow(selectedTabIndex = selectedTab) {
+									Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
+									Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.replies)) })
+									Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
+									if (isMe || account!!.pleroma?.hideFavorites == false) {
+										Tab(
+											selectedTab == 3,
+											onClick = { selectedTab = 3 },
+											text = { Text(stringResource(Res.string.likes)) }
 										)
 									}
 								}
-							}
-							//</editor-fold>
 
-							//<editor-fold name="Bio"
-							if (account!!.note != null)
-								Column(modifier = Modifier.padding(top = 10.dp)) {
-									HtmlContent(
-										account!!.note!!,
-										emojis = account!!.emojis,
-										emojiSize = 1.5.em
+								//<editor-fold name="Pinned posts">
+								if (selectedTab == 0 && pinnedStatuses.isNotEmpty()) {
+									Status(
+										pinnedStatuses.first(),
+										onUpdate = { new -> pinnedStatuses.update(pinnedStatuses.first(), new) },
+										pinned = true,
+										showDivider = false
 									)
-								}
-							//</editor-fold>
 
-							//<editor-fold name="Fields">
-							if (account!!.fields.isNotEmpty())
-								Column(
-									modifier = Modifier.padding(top = 10.dp)
-										.clip(RoundedCornerShape(10.dp))
-										.border(1.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
-										.background(MaterialTheme.colorScheme.surfaceContainer),
-								) {
-									Column(
-										modifier = Modifier.padding(10.dp),
-										verticalArrangement = Arrangement.spacedBy(5.dp)
-									) {
-										account!!.fields.forEach { (name, value) ->
-											Row(
-												horizontalArrangement = Arrangement.spacedBy(5.dp)
-											) {
-												HtmlContent(
-													string = name,
-													emojis = account!!.emojis,
-													modifier = Modifier.weight(0.35f),
-													color = MaterialTheme.colorScheme.secondary
-												)
-												HtmlContent(
-													string = value,
-													emojis = account!!.emojis,
-													modifier = Modifier.weight(0.65f)
-												)
-											}
+									if (pinnedStatuses.size > 1) {
+										OutlinedButton(
+											modifier = Modifier.padding(5.dp).fillMaxWidth(),
+											onClick = { navHandler.navigate(PinnedPostsRoute(account!!.id)) }
+										) {
+											Icon(painterResource(Res.drawable.icon_keep_24px), null)
+											Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+											Text(stringResource(Res.string.view_all_pinned_posts))
 										}
 									}
-								}
-							//</editor-fold>
 
-							//<editor-fold name="Bottom of Header">
-							Row(modifier = Modifier.padding(top = 10.dp)) {
-								// todo: format this, it's just an ugly timestamp right now
-								Text(
-									translation(
-										Res.string.joined_on_x,
-										mapOf("date_time" to AnnotatedString(
-											Instant.parse(account!!.createdAt).toLocalizedString()
-										))
-									),
-									color = MaterialTheme.colorScheme.onSurfaceVariant
-								)
-							}
-
-							if (!hideFollowCounters)
-								Row(
-									modifier = Modifier.padding(top = 10.dp),
-									horizontalArrangement = Arrangement.spacedBy(10.dp)
-								) {
-									Text(
-										translation(
-											Res.plurals.x_followers,
-											quantity = account!!.followersCount.toInt(),
-											mapOf("count" to buildAnnotatedString {
-												withStyle(style = SpanStyle(
-													fontWeight = FontWeight.Bold
-												)) { append("${account!!.followersCount}") }
-												toAnnotatedString()
-											})
-										)
-									)
-
-									Text(
-										translation(
-											Res.plurals.x_following,
-											quantity = account!!.followingCount.toInt(),
-											mapOf("count" to buildAnnotatedString {
-												withStyle(style = SpanStyle(
-													fontWeight = FontWeight.Bold
-												)) { append("${account!!.followingCount}") }
-												toAnnotatedString()
-											})
-										)
+									HorizontalDivider(
+										thickness = 1.dp,
+										color = MaterialTheme.colorScheme.surfaceContainer
 									)
 								}
-							//</editor-fold>
-						}
-
-						// tabs
-						Column(
-							modifier = Modifier.offset(y = verticalOffset)
-						) {
-							PrimaryTabRow(selectedTabIndex = selectedTab) {
-								Tab(selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(Res.string.posts)) })
-								Tab(selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(Res.string.replies)) })
-								Tab(selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(Res.string.media)) })
-								if (isMe || account!!.pleroma?.hideFavorites == false) {
-									Tab(
-										selectedTab == 3,
-										onClick = { selectedTab = 3 },
-										text = { Text(stringResource(Res.string.likes)) }
-									)
-								}
+								//</editor-fold>
 							}
-
-							//<editor-fold name="Pinned posts">
-							if (selectedTab == 0 && pinnedStatuses.isNotEmpty()) {
-								Status(
-									pinnedStatuses.first(),
-									onUpdate = { new -> pinnedStatuses.update(pinnedStatuses.first(), new) },
-									pinned = true,
-									showDivider = false
-								)
-
-								if (pinnedStatuses.size > 1) {
-									OutlinedButton(
-										modifier = Modifier.padding(5.dp).fillMaxWidth(),
-										onClick = { navHandler.navigate(PinnedPostsRoute(account!!.id)) }
-									) {
-										Icon(painterResource(Res.drawable.icon_keep_24px), null)
-										Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-										Text(stringResource(Res.string.view_all_pinned_posts))
-									}
-								}
-
-								HorizontalDivider(
-									thickness = 1.dp,
-									color = MaterialTheme.colorScheme.surfaceContainer
-								)
-							}
-							//</editor-fold>
 						}
 					}
 				},
@@ -785,6 +824,37 @@ fun ProfileView(
 			modifier = Modifier,
 		)
 
+	if (showRemoveFollowerWarning)
+		AlertDialog(
+			text = {
+				Text(translation(
+					Res.string.are_you_sure_you_want_to_remove_x_from_followers,
+					mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+				))
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showRemoveFollowerWarning = !showRemoveFollowerWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						removeFollower()
+
+						showRemoveFollowerWarning = !showRemoveFollowerWarning
+						dropdownVisible = false
+					}
+				) {
+					Text(stringResource(Res.string.yes))
+				}
+			},
+			onDismissRequest = { showRemoveFollowerWarning = !showRemoveFollowerWarning },
+			modifier = Modifier,
+		)
+
 	if (showBlockWarning)
 		AlertDialog(
 			text = {
@@ -814,8 +884,7 @@ fun ProfileView(
 						else block()
 
 						showBlockWarning = !showBlockWarning
-						if (dropdownVisible)
-							dropdownVisible = false
+						dropdownVisible = false
 					}
 				) {
 					Text(stringResource(Res.string.yes))
