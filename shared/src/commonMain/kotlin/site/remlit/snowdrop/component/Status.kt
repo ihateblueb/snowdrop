@@ -192,20 +192,16 @@ fun Status(
 	if (!filteredState.containsKey(realStatus.id))
 		filteredState[realStatus.id] = statusStateController.defaultFilteredValue
 
-	suspend fun updateStatus(delete: Boolean = false) {
+	// why did we do this?????????
+	fun updateStatus(delete: Boolean = false, newStatus: Status?) {
 		if (delete) {
 			isVisible = false
 			return onUpdate(null)
 		}
 
-		val res = getStatus(status.id)
-		if (res.error || res.response == null) {
-			res.handleError(snackbarController)
-			return
+		if (newStatus != null) {
+			onUpdate(newStatus)
 		}
-
-		status = res.response
-		onUpdate(res.response)
 	}
 
 	var inThreadView by remember { mutableStateOf(false) }
@@ -726,7 +722,7 @@ fun Status(
 															return@launch
 														}
 
-														updateStatus()
+														onUpdate(res.response)
 													} else {
 														snackbarController.showSnackbar(cannotUseRemoteEmojiMessage)
 													}
@@ -762,7 +758,7 @@ fun Status(
 						realStatus = realStatus,
 						rebloggingAccount = rebloggingAccount,
 						isMine = isMine,
-						updateStatus = { delete -> updateStatus(delete) },
+						updateStatus = { delete, newStatus -> updateStatus(delete, newStatus) },
 						lockable = lockable
 					)
 				}

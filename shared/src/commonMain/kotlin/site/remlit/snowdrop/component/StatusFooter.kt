@@ -107,7 +107,7 @@ fun StatusFooter(
 	realStatus: Status,
 	rebloggingAccount: Account?,
 	isMine: Boolean,
-	updateStatus: suspend (delete: Boolean) -> Unit,
+	updateStatus: suspend (delete: Boolean, newStatus: Status?) -> Unit,
 
 	lockable: Boolean,
 ) {
@@ -168,10 +168,10 @@ fun StatusFooter(
 			navHandler.navigate(
 				ComposeRoute(
 					inReplyToId = realStatus.id,
-					cw = if (!realStatus.spoilerText.isNullOrBlank()) {
-						if (appendReOnReplies && !realStatus.spoilerText.lowercase().startsWith("re: "))
+					cw = (if (!realStatus.spoilerText.isNullOrBlank()) {
+						if (appendReOnReplies && !realStatus.spoilerText!!.lowercase().startsWith("re: "))
 							"RE: ${realStatus.spoilerText}" else realStatus.spoilerText
-					} else "",
+					} else "")!!,
 					// what a block
 					content = (if (!isMine) "@${realStatus.account!!.acct} " else "") +
 						realStatus.mentions.filter { it.id != currentAccount?.id }
@@ -205,8 +205,8 @@ fun StatusFooter(
 						return@launch
 					}
 
-					if (rebloggingAccount?.id == currentAccount?.id) updateStatus(true)
-					else updateStatus(false)
+					if (rebloggingAccount?.id == currentAccount?.id) updateStatus(true, res.response)
+					else updateStatus(false, res.response)
 				}
 			},
 			colors = if (realStatus.reblogged) ButtonDefaults.textButtonColors(
@@ -247,7 +247,7 @@ fun StatusFooter(
 						return@launch
 					}
 
-					updateStatus(false)
+					updateStatus(false, res.response)
 				}
 			},
 			colors = if (realStatus.favourited) ButtonDefaults.textButtonColors(
@@ -336,9 +336,10 @@ fun StatusFooter(
 							if (res.error || res.response == null) {
 								res.handleError(snackbarController)
 								vibrateError(haptics)
+								return@launch
 							}
 
-							updateStatus(false)
+							updateStatus(false, res.response)
 						}
 					}
 				)
@@ -455,9 +456,10 @@ fun StatusFooter(
 								if (res.error || res.response == null) {
 									res.handleError(snackbarController)
 									vibrateError(haptics)
+									return@launch
 								}
 
-								updateStatus(false)
+								updateStatus(false, res.response)
 							}
 						}
 					)
@@ -482,9 +484,10 @@ fun StatusFooter(
 								if (res.error || res.response == null) {
 									res.handleError(snackbarController)
 									vibrateError(haptics)
+									return@launch
 								}
 
-								updateStatus(false)
+								updateStatus(false, res.response)
 							}
 						}
 					)
@@ -511,14 +514,14 @@ fun StatusFooter(
 								vibrate(true, haptics)
 								showDropdown = false
 
-								val req = deleteStatus(realStatus.id)
-								if (req.error) {
-									req.handleError(snackbarController)
+								val res = deleteStatus(realStatus.id)
+								if (res.error) {
+									res.handleError(snackbarController)
 									vibrateError(haptics)
 									return@launch
 								}
 
-								updateStatus(true)
+								updateStatus(true, null)
 							}
 						}
 					)
@@ -541,7 +544,7 @@ fun StatusFooter(
 					return@launch
 				}
 
-				updateStatus(false)
+				updateStatus(false, res.response)
 			}
 		},
 		onEnterUnicodeEmoji = {
@@ -555,7 +558,7 @@ fun StatusFooter(
 					return@launch
 				}
 
-				updateStatus(false)
+				updateStatus(false, res.response)
 			}
 		}
 	)

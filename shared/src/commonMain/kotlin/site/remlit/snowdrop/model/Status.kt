@@ -11,9 +11,9 @@ data class Status(
 	val account: Account? = null,
 
 	@SerialName("spoiler_text")
-	val spoilerText: String? = null,
+	var spoilerText: String? = null,
 	val text: String? = null,
-	val content: String? = null,
+	var content: String? = null,
 
 	val url: String? = null,
 	val uri: String? = null,

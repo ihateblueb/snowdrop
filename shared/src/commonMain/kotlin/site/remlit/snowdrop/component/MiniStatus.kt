@@ -153,7 +153,7 @@ fun MiniStatus(
 				) {
 					Icon(painterResource(Res.drawable.icon_warning_20px), null)
 					Text(
-						status.spoilerText,
+						status.spoilerText!!,
 						fontWeight = FontWeight.Medium
 					)
 				}
