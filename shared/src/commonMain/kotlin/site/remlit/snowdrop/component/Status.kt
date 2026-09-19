@@ -37,6 +37,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,7 +66,6 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusMediaAttachmentRoute
 import site.remlit.snowdrop.ThreadRoute
-import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.model.Status
@@ -108,6 +108,7 @@ import snowdrop.shared.generated.resources.replying_to_self
 import snowdrop.shared.generated.resources.replying_to_x
 import snowdrop.shared.generated.resources.replying_to_x_and_x_others
 import snowdrop.shared.generated.resources.show_content
+import snowdrop.shared.generated.resources.translated_from
 import snowdrop.shared.generated.resources.x_boosted
 import snowdrop.shared.generated.resources.you_cannot_react_with_a_remote_emoji
 import kotlin.math.ceil
@@ -219,6 +220,9 @@ fun Status(
 			timestampKey++
 		}
 	}
+
+	var translationKey by rememberSaveable { mutableStateOf(0) }
+	var translatedFrom by rememberSaveable { mutableStateOf("") }
 
 	// start content
 	Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -588,7 +592,18 @@ fun Status(
 											emojiSize = 1.5.em
 										)
 									}
-								}
+							}
+
+							// odd means it's in the translated state
+							if (translationKey % 2 == 1) {
+								Text(
+									translation(
+										Res.string.translated_from,
+										mapOf("language" to AnnotatedString(translatedFrom))
+									),
+									fontSize = 13.sp
+								)
+							}
 
 							//<editor-fold name="Attachments">
 							if (realStatus.mediaAttachments.isNotEmpty()) {
@@ -639,51 +654,52 @@ fun Status(
 					}
 
 					Column(modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)) {
-						if (realStatus.spoilerText != null && realStatus.spoilerText!!.isNotBlank()) {
-							Column(
-								modifier = Modifier.fillMaxWidth()
-									.clip(RoundedCornerShape(10.dp))
-									.background(WarningColor25)
-									.clickable(onClick = {
-										cwState[realStatus.id] = !cwState.getOrElse(realStatus.id) { false }
-									})
-							) {
-								Row(
-									modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
-										.fillMaxWidth(),
-									horizontalArrangement = Arrangement.spacedBy(10.dp),
-									verticalAlignment = Alignment.CenterVertically
-								) {
-									Icon(painterResource(Res.drawable.icon_warning_24px), null)
-
-									Column(modifier = Modifier.weight(1f)) {
-										HtmlContent(
-											realStatus.spoilerText!!,
-											emojis = realStatus.emojis,
-											fontWeight = FontWeight.Medium
-										)
-										Text(
-											if (!cwState.getOrElse(realStatus.id) { false }) stringResource(Res.string.show_content)
-											else stringResource(Res.string.hide_content),
-											fontSize = 12.sp
-										)
-									}
-
-									if (realStatus.mediaAttachments.isNotEmpty()) {
-										Icon(painterResource(Res.drawable.icon_image_24px), null)
-									}
-								}
-							}
-
-							AnimatedVisibility(cwState.getOrElse(realStatus.id) { false }) {
+						key(translationKey) {
+							if (realStatus.spoilerText != null && realStatus.spoilerText!!.isNotBlank()) {
 								Column(
-									modifier = Modifier.padding(top = 10.dp)
+									modifier = Modifier.fillMaxWidth()
+										.clip(RoundedCornerShape(10.dp))
+										.background(WarningColor25)
+										.clickable(onClick = {
+											cwState[realStatus.id] = !cwState.getOrElse(realStatus.id) { false }
+										})
 								) {
-									renderContent()
-								}
-							}
-						} else renderContent()
+									Row(
+										modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
+											.fillMaxWidth(),
+										horizontalArrangement = Arrangement.spacedBy(10.dp),
+										verticalAlignment = Alignment.CenterVertically
+									) {
+										Icon(painterResource(Res.drawable.icon_warning_24px), null)
 
+										Column(modifier = Modifier.weight(1f)) {
+											HtmlContent(
+												realStatus.spoilerText!!,
+												emojis = realStatus.emojis,
+												fontWeight = FontWeight.Medium
+											)
+											Text(
+												if (!cwState.getOrElse(realStatus.id) { false }) stringResource(Res.string.show_content)
+												else stringResource(Res.string.hide_content),
+												fontSize = 12.sp
+											)
+										}
+
+										if (realStatus.mediaAttachments.isNotEmpty()) {
+											Icon(painterResource(Res.drawable.icon_image_24px), null)
+										}
+									}
+								}
+
+								AnimatedVisibility(cwState.getOrElse(realStatus.id) { false }) {
+									Column(
+										modifier = Modifier.padding(top = 10.dp)
+									) {
+										renderContent()
+									}
+								}
+							} else renderContent()
+						}
 					}
 
 					/*
@@ -759,7 +775,11 @@ fun Status(
 						rebloggingAccount = rebloggingAccount,
 						isMine = isMine,
 						updateStatus = { delete, newStatus -> updateStatus(delete, newStatus) },
-						lockable = lockable
+						lockable = lockable,
+						onTranslated = { from ->
+							translatedFrom = from
+							translationKey++
+						}
 					)
 				}
 

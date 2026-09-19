@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -40,6 +42,7 @@ import site.remlit.snowdrop.api.statuses.muteStatus
 import site.remlit.snowdrop.api.statuses.pinStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
+import site.remlit.snowdrop.api.statuses.translateStatus
 import site.remlit.snowdrop.api.statuses.unbookmarkStatus
 import site.remlit.snowdrop.api.statuses.unfavouriteStatus
 import site.remlit.snowdrop.api.statuses.unmuteStatus
@@ -51,6 +54,7 @@ import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.model.request.TranslateStatusRequest
 import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
@@ -89,6 +93,7 @@ import snowdrop.shared.generated.resources.icon_reply_all_24px
 import snowdrop.shared.generated.resources.icon_star_filled_24px
 import snowdrop.shared.generated.resources.icon_star_24px
 import snowdrop.shared.generated.resources.icon_tooth_24px
+import snowdrop.shared.generated.resources.icon_translate_24px
 import snowdrop.shared.generated.resources.icon_volume_off_24px
 import snowdrop.shared.generated.resources.mute_conversation
 import snowdrop.shared.generated.resources.open_in_browser
@@ -96,7 +101,9 @@ import snowdrop.shared.generated.resources.pin
 import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.show_likes
+import snowdrop.shared.generated.resources.show_original
 import snowdrop.shared.generated.resources.show_reactions
+import snowdrop.shared.generated.resources.translate
 import snowdrop.shared.generated.resources.unbookmark
 import snowdrop.shared.generated.resources.unmute_conversation
 import snowdrop.shared.generated.resources.unpin
@@ -108,6 +115,7 @@ fun StatusFooter(
 	rebloggingAccount: Account?,
 	isMine: Boolean,
 	updateStatus: suspend (delete: Boolean, newStatus: Status?) -> Unit,
+	onTranslated: (from: String) -> Unit,
 
 	lockable: Boolean,
 ) {
@@ -126,6 +134,18 @@ fun StatusFooter(
 	var showEmojiPicker by remember { mutableStateOf(false) }
 
 	var showDropdown by remember { mutableStateOf(false) }
+
+	var hasBeenTranslated by rememberSaveable { mutableStateOf(false) }
+	var showingTranslated by rememberSaveable { mutableStateOf(false) }
+	var translatedCw by rememberSaveable { mutableStateOf("") }
+	var translatedText by rememberSaveable { mutableStateOf("") }
+	var translatedPoll by rememberSaveable { mutableStateOf<Status.Poll?>(null) }
+	var translatedAttachments by rememberSaveable { mutableStateOf<List<Status.MediaAttachment>?>(null) }
+	var originalCw by rememberSaveable { mutableStateOf("") }
+	var originalText by rememberSaveable { mutableStateOf("") }
+	var originalPoll by rememberSaveable { mutableStateOf<Status.Poll?>(null) }
+	var originalAttachments by rememberSaveable { mutableStateOf<List<Status.MediaAttachment>?>(null)}
+	var translatedFrom by rememberSaveable { mutableStateOf("") }
 
 
 	// Preferences
@@ -340,6 +360,89 @@ fun StatusFooter(
 							}
 
 							updateStatus(false, res.response)
+						}
+					}
+				)
+
+				DropdownMenuItem(
+					text = {
+						if (!showingTranslated) Text(stringResource(Res.string.translate))
+						else Text(stringResource(Res.string.show_original))
+					},
+					leadingIcon = {
+						Icon(painterResource(Res.drawable.icon_translate_24px), null)
+					},
+					shape = MenuDefaults.middleItemShape,
+					onClick = {
+						// hello my name is translation code. please be nice to me
+						coroutineScope.launch {
+							vibrate(true, haptics)
+							showDropdown = false
+
+							if (hasBeenTranslated) {
+								if (!showingTranslated) {
+									originalText = realStatus.content!!
+									originalCw = realStatus.spoilerText!!
+									realStatus.content = translatedText
+									realStatus.spoilerText = translatedCw
+									realStatus.poll = translatedPoll
+									realStatus.mediaAttachments = translatedAttachments!!
+								} else {
+									realStatus.content = originalText
+									realStatus.spoilerText = originalCw
+									realStatus.poll = originalPoll
+									realStatus.mediaAttachments = originalAttachments!!
+								}
+								showingTranslated = !showingTranslated
+								updateStatus(false, realStatus)
+								onTranslated(translatedFrom)
+								return@launch
+							}
+
+							val res = translateStatus(
+								realStatus.id,
+								// simple enough
+								// DO NOT USE .toLanguageTag()!!!!!!!!!!!!!!!!!!!!! WORST MISTAKE OF MY LIFE
+								// WHAT THE FUCK IS A "en-US-u-mu-fahrenhe"??????????????????????????????
+								TranslateStatusRequest(Locale.current.language)
+							)
+							if (res.error || res.response == null) {
+								res.handleError(snackbarController)
+								vibrateError(haptics)
+								return@launch
+							}
+
+							val tempPoll = realStatus.poll
+							tempPoll?.options?.forEachIndexed { index, option ->
+								option.title = res.response.poll?.options[index]?.title ?: option.title
+							}
+
+							val tempAttachments = realStatus.mediaAttachments
+							tempAttachments.forEachIndexed { index, attachment ->
+								attachment.description = res.response.mediaAttachments?.get(index)?.description ?: attachment.description
+							}
+
+							originalText = realStatus.content!!
+							originalCw = realStatus.spoilerText!!
+							originalPoll = realStatus.poll
+							originalAttachments = realStatus.mediaAttachments
+
+							translatedText = res.response.content
+							translatedCw = res.response.spoilerText
+							translatedPoll = tempPoll
+							translatedAttachments = tempAttachments
+
+							realStatus.content = translatedText
+							realStatus.spoilerText = translatedCw
+
+							showingTranslated = true
+							hasBeenTranslated = true
+
+							translatedFrom = res.response.detectedSourceLanguage
+
+							updateStatus(false, realStatus)
+
+							onTranslated(translatedFrom)
 						}
 					}
 				)

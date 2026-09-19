@@ -54,11 +54,11 @@ data class Status(
 	@SerialName("local_only")
 	val localOnly: Boolean? = null,
 
-	val poll: Poll? = null,
+	var poll: Poll? = null,
 	val filtered: List<Filtered>? = null,
 	val mentions: List<Mention> = listOf(),
 	@SerialName("media_attachments")
-	val mediaAttachments: List<MediaAttachment> = listOf(),
+	var mediaAttachments: List<MediaAttachment> = listOf(),
 	val emojis: List<Emoji> = listOf(),
 	val reactions: List<Reaction> = listOf(),
 	val tags: List<Tag> = listOf(),
@@ -106,7 +106,7 @@ data class Status(
 	) {
 		@Serializable
 		data class Option(
-			val title: String,
+			var title: String,
 			@SerialName("votes_count")
 			val votesCount: Long,
 		)
@@ -165,7 +165,7 @@ data class Status(
 		val textUrl: String? = null,
 
 		val meta: Meta? = null,
-		val description: String? = null,
+		var description: String? = null,
 		val blurhash: String? = null,
 		val type: String
 	) {
