@@ -22,4 +22,5 @@ actual suspend fun openInAppBrowser(url: String) {
 actual fun closeInAppBrowser() {
 	if (safariViewController == null) return
 	safariViewController!!.dismissViewControllerAnimated(true, null)
+	safariViewController = null
 }
