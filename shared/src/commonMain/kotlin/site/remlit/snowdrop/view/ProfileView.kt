@@ -401,7 +401,7 @@ fun ProfileView(
 								}
 							)
 
-							if (relationship?.followedBy == true) {
+							if (relationship?.followedBy == true && getFeature("remove_follower")) {
 								DangerDropdownItem(
 									text = {
 										Text(stringResource(Res.string.remove_follower))
