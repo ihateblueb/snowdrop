@@ -66,6 +66,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusMediaAttachmentRoute
 import site.remlit.snowdrop.ThreadRoute
+import site.remlit.snowdrop.api.statuses.getStatus
 import site.remlit.snowdrop.api.statuses.reactToStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.model.Status
@@ -193,8 +194,7 @@ fun Status(
 	if (!filteredState.containsKey(realStatus.id))
 		filteredState[realStatus.id] = statusStateController.defaultFilteredValue
 
-	// why did we do this?????????
-	fun updateStatus(delete: Boolean = false, newStatus: Status?) {
+	suspend fun updateStatus(delete: Boolean = false, newStatus: Status?) {
 		if (delete) {
 			isVisible = false
 			return onUpdate(null)
@@ -203,6 +203,15 @@ fun Status(
 		if (newStatus != null) {
 			onUpdate(newStatus)
 		}
+
+		val res = getStatus(status.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarController)
+			return
+		}
+
+		status = res.response
+		onUpdate(res.response)
 	}
 
 	var inThreadView by remember { mutableStateOf(false) }
