@@ -164,6 +164,14 @@ suspend fun determineFeatures() {
 	) putFeature("temp_mutes", false)
 	else putFeature("temp_mutes", true)
 
+	if (
+		software == Software.Mastodon ||
+		software == Software.Glitch ||
+		software == Software.Chuckya ||
+		software == Software.Friendica // only supports other and spam from my testing
+	) putFeature("report_categories", true)
+	else putFeature("report_categories", false)
+
 	determiningFeatures = false
 }
 

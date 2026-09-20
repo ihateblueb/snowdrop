@@ -77,6 +77,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.EditProfileRoute
 import site.remlit.snowdrop.PinnedPostsRoute
 import site.remlit.snowdrop.ProfileRoute
+import site.remlit.snowdrop.ReportRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.blockAccount
 import site.remlit.snowdrop.api.accounts.followAccount
@@ -152,6 +153,7 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_outlined_flag_24px
 import snowdrop.shared.generated.resources.icon_person_remove_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_off_24px
@@ -171,6 +173,7 @@ import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.remove_follower
 import snowdrop.shared.generated.resources.replies
+import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.unblock
@@ -510,6 +513,19 @@ fun ProfileView(
 								},
 								shape = MenuDefaults.middleItemShape,
 								onClick = { showBlockWarning = !showBlockWarning }
+							)
+
+							DangerDropdownItem(
+								text = {
+									Text(stringResource(Res.string.report))
+								},
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
+								},
+								shape = MenuDefaults.trailingItemShape,
+								onClick = {
+									navHandler.navigate(ReportRoute(account!!.id))
+								}
 							)
 						}
 					}

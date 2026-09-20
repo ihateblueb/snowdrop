@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.ComposeRoute
+import site.remlit.snowdrop.ReportRoute
 import site.remlit.snowdrop.StatusInteractionDetailRoute
 import site.remlit.snowdrop.api.statuses.biteStatus
 import site.remlit.snowdrop.api.statuses.bookmarkStatus
@@ -533,7 +534,7 @@ fun StatusFooter(
 							Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
 						},
 						shape = if (isMine) MenuDefaults.middleItemShape else MenuDefaults.trailingItemShape,
-						onClick = { }
+						onClick = { navHandler.navigate(ReportRoute(accountId = realStatus.account!!.id, statusId = realStatus.id))}
 					)
 				}
 

@@ -164,6 +164,12 @@ data class ComposeRoute(
 )
 
 @Serializable
+data class ReportRoute(
+	val accountId: String,
+	val statusId: String? = null
+)
+
+@Serializable
 object SettingsRoute
 @Serializable
 object AboutSettingsRoute
@@ -254,6 +260,7 @@ fun App() = safe {
 	}
 
 
+	// this is awesome
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
 		atRoute<ThreadRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
@@ -267,7 +274,8 @@ fun App() = safe {
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
 		atRoute<DebugLogRoute>(currentDest) ||
-		atRoute<StatusMediaAttachmentRoute>(currentDest)
+		atRoute<StatusMediaAttachmentRoute>(currentDest) ||
+		atRoute<ReportRoute>(currentDest)
 
 	val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
 		.collectAsStateWithLifecycle(false)
@@ -555,6 +563,11 @@ fun App() = safe {
 								args.content,
 								args.visibility
 							)
+						}
+
+						transitionedComposable<ReportRoute> {
+							val args = it.toRoute<ReportRoute>()
+							ReportView(args.accountId, args.statusId)
 						}
 
 						// Settings

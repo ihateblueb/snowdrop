@@ -9,6 +9,19 @@
 	<string name="post">Post</string>
 	<string name="post_by_x">Post by {display_name}</string>
 
+	<string name="reporting_x">Reporting {handle}</string>
+	<string name="comment">Comment</string>
+	<string name="any_info">Any info your moderators should know</string>
+	<string name="forward_to_remote_instance">Forward to remote instance</string>
+	<string name="send_report">Send report</string>
+	<string name="category">Category</string>
+
+	<string name="spam">Spam</string>
+	<string name="illegal_content">Illegal content</string>
+	<string name="rule_violation">Rule violation</string>
+	<string name="which_rules">Which rule(s)?</string>
+	<string name="other">Other</string>
+
 	<string name="boosted_by">Boosted by</string>
 	<string name="liked_by">Liked by</string>
 	<string name="reacted_by">Reacted by</string>
