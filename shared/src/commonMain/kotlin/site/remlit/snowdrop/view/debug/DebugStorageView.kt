@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -41,8 +42,12 @@ fun DebugStorageView(
 			modifier = Modifier.padding(bottom = 20.dp),
 			verticalArrangement = Arrangement.spacedBy(5.dp)
 		) {
-			Text(key, fontWeight = FontWeight.Bold, softWrap = true)
-			Text(value?.ifBlank { "n/a" } ?: "n/a", softWrap = true)
+			SelectionContainer {
+				Text(key, fontWeight = FontWeight.Bold, softWrap = true)
+			}
+			SelectionContainer {
+				Text(value?.ifBlank { "n/a" } ?: "n/a", softWrap = true)
+			}
 		}
 	}
 
