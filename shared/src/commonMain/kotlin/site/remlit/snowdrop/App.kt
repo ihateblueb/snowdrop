@@ -32,10 +32,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -212,8 +213,10 @@ fun App() = safe {
 	val currentDest = navBackStackEntry?.destination
 
 	val snackbarHostState = remember { SnackbarHostState() }
-	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
-	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	val accountSwitcherSheetState = rememberBottomSheetState(
+		initialValue = SheetValue.Hidden,
+		enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+	)
 
 	var fetchAccountAndEmojis by remember { mutableStateOf(true) }
 
