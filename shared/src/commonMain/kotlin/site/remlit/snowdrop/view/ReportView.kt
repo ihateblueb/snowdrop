@@ -37,30 +37,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.ktor.util.reflect.instanceOf
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import site.remlit.snowdrop.api.accounts.updateCredentials
 import site.remlit.snowdrop.api.report
-import site.remlit.snowdrop.api.statuses.getStatusFavouritedBy
-import site.remlit.snowdrop.api.statuses.getStatusReactions
-import site.remlit.snowdrop.api.statuses.getStatusRebloggedBy
-import site.remlit.snowdrop.component.AccountRow
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
-import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.request.ReportRequest
-import site.remlit.snowdrop.model.request.UpdateCredentialsRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.cache.fetchInstance
-import site.remlit.snowdrop.util.cache.fetchStatus
 import site.remlit.snowdrop.util.cache.fetchStatusOrNull
 import site.remlit.snowdrop.util.getFeature
 import site.remlit.snowdrop.util.translation
-import site.remlit.snowdrop.util.updateCurrentAccountObject
-import site.remlit.snowdrop.util.vibrateError
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.any_info
 import snowdrop.shared.generated.resources.category
@@ -70,8 +59,6 @@ import snowdrop.shared.generated.resources.illegal_content
 import snowdrop.shared.generated.resources.other
 import snowdrop.shared.generated.resources.reporting_x
 import snowdrop.shared.generated.resources.rule_violation
-import snowdrop.shared.generated.resources.rules
-import snowdrop.shared.generated.resources.save
 import snowdrop.shared.generated.resources.send_report
 import snowdrop.shared.generated.resources.spam
 import snowdrop.shared.generated.resources.which_rules
@@ -117,7 +104,7 @@ fun ReportView(
 							statusIds = if (statusId != null) listOf(statusId) else listOf(), // todo: make it so we can pick more posts. too lazy rn
 							forward = shouldForward,
 							comment = comment,
-							ruleIds = rules.ifEmpty { null }
+							ruleIds = rules
 						))
 					}
 				},
