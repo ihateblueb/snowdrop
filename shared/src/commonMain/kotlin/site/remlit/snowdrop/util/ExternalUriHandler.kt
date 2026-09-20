@@ -1,5 +1,7 @@
 package site.remlit.snowdrop.util
 
+import site.remlit.snowdrop.model.Platform
+
 /**
  * Handler for snowdrop:// URIs being forwarded to the app.
  *
@@ -24,7 +26,7 @@ object ExternalUriHandler {
 		listener?.let {
 			it.invoke(uri)
 			cached = null
-			closeInAppBrowser()
+			if (getPlatform() == Platform.IOS) closeInAppBrowser()
 		}
 	}
 }
