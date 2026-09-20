@@ -478,38 +478,37 @@ fun ProfileView(
 
 							DangerDropdownItem(
 								text = {
-									if (relationship?.muting == false)
-										Text(stringResource(Res.string.mute))
-									else
+									if (relationship?.muting == true)
 										Text(stringResource(Res.string.unmute))
+									else
+										Text(stringResource(Res.string.mute))
 								},
 								leadingIcon = {
-									if (relationship?.muting == false)
-										Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
-									else
+									if (relationship?.muting == true)
 										Icon(painterResource(Res.drawable.icon_volume_up_24px), null)
-
+									else
+										Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
 								},
 								shape = MenuDefaults.middleItemShape,
 								onClick = {
-									if (relationship?.muting == false)
-										showMuteWarning = !showMuteWarning
-									else
+									if (relationship?.muting == true)
 										showUnmuteWarning = !showUnmuteWarning
+									else
+										showMuteWarning = !showMuteWarning
 								}
 							)
 
 							DangerDropdownItem(
 								text = {
-									if (relationship?.blocking == false)
-										Text(stringResource(Res.string.block))
-									else
+									if (relationship?.blocking == true)
 										Text(stringResource(Res.string.unblock))
+									else
+										Text(stringResource(Res.string.block))
 								},
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_block_24px), null)
 								},
-								shape = MenuDefaults.trailingItemShape,
+								shape = MenuDefaults.middleItemShape,
 								onClick = { showBlockWarning = !showBlockWarning }
 							)
 						}
