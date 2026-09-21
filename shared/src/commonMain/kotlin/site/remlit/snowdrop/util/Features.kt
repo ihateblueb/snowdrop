@@ -20,7 +20,12 @@ enum class Software {
 	IceshrimpNET,
 	Mitra,
 	GoToSocial,
-	Friendica
+	Friendica,
+	Takahe,
+	Wafrn,
+	Hollo,
+	Hometown,
+	Toki
 }
 
 /**
@@ -90,6 +95,21 @@ suspend fun determineFeatures() {
 	if ("""\(compatible; Friendica.*\)""".toRegex().containsMatchIn(version))
 		software = Software.Friendica
 
+	if ("""\(compatible; Takahe.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Takahe
+
+	if ("""\(compatible; Wafrn.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Wafrn
+
+	if (v2?.sourceUrl != null && v2.sourceUrl.contains(("fedify-dev/hollo").toRegex()))
+		software = Software.Hollo
+
+	if ("""\+hometown""".toRegex().containsMatchIn(version))
+		software = Software.Hometown
+
+	if ("""\(compatible; Toki.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Toki
+
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
@@ -143,7 +163,8 @@ suspend fun determineFeatures() {
 	if (
 		software == Software.Glitch ||
 		software == Software.Chuckya ||
-		software == Software.GoToSocial
+		software == Software.GoToSocial ||
+		software == Software.Hometown
 	) putFeature("local_only_toggle", true)
 	else putFeature("local_only_toggle", false)
 
