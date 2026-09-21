@@ -175,7 +175,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 						}
 					}, // TODO: this is MOSTLY fixed by this jank, however refreshing will still just display the next of results. harper pls fix
 					refreshKey = refreshKey,
-					timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
+					timelineComponent = { item, _, _, onUpdate -> Status(item, onUpdate) },
 					distinctCheck = true
 				)
 				1 -> RefreshableTimeline(
@@ -197,7 +197,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 						}
 					},
 					refreshKey = refreshKey,
-					timelineComponent = { item, _ -> AccountRow(account = item) },
+					timelineComponent = { item, _, _, _ -> AccountRow(account = item) },
 					distinctCheck = true
 				)
 			}

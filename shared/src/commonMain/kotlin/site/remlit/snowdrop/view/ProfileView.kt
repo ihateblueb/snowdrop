@@ -859,7 +859,7 @@ fun ProfileView(
 					}
 				},
 				fetchMethod = { maxId, minId, sinceId -> getTimeline(maxId, minId, sinceId) },
-				timelineComponent = { item, onUpdate -> Status(item, onUpdate) },
+				timelineComponent = { item, _, _, onUpdate -> Status(item, onUpdate) },
 				refreshKey = selectedTab,
 				onRefresh = {
 					// for pinned posts

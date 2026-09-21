@@ -30,10 +30,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.api.compat.pleroma.notifications.readNotifications
 import site.remlit.snowdrop.api.markers.postMarkers
+import site.remlit.snowdrop.api.notifications.getGroupedNotifications
 import site.remlit.snowdrop.api.notifications.getNotifications
+import site.remlit.snowdrop.component.GroupedNotification
 import site.remlit.snowdrop.component.Notification
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Marker
 import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.blockingSettings
@@ -251,22 +254,52 @@ fun NotificationsView() = ViewSurface {
 		}
 	}
 
-	RefreshableTimeline(
-		fetchMethod = f@{ maxId, minId, sinceId ->
-			val res = getNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes())
+	if (!blockingSettings.getBoolean("use_grouped_notifications", false)) {
+		RefreshableTimeline(
+			fetchMethod = f@{ maxId, minId, sinceId ->
+				val res = getNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes())
 
-			if (firstNotificationId == null)
-				firstNotificationId = res.response?.firstOrNull()?.id
+				if (firstNotificationId == null)
+					firstNotificationId = res.response?.firstOrNull()?.id
 
-			return@f res
-		},
-		refreshKey = refreshKey,
-		onRefresh = { firstNotificationId = null },
-		timelineComponent = { item, _ ->
-			Notification(
-				item,
-				onAction = { coroutineScope.launch { readNotifications(false) } }
-			)
-		}, // todo: onUpdate
-	)
+				return@f res
+			},
+			refreshKey = refreshKey,
+			onRefresh = { firstNotificationId = null },
+			timelineComponent = { item, _, _, _ ->
+				Notification(
+					item,
+					onAction = { coroutineScope.launch { readNotifications(false) } }
+				)
+			}, // todo: onUpdate
+		)
+	} else {
+		RefreshableTimeline(
+			groupedNotifsMethod = f@{ maxId, minId, sinceId ->
+				val res = getGroupedNotifications(maxId = maxId, minId = minId, sinceId = sinceId, excludeTypes = getExcludedTypes())
+
+				if (firstNotificationId == null)
+					firstNotificationId = res.response?.notificationGroups?.first()?.mostRecentNotificationId
+
+				return@f res
+			},
+			refreshKey = refreshKey,
+			onRefresh = { firstNotificationId = null },
+			timelineComponent = { item, statuses, accounts, _ ->
+				GroupedNotification(
+					group = item,
+					statuses = statuses!!,
+					accounts = accounts!!,
+					onAction = { coroutineScope.launch { readNotifications(false) } }
+				)
+			}, // todo: onUpdate
+		)
+
+		/*
+			} else {
+
+				}
+		 */
+	}
+
 }

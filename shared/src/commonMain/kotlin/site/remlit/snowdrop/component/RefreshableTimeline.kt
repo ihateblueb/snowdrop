@@ -18,6 +18,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,8 +42,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
+import site.remlit.snowdrop.model.GroupedNotificationsResults
 import site.remlit.snowdrop.model.IdentifiableObject
+import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.viewModel.TimelineViewModel
 import site.remlit.snowdrop.model.viewModel.timelineViewModelFactory
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -102,15 +106,24 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 
 	listState: LazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() },
 
-	fetchMethod: suspend (
+	fetchMethod: (suspend (
 			maxId: String?,
 			minId: String?,
 			sinceId: String?
-		) -> ApiResponse<List<T>>,
+		) -> ApiResponse<List<T>>)? = null,
 	onRefresh: () -> Unit = {},
+
+	// grouped notifs only
+	groupedNotifsMethod: (suspend (
+		maxId: String?,
+		minId: String?,
+		sinceId: String?
+	) -> ApiResponse<GroupedNotificationsResults>)? = null,
 
 	timelineComponent: @Composable (
 		item: T,
+		statuses: List<Status>?,
+		accounts: List<Account>?,
 		onUpdate: ((T?) -> Unit)
 	) -> Unit,
 
@@ -129,6 +142,8 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 	// todo: make rememberSaveable
 
 	val timeline = remember { timelineViewModel.timelineItems }
+	val statuses = remember { mutableStateListOf<Status>() }
+	val accounts = remember { mutableStateListOf<Account>() }
 	val refreshState = rememberPullToRefreshState() // this is rememberSaveable
 	var isRefreshing by rememberSaveable { mutableStateOf(false) }
 	var isFetchingMore by rememberSaveable { mutableStateOf(false) }
@@ -139,14 +154,27 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isFetchingMore = true
 
 		onRefresh()
-		val res = fetchMethod(timeline.last().id, null, null)
-		if (res.error) {
-			res.handleError(snackbarHandler)
-			return
-		}
-		if (res.response == null) return
+		if (groupedNotifsMethod != null) {
+			val res = groupedNotifsMethod(timeline.last().id, null, null)
+			if (res.error) {
+				res.handleError(snackbarHandler)
+				return
+			}
+			if (res.response == null) return
 
-		timeline.addAll(res.response)
+			timeline.addAll(res.response.notificationGroups as Collection<T>)
+			statuses.addAll(res.response.statuses)
+			accounts.addAll(res.response.accounts)
+		} else if (fetchMethod != null) {
+			val res = fetchMethod(timeline.last().id, null, null)
+			if (res.error) {
+				res.handleError(snackbarHandler)
+				return
+			}
+			if (res.response == null) return
+
+			timeline.addAll(res.response)
+		}
 		isFetchingMore = false
 	}
 
@@ -162,15 +190,33 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 		isRefreshing = true
 
 		onRefresh()
-		val res = fetchMethod(null, null, null)
-		if (res.error) {
-			res.handleError(snackbarHandler)
-			return
-		}
-		if (res.response == null) return
+		if (groupedNotifsMethod != null) {
+			val res = groupedNotifsMethod(null, null, null)
+			if (res.error) {
+				res.handleError(snackbarHandler)
+				return
+			}
+			if (res.response == null) return
 
-		timeline.clear()
-		timeline.addAll(res.response)
+			timeline.clear()
+			statuses.clear()
+			accounts.clear()
+			timeline.addAll(res.response.notificationGroups as Collection<T>)
+			statuses.addAll(res.response.statuses)
+			accounts.addAll(res.response.accounts)
+			isFetchingMore = false
+		} else if (fetchMethod != null) {
+			val res = fetchMethod(null, null, null)
+			if (res.error) {
+				res.handleError(snackbarHandler)
+				return
+			}
+			if (res.response == null) return
+
+			timeline.clear()
+			timeline.addAll(res.response)
+			isFetchingMore = false
+		}
 		if (scrollToTopPostRefresh) listState.scrollToItem(0)
 		isRefreshing = false
 	}
@@ -241,7 +287,7 @@ fun <T : IdentifiableObject<String>> RefreshableTimeline(
 				key = { it.id }
 			) {
 				Box(modifier = itemModifier) {
-					timelineComponent(it) { new -> timeline.update(it, new) }
+					timelineComponent(it, statuses, accounts) { new -> timeline.update(it, new) }
 				}
 			}
 

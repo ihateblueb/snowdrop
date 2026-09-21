@@ -404,8 +404,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(0, 5).padding(bottom = 2.dp),
-				shape = ListItemShape(0, 5),
+				modifier = Modifier.listItemClip(0, 6).padding(bottom = 2.dp),
+				shape = ListItemShape(0, 6),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.haptics)) },
@@ -427,8 +427,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(1, 5).padding(bottom = 2.dp),
-				shape = ListItemShape(1, 5),
+				modifier = Modifier.listItemClip(1, 6).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 6),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.lock_timeline)) },
@@ -451,8 +451,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 
 			Card(
-				modifier = Modifier.listItemClip(2, 5).padding(bottom = 2.dp),
-				shape = ListItemShape(2, 5),
+				modifier = Modifier.listItemClip(2, 6).padding(bottom = 2.dp),
+				shape = ListItemShape(2, 6),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.warn_when_posting_publicly)) },
@@ -475,8 +475,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(true)
 
 			Card(
-				modifier = Modifier.listItemClip(3, 5).padding(bottom = 2.dp),
-				shape = ListItemShape(3, 5),
+				modifier = Modifier.listItemClip(3, 6).padding(bottom = 2.dp),
+				shape = ListItemShape(3, 6),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.append_re_on_reply_content_warnings)) },
@@ -498,8 +498,8 @@ fun GeneralSettingsView() = ViewSurface {
 				.collectAsStateWithLifecycle(false)
 			
 			Card(
-				modifier = Modifier.listItemClip(4, 5).padding(bottom = 10.dp),
-				shape = ListItemShape(4, 5),
+				modifier = Modifier.listItemClip(4, 6).padding(bottom = 10.dp),
+				shape = ListItemShape(4, 6),
 			) {
 				ListItem(
 					headlineContent = { Text(stringResource(Res.string.disable_attachments_download)) },
@@ -511,6 +511,29 @@ fun GeneralSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("disable_attachments_download", !disableAttachmentsDownload)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val useGroupedNotifications by settings.getBooleanFlow("use_grouped_notifications", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card(
+				modifier = Modifier.listItemClip(5, 6).padding(bottom = 10.dp),
+				shape = ListItemShape(5, 6),
+			) {
+				ListItem(
+					headlineContent = { Text("grouped") },
+					trailingContent = {
+						Switch(
+							useGroupedNotifications,
+							onCheckedChange = { blockingSettings.putBoolean("use_grouped_notifications", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("use_grouped_notifications", !useGroupedNotifications)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
