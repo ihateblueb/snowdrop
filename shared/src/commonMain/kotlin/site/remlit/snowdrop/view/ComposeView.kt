@@ -358,11 +358,11 @@ fun ComposeView(
 
 		val res = if (editingId != null) editStatus(editingId, CreateStatusRequest(
 			status = textFieldState.text as String?,
-			spoilerText = cwFieldState.text as String?
+			spoilerText = if (showCwField) cwFieldState.text as String? else null
 		)) else createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
-			spoilerText = cwFieldState.text as String?,
+			spoilerText = if (showCwField) cwFieldState.text as String? else null,
 			visibility = visibility,
 			mediaIds = uploadedMedia.map { it.id },
 			localOnly = localOnly,
