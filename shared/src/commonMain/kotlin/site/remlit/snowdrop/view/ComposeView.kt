@@ -413,7 +413,7 @@ fun ComposeView(
 		val __translation = stringResource(if (scheduledDateTimeIsSet) Res.string.submit_scheduled_post else Res.string.post_verb)
 		FilledTonalIconButton(
 			onClick = {
-				if (warnWhenPostingPublicly && (visibility == "public" || visibility == "unlisted"))
+				if (warnWhenPostingPublicly && (visibility == "public" || visibility == "unlisted") && editingId == null)
 					showPubliclyPostingWarning = true
 				else launchPost()
 			},
