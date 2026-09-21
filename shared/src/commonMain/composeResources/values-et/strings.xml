@@ -64,7 +64,6 @@
     <string name="show_boosts">Näita hooandmisi</string>
     <string name="show_likes">Näita meeldimisi</string>
     <string name="show_reactions">Näita reageerimisi</string>
-    <string name="mute">Summuta</string>
     <string name="report">Teata haldajale</string>
     <string name="edit">Muuda</string>
     <string name="delete">Kustuta</string>
@@ -289,8 +288,35 @@
     <string name="back">Tagasi</string>
     <string name="more">Veel</string>
     <string name="warn_when_posting_publicly">Hoiata avalikul postitamisel</string>
-    <string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Kui postitad avalikult või ajajooneväliselt, siis kuvatakse enne postitamist kinnitusvaade.</string>
+    <string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Kui postitad avalikult või ajajooneväliselt, siis kuvatakse enne postitamist kinnitusvaade</string>
     <string name="you_are_posting_publicly">Sa oled postitamas avalikult</string>
     <string name="anyone_will_be_able_to_see_this_post">Kõik, sealhulgas need, keda sa ei jälgi ega sa pole maininud, võivad seda postitust näha.</string>
     <string name="dont_show_again">Ära näita enam uuesti</string>
+    <string name="disable_attachments_download">Lülita manusta automaatne allalaadimine välja</string>
+    <string name="mute_conversation">Summuta vestlus</string>
+    <string name="unmute_conversation">Lõpeta vestluse summutamine</string>
+    <string name="media_type">Meediumi tüüp: {type}</string>
+    <string name="load_attachment">Laadi manus</string>
+    <string name="mentions_x">Kasutaja {handle} mainimised</string>
+    <string name="ignore">Eira</string>
+    <plurals name="mentions_x_and_x_others">
+        <item quantity="one">Mainib „{handle}“ kasutajakontot ja veel {number} teist</item>
+        <item quantity="other">Mainib „{handle}“ kasutajakontot ja veel {number} teist</item>
+    </plurals>
+    <plurals name="replying_to_x_and_x_others">
+        <item quantity="one">Vastus „{handle}“ kasutajakontole ja veel {number}-le teisele</item>
+        <item quantity="other">Vastus „{handle}“ kasutajakontole ja veel {number}-le teisele</item>
+    </plurals>
+    <string name="open_mentioned_accounts_sheet">Ava mainitud kasutajakontode leht</string>
+    <string name="remove_mentions_from_the_start_of_posts">Eemalda mainimised postituste algusest</string>
+    <string name="mentions_will_be_shown_separately">Mainimisi näidatakse eraldi</string>
+    <string name="image_conversion">Piltide teisendamine</string>
+    <string name="ios_requires_image_conversion">Vorming, millesse pildid salvestamisel teisendatakse, kui iOS algset vormingut ei toeta</string>
+    <string name="automatically_choose">Automaatne</string>
+    <string name="jpeg_quality">Kvaliteet JPEG-vormingusse teisendamisel: {number}</string>
+    <string name="hide_boosts">Peida hoo lisamised</string>
+    <string name="image_saved">Pilt on salvestatud</string>
+    <string name="converted_to_type">(teisendatud uueks tüübiks: {type})</string>
+    <string name="issue_saving_image">Pildi salvestamisel tekkis probleem. Rakendusel võivada olla puudu vajalikud õigused või pilditüüp pole salvestatavas vormingus.</string>
+    <string name="login_help">Födiversum (ja Mastodon) ei tähenda ühte konkreetset rakendust. Kui liitud Mastodoniga, siis liitud ühe konkreetse saidiga. Selle veebisaidi domeen ongi sinu serveri domeen.</string>
 </resources>
