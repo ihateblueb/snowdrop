@@ -20,6 +20,7 @@
 - Muting/unmuting (w/ options on software that has support)
 - Translating posts (content, CW, poll options)
 - Ability to attach generic files in the composer
+- Reporting posts/users
 
 ### Fixed
 - Switching search tabs
@@ -50,6 +51,7 @@
 - MiniStatus has 2 max lines instead of 3
 - Default visibility is now fetched from the server and set accordingly on first login
 - OAuth is now done with an in-app browser
+- Text can now be selected in the debug storage page
 
 ## [0.0.8-alpha]
 
