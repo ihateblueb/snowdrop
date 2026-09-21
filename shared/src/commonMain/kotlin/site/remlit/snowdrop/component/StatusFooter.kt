@@ -601,7 +601,7 @@ fun StatusFooter(
 						},
 						shape = MenuDefaults.middleItemShape,
 						onClick = {
-							navHandler.navigate(ComposeRoute(editingId = realStatus.id))
+							navHandler.navigate(ComposeRoute(editingId = realStatus.id, content = realStatus.text ?: "", cw = realStatus.spoilerText ?: ""))
 						}
 					)
 
