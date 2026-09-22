@@ -148,7 +148,8 @@ suspend fun determineFeatures() {
 
 	if (
 		software == Software.IceshrimpNET ||
-		(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites > 0)
+		software == Software.Wafrn ||
+		(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites >= 2)
 	) putFeature("biting", true)
 	else putFeature("biting", false)
 

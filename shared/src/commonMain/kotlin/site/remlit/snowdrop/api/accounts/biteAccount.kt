@@ -3,11 +3,8 @@ package site.remlit.snowdrop.api.accounts
 import com.russhwolf.settings.ExperimentalSettingsApi
 import io.ktor.client.request.header
 import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import site.remlit.snowdrop.model.ApiResponse
-import site.remlit.snowdrop.util.config.endOfRequest
+import site.remlit.snowdrop.util.config.endOfRequestNoBody
 import site.remlit.snowdrop.util.config.httpClient
 import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
@@ -16,11 +13,9 @@ import site.remlit.snowdrop.util.settings
 suspend fun biteAccount(id: String): ApiResponse<Unit> = safeApiRequest { accountId, host ->
 	val token = settings.getString("account_${accountId}_token", "")
 
-	val req = httpClient.post("https://$host/api/v1/bite") {
-		contentType(ContentType.Application.Json)
-		setBody("\"${id}\"")
+	val req = httpClient.post("https://$host/api/v1/accounts/$id/bite") {
 		header("Authorization", "Bearer $token")
 	}
 
-	endOfRequest(req)
+	endOfRequestNoBody(req)
 }
