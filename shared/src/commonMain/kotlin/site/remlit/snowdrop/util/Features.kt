@@ -194,6 +194,12 @@ suspend fun determineFeatures() {
 	) putFeature("report_categories", true)
 	else putFeature("report_categories", false)
 
+	// don't blindly copy and paste this, its inverted
+	if (
+		software != Software.IceshrimpJS
+	) putFeature("markers", false)
+	else putFeature("markers", true)
+
 	determiningFeatures = false
 }
 

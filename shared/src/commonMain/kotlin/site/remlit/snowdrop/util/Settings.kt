@@ -14,6 +14,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.StartRoute
 import site.remlit.snowdrop.api.getEmojis
@@ -25,6 +26,7 @@ import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.cache.getCacheEntry
 import site.remlit.snowdrop.util.cache.putCacheEntry
+import site.remlit.snowdrop.util.log.debug
 
 @OptIn(ExperimentalSettingsApi::class)
 expect val settings: FlowSettings
@@ -32,8 +34,40 @@ expect val settings: FlowSettings
 @OptIn(ExperimentalSettingsApi::class)
 val blockingSettings = settings.toBlockingSettings()
 
+/**
+ * Gets a Snowdrop version string.
+ *
+ * @param detailed If the git branch and commit should be included
+ *
+ * @since 0.0.10-alpha
+ * */
+fun getVersionString(detailed: Boolean = true): String = if (detailed)
+	"${GradleVariables.version} (${GradleVariables.gitBranch}@${GradleVariables.gitCommit})"
+else GradleVariables.version
+
+var settingUp by mutableStateOf(false)
+
 /** Initialize the settings store */
+@OptIn(ExperimentalSettingsApi::class)
 fun setupAppSettings() {
+	if (settingUp) return
+
+	settingUp = true
+
+	bgIO {
+		val ver = settings.getStringOrNull("_last_opened_version")
+		// this will update features for whenever we change the version
+		val newVer = getVersionString()
+		debug { "(setupAppSettings) set last opened version to $newVer from $ver" }
+
+		if (ver != newVer) {
+			debug { "(setupAppSettings) redetermining features due to new ver" }
+			determineFeatures()
+		}
+
+		settings.putString("_last_opened_version", newVer)
+	}
+
 	if (!blockingSettings.getBoolean("setup", false)) {
 		blockingSettings.putBoolean("logged_in", false)
 		blockingSettings.putBoolean("setup", true)
@@ -41,6 +75,8 @@ fun setupAppSettings() {
 
 	if (getCurrentAccountId() != "" && getCurrentAccountHost() == "")
 		logoutAccount(getCurrentAccountId())
+
+	settingUp = false
 }
 
 //<editor-fold name="Account State">
@@ -252,6 +288,10 @@ fun checkForUnreadNotifications(
 	hapticFeedback: HapticFeedback
 ) = bgIO {
 	if (!blockingSettings.getBoolean("hide_unread_notifications_badge", false)) {
+		// todo: iceshrimp.js doesn't support markers, we need to add an alternate
+		// 		 implementation for them. we should store a last seen id locally to use
+		// 		 in place of the marker one.
+
 		// we're grabbing marker for notifications and just checking
 		// notifications since it
 		val res = getMarkers(timelines = listOf("notifications"))
