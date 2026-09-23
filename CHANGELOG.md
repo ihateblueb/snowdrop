@@ -1,6 +1,15 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.9-alpha)]
+## [Unreleased (0.0.10-alpha)]
+
+### Added
+- Feature detection reruns whenever the app version changes
+
+### Fixed
+
+### Changed
+
+## [0.0.9-alpha]
 
 ### Added
 - Bot and locked icons for profile views and account row

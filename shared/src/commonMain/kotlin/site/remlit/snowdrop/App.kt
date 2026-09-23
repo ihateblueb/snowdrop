@@ -201,8 +201,10 @@ var wide = false
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
-	setupAppSettings()
-	setupCache()
+	LaunchedEffect("") {
+		setupAppSettings()
+		setupCache()
+	}
 
 	val localDensity = LocalDensity.current
 	// as per material recommendations: https://m3.material.io/foundations/layout/breakpoints/overview
