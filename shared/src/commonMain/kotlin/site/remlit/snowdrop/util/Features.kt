@@ -196,7 +196,7 @@ suspend fun determineFeatures() {
 
 	// don't blindly copy and paste this, its inverted
 	if (
-		software != Software.IceshrimpJS
+		software == Software.IceshrimpJS
 	) putFeature("markers", false)
 	else putFeature("markers", true)
 

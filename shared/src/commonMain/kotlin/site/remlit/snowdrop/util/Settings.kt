@@ -38,11 +38,17 @@ val blockingSettings = settings.toBlockingSettings()
  * Gets a Snowdrop version string.
  *
  * @param detailed If the git branch and commit should be included
+ * @param userAgent If should be formatted for a user agent
  *
  * @since 0.0.10-alpha
  * */
-fun getVersionString(detailed: Boolean = true): String = if (detailed)
-	"${GradleVariables.version} (${GradleVariables.gitBranch}@${GradleVariables.gitCommit})"
+fun getVersionString(
+	detailed: Boolean = true,
+	userAgent: Boolean = false
+): String = if (userAgent)
+	"${GradleVariables.version}+${GradleVariables.gitCommit}@${GradleVariables.gitBranch}"
+else if (detailed)
+	"${GradleVariables.version} (${GradleVariables.gitCommit}@${GradleVariables.gitBranch})"
 else GradleVariables.version
 
 var settingUp by mutableStateOf(false)

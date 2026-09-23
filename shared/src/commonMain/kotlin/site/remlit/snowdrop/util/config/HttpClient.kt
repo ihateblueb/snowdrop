@@ -10,10 +10,11 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import site.remlit.snowdrop.GradleVariables
 import site.remlit.snowdrop.exception.ApiException
+import site.remlit.snowdrop.util.getVersionString
 import site.remlit.snowdrop.util.log.debug
 
 val httpClient = HttpClient {
-	val userAgent = "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}@${GradleVariables.gitBranch}"
+	val userAgent = "Snowdrop/${getVersionString(userAgent = true)}"
 
 	defaultRequest {
 		header("User-Agent", userAgent)

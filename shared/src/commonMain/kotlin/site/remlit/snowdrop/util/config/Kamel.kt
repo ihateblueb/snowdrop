@@ -9,6 +9,7 @@ import io.kamel.image.config.Default
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import site.remlit.snowdrop.GradleVariables
+import site.remlit.snowdrop.util.getVersionString
 
 val kamelTweenAnimation = tween<Float>(durationMillis = 250)
 
@@ -21,7 +22,7 @@ val kamelConfig = KamelConfig {
 		// 250 MiB
 		httpCache(250 * 1024 * 1024)
 
-		val userAgent = "Snowdrop/${GradleVariables.version}+${GradleVariables.gitCommit}@${GradleVariables.gitBranch}"
+		val userAgent = "Snowdrop/${getVersionString(userAgent = true)}"
 
 		defaultRequest {
 			header("User-Agent", userAgent)

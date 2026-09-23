@@ -201,7 +201,7 @@ var wide = false
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
-	LaunchedEffect("") {
+	LaunchedEffect(Unit) {
 		setupAppSettings()
 		setupCache()
 	}
