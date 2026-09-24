@@ -3,10 +3,12 @@ package site.remlit.snowdrop.view
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,8 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
@@ -32,6 +37,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,10 +55,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -67,21 +77,26 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.EditProfileRoute
 import site.remlit.snowdrop.PinnedPostsRoute
 import site.remlit.snowdrop.ProfileRoute
+import site.remlit.snowdrop.ReportRoute
 import site.remlit.snowdrop.api.accounts.biteAccount
 import site.remlit.snowdrop.api.accounts.blockAccount
 import site.remlit.snowdrop.api.accounts.followAccount
 import site.remlit.snowdrop.api.accounts.getLikes
 import site.remlit.snowdrop.api.accounts.getRelationships
 import site.remlit.snowdrop.api.accounts.getStatuses
+import site.remlit.snowdrop.api.accounts.muteAccount
 import site.remlit.snowdrop.api.accounts.removeAccountFromFollowers
 import site.remlit.snowdrop.api.accounts.unblockAccount
 import site.remlit.snowdrop.api.accounts.unfollowAccount
+import site.remlit.snowdrop.api.accounts.unmuteAccount
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.Divider
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.RefreshableTimeline
 import site.remlit.snowdrop.component.Status
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.component.Visibility
 import site.remlit.snowdrop.component.bigAvatarRadius
 import site.remlit.snowdrop.component.bigAvatarSize
 import site.remlit.snowdrop.component.dropdown.DangerDropdownItem
@@ -90,6 +105,7 @@ import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.ApiResponse
 import site.remlit.snowdrop.model.Relationship
 import site.remlit.snowdrop.model.Status
+import site.remlit.snowdrop.model.request.MuteAccountRequest
 import site.remlit.snowdrop.model.request.UpdateFollowRequest
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
@@ -98,6 +114,7 @@ import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
+import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
 import site.remlit.snowdrop.util.extension.toLocalizedString
 import site.remlit.snowdrop.util.getCurrentAccountHost
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
@@ -111,19 +128,24 @@ import site.remlit.snowdrop.util.vibrateSoft
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_block_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_cancel_your_follow_request_to_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_mute_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_remove_x_from_followers
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_send_a_follow_request_to_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unblock_x
 import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unfollow_x
+import snowdrop.shared.generated.resources.are_you_sure_you_want_to_unmute_x
 import snowdrop.shared.generated.resources.block
 import snowdrop.shared.generated.resources.blocked
 import snowdrop.shared.generated.resources.cancel
 import snowdrop.shared.generated.resources.cancel_request
 import snowdrop.shared.generated.resources.copy_handle
+import snowdrop.shared.generated.resources.days
 import snowdrop.shared.generated.resources.edit_profile
 import snowdrop.shared.generated.resources.follow
 import snowdrop.shared.generated.resources.follows_you
 import snowdrop.shared.generated.resources.hide_boosts
+import snowdrop.shared.generated.resources.hide_from_notifications
+import snowdrop.shared.generated.resources.hours
 import snowdrop.shared.generated.resources.icon_alternate_email_24px
 import snowdrop.shared.generated.resources.icon_arrow_forward_20px
 import snowdrop.shared.generated.resources.icon_block_24px
@@ -132,24 +154,33 @@ import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_lock_20px
 import snowdrop.shared.generated.resources.icon_more_vert_24px
 import snowdrop.shared.generated.resources.icon_open_in_new_24px
+import snowdrop.shared.generated.resources.icon_outlined_flag_24px
 import snowdrop.shared.generated.resources.icon_person_remove_24px
 import snowdrop.shared.generated.resources.icon_repeat_24px
 import snowdrop.shared.generated.resources.icon_repeat_off_24px
 import snowdrop.shared.generated.resources.icon_smart_toy_20px
 import snowdrop.shared.generated.resources.icon_tooth_24px
+import snowdrop.shared.generated.resources.icon_volume_off_24px
+import snowdrop.shared.generated.resources.icon_volume_up_24px
 import snowdrop.shared.generated.resources.joined_on_x
 import snowdrop.shared.generated.resources.likes
 import snowdrop.shared.generated.resources.media
+import snowdrop.shared.generated.resources.minutes
+import snowdrop.shared.generated.resources.mute
+import snowdrop.shared.generated.resources.mute_for_time
 import snowdrop.shared.generated.resources.mutuals
 import snowdrop.shared.generated.resources.open_in_browser
 import snowdrop.shared.generated.resources.posts
 import snowdrop.shared.generated.resources.profile
 import snowdrop.shared.generated.resources.remove_follower
 import snowdrop.shared.generated.resources.replies
+import snowdrop.shared.generated.resources.report
 import snowdrop.shared.generated.resources.request_to_follow
 import snowdrop.shared.generated.resources.show_boosts
 import snowdrop.shared.generated.resources.unblock
 import snowdrop.shared.generated.resources.unfollow
+import snowdrop.shared.generated.resources.unit_of_time
+import snowdrop.shared.generated.resources.unmute
 import snowdrop.shared.generated.resources.view_all_pinned_posts
 import snowdrop.shared.generated.resources.x_followers
 import snowdrop.shared.generated.resources.x_following
@@ -202,12 +233,14 @@ fun ProfileView(
 		relationship = res.response.firstOrNull()
 	}
 
-	val pinnedStatuses = remember { mutableStateListOf<Status>() }
+	val pinnedStatuses = rememberSaveable { mutableStateListOf<Status>() }
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by rememberSaveable { mutableStateOf(0) }
 
 	var dropdownVisible by remember { mutableStateOf(false) }
+
+	val __translation_unit_of_time = stringResource(Res.string.unit_of_time)
 
 	var relActionKey by remember { mutableStateOf(0) }
 
@@ -241,6 +274,37 @@ fun ProfileView(
 		relActionKey++
 	}
 
+	fun mute(notifications: Boolean, duration: Int = 0, durType: String) = bg {
+		var res: ApiResponse<Relationship>? = null
+		if (durType.isBlank()) {
+			res = muteAccount(account!!.id, MuteAccountRequest(notifications, duration))
+		} else {
+			val properDuration = when (durType) {
+				"minutes" -> duration * 60
+				"hours" -> duration * 60 * 60
+				else -> duration * 60 * 60 * 24
+			}
+			res = muteAccount(account!!.id, MuteAccountRequest(notifications, properDuration))
+		}
+
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+		relActionKey++
+	}
+
+	fun unmute() = bg {
+		val res = unmuteAccount(account!!.id)
+		if (res.error || res.response == null) {
+			res.handleError(snackbarHandler)
+			return@bg
+		}
+		relationship = res.response
+		relActionKey++
+	}
+
 	fun block() = bg {
 		val res = blockAccount(account!!.id)
 		if (res.error || res.response == null) {
@@ -263,6 +327,8 @@ fun ProfileView(
 
 	var showRelationshipActionWarning by remember { mutableStateOf(false) }
 	var showRemoveFollowerWarning by remember { mutableStateOf(false) }
+	var showMuteWarning by remember { mutableStateOf(false) }
+	var showUnmuteWarning by remember { mutableStateOf(false) }
 	var showBlockWarning by remember { mutableStateOf(false) }
 
 	Column {
@@ -409,23 +475,58 @@ fun ProfileView(
 									leadingIcon = {
 										Icon(painterResource(Res.drawable.icon_person_remove_24px), null)
 									},
-									shape = MenuDefaults.trailingItemShape,
+									shape = MenuDefaults.middleItemShape,
 									onClick = { showRemoveFollowerWarning = !showRemoveFollowerWarning }
 								)
 							}
 
 							DangerDropdownItem(
 								text = {
-									if (relationship?.blocking == false)
-										Text(stringResource(Res.string.block))
+									if (relationship?.muting == true)
+										Text(stringResource(Res.string.unmute))
 									else
+										Text(stringResource(Res.string.mute))
+								},
+								leadingIcon = {
+									if (relationship?.muting == true)
+										Icon(painterResource(Res.drawable.icon_volume_up_24px), null)
+									else
+										Icon(painterResource(Res.drawable.icon_volume_off_24px), null)
+								},
+								shape = MenuDefaults.middleItemShape,
+								onClick = {
+									if (relationship?.muting == true)
+										showUnmuteWarning = !showUnmuteWarning
+									else
+										showMuteWarning = !showMuteWarning
+								}
+							)
+
+							DangerDropdownItem(
+								text = {
+									if (relationship?.blocking == true)
 										Text(stringResource(Res.string.unblock))
+									else
+										Text(stringResource(Res.string.block))
 								},
 								leadingIcon = {
 									Icon(painterResource(Res.drawable.icon_block_24px), null)
 								},
-								shape = MenuDefaults.trailingItemShape,
+								shape = MenuDefaults.middleItemShape,
 								onClick = { showBlockWarning = !showBlockWarning }
+							)
+
+							DangerDropdownItem(
+								text = {
+									Text(stringResource(Res.string.report))
+								},
+								leadingIcon = {
+									Icon(painterResource(Res.drawable.icon_outlined_flag_24px), null)
+								},
+								shape = MenuDefaults.trailingItemShape,
+								onClick = {
+									navHandler.navigate(ReportRoute(account!!.id))
+								}
 							)
 						}
 					}
@@ -748,10 +849,7 @@ fun ProfileView(
 										}
 									}
 
-									HorizontalDivider(
-										thickness = 1.dp,
-										color = MaterialTheme.colorScheme.surfaceContainer
-									)
+									Divider()
 								}
 								//</editor-fold>
 							}
@@ -852,6 +950,179 @@ fun ProfileView(
 				}
 			},
 			onDismissRequest = { showRemoveFollowerWarning = !showRemoveFollowerWarning },
+			modifier = Modifier,
+		)
+
+	if (showMuteWarning) {
+		var muteNotifs by remember { mutableStateOf(true) }
+		var showingDurationDropdown by remember { mutableStateOf(false) }
+		var durationType by remember { mutableStateOf("hours") }
+		var durationSet by remember { mutableStateOf(false) }
+		var duration by remember { mutableStateOf("") }
+
+		AlertDialog(
+			text = {
+				Column {
+					Row {
+						Text(translation(
+							Res.string.are_you_sure_you_want_to_mute_x,
+							mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+						))
+					}
+
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						modifier = Modifier
+							.padding(top = 10.dp)
+							.fillMaxWidth()
+							.clickable(onClick = { muteNotifs = !muteNotifs })
+					) {
+						IconButton(
+							onClick = { muteNotifs = !muteNotifs }
+						) {
+							Checkbox(
+								checked = muteNotifs,
+								onCheckedChange = { muteNotifs = !muteNotifs }
+							)
+						}
+						Text(stringResource(Res.string.hide_from_notifications))
+					}
+
+					if (getFeature("temp_mutes")) {
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(5.dp),
+							verticalAlignment = Alignment.CenterVertically,
+							modifier = Modifier
+								.fillMaxWidth()
+								.clickable(onClick = { durationSet = !durationSet })
+						) {
+							IconButton(
+								onClick = { durationSet = !durationSet }
+							) {
+								Checkbox(
+									checked = durationSet,
+									onCheckedChange = { durationSet = !durationSet }
+								)
+							}
+
+							Text(stringResource(Res.string.mute_for_time))
+
+							TextField(
+								duration,
+								singleLine = true,
+								onValueChange = { duration = it },
+								keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go, keyboardType = KeyboardType.Number),
+								keyboardActions = KeyboardActions(onGo = { /*continueButtonPressed()*/ }),
+								modifier = Modifier.width(50.dp)
+							)
+
+							OutlinedButton(
+								onClick = {
+									showingDurationDropdown = !showingDurationDropdown
+								},
+								modifier = Modifier.semantics { contentDescription = __translation_unit_of_time }
+							) {
+								Text(
+									when (durationType) {
+										"minutes" -> stringResource(Res.string.minutes)
+										"hours" -> stringResource(Res.string.hours)
+										else -> stringResource(Res.string.days)
+									},
+									fontWeight = FontWeight.Medium
+								)
+							}
+
+							PreparedDropdownMenu(
+								expanded = showingDurationDropdown,
+								onDismissRequest = { showingDurationDropdown = false }
+							) {
+								val durations = listOf("minutes", "hours", "days")
+
+								@Composable
+								fun DurationDropdownItem(dur: String, index: Int) {
+									DropdownMenuItem(
+										enabled = true,
+										selected = durationType == dur,
+										onClick = {
+											durationType = dur
+											showingDurationDropdown = !showingDurationDropdown
+										},
+										leadingIcon = { Visibility(dur) },
+										colors = MenuDefaults.selectableItemColors(),
+										shapes = durations.getPreparedDropdownMenuItemShapes(index),
+										contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
+										text = {
+											Text(
+												when (dur) {
+													"minutes" -> stringResource(Res.string.minutes)
+													"hours" -> stringResource(Res.string.hours)
+													else -> stringResource(Res.string.days)
+												},
+												fontWeight = FontWeight.Medium
+											)
+										}
+									)
+								}
+
+								durations.forEachIndexed { index, string -> DurationDropdownItem(string, index) }
+							}
+						}
+					}
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showMuteWarning = !showMuteWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						mute(muteNotifs, if (durationSet) duration.toIntOrNull() ?: 0 else 0, durationType)
+
+						showMuteWarning = !showMuteWarning
+						dropdownVisible = false
+					}
+				) {
+					Text(stringResource(Res.string.yes))
+				}
+			},
+			onDismissRequest = { showMuteWarning = !showMuteWarning },
+			modifier = Modifier,
+		)
+	}
+
+	if (showUnmuteWarning)
+		AlertDialog(
+			text = {
+				Text(translation(
+					Res.string.are_you_sure_you_want_to_unmute_x,
+					mapOf("handle" to AnnotatedString("@${account!!.acct}"))
+				))
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showUnmuteWarning = !showUnmuteWarning }
+				) {
+					Text(stringResource(Res.string.cancel))
+				}
+			},
+			confirmButton = {
+				TextButton(
+					onClick = {
+						unmute()
+
+						showUnmuteWarning = !showUnmuteWarning
+						dropdownVisible = false
+					}
+				) {
+					Text(stringResource(Res.string.yes))
+				}
+			},
+			onDismissRequest = { showUnmuteWarning = !showUnmuteWarning },
 			modifier = Modifier,
 		)
 

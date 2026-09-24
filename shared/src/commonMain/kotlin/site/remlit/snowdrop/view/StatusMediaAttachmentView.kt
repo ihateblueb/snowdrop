@@ -220,7 +220,10 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 					Icon(painterResource(Res.drawable.icon_download_24px), null)
 				}
 
-				IconButton(onClick = { uriHandler.openUri(status?.mediaAttachments[pager.currentPage]?.url ?: "") }) {
+				IconButton(
+					onClick = { uriHandler.openUri(status?.mediaAttachments[pager.currentPage]?.url!!) },
+					enabled = status?.mediaAttachments[pager.currentPage]?.url != null
+				) {
 					Icon(painterResource(Res.drawable.icon_open_in_new_24px), null)
 				}
 

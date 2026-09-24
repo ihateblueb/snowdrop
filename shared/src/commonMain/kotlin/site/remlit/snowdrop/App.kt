@@ -32,10 +32,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -163,6 +164,12 @@ data class ComposeRoute(
 )
 
 @Serializable
+data class ReportRoute(
+	val accountId: String,
+	val statusId: String? = null
+)
+
+@Serializable
 object SettingsRoute
 @Serializable
 object AboutSettingsRoute
@@ -194,8 +201,10 @@ var wide = false
 @Composable
 @OptIn(ExperimentalSettingsApi::class, ExperimentalMaterial3Api::class)
 fun App() = safe {
-	setupAppSettings()
-	setupCache()
+	LaunchedEffect(Unit) {
+		setupAppSettings()
+		setupCache()
+	}
 
 	val localDensity = LocalDensity.current
 	// as per material recommendations: https://m3.material.io/foundations/layout/breakpoints/overview
@@ -212,8 +221,10 @@ fun App() = safe {
 	val currentDest = navBackStackEntry?.destination
 
 	val snackbarHostState = remember { SnackbarHostState() }
-	// ignore the deprecation warning, it is wrong and it will figure that out when they remove the deprecated one
-	val accountSwitcherSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	val accountSwitcherSheetState = rememberBottomSheetState(
+		initialValue = SheetValue.Hidden,
+		enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+	)
 
 	var fetchAccountAndEmojis by remember { mutableStateOf(true) }
 
@@ -251,6 +262,7 @@ fun App() = safe {
 	}
 
 
+	// this is awesome
 	val shouldHideBottomBar = atRoute<ComposeRoute>(currentDest) ||
 		atRoute<ThreadRoute>(currentDest) ||
 		atRoute<SettingsRoute>(currentDest) ||
@@ -264,7 +276,8 @@ fun App() = safe {
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
 		atRoute<DebugLogRoute>(currentDest) ||
-		atRoute<StatusMediaAttachmentRoute>(currentDest)
+		atRoute<StatusMediaAttachmentRoute>(currentDest) ||
+		atRoute<ReportRoute>(currentDest)
 
 	val alwaysShowComposeButton by settings.getBooleanFlow("always_show_compose_button", false)
 		.collectAsStateWithLifecycle(false)
@@ -552,6 +565,11 @@ fun App() = safe {
 								args.content,
 								args.visibility
 							)
+						}
+
+						transitionedComposable<ReportRoute> {
+							val args = it.toRoute<ReportRoute>()
+							ReportView(args.accountId, args.statusId)
 						}
 
 						// Settings

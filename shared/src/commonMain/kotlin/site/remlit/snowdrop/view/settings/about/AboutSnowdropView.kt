@@ -44,6 +44,7 @@ import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.atRoute
+import site.remlit.snowdrop.util.getVersionString
 import site.remlit.snowdrop.util.settings
 import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
@@ -64,7 +65,7 @@ fun AboutSnowdropView() = ViewSurface {
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
 
-	val snowdropVersion = "${GradleVariables.version} (${GradleVariables.gitCommit}@${GradleVariables.gitBranch})"
+	val snowdropVersion = getVersionString()
 
 	val showDebugOption by remember { settings.getBooleanFlow("show_debug_option", false) }
 		.collectAsStateWithLifecycle(false)

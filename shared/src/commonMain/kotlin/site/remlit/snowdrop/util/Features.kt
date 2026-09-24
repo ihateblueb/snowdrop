@@ -20,7 +20,12 @@ enum class Software {
 	IceshrimpNET,
 	Mitra,
 	GoToSocial,
-	Friendica
+	Friendica,
+	Takahe,
+	Wafrn,
+	Hollo,
+	Hometown,
+	Toki
 }
 
 /**
@@ -90,6 +95,21 @@ suspend fun determineFeatures() {
 	if ("""\(compatible; Friendica.*\)""".toRegex().containsMatchIn(version))
 		software = Software.Friendica
 
+	if ("""\(compatible; Takahe.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Takahe
+
+	if ("""\(compatible; Wafrn.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Wafrn
+
+	if (v2?.sourceUrl != null && v2.sourceUrl.contains(("fedify-dev/hollo").toRegex()))
+		software = Software.Hollo
+
+	if ("""\+hometown""".toRegex().containsMatchIn(version))
+		software = Software.Hometown
+
+	if ("""\(compatible; Toki.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Toki
+
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
@@ -128,7 +148,8 @@ suspend fun determineFeatures() {
 
 	if (
 		software == Software.IceshrimpNET ||
-		(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites > 0)
+		software == Software.Wafrn ||
+		(v2?.apiVersions?.netIceshrimpBites != null && v2.apiVersions.netIceshrimpBites >= 2)
 	) putFeature("biting", true)
 	else putFeature("biting", false)
 
@@ -143,7 +164,8 @@ suspend fun determineFeatures() {
 	if (
 		software == Software.Glitch ||
 		software == Software.Chuckya ||
-		software == Software.GoToSocial
+		software == Software.GoToSocial ||
+		software == Software.Hometown
 	) putFeature("local_only_toggle", true)
 	else putFeature("local_only_toggle", false)
 
@@ -157,6 +179,26 @@ suspend fun determineFeatures() {
 		software == Software.Friendica
 	) putFeature("remove_follower", false)
 	else putFeature("remove_follower", true)
+
+	if (
+		software == Software.Sharkey ||
+		software == Software.Friendica
+	) putFeature("temp_mutes", false)
+	else putFeature("temp_mutes", true)
+
+	if (
+		software == Software.Mastodon ||
+		software == Software.Glitch ||
+		software == Software.Chuckya ||
+		software == Software.Friendica // only supports other and spam from my testing
+	) putFeature("report_categories", true)
+	else putFeature("report_categories", false)
+
+	// don't blindly copy and paste this, its inverted
+	if (
+		software == Software.IceshrimpJS
+	) putFeature("markers", false)
+	else putFeature("markers", true)
 
 	determiningFeatures = false
 }

@@ -69,7 +69,6 @@
     <string name="show_boosts">Pokaż boosty</string>
     <string name="show_likes">Pokaż polubienia</string>
     <string name="show_reactions">Pokaż reakcje</string>
-    <string name="mute">Wycisz</string>
     <string name="report">Zgłoś</string>
     <string name="edit">Edytuj</string>
     <string name="delete">Usuń</string>
@@ -328,4 +327,29 @@
     <string name="back">Wróć</string>
     <string name="more">Więcej</string>
     <string name="warn_when_posting_publicly">Ostrzegaj przy postowaniu z widocznością publiczną</string>
+    <string name="disable_attachments_download">Wyłącz automatyczne pobieranie załączników</string>
+    <string name="ignore">Ignoruj</string>
+    <string name="mute_conversation">Wycisz konwersację</string>
+    <string name="unmute_conversation">Cofnij wyciszenie konwersacji</string>
+    <string name="load_attachment">Załaduj załącznik</string>
+    <string name="mentions_x">Wspomina {handle}</string>
+    <plurals name="mentions_x_and_x_others">
+        <item quantity="one">Wspomina {handle} i {number} inną osobę</item>
+        <item quantity="few">Wspomina {handle} i {number} innych</item>
+        <item quantity="many">Wspomina {handle} i {number} innych</item>
+        <item quantity="other">Wspomina {handle} i {number} innych</item>
+    </plurals>
+    <plurals name="replying_to_x_and_x_others">
+        <item quantity="one">W odpowiedzi do {handle} i {number} innej osoby</item>
+        <item quantity="few">W odpowiedzi do {handle} i {number} innych</item>
+        <item quantity="many">W odpowiedzi do {handle} i {number} innych</item>
+        <item quantity="other">W odpowiedzi do {handle} i {number} innych</item>
+    </plurals>
+    <string name="open_mentioned_accounts_sheet">Otwórz listę wzmiankowanych kont</string>
+    <string name="remove_mentions_from_the_start_of_posts">Usuwaj wzmianki z początku wpisów</string>
+    <string name="mentions_will_be_shown_separately">Wzmianki będą wyświetlać się osobno</string>
+    <string name="media_type">Typ mediów: {type}</string>
+    <string name="you_are_posting_publicly">Postujesz publicznie</string>
+    <string name="anyone_will_be_able_to_see_this_post">Każdy użytkownik, nawet nieobserwujący ani niewzmieniony, będzie mógł zobaczyć ten post.</string>
+    <string name="whenever_you_post_publicly_a_confirmation_dialog_will_pop_up">Za każdym razem, gdy będziesz chcieć wysłać post z widocznością Publiczny lub Niewidoczny, zostanie wyświetlony komunikat proszący o potwierdzenie.</string>
 </resources>

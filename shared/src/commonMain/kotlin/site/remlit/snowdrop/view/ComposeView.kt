@@ -94,6 +94,7 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.mimeType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -107,6 +108,8 @@ import site.remlit.snowdrop.api.media.uploadMedia
 import site.remlit.snowdrop.api.search
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
+import site.remlit.snowdrop.api.statuses.getStatusContext
+import site.remlit.snowdrop.api.statuses.getStatusSource
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.DatePickerModal
 import site.remlit.snowdrop.component.EmojiPicker
@@ -310,11 +313,18 @@ fun ComposeView(
 			visibility = editTarget!!.visibility ?: "direct"
 			visibilityEnabled = false
 
+			// this should be optimized but i need to go to class
+			val res = getStatusSource(editTarget!!.id)
+			if (res.error || res.response == null) {
+				res.handleError(snackbarHandler)
+				return@LaunchedEffect
+			}
+
 			cwFieldState.clearText()
-			cwFieldState.setTextAndPlaceCursorAtEnd(editTarget!!.spoilerText ?: "")
+			cwFieldState.setTextAndPlaceCursorAtEnd(res.response.spoilerText)
 
 			textFieldState.clearText()
-			textFieldState.setTextAndPlaceCursorAtEnd(editTarget!!.text ?: "")
+			textFieldState.setTextAndPlaceCursorAtEnd(res.response.text)
 		}
 	}
 
@@ -358,11 +368,11 @@ fun ComposeView(
 
 		val res = if (editingId != null) editStatus(editingId, CreateStatusRequest(
 			status = textFieldState.text as String?,
-			spoilerText = cwFieldState.text as String?
+			spoilerText = if (showCwField) cwFieldState.text as String? else null
 		)) else createStatus(CreateStatusRequest(
 			inReplyToId = inReplyToId,
 			status = textFieldState.text as String?,
-			spoilerText = cwFieldState.text as String?,
+			spoilerText = if (showCwField) cwFieldState.text as String? else null,
 			visibility = visibility,
 			mediaIds = uploadedMedia.map { it.id },
 			localOnly = localOnly,
@@ -413,7 +423,7 @@ fun ComposeView(
 		val __translation = stringResource(if (scheduledDateTimeIsSet) Res.string.submit_scheduled_post else Res.string.post_verb)
 		FilledTonalIconButton(
 			onClick = {
-				if (warnWhenPostingPublicly && (visibility == "public" || visibility == "unlisted"))
+				if (warnWhenPostingPublicly && (visibility == "public" || visibility == "unlisted") && editingId == null)
 					showPubliclyPostingWarning = true
 				else launchPost()
 			},
