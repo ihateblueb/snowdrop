@@ -90,6 +90,7 @@ import site.remlit.snowdrop.api.accounts.unblockAccount
 import site.remlit.snowdrop.api.accounts.unfollowAccount
 import site.remlit.snowdrop.api.accounts.unmuteAccount
 import site.remlit.snowdrop.component.Avatar
+import site.remlit.snowdrop.component.Divider
 import site.remlit.snowdrop.component.HtmlContent
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.RefreshableTimeline
@@ -232,7 +233,7 @@ fun ProfileView(
 		relationship = res.response.firstOrNull()
 	}
 
-	val pinnedStatuses = remember { mutableStateListOf<Status>() }
+	val pinnedStatuses = rememberSaveable { mutableStateListOf<Status>() }
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by rememberSaveable { mutableStateOf(0) }
@@ -848,10 +849,7 @@ fun ProfileView(
 										}
 									}
 
-									HorizontalDivider(
-										thickness = 1.dp,
-										color = MaterialTheme.colorScheme.surfaceContainer
-									)
+									Divider()
 								}
 								//</editor-fold>
 							}
