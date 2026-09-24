@@ -743,7 +743,7 @@ fun Status(
 															return@launch
 														}
 
-														onUpdate(res.response)
+														updateStatus(false)
 													} else {
 														snackbarController.showSnackbar(cannotUseRemoteEmojiMessage)
 													}
