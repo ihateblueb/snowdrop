@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.DebugRoute
@@ -82,6 +83,7 @@ fun LoginView() = ViewSurface {
 	val snackbarHandler = LocalSnackbarController.current
 	// TODO: update to LocalClipboard when this issue is resolved https://youtrack.jetbrains.com/issue/CMP-7624
 	val clipboardManager = LocalClipboardManager.current
+	val coroutineScope = rememberCoroutineScope()
 
 
 	// Text field states
@@ -93,6 +95,7 @@ fun LoginView() = ViewSurface {
 	// Auth flow states
 	var waitingForNext by remember { mutableStateOf(false) }
 	var continued by remember { mutableStateOf(false) }
+	var finishing by remember { mutableStateOf(false) }
 
 	// Account states
 	val currentAccountId by settings.getStringOrNullFlow("current_account")
@@ -144,59 +147,92 @@ fun LoginView() = ViewSurface {
 		}
 	}
 
-	fun finishButtonPressed() = runBlocking {
-		val res = createToken(oauthCallbackCode!!)
-		blockingSettings.remove("oauth_callback")
+	fun finishButtonPressed() {
+		coroutineScope.launch {
+			finishing = true
+			val res = createToken(oauthCallbackCode!!)
+			blockingSettings.remove("oauth_callback")
 
-		if (res.error || res.response == null) {
-			res.handleError(snackbarHandler)
-			return@runBlocking
-		}
+			if (res.error || res.response == null) {
+				res.handleError(snackbarHandler)
+				return@launch
+			}
 
-		//<editor-fold name="existing account check">
-		val existingAccounts = getAccounts().map { Pair(it, getAccountObject(it)) }
-			.filter { it.second != null }
+			//<editor-fold name="existing account check">
+			val existingAccounts = getAccounts().map { Pair(it, getAccountObject(it)) }
+				.filter { it.second != null }
 
-		val verifyCredentialsRes = verifyCredentials(
-			host = settings.getString("account_${currentAccountId}_host", host),
-			token = res.response.accessToken
-		)
-		if (verifyCredentialsRes.error || verifyCredentialsRes.response == null) {
-			res.handleError(snackbarHandler)
-			return@runBlocking
-		}
+			val verifyCredentialsRes = verifyCredentials(
+				host = settings.getString("account_${currentAccountId}_host", host),
+				token = res.response.accessToken
+			)
+			if (verifyCredentialsRes.error || verifyCredentialsRes.response == null) {
+				res.handleError(snackbarHandler)
+				return@launch
+			}
 
-		// if the account exists, update to a new token and use the existing entry
-		val existingAccount = existingAccounts.find {
-			it.second?.id == verifyCredentialsRes.response.id
-		}
-		if (existingAccount != null) {
-			debug { "(LoginView) found existing account ${existingAccount.first}, refreshing token" }
-			logoutAccount(currentAccountId!!)
-			blockingSettings.putString("account_${existingAccount.first}_token", res.response.accessToken)
-			switchAccount(existingAccount.first, navController)
+			// if the account exists, update to a new token and use the existing entry
+			val existingAccount = existingAccounts.find {
+				it.second?.id == verifyCredentialsRes.response.id
+			}
+			if (existingAccount != null) {
+				debug { "(LoginView) found existing account ${existingAccount.first}, refreshing token" }
+				logoutAccount(currentAccountId!!)
+				blockingSettings.putString("account_${existingAccount.first}_token", res.response.accessToken)
+				switchAccount(existingAccount.first, navController)
+				blockingSettings.putBoolean("logged_in", true)
+				return@launch
+			}
+			//</editor-fold>
+
+			blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
 			blockingSettings.putBoolean("logged_in", true)
-			return@runBlocking
+
+			bgIO {
+				updateCurrentAccountObject()
+				determineFeatures()
+				updatePreferencesFromServer()
+			}
+
+			navController.popBackStack()
+			navController.navigate(TimelineRoute)
+
+			finishing = false
 		}
-		//</editor-fold>
 
-		blockingSettings.putString("account_${currentAccountId}_token", res.response.accessToken)
-		blockingSettings.putBoolean("logged_in", true)
-
-		bgIO {
-			updateCurrentAccountObject()
-			determineFeatures()
-			updatePreferencesFromServer()
-		}
-
-		navController.popBackStack()
-		navController.navigate(TimelineRoute)
 	}
 
 	if (!oauthCallbackCode.isNullOrBlank())
 		finishButtonPressed()
 
-	if (!continued) {
+	if (finishing) {
+		Column(
+			modifier = Modifier
+				.background(MaterialTheme.colorScheme.background)
+				.safeContentPadding()
+				.fillMaxSize(),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center
+		) {
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(10.dp),
+			) {
+				CircularProgressIndicator()
+
+				TextButton(
+					onClick = {
+						continued = false
+						waitingForNext = false
+						finishing = false
+						host = ""
+					},
+				) {
+					Text(stringResource(Res.string.reset))
+				}
+			}
+		}
+	} else if (!continued) {
 		val scrollState = rememberScrollState()
 		Column(
 			modifier = Modifier
@@ -307,6 +343,7 @@ fun LoginView() = ViewSurface {
 					onClick = {
 						continued = false
 						waitingForNext = false
+						finishing = false
 						host = ""
 					},
 				) {
