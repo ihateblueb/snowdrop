@@ -51,6 +51,8 @@ fun vibratePositive(haptics: HapticFeedback) {
 	when (getPlatform()) {
 		Platform.ANDROID -> haptics.performHapticFeedback(HapticFeedbackType.Confirm)
 		Platform.IOS -> haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
+		// TODO: stub?
+		Platform.DESKTOP -> {}
 	}
 }
 
@@ -66,6 +68,7 @@ fun vibrateNegative(haptics: HapticFeedback) {
 	when (getPlatform()) {
 		Platform.ANDROID -> haptics.performHapticFeedback(HapticFeedbackType.Reject)
 		Platform.IOS -> haptics.performHapticFeedback(HapticFeedbackType.ToggleOff)
+		Platform.DESKTOP -> {}
 	}
 }
 
