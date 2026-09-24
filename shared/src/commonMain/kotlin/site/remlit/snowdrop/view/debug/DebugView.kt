@@ -23,12 +23,15 @@ import site.remlit.snowdrop.util.bgIO
 import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.clearCacheEntries
 import site.remlit.snowdrop.util.determineFeatures
+import site.remlit.snowdrop.util.getAccountObject
+import site.remlit.snowdrop.util.getAccounts
 import site.remlit.snowdrop.util.resetFeatures
 import site.remlit.snowdrop.util.toggleLoggedInState
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.cache
 import snowdrop.shared.generated.resources.clear_accounts
 import snowdrop.shared.generated.resources.clear_cache
+import snowdrop.shared.generated.resources.clear_empty_accounts
 import snowdrop.shared.generated.resources.clear_settings
 import snowdrop.shared.generated.resources.debug
 import snowdrop.shared.generated.resources.icon_chevron_right_24px
@@ -133,6 +136,26 @@ fun DebugView() = ViewSurface {
 					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
 					headlineContent = { Text(stringResource(Res.string.clear_settings)) },
 					modifier = Modifier.clickable { bg { blockingSettings.clear() } }
+				)
+			}
+		}
+		item {
+			Card {
+				ListItem(
+					leadingContent = { Icon(painterResource(Res.drawable.icon_refresh_24px), null) },
+					headlineContent = { Text(stringResource(Res.string.clear_empty_accounts)) },
+					modifier = Modifier.clickable {
+						bg {
+							val accounts = getAccounts().map { Pair(it, getAccountObject(it)) }
+							accounts.filter { it.second == null }.forEach {
+								blockingSettings.remove("account_${it.first}_host")
+								blockingSettings.remove("account_${it.first}_token")
+								blockingSettings.remove("account_${it.first}_client_id")
+								blockingSettings.remove("account_${it.first}_client_secret")
+							}
+							blockingSettings.putString("accounts", accounts.filter { it.second != null }.joinToString(separator = " ") { it.first })
+						}
+					}
 				)
 			}
 		}

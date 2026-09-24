@@ -133,6 +133,7 @@
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_settings">Clear settings</string>
 	<string name="clear_accounts">Clear accounts</string>
+	<string name="clear_empty_accounts">Clear empty accounts</string>
 
 	<string name="x_liked_your_post">{clickable_display_name} liked your post</string>
 	<string name="x_reacted_with_x">{clickable_display_name} reacted with {emoji}</string>
