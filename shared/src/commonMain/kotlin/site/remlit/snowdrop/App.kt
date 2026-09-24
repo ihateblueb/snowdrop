@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
@@ -455,44 +458,50 @@ fun App() = safe {
 							sheetState = accountSwitcherSheetState,
 							onDismissRequest = { showAccountSwitcher = false }
 						) {
-							var reordering by remember { mutableStateOf(false) }
+							val scrollState = rememberScrollState()
 
-							AccountPickerList(
-								modifier = Modifier.padding(horizontal = 15.dp),
-								onSelect = { showAccountSwitcher = false },
-								reordering = reordering
-							)
-
-							Row(
-								modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp)
-									.fillMaxWidth(),
-								horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+							Column(
+								modifier = Modifier.verticalScroll(scrollState)
 							) {
-								FilledTonalButton(
-									onClick = {
-										showAccountSwitcher = false
-										addNewAccount(navController)
-									},
-									enabled = !reordering
-								) {
-									Icon(painterResource(Res.drawable.icon_add_24px), null)
-									Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-									Text(stringResource(Res.string.add_account))
-								}
+								var reordering by remember { mutableStateOf(false) }
 
-								FilledTonalButton(
-									onClick = { reordering = !reordering },
+								AccountPickerList(
+									modifier = Modifier.padding(horizontal = 15.dp),
+									onSelect = { showAccountSwitcher = false },
+									reordering = reordering
+								)
+
+								Row(
+									modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 10.dp)
+										.fillMaxWidth(),
+									horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
 								) {
-									Icon(
-										if (reordering) painterResource(Res.drawable.icon_check_24px)
-										else painterResource(Res.drawable.icon_list_arrow_24px),
-										null
-									)
-									Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-									Text(
-										if (reordering) stringResource(Res.string.save)
-										else stringResource(Res.string.reorder)
-									)
+									FilledTonalButton(
+										onClick = {
+											showAccountSwitcher = false
+											addNewAccount(navController)
+										},
+										enabled = !reordering
+									) {
+										Icon(painterResource(Res.drawable.icon_add_24px), null)
+										Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+										Text(stringResource(Res.string.add_account))
+									}
+
+									FilledTonalButton(
+										onClick = { reordering = !reordering },
+									) {
+										Icon(
+											if (reordering) painterResource(Res.drawable.icon_check_24px)
+											else painterResource(Res.drawable.icon_list_arrow_24px),
+											null
+										)
+										Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+										Text(
+											if (reordering) stringResource(Res.string.save)
+											else stringResource(Res.string.reorder)
+										)
+									}
 								}
 							}
 						}
