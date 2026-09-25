@@ -202,7 +202,7 @@ fun LoginView() = ViewSurface {
 
 	}
 
-	if (!oauthCallbackCode.isNullOrBlank())
+	if (!oauthCallbackCode.isNullOrBlank() && !finishing)
 		finishButtonPressed()
 
 	if (finishing) {
