@@ -13,6 +13,7 @@ import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.AboutInstanceRoute
 import site.remlit.snowdrop.AboutSnowdropRoute
 import site.remlit.snowdrop.component.NavigationBackButton
+import site.remlit.snowdrop.component.SettingOrder
 import site.remlit.snowdrop.component.SettingsCard
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.util.LocalNavController
@@ -39,7 +40,7 @@ fun AboutSettingsView() = ViewSurface {
 	) {
 		item {
 			SettingsCard(
-				position = 0, size = 2,
+				order = SettingOrder.Start,
 				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_info_24px), null,
 						modifier = modifier, tint = color)
@@ -53,7 +54,7 @@ fun AboutSettingsView() = ViewSurface {
 		}
 		item {
 			SettingsCard(
-				position = 1, size = 2,
+				order = SettingOrder.End,
 				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_info_24px), null,
 						modifier = modifier, tint = color)

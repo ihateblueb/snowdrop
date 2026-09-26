@@ -42,6 +42,7 @@ import site.remlit.snowdrop.LoginRoute
 import site.remlit.snowdrop.WellbeingSettingsRoute
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.NavigationBackButton
+import site.remlit.snowdrop.component.SettingOrder
 import site.remlit.snowdrop.component.SettingsCard
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.avatarSize
@@ -55,9 +56,12 @@ import site.remlit.snowdrop.util.showAccountSwitcher
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.about
 import snowdrop.shared.generated.resources.appearance
+import snowdrop.shared.generated.resources.composing
 import snowdrop.shared.generated.resources.general
+import snowdrop.shared.generated.resources.icon_edit_24px
 import snowdrop.shared.generated.resources.icon_favorite_24px
 import snowdrop.shared.generated.resources.icon_info_24px
+import snowdrop.shared.generated.resources.icon_list_24px
 import snowdrop.shared.generated.resources.icon_logout_24px
 import snowdrop.shared.generated.resources.icon_palette_24px
 import snowdrop.shared.generated.resources.icon_settings_24px
@@ -65,6 +69,7 @@ import snowdrop.shared.generated.resources.icon_switch_account_24px
 import snowdrop.shared.generated.resources.logout
 import snowdrop.shared.generated.resources.settings
 import snowdrop.shared.generated.resources.switch_account
+import snowdrop.shared.generated.resources.timeline
 import snowdrop.shared.generated.resources.wellbeing
 
 val dropdownEnterAnimation = expandVertically() + fadeIn()
@@ -151,24 +156,9 @@ fun SettingsView() = ViewSurface {
 		modifier = Modifier.padding(horizontal = 10.dp)
 	) {
 		//<editor-fold name="General">
-		//general
 		item {
 			SettingsCard(
-				position = 0, size = 3,
-				icon = { color, modifier ->
-					Icon(painterResource(Res.drawable.icon_settings_24px), null,
-						modifier = modifier, tint = color)
-				},
-				headlineContent = stringResource(Res.string.general),
-				onClick = {
-					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
-						navHandler.navigate(GeneralSettingsRoute)
-				}
-			)
-		}
-		item {
-			SettingsCard(
-				position = 1, size = 3,
+				order = SettingOrder.Start,
 				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_palette_24px), null,
 						modifier = modifier, tint = color)
@@ -182,7 +172,35 @@ fun SettingsView() = ViewSurface {
 		}
 		item {
 			SettingsCard(
-				position = 2, size = 3,
+				order = SettingOrder.Middle,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_list_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = stringResource(Res.string.timeline),
+				onClick = {
+					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(GeneralSettingsRoute)
+				}
+			)
+		}
+		item {
+			SettingsCard(
+				order = SettingOrder.Middle,
+				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_edit_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = stringResource(Res.string.composing),
+				onClick = {
+					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(GeneralSettingsRoute)
+				}
+			)
+		}
+		item {
+			SettingsCard(
+				order = SettingOrder.End,
 				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_favorite_24px), null,
 						modifier = modifier, tint = color)
@@ -199,7 +217,7 @@ fun SettingsView() = ViewSurface {
 		// about
 		item {
 			SettingsCard(
-				position = 0, size = 1,
+				order = SettingOrder.Single,
 				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_info_24px), null,
 						modifier = modifier, tint = color)
