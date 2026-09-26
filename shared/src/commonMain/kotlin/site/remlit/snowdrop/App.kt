@@ -365,9 +365,9 @@ fun App() = safe {
 												showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
 
 												BadgedBox(badge = { Badge() }) {
-													NavigationBarIcon(item)
+													NavigationBarIcon(item, selected = atRoute(item.toRouteClass(), currentDest))
 												}
-											else NavigationBarIcon(item)
+											else NavigationBarIcon(item, selected = atRoute(item.toRouteClass(), currentDest))
 										},
 										label = {
 											if (showNavigationBarLabels)
@@ -401,9 +401,9 @@ fun App() = safe {
 											showUnreadNotificationsBadge && !hideUnreadNotificationsBadge)
 
 											BadgedBox(badge = { Badge() }) {
-												NavigationBarIcon(item)
+												NavigationBarIcon(item, selected = atRoute(item.toRouteClass(), currentDest))
 											}
-										else NavigationBarIcon(item)
+										else NavigationBarIcon(item, selected = atRoute(item.toRouteClass(), currentDest))
 									},
 									alwaysShowLabel = showNavigationBarLabels,
 									label = {

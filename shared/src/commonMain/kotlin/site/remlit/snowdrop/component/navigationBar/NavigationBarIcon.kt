@@ -19,26 +19,40 @@ import site.remlit.snowdrop.model.NavigationBarOption
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_account_circle_24px
+import snowdrop.shared.generated.resources.icon_account_circle_filled_24px
 import snowdrop.shared.generated.resources.icon_explore_24px
+import snowdrop.shared.generated.resources.icon_explore_filled_24px
 import snowdrop.shared.generated.resources.icon_home_24px
+import snowdrop.shared.generated.resources.icon_home_filled_24px
 import snowdrop.shared.generated.resources.icon_notifications_24px
+import snowdrop.shared.generated.resources.icon_notifications_filled_24px
 
 @Composable
-fun NavigationBarIcon(tab: NavigationBarOption) {
+fun NavigationBarIcon(tab: NavigationBarOption, selected: Boolean) {
 	val account by remember { getCurrentAccountObjectFlow() }
 		.collectAsStateWithLifecycle(null)
 
 	when (tab) {
-		NavigationBarOption.Timeline -> Icon(painterResource(Res.drawable.icon_home_24px), null)
+		NavigationBarOption.Timeline -> {
+			if (selected) Icon(painterResource(Res.drawable.icon_home_filled_24px), null)
+			else Icon(painterResource(Res.drawable.icon_home_24px), null)
+		}
 
-		NavigationBarOption.Notifications -> Icon(painterResource(Res.drawable.icon_notifications_24px), null)
+		NavigationBarOption.Notifications -> {
+			if (selected) Icon(painterResource(Res.drawable.icon_notifications_filled_24px), null)
+			else Icon(painterResource(Res.drawable.icon_notifications_24px), null)
+		}
 
-		NavigationBarOption.Explore -> Icon(painterResource(Res.drawable.icon_explore_24px), null)
+		NavigationBarOption.Explore -> {
+			if (selected) Icon(painterResource(Res.drawable.icon_explore_filled_24px), null)
+			else Icon(painterResource(Res.drawable.icon_explore_24px), null)
+		}
 
 		NavigationBarOption.MyProfile -> {
 			@Composable
 			fun fallbackAvatarIcon() {
-				Icon(painterResource(Res.drawable.icon_account_circle_24px), null)
+				if (selected) Icon(painterResource(Res.drawable.icon_account_circle_filled_24px), null)
+				else Icon(painterResource(Res.drawable.icon_account_circle_24px), null)
 			}
 
 			if (account != null && account!!.avatar != null) {

@@ -262,7 +262,7 @@ fun AppearanceSettingsView() = ViewSurface {
 									),
 									verticalAlignment = Alignment.CenterVertically
 								) {
-									NavigationBarIcon(item)
+									NavigationBarIcon(item, selected = false)
 									Text(NavigationBarLabel(item))
 
 									Row(
