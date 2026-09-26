@@ -4,6 +4,7 @@
 
 ### Added
 - Feature detection reruns whenever the app version changes
+- Display of logged in account at the top, move the switch/log out button there
 
 ### Fixed
 

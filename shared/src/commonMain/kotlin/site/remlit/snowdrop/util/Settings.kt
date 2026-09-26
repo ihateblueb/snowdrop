@@ -182,6 +182,22 @@ fun getAccountObject(id: String): Account? {
  * Gets the current account's user object from the verify credentials endpoint.
  *
  * @return User
+ * @since 0.0.10-alpha
+ * */
+@OptIn(ExperimentalSettingsApi::class)
+fun getCurrentAccountObject(): Account? {
+	if (!blockingSettings.getBoolean("logged_in", false))
+		return null
+
+	val currentAccountId = getCurrentAccountId()
+	return getCacheEntry("account_$currentAccountId")?.getContent<Account>()
+}
+
+
+/**
+ * Gets the current account's user object from the verify credentials endpoint.
+ *
+ * @return User
  * @since 0.0.1-alpha
  * */
 @OptIn(ExperimentalSettingsApi::class)
