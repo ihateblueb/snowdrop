@@ -27,6 +27,7 @@ fun Reaction(reaction: Status.Reaction, showTooltip: Boolean = true) {
 			}
 		} else when (getPlatform()) {
 			Platform.ANDROID -> Text(reaction.name)
+			Platform.DESKTOP -> Text(reaction.name)
 			Platform.IOS -> Text(
 				reaction.name,
 				fontSize = 18.sp,

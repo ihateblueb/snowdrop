@@ -1,13 +1,12 @@
 package site.remlit.snowdrop.util
 
-import android.content.Context
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.SharedPreferencesSettings
+import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import java.util.prefs.Preferences
 
 @OptIn(ExperimentalSettingsApi::class)
-actual val settings: FlowSettings = SharedPreferencesSettings(
-	AndroidContext.context
-		.getSharedPreferences("snowdrop_prefs", Context.MODE_PRIVATE)
+actual val settings: FlowSettings = PreferencesSettings(
+	Preferences.userRoot().node("snowdrop_prefs")
 ).toFlowSettings()
