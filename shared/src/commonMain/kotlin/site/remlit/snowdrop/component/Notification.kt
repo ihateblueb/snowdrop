@@ -107,7 +107,7 @@ fun Notification(
 
 	// sharkey doesn't include the actual reactions in the notifications for some reason
 	// chuckya includes the reaction prop, so we should use that. otherwise there's no point in showing the notif
-	if (notification.type == "reaction" && notification.reaction == null && notification.emoji == null) return
+	if (notification.type == "reaction" && notification.reaction == null && notification.emoji == null && notification.name == null) return
 
 
 	var translationKey by remember { mutableStateOf<StringResource?>(null) }
@@ -133,9 +133,10 @@ fun Notification(
 		"reaction" -> {
 			translationKey = Res.string.x_reacted_with_x
 			replacementMap["emoji"] = AnnotatedString(
-				(if (notification.reaction == null) "${notification.emoji}"
-				else if (notification.reaction.url != null) ":${notification.reaction.name}:"
-				else notification.reaction.name) ?: ""
+				text = (if (notification.name != null) htmlToAnnotatedString(notification.name).first.text       // snac, unicode
+				else if (notification.reaction == null || notification.emojiUrl != null) "${notification.emoji}" // snac, custom; non-chuckya (*oma?)
+				else if (notification.reaction.url != null) ":${notification.reaction.name}:"                    // chuckya, custom
+				else notification.reaction.name) ?: ""                                                           // chuckya, unicode
 			)
 		}
 		"reblog" -> translationKey = Res.string.x_boosted_your_post
