@@ -24,6 +24,8 @@ import site.remlit.snowdrop.util.ListItemShape
 import site.remlit.snowdrop.util.listItemClip
 import site.remlit.snowdrop.util.listItemSpacing
 
+enum class SettingOrder { Start, Middle, End, Single }
+
 /**
  * Settings list item card. Stylized with listItemClip and ListItemShape.
  *
@@ -41,8 +43,7 @@ import site.remlit.snowdrop.util.listItemSpacing
  * */
 @Composable
 fun SettingsCard(
-	position: Int,
-	size: Int,
+	order: SettingOrder = SettingOrder.Middle,
 
 	icon: @Composable (Color, Modifier) -> Unit,
 	iconBackground: Color = MaterialTheme.colorScheme.primaryContainer,
@@ -54,6 +55,18 @@ fun SettingsCard(
 	trailingContent: (@Composable () -> Unit)? = null,
 	onClick: () -> Unit = {}
 ) {
+	val position = when (order) {
+		SettingOrder.Start -> 0
+		SettingOrder.Middle -> 1
+		SettingOrder.End -> 2
+		SettingOrder.Single -> 0
+	}
+
+	val size = when (order) {
+		SettingOrder.Single -> 1
+		else -> 3
+	}
+
 	Box(
 		modifier = Modifier
 			.let {
