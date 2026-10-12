@@ -45,12 +45,12 @@ enum class SettingOrder { Start, Middle, End, Single }
 fun SettingsCard(
 	order: SettingOrder = SettingOrder.Middle,
 
-	icon: @Composable (Color, Modifier) -> Unit,
+	icon: @Composable ((Color, Modifier) -> Unit)? = null,
 	iconBackground: Color = MaterialTheme.colorScheme.primaryContainer,
 	iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
 
 	headlineContent: String,
-	supportingContent: String? = null,
+	supportingContent: (@Composable () -> Unit)? = null,
 
 	trailingContent: (@Composable () -> Unit)? = null,
 	onClick: () -> Unit = {}
@@ -86,15 +86,16 @@ fun SettingsCard(
 			Row(
 				horizontalArrangement = Arrangement.spacedBy(15.dp),
 				verticalAlignment = Alignment.CenterVertically,
-				modifier = Modifier.padding(10.dp)
+				modifier = Modifier.padding(vertical = 10.dp, horizontal = if (icon == null) 15.dp else 10.dp)
 			) {
-				Box(
-					modifier = Modifier.clip(RoundedCornerShape(100))
-						.background(iconBackground)
-						.padding(5.dp)
-				) {
-					icon(iconColor, Modifier.padding(5.dp))
-				}
+				if (icon != null)
+					Box(
+						modifier = Modifier.clip(RoundedCornerShape(100))
+							.background(iconBackground)
+							.padding(5.dp)
+					) {
+						icon(iconColor, Modifier.padding(5.dp))
+					}
 
 				Column(
 					modifier = Modifier.weight(1f),
@@ -104,10 +105,7 @@ fun SettingsCard(
 						color = MaterialTheme.colorScheme.onSurface
 					)
 					if (supportingContent != null)
-						Text(
-							headlineContent,
-							fontSize = 13.sp
-						)
+						supportingContent()
 				}
 
 				if (trailingContent != null) trailingContent()
