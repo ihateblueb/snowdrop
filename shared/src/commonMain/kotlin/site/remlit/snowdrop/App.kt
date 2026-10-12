@@ -181,9 +181,13 @@ object AboutInstanceRoute
 @Serializable
 object AboutSnowdropRoute
 @Serializable
-object GeneralSettingsRoute
-@Serializable
 object AppearanceSettingsRoute
+@Serializable
+object ComposingSettingsRoute
+@Serializable
+object TimelineSettingsRoute
+@Serializable
+object GeneralSettingsRoute
 @Serializable
 object WellbeingSettingsRoute
 
@@ -276,6 +280,8 @@ fun App() = safe {
 		atRoute<GeneralSettingsRoute>(currentDest) ||
 		atRoute<AppearanceSettingsRoute>(currentDest) ||
 		atRoute<WellbeingSettingsRoute>(currentDest) ||
+		atRoute<ComposingSettingsRoute>(currentDest) ||
+		atRoute<TimelineSettingsRoute>(currentDest) ||
 		atRoute<DebugRoute>(currentDest) ||
 		atRoute<DebugStorageRoute>(currentDest) ||
 		atRoute<DebugLogRoute>(currentDest) ||
@@ -588,6 +594,8 @@ fun App() = safe {
 						transitionedComposable<AboutSnowdropRoute> { AboutSnowdropView() }
 						transitionedComposable<GeneralSettingsRoute> { GeneralSettingsView() }
 						transitionedComposable<AppearanceSettingsRoute> { AppearanceSettingsView() }
+						transitionedComposable<ComposingSettingsRoute> { ComposingSettingsView() }
+						transitionedComposable<TimelineSettingsRoute> { TimelineSettingsView() }
 						transitionedComposable<WellbeingSettingsRoute> { WellbeingSettingsView() }
 
 						// Debug

@@ -37,8 +37,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import site.remlit.snowdrop.AboutSettingsRoute
 import site.remlit.snowdrop.AppearanceSettingsRoute
+import site.remlit.snowdrop.ComposingSettingsRoute
 import site.remlit.snowdrop.GeneralSettingsRoute
 import site.remlit.snowdrop.LoginRoute
+import site.remlit.snowdrop.TimelineSettingsRoute
 import site.remlit.snowdrop.WellbeingSettingsRoute
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.NavigationBackButton
@@ -160,6 +162,20 @@ fun SettingsView() = ViewSurface {
 			SettingsCard(
 				order = SettingOrder.Start,
 				icon = { color, modifier ->
+					Icon(painterResource(Res.drawable.icon_settings_24px), null,
+						modifier = modifier, tint = color)
+				},
+				headlineContent = stringResource(Res.string.general),
+				onClick = {
+					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(GeneralSettingsRoute)
+				}
+			)
+		}
+		item {
+			SettingsCard(
+				order = SettingOrder.Middle,
+				icon = { color, modifier ->
 					Icon(painterResource(Res.drawable.icon_palette_24px), null,
 						modifier = modifier, tint = color)
 				},
@@ -179,8 +195,8 @@ fun SettingsView() = ViewSurface {
 				},
 				headlineContent = stringResource(Res.string.timeline),
 				onClick = {
-					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
-						navHandler.navigate(GeneralSettingsRoute)
+					if (!atRoute<TimelineSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(TimelineSettingsRoute)
 				}
 			)
 		}
@@ -193,8 +209,8 @@ fun SettingsView() = ViewSurface {
 				},
 				headlineContent = stringResource(Res.string.composing),
 				onClick = {
-					if (!atRoute<GeneralSettingsRoute>(navHandler.currentDestination))
-						navHandler.navigate(GeneralSettingsRoute)
+					if (!atRoute<ComposingSettingsRoute>(navHandler.currentDestination))
+						navHandler.navigate(ComposingSettingsRoute)
 				}
 			)
 		}
