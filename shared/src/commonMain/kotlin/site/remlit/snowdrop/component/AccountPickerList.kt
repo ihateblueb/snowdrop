@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
@@ -120,7 +121,9 @@ fun AccountPickerList(
 					)
 					Text(
 						"@${account.username}@${getAccountHost(id)}",
-						fontSize = 13.sp
+						fontSize = 13.sp,
+						maxLines = 1,
+						overflow = TextOverflow.Ellipsis
 					)
 				}
 

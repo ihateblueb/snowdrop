@@ -233,7 +233,7 @@ fun ProfileView(
 		relationship = res.response.firstOrNull()
 	}
 
-	val pinnedStatuses = rememberSaveable { mutableStateListOf<Status>() }
+	val pinnedStatuses = remember { mutableStateListOf<Status>() }
 
 	val verticalOffset = (-((bigAvatarSize/2) - 4)).dp
 	var selectedTab by rememberSaveable { mutableStateOf(0) }
@@ -434,38 +434,40 @@ fun ProfileView(
 						if (!isMe) {
 							MenuDivider()
 
-							DropdownMenuItem(
-								text = {
-									if (relationship?.showingReblogs == false)
-										Text(stringResource(Res.string.show_boosts))
-									else
-										Text(stringResource(Res.string.hide_boosts))
-								},
-								leadingIcon = {
-									if (relationship?.showingReblogs == false)
-										Icon(painterResource(Res.drawable.icon_repeat_24px), null)
-									else
-										Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
-								},
-								shape = MenuDefaults.middleItemShape,
-								onClick = {
-									coroutineScope.launch {
-										vibrate(true, haptics)
-										dropdownVisible = false
+							if (relationship?.following == true) {
+								DropdownMenuItem(
+									text = {
+										if (relationship?.showingReblogs == false)
+											Text(stringResource(Res.string.show_boosts))
+										else
+											Text(stringResource(Res.string.hide_boosts))
+									},
+									leadingIcon = {
+										if (relationship?.showingReblogs == false)
+											Icon(painterResource(Res.drawable.icon_repeat_24px), null)
+										else
+											Icon(painterResource(Res.drawable.icon_repeat_off_24px), null)
+									},
+									shape = MenuDefaults.middleItemShape,
+									onClick = {
+										coroutineScope.launch {
+											vibrate(true, haptics)
+											dropdownVisible = false
 
-										val res = if (relationship?.showingReblogs == false)
-											followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
-										else followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
+											val res = if (relationship?.showingReblogs == false)
+												followAccount(account!!.id, req = UpdateFollowRequest(reblogs = true))
+											else followAccount(account!!.id, req = UpdateFollowRequest(reblogs = false))
 
-										if (res.error || res.response == null) {
-											res.handleError(snackbarHandler)
-											return@launch
+											if (res.error || res.response == null) {
+												res.handleError(snackbarHandler)
+												return@launch
+											}
+
+											relationship = res.response
 										}
-
-										relationship = res.response
 									}
-								}
-							)
+								)
+							}
 
 							if (relationship?.followedBy == true && getFeature("remove_follower")) {
 								DangerDropdownItem(

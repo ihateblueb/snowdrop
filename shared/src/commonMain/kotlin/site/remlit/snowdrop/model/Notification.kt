@@ -14,9 +14,13 @@ data class Notification(
 	val status: Status? = null,
 
 	val emoji: String? = null,
-	val reaction: ChuckyaReaction? = null,
 	@SerialName("emoji_url")
 	val emojiUrl: String? = null,
+
+	val name: String? = null,
+
+	val reaction: ChuckyaReaction? = null,
+
 	val bite: Bite? = null,
 
 	@SerialName("created_at")

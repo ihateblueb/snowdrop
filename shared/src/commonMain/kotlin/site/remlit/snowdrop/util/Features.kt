@@ -25,7 +25,8 @@ enum class Software {
 	Wafrn,
 	Hollo,
 	Hometown,
-	Toki
+	Toki,
+	Snac
 }
 
 /**
@@ -110,13 +111,17 @@ suspend fun determineFeatures() {
 	if ("""\(compatible; Toki.*\)""".toRegex().containsMatchIn(version))
 		software = Software.Toki
 
+	if ("""\(not true; really snac.*\)""".toRegex().containsMatchIn(version))
+		software = Software.Snac
+
 	debug { "(Features) Detected software $software from version string \"${version}\" and api_versions \"${v2?.apiVersions}\"" }
 
 	if (
 		software == Software.Chuckya ||
 		software == Software.Sharkey ||
 		software == Software.IceshrimpJS ||
-		software == Software.IceshrimpNET
+		software == Software.IceshrimpNET ||
+		software == Software.Snac
 	) putFeature("reactions", true)
 	else putFeature("reactions", false)
 
