@@ -44,8 +44,6 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import site.remlit.snowdrop.bottomNavEnterAnimation
-import site.remlit.snowdrop.bottomNavExitAnimation
 import site.remlit.snowdrop.model.Emoji
 import site.remlit.snowdrop.model.Platform
 import site.remlit.snowdrop.util.blockingSettings

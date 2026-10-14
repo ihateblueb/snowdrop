@@ -94,7 +94,6 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.mimeType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -108,7 +107,6 @@ import site.remlit.snowdrop.api.media.uploadMedia
 import site.remlit.snowdrop.api.search
 import site.remlit.snowdrop.api.statuses.createStatus
 import site.remlit.snowdrop.api.statuses.editStatus
-import site.remlit.snowdrop.api.statuses.getStatusContext
 import site.remlit.snowdrop.api.statuses.getStatusSource
 import site.remlit.snowdrop.component.Avatar
 import site.remlit.snowdrop.component.DatePickerModal
