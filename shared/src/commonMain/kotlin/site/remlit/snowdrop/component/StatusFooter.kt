@@ -60,6 +60,7 @@ import site.remlit.snowdrop.util.BoostColor
 import site.remlit.snowdrop.util.LikeColor
 import site.remlit.snowdrop.util.LocalNavController
 import site.remlit.snowdrop.util.LocalSnackbarController
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.extension.toFormatShort
 import site.remlit.snowdrop.util.getCurrentAccountObjectFlow
 import site.remlit.snowdrop.util.getFeature
@@ -154,10 +155,9 @@ fun StatusFooter(
 		.collectAsStateWithLifecycle(true)
 
 	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
-		.collectAsStateWithLifecycle(false)
+		.collectAsStateWithLifecycle(blockingSettings.getBoolean("timeline_locked", false))
 
-	val hideInteractionCounters by settings.getBooleanFlow("hide_interaction_counters", false)
-		.collectAsStateWithLifecycle(false)
+	val hideInteractionCounters = remember { blockingSettings.getBoolean("hide_interaction_counters", false) }
 
 
 	@Composable

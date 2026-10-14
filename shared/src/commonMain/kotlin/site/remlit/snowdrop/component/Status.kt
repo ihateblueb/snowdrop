@@ -141,6 +141,8 @@ fun Status(
 	val cwState = statusStateController.cw
 	val filteredState = statusStateController.filtered
 
+	val hideInteractionCounters = remember { blockingSettings.getBoolean("hide_interaction_counters", false) }
+
 	// this exists so we can make sure other LaunchedEffects don't run until their key changes
 	var firstCompositionDone by remember { mutableStateOf(false) }
 	LaunchedEffect(Unit) { firstCompositionDone = true }
@@ -764,9 +766,7 @@ fun Status(
 												verticalAlignment = Alignment.CenterVertically
 											) {
 												Reaction(it, showTooltip = false)
-
-												if (!blockingSettings.getBoolean("hide_interaction_counters", false))
-													Text("${it.count}")
+												if (!hideInteractionCounters) Text("${it.count}")
 											}
 										}
 									}

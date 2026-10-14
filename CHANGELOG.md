@@ -7,8 +7,10 @@
 - Display of logged in account at the top, move the switch/log out button there
 
 ### Fixed
+- Initial state of timeline locking, interaction hiding in statuses
 
 ### Changed
+- Redesigned settings page, added user card with logout and account switcher at the top
 
 ## [0.0.9-alpha]
 
