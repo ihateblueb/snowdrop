@@ -22,6 +22,8 @@ kotlin {
 		}
 	}
 
+	jvm("desktop")
+
 	android {
 		namespace = "site.remlit.snowdrop.shared"
 		compileSdk = libs.versions.android.compileSdk.get().toInt()
