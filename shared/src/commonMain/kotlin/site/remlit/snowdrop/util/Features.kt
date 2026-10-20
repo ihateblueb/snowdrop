@@ -199,6 +199,12 @@ suspend fun determineFeatures() {
 	) putFeature("report_categories", true)
 	else putFeature("report_categories", false)
 
+	// on iceshrimp.net, reports can only be forwarded by moderators
+	 if (
+		 software == Software.IceshrimpNET
+	 ) putFeature("forward_reports", false)
+	else putFeature("forward_reports", true)
+
 	// don't blindly copy and paste this, its inverted
 	if (
 		software == Software.IceshrimpJS
