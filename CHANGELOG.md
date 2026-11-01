@@ -1,16 +1,41 @@
 # Snowdrop Changelog
 
-## [Unreleased (0.0.10-alpha)]
+## [Unreleased (0.0.11-alpha)]
+
+### Added
+
+### Fixed
+
+### Changed
+
+## [0.0.10-alpha]
 
 ### Added
 - Feature detection reruns whenever the app version changes
 - Display of logged in account at the top, move the switch/log out button there
+- Software detection for Takahe, Wafrn (enabled biting), Hollo, Hometown, Snac and Toki (enabled local only)
+- Ability to clear empty account objects from cache (in debug menu)
 
 ### Fixed
 - Initial state of timeline locking, interaction hiding in statuses
+- Public post warning showing up when editing a post
+- CWs being added if the field is hidden but contains text
+- "Open in browser" button crashing the app if the attachments pager wasn't loaded yet
+- Posts not being updated when reacting with an existing reaction
+- The wrong kind of divider being used under pinned posts
+- Hang (ANR) when adding new accounts sometimes
+- Reacting on Snac
 
 ### Changed
 - Redesigned settings page, added user card with logout and account switcher at the top
+- Existing post content should now populate on all software when editing a post
+- Switched to updated Iceshrimp.NET bite endpoint
+- Made the account picker sheet scrollable
+- A space is now added after an emoji code when using the picker in the composer
+- Selected routes (home/notifs/explore/profile) now use filled icons
+- Bookmark icon is now Material Rounded
+- Handles are now truncated in the account picker when necessary
+- Hide boosts toggle is now hidden if you aren't following a user
 
 ## [0.0.9-alpha]
 
