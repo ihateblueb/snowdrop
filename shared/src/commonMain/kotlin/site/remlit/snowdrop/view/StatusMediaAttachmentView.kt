@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,8 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
@@ -74,6 +77,7 @@ import snowdrop.shared.generated.resources.icon_open_in_new_24px
 import snowdrop.shared.generated.resources.image_saved
 import snowdrop.shared.generated.resources.issue_saving_image
 import snowdrop.shared.generated.resources.issue_saving_video
+import snowdrop.shared.generated.resources.n_of_x
 import snowdrop.shared.generated.resources.video_saved
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,7 +118,16 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 	) {
 		TopAppBar(
 			navigationIcon = { NavigationBackButton(close = true) },
-			title = {},
+			title = {
+				Text(
+					translation(
+						Res.string.n_of_x,
+						mapOf("n" to AnnotatedString("${pager.currentPage+1}"),
+							"x" to AnnotatedString("${pager.pageCount}"))
+					),
+					fontSize = 15.sp,
+				)
+			},
 			colors = TopAppBarDefaults.topAppBarColors(
 				containerColor = Color(0x80000000),
 				navigationIconContentColor = Color.White
@@ -128,7 +141,6 @@ fun StatusMediaAttachmentView(id: String, startingPosition: Int = 0) = ViewSurfa
 				) {
 					Icon(painterResource(Res.drawable.icon_info_24px), null)
 				}
-
 				IconButton(
 					onClick = {
 						coroutineScope.launch {

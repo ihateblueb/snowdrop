@@ -4,8 +4,10 @@
 
 ### Added
 - Alternative heart icon for the like button
+- Page indicator to the top of the status attachments viewer
 
 ### Fixed
+- 1 dp missing padding on dropdowns on the top and bottom
 
 ### Changed
 - The visibility picker in Composing settings is now the same as the post composer. It looks nicer, and it floats.

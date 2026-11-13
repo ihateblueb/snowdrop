@@ -422,4 +422,6 @@
 	<string name="like_button_icon">Like button icon</string>
 	<string name="star">Star</string>
 	<string name="heart">Heart</string>
+
+	<string name="n_of_x">{n} of {x}</string>
 </resources>
