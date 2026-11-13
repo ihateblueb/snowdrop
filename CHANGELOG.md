@@ -3,6 +3,7 @@
 ## [Unreleased (0.0.11-alpha)]
 
 ### Added
+- Alternative heart icon for the like button
 
 ### Fixed
 
