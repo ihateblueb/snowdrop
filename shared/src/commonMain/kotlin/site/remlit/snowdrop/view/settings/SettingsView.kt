@@ -130,20 +130,24 @@ fun SettingsView() = ViewSurface {
 						}
 
 						FlowRow(
-							modifier = Modifier.padding(bottom = 10.dp, start = avatarSize.dp + 20.dp),
+							modifier = Modifier.padding(bottom = 10.dp, start = 10.dp, end = 10.dp),
 							horizontalArrangement = Arrangement.spacedBy(5.dp)
 						) {
-							OutlinedButton(onClick = { showAccountSwitcher = true }) {
+							OutlinedButton(
+								modifier = Modifier.weight(1f),
+								onClick = { showAccountSwitcher = true }
+							) {
 								Icon(painterResource(Res.drawable.icon_switch_account_24px), null)
 								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 								Text(stringResource(Res.string.switch_account))
 							}
-							OutlinedButton(onClick = {
-								logoutAccount(getCurrentAccountId())
-								navHandler.navigate(LoginRoute) {
-									popUpTo(navHandler.graph.id) { inclusive = true }
+							OutlinedButton(
+								modifier = Modifier.weight(1f),
+								onClick = {
+									logoutAccount(getCurrentAccountId())
+									navHandler.navigate(LoginRoute) { popUpTo(navHandler.graph.id) { inclusive = true } }
 								}
-							}) {
+							) {
 								Icon(painterResource(Res.drawable.icon_logout_24px), null)
 								Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 								Text(stringResource(Res.string.logout))

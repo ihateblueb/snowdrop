@@ -116,9 +116,7 @@ fun ExploreView(immediateFocus: Boolean = false) = ViewSurface {
 		Column(
 			modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
 				.fillMaxSize()
-		) {
-			Text("Trending")
-		}
+		) {}
 	} else {
 		var selectedTab by rememberSaveable { mutableStateOf(0) }
 

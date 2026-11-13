@@ -544,12 +544,9 @@ fun App() = safe {
 							val args = it.toRoute<ExploreRoute>()
 							ExploreView(args.immediateFocus)
 						}
-						composable<MyProfileRoute> {
-							if (account != null) ProfileView(account!!.id)
-							else Text("Error")
-						}
-						transitionedComposable<EditProfileRoute> { EditProfileView() }
+						composable<MyProfileRoute> { if (account != null) ProfileView(account!!.id) }
 
+						transitionedComposable<EditProfileRoute> { EditProfileView() }
 						transitionedComposable<ThreadRoute> {
 							val args = it.toRoute<ThreadRoute>()
 							ThreadView(args.id)
