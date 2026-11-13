@@ -8,17 +8,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import site.remlit.snowdrop.model.Account
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.config.kamelTweenAnimation
+import site.remlit.snowdrop.util.settings
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.icon_broken_image_20px
 import snowdrop.shared.generated.resources.icon_broken_image_24px
@@ -52,6 +57,8 @@ fun Avatar(
 
 	modifier: Modifier = Modifier
 ) {
+	val useCircularAvatars = remember { blockingSettings.getBoolean("use_circular_avatars", false) }
+
 	val size = if (big) bigAvatarSize.dp
 		else if (small) smallAvatarSize.dp
 		else if (smaller) smallerAvatarSize.dp
@@ -64,7 +71,10 @@ fun Avatar(
 	@Composable
 	fun fallback(fail: Boolean = false) {
 		Box(
-			modifier = Modifier.clip(RoundedCornerShape(radius)).then(modifier)
+			modifier = Modifier.clip(
+					if (useCircularAvatars) RoundedCornerShape(percent = 100)
+					else RoundedCornerShape(size = radius)
+				).then(modifier)
 				.background(MaterialTheme.colorScheme.surfaceContainerHigh)
 				.height(size)
 				.width(size),
@@ -92,7 +102,10 @@ fun Avatar(
 			onLoading = { fallback() },
 			onFailure = { fallback(fail = true) },
 			animationSpec = kamelTweenAnimation,
-			modifier = Modifier.clip(RoundedCornerShape(radius)).then(modifier)
+			modifier = Modifier.clip(
+					if (useCircularAvatars) RoundedCornerShape(percent = 100)
+					else RoundedCornerShape(size = radius)
+				).then(modifier)
 				.height(size)
 				.width(size),
 		)

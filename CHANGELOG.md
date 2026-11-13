@@ -5,6 +5,7 @@
 ### Added
 - Alternative heart icon for the like button
 - Page indicator to the top of the status attachments viewer
+- C
 
 ### Fixed
 - 1 dp missing padding on dropdowns on the top and bottom

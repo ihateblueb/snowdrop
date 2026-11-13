@@ -111,6 +111,7 @@ import site.remlit.snowdrop.util.LocalSnackbarController
 import site.remlit.snowdrop.util.atRoute
 import site.remlit.snowdrop.util.bg
 import site.remlit.snowdrop.util.bgIO
+import site.remlit.snowdrop.util.blockingSettings
 import site.remlit.snowdrop.util.cache.fetchAccount
 import site.remlit.snowdrop.util.extension.formatNumber
 import site.remlit.snowdrop.util.extension.getPreparedDropdownMenuItemShapes
@@ -207,6 +208,8 @@ fun ProfileView(
 	/* Preferences */
 	val hideFollowCounters by remember { settings.getBooleanFlow("hide_follow_counters", false) }
 		.collectAsStateWithLifecycle(false)
+
+	val useCircularAvatars = remember { blockingSettings.getBoolean("use_circular_avatars", false) }
 
 	/* View variables */
 	val currentAccount by remember { getCurrentAccountObjectFlow() }
@@ -602,7 +605,8 @@ fun ProfileView(
 										Box(
 											modifier = Modifier.background(
 												MaterialTheme.colorScheme.background,
-												RoundedCornerShape((bigAvatarRadius + 2).dp)
+												if (useCircularAvatars) RoundedCornerShape(percent = 100)
+												else RoundedCornerShape((bigAvatarRadius + 2).dp)
 											).height((bigAvatarSize + 6).dp)
 												.width((bigAvatarSize + 6).dp)
 										)

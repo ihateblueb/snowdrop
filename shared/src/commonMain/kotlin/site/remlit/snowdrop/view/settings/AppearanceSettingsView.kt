@@ -76,6 +76,7 @@ import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
 import snowdrop.shared.generated.resources.star
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
+import snowdrop.shared.generated.resources.use_circular_avatars
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
 @Composable
@@ -137,6 +138,29 @@ fun AppearanceSettingsView() = ViewSurface {
 					},
 					modifier = Modifier.clickable {
 						blockingSettings.putBoolean("remove_mentions_from_the_start_of_posts", !removeMentionsFromTheStartOfPosts)
+					},
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
+			}
+		}
+		item {
+			val useCircularAvatars by settings.getBooleanFlow("use_circular_avatars", false)
+				.collectAsStateWithLifecycle(false)
+
+			Card(
+				modifier = Modifier.listItemClip(1, 4).padding(bottom = 2.dp),
+				shape = ListItemShape(1, 4),
+			) {
+				ListItem(
+					headlineContent = { Text(stringResource(Res.string.use_circular_avatars)) },
+					trailingContent = {
+						Switch(
+							useCircularAvatars,
+							onCheckedChange = { blockingSettings.putBoolean("use_circular_avatars", it) }
+						)
+					},
+					modifier = Modifier.clickable {
+						blockingSettings.putBoolean("use_circular_avatars", !useCircularAvatars)
 					},
 					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 				)
