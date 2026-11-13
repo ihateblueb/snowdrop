@@ -117,6 +117,7 @@ import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.TimePickerModal
 import site.remlit.snowdrop.component.ViewSurface
 import site.remlit.snowdrop.component.Visibility
+import site.remlit.snowdrop.component.VisibilityPicker
 import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.model.Account
 import site.remlit.snowdrop.model.ApiResponse
@@ -736,9 +737,7 @@ fun ComposeView(
 							Row {
 								val __translation_visibility_picker = stringResource(Res.string.visibility_picker)
 								TextButton(
-									onClick = {
-										visibilityDropdownOpen = !visibilityDropdownOpen
-									},
+									onClick = { visibilityDropdownOpen = !visibilityDropdownOpen },
 									enabled = visibilityEnabled,
 									modifier = Modifier.semantics { contentDescription = __translation_visibility_picker }
 								) {
@@ -746,82 +745,15 @@ fun ComposeView(
 								}
 
 								// Visibility picker
-								PreparedDropdownMenu(
+								VisibilityPicker(
 									expanded = visibilityDropdownOpen,
-									onDismissRequest = { visibilityDropdownOpen = !visibilityDropdownOpen }
-								) {
-									var visibilities = listOf("public", "unlisted", "private", "direct")
-
-									if (getFeature("local_visibility")) visibilities = visibilities.plus("local")
-
-									@Composable
-									fun VisibilityDropdownItem(vis: String, index: Int) {
-										DropdownMenuItem(
-											enabled = true,
-											selected = visibility == vis,
-											onClick = {
-												visibility = vis
-												visibilityDropdownOpen = !visibilityDropdownOpen
-											},
-											leadingIcon = { Visibility(vis) },
-											colors = MenuDefaults.selectableItemColors(),
-											shapes = visibilities.getPreparedDropdownMenuItemShapes(index),
-											contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-											text = {
-												Column(modifier = Modifier.padding(vertical = 5.dp)) {
-													Text(
-														when (vis) {
-															"public" -> stringResource(Res.string.visibility_public)
-															"unlisted" -> stringResource(Res.string.visibility_unlisted)
-															"private" -> stringResource(Res.string.visibility_followers)
-															"local" -> stringResource(Res.string.visibility_local)
-															else -> stringResource(Res.string.visibility_direct)
-														},
-														fontWeight = FontWeight.Medium
-													)
-													Text(
-														when (vis) {
-															"public" -> stringResource(Res.string.visibility_public_description)
-															"unlisted" -> stringResource(Res.string.visibility_unlisted_description)
-															"private" -> stringResource(Res.string.visibility_followers_description)
-															"local" -> stringResource(Res.string.visibility_local_description)
-															else -> stringResource(Res.string.visibility_direct_description)
-														},
-														fontSize = 13.sp
-													)
-												}
-											}
-										)
-									}
-
-									// todo: do minimum visibility based on the view's visibility parameter
-									visibilities.forEachIndexed { index, string -> VisibilityDropdownItem(string, index) }
-
-
-									if (getFeature("local_only_toggle")) {
-										HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-
-										DropdownMenuItem(
-											checked = false,
-											onCheckedChange = { localOnly = !localOnly },
-											leadingIcon = { Visibility("local") },
-											colors = MenuDefaults.selectableItemColors(),
-											shapes = MenuItemShapes(MenuDefaults.standaloneGroupShape, MenuDefaults.standaloneGroupShape),
-											contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-											text = {
-												Text(
-													stringResource(Res.string.visibility_local),
-													fontWeight = FontWeight.Medium
-												)
-											},
-											trailingIcon = {
-												Switch(checked = localOnly, onCheckedChange = {
-													localOnly = !localOnly
-												})
-											}
-										)
-									}
-								}
+									onSetExpanded = { visibilityDropdownOpen = it },
+									visibility = visibility,
+									onSetVisibility = { visibility = it },
+									showLocal = true,
+									local = localOnly,
+									onSetLocal = { localOnly = it }
+								)
 							}
 						}
 					}

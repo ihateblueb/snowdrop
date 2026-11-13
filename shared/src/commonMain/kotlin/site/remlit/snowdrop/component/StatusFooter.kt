@@ -139,6 +139,7 @@ fun StatusFooter(
 
 	var showDropdown by remember { mutableStateOf(false) }
 
+	// Translation state
 	var hasBeenTranslated by rememberSaveable { mutableStateOf(false) }
 	var showingTranslated by rememberSaveable { mutableStateOf(false) }
 	var translatedCw by rememberSaveable { mutableStateOf("") }
@@ -158,6 +159,9 @@ fun StatusFooter(
 
 	val timelineLocked by settings.getBooleanFlow("timeline_locked", false)
 		.collectAsStateWithLifecycle(blockingSettings.getBoolean("timeline_locked", false))
+
+	val favoriteButtonIcon by settings.getIntFlow("favorite_button_icon", 0)
+		.collectAsStateWithLifecycle(blockingSettings.getInt("favorite_button_icon", 0))
 
 	val hideInteractionCounters = remember { blockingSettings.getBoolean("hide_interaction_counters", false) }
 
@@ -277,9 +281,6 @@ fun StatusFooter(
 				contentColor = LikeColor()
 			) else null
 		) {
-			val favoriteButtonIcon by settings.getIntFlow("favorite_button_icon", 0)
-				.collectAsStateWithLifecycle(blockingSettings.getInt("favorite_button_icon", 0))
-
 			if (realStatus.favourited) Icon(
 				painterResource(when (favoriteButtonIcon) {
 					0 -> Res.drawable.icon_star_filled_24px

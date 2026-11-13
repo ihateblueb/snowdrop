@@ -8,6 +8,7 @@
 ### Fixed
 
 ### Changed
+- The visibility picker in Composing settings is now the same as the post composer. It looks nicer, and it floats.
 
 ## [0.0.10-alpha]
 

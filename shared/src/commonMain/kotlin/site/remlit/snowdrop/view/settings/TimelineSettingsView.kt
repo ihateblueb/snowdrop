@@ -40,8 +40,6 @@ import kotlin.math.roundToInt
 fun TimelineSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
 
-	var showVisibilityPicker by remember { mutableStateOf(false) }
-
 	TopAppBar(
 		navigationIcon = { NavigationBackButton() },
 		title = {

@@ -323,8 +323,8 @@ fun AppearanceSettingsView() = ViewSurface {
 							verticalAlignment = Alignment.CenterVertically
 						) {
 							when (favoriteButtonIcon) {
-								0 -> Text(translation(Res.string.star), fontSize = 13.sp)
-								1 -> Text(translation(Res.string.heart), fontSize = 13.sp)
+								0 -> Text(translation(Res.string.star))
+								1 -> Text(translation(Res.string.heart))
 							}
 
 							if (showPickerDropdown) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
