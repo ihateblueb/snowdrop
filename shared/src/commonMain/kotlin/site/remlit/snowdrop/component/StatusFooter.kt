@@ -80,6 +80,8 @@ import snowdrop.shared.generated.resources.icon_bookmark_24px
 import snowdrop.shared.generated.resources.icon_bookmark_filled_24px
 import snowdrop.shared.generated.resources.icon_delete_24px
 import snowdrop.shared.generated.resources.icon_edit_24px
+import snowdrop.shared.generated.resources.icon_favorite_24px
+import snowdrop.shared.generated.resources.icon_favorite_filled_24px
 import snowdrop.shared.generated.resources.icon_keep_24px
 import snowdrop.shared.generated.resources.icon_keep_off_24px
 import snowdrop.shared.generated.resources.icon_link_24px
@@ -275,12 +277,21 @@ fun StatusFooter(
 				contentColor = LikeColor()
 			) else null
 		) {
+			val favoriteButtonIcon by settings.getIntFlow("favorite_button_icon", 0)
+				.collectAsStateWithLifecycle(blockingSettings.getInt("favorite_button_icon", 0))
+
 			if (realStatus.favourited) Icon(
-				painterResource(Res.drawable.icon_star_filled_24px),
+				painterResource(when (favoriteButtonIcon) {
+					0 -> Res.drawable.icon_star_filled_24px
+					else -> Res.drawable.icon_favorite_filled_24px
+				}),
 				null,
 				tint = LikeColor()
 			) else Icon(
-				painterResource(Res.drawable.icon_star_24px),
+				painterResource(when (favoriteButtonIcon) {
+					0 -> Res.drawable.icon_star_24px
+					else -> Res.drawable.icon_favorite_24px
+				}),
 				null
 			)
 

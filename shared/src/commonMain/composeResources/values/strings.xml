@@ -418,4 +418,8 @@
 	<string name="mentions_will_be_shown_separately">Mentions will be shown separately</string>
 
 	<string name="login_help">The fediverse (and Mastodon) aren't one single app. When you sign up for it, you sign up on a specific website. That website's domain is your "instance host".</string>
+
+	<string name="like_button_icon">Like button icon</string>
+	<string name="star">Star</string>
+	<string name="heart">Heart</string>
 </resources>

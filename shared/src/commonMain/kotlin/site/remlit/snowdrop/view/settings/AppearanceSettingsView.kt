@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,18 +28,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.russhwolf.settings.ExperimentalSettingsApi
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sh.calvin.reorderable.ReorderableColumn
 import site.remlit.snowdrop.component.NavigationBackButton
 import site.remlit.snowdrop.component.ViewSurface
+import site.remlit.snowdrop.component.dropdown.PreparedDropdownMenu
 import site.remlit.snowdrop.component.navigationBar.NavigationBarIcon
 import site.remlit.snowdrop.component.navigationBar.NavigationBarLabel
 import site.remlit.snowdrop.util.ListItemShape
@@ -49,18 +56,25 @@ import site.remlit.snowdrop.util.log.debug
 import site.remlit.snowdrop.util.mapToNavigationOptions
 import site.remlit.snowdrop.util.putNavigationBarOrder
 import site.remlit.snowdrop.util.settings
+import site.remlit.snowdrop.util.translation
 import snowdrop.shared.generated.resources.Res
 import snowdrop.shared.generated.resources.always_show_compose_button
 import snowdrop.shared.generated.resources.appearance
+import snowdrop.shared.generated.resources.heart
+import snowdrop.shared.generated.resources.home
 import snowdrop.shared.generated.resources.icon_drag_indicator_24px
+import snowdrop.shared.generated.resources.icon_favorite_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_down_24px
 import snowdrop.shared.generated.resources.icon_keyboard_arrow_up_24px
+import snowdrop.shared.generated.resources.icon_star_24px
+import snowdrop.shared.generated.resources.like_button_icon
 import snowdrop.shared.generated.resources.mentions_will_be_shown_separately
 import snowdrop.shared.generated.resources.navigation_bar_tab_order
 import snowdrop.shared.generated.resources.remove_mentions_from_the_start_of_posts
 import snowdrop.shared.generated.resources.reorder
 import snowdrop.shared.generated.resources.show_navigation_bar_labels
 import snowdrop.shared.generated.resources.show_send_post_at_bottom_of_composer
+import snowdrop.shared.generated.resources.star
 import snowdrop.shared.generated.resources.use_amoled_dark_theme
 import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause_contrast_issues
 
@@ -68,6 +82,7 @@ import snowdrop.shared.generated.resources.using_on_a_nonamoled_screen_may_cause
 @OptIn(ExperimentalSettingsApi::class)
 fun AppearanceSettingsView() = ViewSurface {
 	val navHandler = LocalNavController.current
+	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
 		navigationIcon = { NavigationBackButton() },
@@ -287,6 +302,56 @@ fun AppearanceSettingsView() = ViewSurface {
 						}
 					}
 				}
+			}
+		}
+		item {
+			// 0: star, 1: heart
+			val favoriteButtonIcon by settings.getIntFlow("favorite_button_icon", 0)
+				.collectAsStateWithLifecycle(0)
+
+			var showPickerDropdown by remember { mutableStateOf(false) }
+
+			Card(
+				modifier = Modifier.listItemClip(0, 0).padding(bottom = 2.dp),
+				shape = ListItemShape(0, 0),
+			) {
+				ListItem(
+					headlineContent = { Text(translation(Res.string.like_button_icon)) },
+					trailingContent = {
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(10.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							when (favoriteButtonIcon) {
+								0 -> Text(translation(Res.string.star), fontSize = 13.sp)
+								1 -> Text(translation(Res.string.heart), fontSize = 13.sp)
+							}
+
+							if (showPickerDropdown) Icon(painterResource(Res.drawable.icon_keyboard_arrow_up_24px), null)
+							else Icon(painterResource(Res.drawable.icon_keyboard_arrow_down_24px), null)
+						}
+
+						PreparedDropdownMenu(
+							expanded = showPickerDropdown,
+							onDismissRequest = { showPickerDropdown = false }
+						) {
+							DropdownMenuItem(
+								leadingIcon = { Icon(painterResource(Res.drawable.icon_star_24px), contentDescription = null) },
+								text = { Text(stringResource(Res.string.star)) },
+								shape = MenuDefaults.leadingItemShape,
+								onClick = { coroutineScope.launch { settings.putInt("favorite_button_icon", 0) } }
+							)
+							DropdownMenuItem(
+								leadingIcon = { Icon(painterResource(Res.drawable.icon_favorite_24px), contentDescription = null) },
+								text = { Text(stringResource(Res.string.heart)) },
+								shape = MenuDefaults.trailingItemShape,
+								onClick = { coroutineScope.launch { settings.putInt("favorite_button_icon", 1) } }
+							)
+						}
+					},
+					modifier = Modifier.clickable { showPickerDropdown = !showPickerDropdown },
+					colors = ListItemDefaults.colors().copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+				)
 			}
 		}
 	}
