@@ -8,9 +8,11 @@
 
 ### Fixed
 - 1 dp missing padding on dropdowns on the top and bottom
+- Reactions feature enabled when using Hollo
 
 ### Changed
 - The visibility picker in Composing settings is now the same as the post composer. It looks nicer, and it floats.
+- Sizing and padding on switch/logout buttons in settings
 
 ## [0.0.10-alpha]
 

@@ -67,7 +67,7 @@ import site.remlit.snowdrop.ProfileRoute
 import site.remlit.snowdrop.StatusMediaAttachmentRoute
 import site.remlit.snowdrop.ThreadRoute
 import site.remlit.snowdrop.api.statuses.getStatus
-import site.remlit.snowdrop.api.statuses.reactToStatus
+import site.remlit.snowdrop.api.statuses.reactStatus
 import site.remlit.snowdrop.api.statuses.unreactFromStatus
 import site.remlit.snowdrop.model.Status
 import site.remlit.snowdrop.model.Account
@@ -739,7 +739,7 @@ fun Status(
 												coroutineScope.launch {
 													if (it.me || !it.name.contains("@")) {
 														val res = if (it.me) unreactFromStatus(realStatus.id, it.name)
-														else reactToStatus(realStatus.id, it.name)
+														else reactStatus(realStatus.id, it.name)
 														if (res.error || res.response == null) {
 															res.handleError(snackbarController)
 															return@launch

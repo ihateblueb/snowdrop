@@ -10,23 +10,8 @@ import site.remlit.snowdrop.model.InstanceV2
 import site.remlit.snowdrop.util.log.debug
 
 enum class Software {
-	Mastodon,
-	Glitch,
-	Chuckya,
-	Pleroma,
-	Akkoma,
-	Sharkey,
-	IceshrimpJS,
-	IceshrimpNET,
-	Mitra,
-	GoToSocial,
-	Friendica,
-	Takahe,
-	Wafrn,
-	Hollo,
-	Hometown,
-	Toki,
-	Snac
+	Mastodon, Glitch, Chuckya, Pleroma, Akkoma, Sharkey, IceshrimpJS, IceshrimpNET, Mitra,
+	GoToSocial, Friendica, Takahe, Wafrn, Hollo, Hometown, Toki, Snac
 }
 
 /**
@@ -121,7 +106,8 @@ suspend fun determineFeatures() {
 		software == Software.Sharkey ||
 		software == Software.IceshrimpJS ||
 		software == Software.IceshrimpNET ||
-		software == Software.Snac
+		software == Software.Snac ||
+		software == Software.Hollo
 	) putFeature("reactions", true)
 	else putFeature("reactions", false)
 

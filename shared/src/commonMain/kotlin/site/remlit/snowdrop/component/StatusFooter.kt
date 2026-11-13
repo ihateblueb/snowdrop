@@ -41,7 +41,7 @@ import site.remlit.snowdrop.api.statuses.deleteStatus
 import site.remlit.snowdrop.api.statuses.favouriteStatus
 import site.remlit.snowdrop.api.statuses.muteStatus
 import site.remlit.snowdrop.api.statuses.pinStatus
-import site.remlit.snowdrop.api.statuses.reactToStatus
+import site.remlit.snowdrop.api.statuses.reactStatus
 import site.remlit.snowdrop.api.statuses.reblogStatus
 import site.remlit.snowdrop.api.statuses.translateStatus
 import site.remlit.snowdrop.api.statuses.unbookmarkStatus
@@ -651,7 +651,7 @@ fun StatusFooter(
 			coroutineScope.launch {
 				showEmojiPicker = !showEmojiPicker
 
-				val res = reactToStatus(realStatus.id, it.shortcode)
+				val res = reactStatus(realStatus.id, it.shortcode)
 				if (res.error || res.response == null) {
 					res.handleError(snackbarController)
 					vibrateError(haptics)
@@ -665,7 +665,7 @@ fun StatusFooter(
 			coroutineScope.launch {
 				showEmojiPicker = !showEmojiPicker
 
-				val res = reactToStatus(realStatus.id, it)
+				val res = reactStatus(realStatus.id, it)
 				if (res.error || res.response == null) {
 					res.handleError(snackbarController)
 					vibrateError(haptics)

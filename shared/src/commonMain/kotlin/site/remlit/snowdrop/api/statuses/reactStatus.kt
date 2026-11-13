@@ -13,7 +13,7 @@ import site.remlit.snowdrop.util.safeApiRequest
 import site.remlit.snowdrop.util.settings
 
 @OptIn(ExperimentalSettingsApi::class)
-suspend fun reactToStatus(
+suspend fun reactStatus(
 	id: String,
 	emoji: String
 ): ApiResponse<Status> = safeApiRequest { accountId, host ->
