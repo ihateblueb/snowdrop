@@ -39,7 +39,7 @@ fun PreparedDropdownMenu(
 	) {
 		DropdownMenuGroup(
 			shapes = MenuDefaults.groupShape(0, 1),
-			modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)
+			modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
 		) {
 			content()
 		}
