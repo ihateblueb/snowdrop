@@ -133,24 +133,28 @@ fun ReportView(
 				)
 			}
 
-			item {
-				Row(
-					horizontalArrangement = Arrangement.spacedBy(5.dp),
-					verticalAlignment = Alignment.CenterVertically,
-					modifier = Modifier
-						.fillMaxWidth()
-						.clickable(onClick = { shouldForward = !shouldForward })
-				) {
-					IconButton(
-						onClick = { shouldForward = !shouldForward }
-					) {
-						Checkbox(
-							checked = shouldForward,
-							onCheckedChange = { shouldForward = !shouldForward }
-						)
-					}
+			val remote = account!!.acct.contains("@")
 
-					Text(stringResource(Res.string.forward_to_remote_instance))
+			if (remote && getFeature("forward_reports")) {
+				item {
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(5.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						modifier = Modifier
+							.fillMaxWidth()
+							.clickable(onClick = { shouldForward = !shouldForward })
+					) {
+						IconButton(
+							onClick = { shouldForward = !shouldForward }
+						) {
+							Checkbox(
+								checked = shouldForward,
+								onCheckedChange = { shouldForward = !shouldForward }
+							)
+						}
+
+						Text(stringResource(Res.string.forward_to_remote_instance))
+					}
 				}
 			}
 
