@@ -426,4 +426,6 @@
 	<string name="n_of_x">{n} of {x}</string>
 
 	<string name="use_circular_avatars">Use circular avatars</string>
+	<string name="followers">Followers</string>
+	<string name="following">Following</string>
 </resources>
